@@ -8,31 +8,6 @@
 <h2 style="color: var(--color-foreground);">{{ 'newsletter.stay_connected_title' | t }}</h2>
 <p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.intro_html' | t }}</p>
 
-<div class="policy-highlight">
-  {{ 'newsletter.offer_highlight_html' | t }}
-  
-  <style>
-    .policy-highlight strong { color: var(--color-foreground); }
-  </style>
-</div>
-
-<h2 style="color: var(--color-foreground);">{{ 'newsletter.what_you_get_title' | t }}</h2>
-<ul>
-  <li>{{ 'newsletter.benefit_early_access_html' | t }}</li>
-  <li>{{ 'newsletter.benefit_discounts_html' | t }}</li>
-  <li>{{ 'newsletter.benefit_bts_html' | t }}</li>
-  <li>{{ 'newsletter.benefit_events_html' | t }}</li>
-  <li>{{ 'newsletter.benefit_style_tips_html' | t }}</li>
-  <style>
-    .policy-content ul { color: var(--color-foreground); opacity: 0.85; }
-    .policy-content li strong { color: var(--color-foreground); }
-  </style>
-  
-</ul>
-
-<h2 style="color: var(--color-foreground);">{{ 'newsletter.signup_title' | t }}</h2>
-<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.signup_prompt' | t }}</p>
-
 <div id="NewsletterContainer" style="background-color: var(--color-surface); padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;" data-adding="{{ 'theme.messages.adding' | t }}" data-success="{{ 'newsletter.success' | t }}" data-error="{{ 'newsletter.error' | t }}" data-verifying="{{ 'newsletter.verifying' | t }}" data-captcha="{{ 'newsletter.captcha_message' | t }}">
   <h3 style="color: var(--color-accent); margin-bottom: 20px;">{{ 'newsletter.subscribe_now' | t }}</h3>
   <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.subscribe_prompt' | t }}</p>
@@ -130,20 +105,11 @@
   }
 {% endjavascript %}
 
-<h2 style="color: var(--color-foreground);">{{ 'newsletter.privacy_title' | t }}</h2>
-<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.privacy_intro' | t }}</p>
-
-<ul>
-  <li>{{ 'newsletter.freq_per_week' | t }}</li>
-  <li>{{ 'newsletter.freq_special_announcements' | t }}</li>
-  <li>{{ 'newsletter.freq_seasonal_lookbooks' | t }}</li>
-  <li>{{ 'newsletter.freq_exclusive_content' | t }}</li>
-</ul>
-
 <p><em style="color: var(--color-foreground); opacity: 0.75;">{{ 'newsletter.unsubscribe_note' | t }}</em></p>
 
-<div class="policy-highlight">
-  {{ 'newsletter.social_highlight' | t }}<br>
-  <strong>{{ 'newsletter.instagram_label' | t }}</strong> @incorrect.society<br>
-  <strong>{{ 'newsletter.tiktok_label' | t }}</strong> @.incorrectsociety
+<div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-direction: column;">
+  <p>To stay updated, follow us on social media:</p>
+{% render 'social-icons', size: 32 %}
 </div>
+
+
