@@ -1,0 +1,209 @@
+{% comment %}
+  Product Grid Section - 3 items per row
+{% endcomment %}
+
+<div class="product-grid-section">
+  <h2 class="product-grid-title">{{ 'homepage.our_products' | t | default: 'OUR PRODUCTS' }}</h2>
+  <div class="product-grid">
+    {% liquid
+      assign shown = 0
+      assign limit = section.settings.products_to_show | default: 6
+    %}
+
+    {% for product in collections['all'].products %}
+      {% liquid
+        assign exclude_handle = 'gift-cards'
+        assign in_excluded = false
+      %}
+      {% for c in product.collections %}
+        {% if c.handle == exclude_handle %}
+          {% assign in_excluded = true %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      {% if in_excluded or product.gift_card? or product.type == 'Gift Card' %}{% continue %}{% endif %}
+      <div class="product-card">
+        <a href="{{ product.url }}" class="product-link">
+          <div class="product-image">
+            {% if product.featured_media %}
+              <img src="{{ product.featured_media | image_url: width: 400 }}" 
+                   alt="{{ product.featured_media.alt | escape }}"
+                   width="400"
+                   height="400"
+                   loading="lazy">
+            {% else %}
+              <div class="product-image-placeholder">
+                No Image
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="product-info">
+            <h3 class="product-title">{{ product.title }}</h3>
+            <p class="product-price">{% render 'price', amount: product.price %}</p>
+          </div>
+        </a>
+      </div>
+      {% liquid
+        assign shown = shown | plus: 1
+        if shown >= limit
+          break
+        endif
+      %}
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-grid-section {
+    padding: 60px 40px;
+  color: var(--color-foreground);
+  }
+
+  .product-grid-title {
+    text-align: center;
+    margin: 0 0 40px;
+    font-size: 28px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+  }
+
+  .product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  }
+
+  .product-card {
+    background-color: transparent;
+    width: calc(33.333% - 27px); /* 3 columns with gap */
+    min-width: 300px;
+  }
+
+  /* When fewer than 3 items, they'll be centered automatically */
+  @media (max-width: 1024px) {
+    .product-card {
+      width: calc(50% - 20px); /* 2 columns on tablet */
+      min-width: 280px;
+    }
+  }
+
+  .product-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .product-link:hover { transform: translateY(-5px); color: var(--color-accent); }
+
+  .product-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 20px;
+    background-color: transparent;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    transform: scale(0.9);
+  }
+
+  .product-link:hover .product-image img {
+    transform: scale(1);
+  }
+
+  .product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  background-color: var(--color-background);
+  color: var(--color-border);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .product-info {
+    text-align: center;
+  }
+
+  .product-title {
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 10px 0;
+  color: var(--color-foreground);
+    line-height: 1.4;
+  }
+
+  .product-price {
+    font-size: 14px;
+    color: var(--color-foreground);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .product-grid-section {
+      padding: 40px 20px;
+    }
+
+    .product-grid {
+      gap: 30px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .product-grid { gap: 20px; }
+    .product-card { width: calc(50% - 12px); min-width: 0; }
+    .product-grid-section { padding: 30px 15px; }
+  }
+
+  @media (max-width: 480px) {
+    .product-grid { gap: 18px; }
+    .product-card { width: 100%; }
+    .product-title { font-size: 13px; }
+    .product-price { font-size: 13px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product Grid",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "label": "Products to show",
+      "min": 3,
+      "max": 12,
+      "step": 3,
+      "default": 6
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,149 @@
+{% comment %}
+  Newsletter Content
+  Usage: {% render 'newsletter-content' %}
+{% endcomment %}
+
+<!-- Social icons are shown in the left sidebar above the newsletter link -->
+
+<h2 style="color: var(--color-foreground);">{{ 'newsletter.stay_connected_title' | t }}</h2>
+<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.intro_html' | t }}</p>
+
+<div class="policy-highlight">
+  {{ 'newsletter.offer_highlight_html' | t }}
+  
+  <style>
+    .policy-highlight strong { color: var(--color-foreground); }
+  </style>
+</div>
+
+<h2 style="color: var(--color-foreground);">{{ 'newsletter.what_you_get_title' | t }}</h2>
+<ul>
+  <li>{{ 'newsletter.benefit_early_access_html' | t }}</li>
+  <li>{{ 'newsletter.benefit_discounts_html' | t }}</li>
+  <li>{{ 'newsletter.benefit_bts_html' | t }}</li>
+  <li>{{ 'newsletter.benefit_events_html' | t }}</li>
+  <li>{{ 'newsletter.benefit_style_tips_html' | t }}</li>
+  <style>
+    .policy-content ul { color: var(--color-foreground); opacity: 0.85; }
+    .policy-content li strong { color: var(--color-foreground); }
+  </style>
+  
+</ul>
+
+<h2 style="color: var(--color-foreground);">{{ 'newsletter.signup_title' | t }}</h2>
+<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.signup_prompt' | t }}</p>
+
+<div id="NewsletterContainer" style="background-color: var(--color-surface); padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;" data-adding="{{ 'theme.messages.adding' | t }}" data-success="{{ 'newsletter.success' | t }}" data-error="{{ 'newsletter.error' | t }}" data-verifying="{{ 'newsletter.verifying' | t }}" data-captcha="{{ 'newsletter.captcha_message' | t }}">
+  <h3 style="color: var(--color-accent); margin-bottom: 20px;">{{ 'newsletter.subscribe_now' | t }}</h3>
+  <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.subscribe_prompt' | t }}</p>
+
+  {% form 'customer', id: 'NewsletterForm' %}
+    {% if form.posted_successfully? %}
+      <p class="newsletter-success" style="margin: 0 0 15px; color: var(--color-foreground);">{{ 'newsletter.success' | t }}</p>
+    {% endif %}
+    {% if form.errors %}
+      <div class="newsletter-errors" style="margin: 0 0 15px; color: var(--color-foreground);">
+        {{ form.errors | default_errors }}
+      </div>
+    {% endif %}
+    <div class="newsletter-message" aria-live="polite" style="margin: 0 0 10px; color: var(--color-foreground);"></div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto;">
+      <input
+        type="text"
+        name="contact[first_name]"
+        id="NewsletterForm-name"
+        placeholder="{{ 'newsletter.name_placeholder' | t }}"
+        autocomplete="given-name"
+        style="padding: 12px; border: 1px solid var(--color-border); background-color: color-mix(in oklab, var(--color-surface), var(--color-background) 50%); color: var(--color-foreground); border-radius: 4px;"
+      >
+
+      <input
+        type="email"
+        name="contact[email]"
+        id="NewsletterForm-email"
+        placeholder="{{ 'newsletter.email_placeholder' | t }}"
+        autocomplete="email"
+        required
+        style="padding: 12px; border: 1px solid var(--color-border); background-color: color-mix(in oklab, var(--color-surface), var(--color-background) 50%); color: var(--color-foreground); border-radius: 4px;"
+      >
+
+  <input type="hidden" name="contact[tags]" value="newsletter">
+
+      <button type="submit" style="background-color: var(--color-accent); color: var(--color-foreground); padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase;">
+        {{ 'newsletter.subscribe_cta' | t }}
+      </button>
+    </div>
+  {% endform %}
+</div>
+
+{% javascript %}
+  const form = document.getElementById('NewsletterForm');
+  const container = document.getElementById('NewsletterContainer');
+  if (form && container) {
+    form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+      const message = form.querySelector('.newsletter-message');
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (!message || !submitButton) return;
+
+      const tAdding = container.dataset.adding || 'Adding...';
+  const tSuccess = container.dataset.success || 'Thanks for subscribing!';
+  const tError = container.dataset.error || 'Something went wrong. Please try again.';
+  const tVerifying = container.dataset.verifying || 'Verifying...';
+  const tCaptcha = container.dataset.captcha || 'Please complete the verification to finish your subscription.';
+  const tSmsPhoneRequired = container.dataset.smsRequired || 'Phone number is required to opt into SMS.';
+
+      message.textContent = '';
+      submitButton.disabled = true;
+      const originalText = submitButton.textContent;
+      submitButton.textContent = tAdding;
+
+  try {
+
+        const action = form.getAttribute('action') || '/contact';
+        const formData = new FormData(form);
+        const response = await fetch(action, {
+          method: 'POST',
+          body: formData,
+          credentials: 'same-origin'
+        });
+        if (response.ok) {
+          message.textContent = tSuccess;
+          form.reset();
+        } else {
+          // Fallback to normal submit for captcha/challenge or throttling or redirect-only responses
+          message.textContent = response.status === 429 ? tCaptcha : tVerifying;
+          form.removeEventListener('submit', arguments.callee);
+          form.submit();
+          return;
+        }
+      } catch (e) {
+        message.textContent = tError;
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+    });
+  }
+{% endjavascript %}
+
+<h2 style="color: var(--color-foreground);">{{ 'newsletter.privacy_title' | t }}</h2>
+<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.privacy_intro' | t }}</p>
+
+<ul>
+  <li>{{ 'newsletter.freq_per_week' | t }}</li>
+  <li>{{ 'newsletter.freq_special_announcements' | t }}</li>
+  <li>{{ 'newsletter.freq_seasonal_lookbooks' | t }}</li>
+  <li>{{ 'newsletter.freq_exclusive_content' | t }}</li>
+</ul>
+
+<p><em style="color: var(--color-foreground); opacity: 0.75;">{{ 'newsletter.unsubscribe_note' | t }}</em></p>
+
+<div class="policy-highlight">
+  {{ 'newsletter.social_highlight' | t }}<br>
+  <strong>{{ 'newsletter.instagram_label' | t }}</strong> @incorrect.society<br>
+  <strong>{{ 'newsletter.tiktok_label' | t }}</strong> @.incorrectsociety
+</div>

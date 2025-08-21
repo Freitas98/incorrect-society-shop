@@ -1,0 +1,322 @@
+<div class="retro-music-player-pixel">
+	<div class="retro-music-title-pixel" id="RetroTrackName">MAFIA</div>
+	<div class="retro-music-controls-pixel">
+		<button id="RetroMusicPrev" class="retro-music-btn-pixel" aria-label="Previous">
+			<span aria-hidden="true">&#9198;</span>
+		</button>
+		<button id="RetroMusicToggle" class="retro-music-btn-pixel" aria-label="Play/Pause">
+			<span id="icon-play" style="display:none">&#9654;</span>
+			<span id="icon-pause">&#10073;&#10073;</span>
+		</button>
+		<button id="RetroMusicNext" class="retro-music-btn-pixel" aria-label="Next">
+			<span aria-hidden="true">&#9197;</span>
+		</button>
+		<div class="retro-music-volume-wrap-pixel">
+			<button id="RetroMusicMute" class="retro-music-btn-pixel" aria-label="Mute" type="button">
+				<span id="icon-volume">&#128266;</span>
+				<span id="icon-mute" style="display:none">&#128263;</span>
+			</button>
+			<input type="range" id="RetroMusicVolume" min="0" max="1" step="0.01" value="0.1" class="retro-music-volume-bar-pixel" aria-label="Volume">
+		</div>
+	</div>
+	<div class="retro-music-progress-row-pixel">
+		<span id="RetroMusicCurrent" class="retro-music-time-pixel">0:00</span>
+		<input type="range" id="RetroMusicSeek" min="0" max="100" value="0" step="1" class="retro-music-progress-bar-pixel" aria-label="Seek">
+		<span id="RetroMusicDuration" class="retro-music-time-pixel">0:00</span>
+	</div>
+	<audio id="RetroAudioPlayer" preload="auto" autoplay></audio>
+</div>
+
+<style>
+.retro-music-player-pixel {
+	background: #18181a;
+	color: #ffb3c6;
+	border: 2.5px solid #8f2b3f;
+	border-radius: 10px;
+	box-shadow: 0 0 8px #8f2b3f, 0 0 2px #222;
+	font-family: 'Press Start 2P', monospace, sans-serif;
+	padding: 10px 10px 8px 10px;
+		width: 100%;
+		max-width: 420px;
+	user-select: none;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 8px;
+		margin-left: auto;
+		margin-right: auto;
+		box-sizing: border-box;
+    margin-bottom: 20px;
+}
+.retro-music-title-pixel {
+	font-size: 0.6em;
+	color: #ffb3c6;
+	text-shadow: 0 0 2px #8f2b3f, 0 0 8px #fff, 0 0 12px #8f2b3f;
+	margin-bottom: 2px;
+	letter-spacing: 2px;
+	font-family: 'Press Start 2P', monospace, sans-serif;
+	text-align: center;
+	width: 100%;
+	filter: blur(0.5px) brightness(1.2);
+}
+.retro-music-controls-pixel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+		width: 100%;
+	background: #18181a;
+	border-radius: 8px;
+	padding: 4px 0 4px 0;
+	box-shadow: 0 0 6px #8f2b3f inset;
+}
+.retro-music-btn-pixel {
+	background: #111;
+	color: #ffb3c6;
+	border: 2px solid #8f2b3f;
+	border-radius: 6px;
+	font-size: 1.1em;
+	width: 48px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 0 2px #8f2b3f;
+	transition: background 0.2s, color 0.2s;
+	cursor: pointer;
+	padding: 0;
+}
+.retro-music-btn-pixel:focus {
+	outline: 2px solid #ffb3c6;
+}
+.retro-music-progress-row-pixel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+		width: 100%;
+}
+.retro-music-progress-bar-pixel {
+	width: 45%;
+	accent-color: #ffb3c6;
+	background: #222;
+	border-radius: 4px;
+	height: 6px;
+	margin: 0 2px;
+	box-shadow: 0 0 2px #8f2b3f;
+}
+.retro-music-time-pixel {
+	font-size: 0.8em;
+	color: #ffb3c6;
+	opacity: 0.8;
+	min-width: 32px;
+	text-align: center;
+	letter-spacing: 1px;
+}
+.retro-music-volume-wrap-pixel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.retro-music-volume-bar-pixel {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 64px;
+    accent-color: #8f2b3f;
+    background: #222;
+    border-radius: 6px;
+    box-shadow: 0 0 4px #8f2b3f;
+    z-index: 9999;
+    display: none;
+    margin: 0;
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    appearance: slider-vertical;
+    pointer-events: all;
+}
+.retro-music-volume-wrap-pixel:hover .retro-music-volume-bar-pixel,
+.retro-music-volume-bar-pixel:hover,
+.retro-music-volume-bar-pixel:focus {
+    display: block;
+}
+@media (max-width: 500px) {
+	.retro-music-player-pixel {
+        min-width: 275px;
+		max-width: 98vw;
+		padding: 6px 1vw;
+	}
+	.retro-music-controls-pixel { gap: 6px; }
+	.retro-music-btn-pixel { width: 32px; height: 32px; font-size: 0.9em; }
+}
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+{% javascript %}
+(function(){
+	const tracks = [
+		{ name: "Port António", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842" },
+		{ name: "Isso é Sério", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842" },
+		{ name: "MAFIA", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841" },
+		{ name: "OLD SKOOL", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841" },
+		{ name: "Push ups", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841" },
+		{ name: "Toni do Rock", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841" },
+		{ name: "COFFEE BEAN", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841" },
+		{ name: "DOVE", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840" },
+		{ name: "Besta", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840" },
+		{ name: "Insomnia", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840" },
+		{ name: "CorDaPele", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839" },
+		{ name: "No Pole", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840" },
+		{ name: "DEEP IN THE WATER", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840" },
+		{ name: "PARKING LOT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839" },
+		{ name: "Não me Confudam", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839" },
+		{ name: "Mikasa", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838" },
+		{ name: "Levels", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838" },
+		{ name: "AMANHÃ", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838" },
+		{ name: "THAT'S THAT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837" },
+	];
+	// Restore state from localStorage
+	let current = parseInt(localStorage.getItem('musicPlayerTrack') || '10', 10);
+	const savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
+	const wasPlaying = localStorage.getItem('musicPlayerPlaying') === 'true';
+	const audio = document.getElementById('RetroAudioPlayer');
+	const toggleBtn = document.getElementById('RetroMusicToggle');
+	const muteBtn = document.getElementById('RetroMusicMute');
+	const iconPlay = document.getElementById('icon-play');
+	const iconPause = document.getElementById('icon-pause');
+	const iconVolume = document.getElementById('icon-volume');
+	const iconMute = document.getElementById('icon-mute');
+	const trackNameEl = document.getElementById('RetroTrackName');
+	const seek = document.getElementById('RetroMusicSeek');
+	const currentTimeEl = document.getElementById('RetroMusicCurrent');
+	const durationEl = document.getElementById('RetroMusicDuration');
+		const prevBtn = document.getElementById('RetroMusicPrev');
+		const nextBtn = document.getElementById('RetroMusicNext');
+		const volumeBar = document.getElementById('RetroMusicVolume');
+
+	function setTrack(idx) {
+    if (idx < 0 || idx >= tracks.length) return;
+    current = idx;
+    audio.src = tracks[current].url;
+    if (trackNameEl) trackNameEl.textContent = tracks[current].name;
+    audio.load();
+    // Reset time display to 0:00 and clear duration until loaded
+    if (currentTimeEl) currentTimeEl.textContent = '0:00';
+    if (durationEl) durationEl.textContent = '--:--';
+    if (seek) seek.value = 0;
+    audio.currentTime = 0;
+    updateIcons();
+}
+	function nextTrack() {
+		setTrack((current + 1) % tracks.length);
+	}
+	function prevTrack() {
+		setTrack((current - 1 + tracks.length) % tracks.length);
+	}
+		function updateIcons() {
+			if (audio.paused) {
+				iconPlay.style.display = '';
+				iconPause.style.display = 'none';
+			} else {
+				iconPlay.style.display = 'none';
+				iconPause.style.display = '';
+			}
+			if (audio.muted || audio.volume === 0) {
+				iconVolume.style.display = 'none';
+				iconMute.style.display = '';
+			} else {
+				iconVolume.style.display = '';
+				iconMute.style.display = 'none';
+			}
+			if (volumeBar) volumeBar.value = audio.volume;
+		}
+	toggleBtn.addEventListener('click', function(){
+		if (audio.paused) {
+			audio.play().catch(()=>{});
+		} else {
+			audio.pause();
+		}
+		updateIcons();
+	});
+		muteBtn.addEventListener('click', function(){
+			audio.muted = !audio.muted;
+			updateIcons();
+		});
+		if (volumeBar) {
+			volumeBar.addEventListener('input', function(){
+				audio.volume = parseFloat(volumeBar.value);
+				if (audio.volume === 0) audio.muted = true;
+				else audio.muted = false;
+				updateIcons();
+			});
+		}
+	prevBtn.addEventListener('click', function(){
+		setTrack((current - 1 + tracks.length) % tracks.length);
+		localStorage.setItem('musicPlayerTrack', current);
+		localStorage.setItem('musicPlayerTime', 0);
+	});
+	nextBtn.addEventListener('click', function(){
+		setTrack((current + 1) % tracks.length);
+		localStorage.setItem('musicPlayerTrack', current);
+		localStorage.setItem('musicPlayerTime', 0);
+	});
+	audio.addEventListener('play', function(){
+		localStorage.setItem('musicPlayerPlaying', 'true');
+		updateIcons();
+	});
+	audio.addEventListener('pause', function(){
+		localStorage.setItem('musicPlayerPlaying', 'false');
+		updateIcons();
+	});
+	audio.addEventListener('ended', nextTrack);
+	audio.addEventListener('timeupdate', function(){
+		if (!seek || !audio.duration) return;
+		seek.value = Math.floor((audio.currentTime / audio.duration) * 100);
+		if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+		if (durationEl) durationEl.textContent = formatTime(audio.duration);
+		localStorage.setItem('musicPlayerTime', audio.currentTime);
+	});
+	audio.addEventListener('loadedmetadata', function(){
+    if (durationEl) durationEl.textContent = formatTime(audio.duration);
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+    if (seek && audio.duration) seek.value = Math.floor((audio.currentTime / audio.duration) * 100);
+});
+	seek.addEventListener('input', function(){
+		if (!audio.duration) return;
+		audio.currentTime = (seek.value / 100) * audio.duration;
+		localStorage.setItem('musicPlayerTime', audio.currentTime);
+	});
+	// Set initial volume and track, update icons
+	audio.volume = 0.1;
+	setTrack(current);
+	updateIcons();
+	// Restore time and play state
+	audio.addEventListener('loadedmetadata', function(){
+    if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
+        audio.currentTime = savedTime;
+        // Force update of time display
+        if (currentTimeEl) currentTimeEl.textContent = formatTime(savedTime);
+        if (seek && audio.duration) seek.value = Math.floor((savedTime / audio.duration) * 100);
+    }
+    if (wasPlaying) {
+        audio.play().catch(()=>{});
+    }
+});
+// Always update time display on play
+audio.addEventListener('play', function(){
+    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
+    if (seek && audio.duration) seek.value = Math.floor((audio.currentTime / audio.duration) * 100);
+});
+// Place formatTime before any event listeners or calls
+function formatTime(sec) {
+    if (!isFinite(sec)) return '0:00';
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+}
+})();
+{% endjavascript %}

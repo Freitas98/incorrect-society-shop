@@ -1,0 +1,273 @@
+{
+  "404": {
+    "title": "404",
+    "not_found": "Página não encontrada.",
+    "back_to_shopping": "Voltar às compras"
+  },
+  "homepage": {
+    "our_products": "OS NOSSOS PRODUTOS"
+  },
+  "blog": {
+    "article_comments": "Comentários",
+    "article_metadata_html": "{{ date }} por {{ author }}",
+    "comment_form_body": "Comentário",
+    "comment_form_email": "Email",
+    "comment_form_name": "Nome",
+    "comment_form_submit": "Publicar",
+    "comment_form_title": "Adicionar um comentário"
+  },
+  "cart": {
+    "checkout": "Finalizar compra",
+    "title": "Carrinho",
+    "update": "Atualizar",
+    "remove": "Remover",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "discount": "Desconto",
+    "quantity": "Quantidade",
+    "each": "cada",
+    "stock_available_html": "{{ count }} disponível(es)",
+    "stock_available_suffix": "disponível",
+    "remove_item_title": "Remover artigo",
+    "remove_item_message_html": "Tens a certeza que queres remover \"{{ title }}\" do carrinho?",
+    "remove_item_confirm": "Remover artigo",
+    "only_x_available": "Apenas {{ count }} em stock.",
+    "update_failed": "Falha ao atualizar a quantidade. Tenta novamente.",
+    "clear_failed": "Falha ao esvaziar o carrinho. Tenta novamente.",
+    "taxes_included": "Impostos incluídos",
+    "taxes_not_included": "Impostos e envio calculados no checkout",
+    "clear": "Esvaziar carrinho",
+    "clear_confirm_title": "Esvaziar carrinho?",
+    "clear_confirm_message": "Tens a certeza que queres remover todos os artigos do carrinho? Esta ação não pode ser anulada.",
+    "empty_title": "O teu carrinho está vazio",
+    "empty_message": "Ainda não adicionaste nada ao carrinho.",
+    "continue_shopping": "Continuar a comprar"
+  },
+  "customers": {
+    "login": {
+      "email": "Email",
+      "password": "Palavra-passe",
+      "submit": "Entrar",
+      "title": "Iniciar sessão"
+    }
+  },
+  "collections": {
+    "title": "Coleções"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Adicionar à Apple Wallet",
+    "card": "Cartão-oferta",
+    "expired": "Este cartão-oferta expirou",
+    "expires_on": "Expira em {{ expires_on }}",
+    "use_at_checkout": "Usa este cartão-oferta no checkout",
+    "copy": "Copiar código",
+    "copied": "Copiado!",
+    "print": "Imprimir",
+    "view_product": "Ver produto do cartão-oferta",
+    "buy_more": "Comprar mais cartões-oferta",
+    "start_at": "A partir de:"
+  },
+  "password": {
+    "title": "Esta loja é privada",
+    "password": "Palavra-passe",
+    "enter": "Entrar"
+  },
+  "search": {
+    "title": "Pesquisar",
+    "placeholder": "Pesquisar",
+    "submit": "Pesquisar",
+    "no_results_title": "Nenhum resultado encontrado",
+    "no_results_html": "Sem resultados para {{ terms }}",
+    "no_results_suggestion": "Tenta pesquisar por outros termos ou explora as nossas coleções",
+    "results_title": "Resultados da Pesquisa",
+    "results_for_html": "{{ count }} resultados para {{ terms }}",
+    "welcome_subtitle": "Usa a barra de pesquisa acima para encontrar produtos",
+    "welcome_message": "Começa a escrever na barra de pesquisa para descobrir os nossos produtos"
+  },
+  "size_guide": {
+    "title": "Guia de Tamanhos",
+    "cm": "CM",
+    "inches": "POLEGADAS",
+    "t_shirts": "T-SHIRTS",
+    "hoodies": "HOODIES",
+    "point_size": "Ponto/Tamanho",
+    "measurement_note": "TODAS AS MEDIDAS PODEM VARIAR ATÉ 2 CM",
+    "measurement_note_inches": "TODAS AS MEDIDAS PODEM VARIAR ATÉ 0,8\"",
+    "size_s": "S",
+    "size_m": "M",
+    "size_l": "L",
+    "size_xl": "XL",
+    "size_xs": "XS",
+    "size_xxl": "XXL"
+  },
+  "policies": {
+    "shipping_policy": "Política de Envio",
+    "terms_of_service": "Termos de Serviço",
+    "privacy_policy": "Política de Privacidade",
+    "refund_policy": "Política de Reembolso",
+    "newsletter": "Newsletter",
+    "size_guide": "Guia de Tamanhos"
+  },
+  "general": {
+    "cancel": "Cancelar",
+    "no_image": "Sem imagem",
+  "home": "Início",
+  "close": "Fechar"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Adicionar ao carrinho",
+      "sold_out": "Esgotado",
+      "description": "Descrição"
+    },
+    "options": {
+      "size": "Tamanho",
+      "color": "Cor",
+      "tamanho": "Tamanho",
+      "cor": "Cor",
+      "preco": "Preço"
+    }
+  },
+  "theme": {
+    "messages": {
+      "adding": "A adicionar...",
+      "added_to_cart": "Produto adicionado ao carrinho com sucesso!",
+      "error_adding_to_cart": "Erro ao adicionar produto ao carrinho. Tenta novamente.",
+      "sold_out": "Esgotado",
+      "add_to_cart": "Adicionar ao carrinho"
+    }
+  },
+  "newsletter": {
+    "stay_connected_title": "Mantém-te ligado",
+    "intro_html": "Junta-te à <strong>Incorrect Society</strong> e sê o primeiro a saber de novos lançamentos, drops exclusivos e eventos.",
+    "offer_highlight_html": "Subscreve a nossa newsletter e recebe <strong>10% de desconto</strong> na tua primeira compra!",
+    "what_you_get_title": "O que vais receber",
+    "benefit_early_access_html": "<strong>Acesso antecipado:</strong> Compra novas coleções antes do público",
+    "benefit_discounts_html": "<strong>Descontos exclusivos:</strong> Códigos e ofertas para subscritores",
+    "benefit_bts_html": "<strong>Nos bastidores:</strong> Conteúdo de sessões e do processo criativo",
+    "benefit_events_html": "<strong>Convites:</strong> Acesso VIP a pop-ups e eventos",
+    "benefit_style_tips_html": "<strong>Dicas de estilo:</strong> Como usar as peças Incorrect Society",
+    "signup_title": "Inscrição na Newsletter",
+    "signup_prompt": "Pronto para te juntares? Introduz o teu email para subscreveres a newsletter.",
+    "subscribe_now": "SUBSCREVER",
+    "subscribe_prompt": "Introduz o teu email para te juntares à Incorrect Society",
+    "subscribe_cta": "Subscrever e obter 10%",
+    "privacy_title": "Privacidade e frequência",
+    "privacy_intro": "Respeitamos a tua privacidade e nunca partilhamos o teu email. Podes esperar:",
+    "freq_per_week": "1-2 newsletters por semana com novidades",
+    "freq_special_announcements": "Anúncios especiais de lançamentos limitados",
+    "freq_seasonal_lookbooks": "Lookbooks sazonais e guias de estilo",
+    "freq_exclusive_content": "Conteúdo exclusivo para subscritores",
+    "unsubscribe_note": "Podes cancelar a subscrição a qualquer momento através do link no email.",
+    "social_highlight": "Segue-nos para atualizações diárias:",
+    "instagram_label": "Instagram:",
+    "tiktok_label": "TikTok:",
+    "success": "Obrigado por subscreveres! Verifica o teu email para confirmar.",
+    "name_placeholder": "O teu nome",
+    "email_placeholder": "O teu email",
+    "phone_placeholder": "O teu telemóvel (opcional)",
+    "error": "Algo correu mal. Tenta novamente.",
+    "accept_marketing_label": "Aceito receber emails e SMS de marketing (opcional)",
+    "accept_email_label": "Aceito receber emails de marketing (opcional)",
+    "accept_sms_label": "Aceito receber SMS de marketing (opcional)",
+    "sms_legal": "Podem aplicar-se custos de mensagens. O consentimento não é condição de compra. Responde STOP para cancelar.",
+    "sms_phone_required": "Introduz um número de telemóvel válido para aderir aos SMS.",
+    "verifying": "A verificar...",
+    "captcha_message": "Conclui a verificação para finalizar a subscrição."
+  },
+  "shipping": {
+    "title": "Informação de Envio",
+    "intro_html": "Na <strong>Incorrect Society</strong>, comprometemo-nos a entregar a tua encomenda de forma rápida e segura. Enviamos para todo o mundo e fornecemos tracking.",
+    "processing_highlight_html": "<strong>Importante:</strong> Todas as encomendas são processadas em 24-48 horas úteis (segunda a sexta).",
+    "methods_title": "Métodos de envio e prazos",
+    "methods_intro": "Oferecemos as seguintes opções:",
+    "methods_eu": "Europa (UE): 3-7 dias úteis",
+    "methods_uk": "Reino Unido: 5-8 dias úteis",
+    "methods_us": "Estados Unidos: 7-12 dias úteis",
+    "methods_ca": "Canadá: 8-14 dias úteis",
+    "methods_anz": "Austrália e Nova Zelândia: 10-16 dias úteis",
+    "methods_row": "Resto do mundo: 10-20 dias úteis",
+    "estimate_note_html": "<em>Os prazos são estimativas e podem variar devido a alfândega ou imprevistos.</em>",
+    "costs_title": "Custos de envio",
+    "costs_intro": "Os custos são calculados no checkout com base na localização e artigos do carrinho. Oferecemos:",
+    "free_over_html": "<strong>Envio gratuito</strong> em encomendas acima de 80€",
+    "standard_rates": "Taxas padrão aplicam-se para encomendas abaixo destes valores",
+    "tracking_title": "Tracking da encomenda",
+    "tracking_intro": "Quando a encomenda for enviada, receberás um número de tracking por email.",
+    "customs_title": "Alfândega e taxas",
+    "customs_intro": "Para encomendas fora da UE, o cliente é responsável por taxas/ impostos do país de destino.",
+    "restrictions_title": "Restrições de envio",
+    "restrictions_intro": "Enviamos para a maioria dos países. Algumas zonas remotas podem não estar disponíveis.",
+    "lost_title": "Encomendas perdidas ou danificadas",
+    "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, contacta-nos: <strong>geral@incorrectsociety.com</strong>.",
+    "contact_highlight": "Para dúvidas, fala com a nossa equipa."
+  },
+  "terms": {
+    "section1_title": "1. Acordo com os Termos",
+    "section1_html": "Ao acederes ao site da <strong>Incorrect Society</strong> e comprares os nossos produtos, aceitas estes Termos de Serviço.",
+    "section2_title": "2. Produtos e Serviços",
+    "section2_html": "A Incorrect Society oferece streetwear e apparel de alta qualidade. As descrições, preços e disponibilidade podem mudar sem aviso.",
+    "section2_list1": "Reservamo-nos o direito de limitar quantidades compradas",
+    "section2_list2": "Todos os preços estão em Euros (EUR), salvo indicação em contrário",
+    "section2_list3": "Podemos recusar serviço por qualquer motivo",
+    "section3_title": "3. Encomendas e Pagamento",
+    "section3_html": "Ao fazeres uma encomenda, fazes uma proposta de compra. Podemos aceitar ou recusar a tua encomenda.",
+    "processing_highlight": "O pagamento deve ser recebido antes do processamento. Aceitamos cartões, PayPal e outros métodos.",
+    "section4_title": "4. Preços e Disponibilidade",
+    "section4_html": "Todos os preços no site estão em Euros e incluem impostos quando aplicável. A disponibilidade depende do stock.",
+    "section4_list1": "Os preços podem mudar sem aviso",
+    "section4_list2": "Podemos corrigir erros de preço",
+    "section4_list3": "Itens de edição limitada sujeitos a disponibilidade",
+    "section5_title": "5. Devoluções e Trocas",
+    "section5_html": "Queremos a tua total satisfação. Aceitamos devoluções/trocas até 30 dias após entrega, conforme política.",
+    "section6_title": "6. Propriedade Intelectual",
+    "section6_html": "Todo o conteúdo (designs, logos, texto, imagens) é propriedade da Incorrect Society e protegido por lei.",
+    "section7_title": "7. Política de Privacidade",
+    "section7_html": "A tua privacidade é importante. Usamos os teus dados conforme a nossa Política de Privacidade.",
+    "section8_title": "8. Limitação de Responsabilidade",
+    "section8_html": "A Incorrect Society não é responsável por danos indiretos, incidentais ou consequentes.",
+    "section9_title": "9. Lei Aplicável",
+    "section9_html": "Estes termos regem-se pelas leis de Portugal. Quaisquer litígios serão resolvidos nos tribunais portugueses.",
+    "section10_title": "10. Alterações aos Termos",
+    "section10_html": "Podemos atualizar estes termos a qualquer momento. O uso contínuo implica aceitação.",
+    "last_updated_label": "Última atualização:",
+    "contact_label": "Para questões sobre estes termos, contacta-nos em"
+  },
+  "challenge": {
+    "title": "Por favor confirma que és humano",
+    "verify_heading": "Verificação",
+    "subtitle": "Conclui a verificação abaixo para continuar.",
+    "footer": "Este passo protege a loja de spam e abuso.",
+    "confirm_message": "Confirma que não és um robô.",
+    "tips_title": "Se a verificação não carregar:",
+    "tip_reload": "Recarrega a página",
+    "tip_disable_blockers": "Desativa temporariamente bloqueadores de anúncios/cookies",
+    "tip_try_other": "Tenta outro navegador ou rede móvel",
+    "back_home": "Voltar à página inicial",
+    "back_previous": "Voltar atrás",
+    "why_title": "Porque este passo?",
+    "why_list_1": "Protege lançamentos de bots",
+    "why_list_2": "Previne spam e abuso",
+    "why_list_3": "Mantém a experiência rápida e justa",
+    "next_title": "O que acontece a seguir?",
+    "next_text": "Após a verificação, continuaremos a tua ação automaticamente.",
+    "need_help": "Precisas de ajuda?",
+    "contact_us": "Contacta-nos"
+  },
+  "subscribe": {
+    "title": "Subscrição confirmada",
+    "subheading": "Obrigado",
+    "message": "O teu email foi confirmado. Vais começar a receber as nossas atualizações.",
+    "back_home": "Voltar à página inicial",
+    "shop_now": "Comprar agora",
+    "unsubscribe": "Cancelar subscrição"
+  },
+  "unsubscribe": {
+    "title": "Subscrição cancelada",
+    "message": "Deixaste de receber os nossos emails. Podes voltar a subscrever quando quiseres."
+  },
+  "announcement": {
+    "default": "WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL",
+    "aria_label": "Anúncio da loja"
+  }
+}

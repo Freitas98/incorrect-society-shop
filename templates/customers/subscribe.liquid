@@ -1,0 +1,43 @@
+{% comment %}
+  Subscription confirmation page – minimal centered layout matching theme style
+{% endcomment %}
+
+{% layout 'theme' %}
+
+<section class="customers-subscribe" style="display: block; margin: 60px auto 80px; text-align: center; max-width: 760px; padding: 0 12px;">
+  <h1 class="policy-title">{{ 'subscribe.title' | t | default: 'Subscription confirmed' }}</h1>
+  <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">{{ 'subscribe.message' | t | default: 'Your email has been confirmed. You will now receive our updates.' }}</p>
+
+  <div style="display: grid; gap: 24px; justify-items: center; margin: 24px 0 4px;">
+    <a href="{{ routes.root_url }}" style="display: inline-block; background: var(--color-accent); color: var(--color-foreground); border: 1px solid var(--color-accent); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600;">{{ 'subscribe.shop_now' | t | default: 'Shop now' }}</a>
+    <a id="unsubscribeLink" href="#" style="font-size: .85rem; color: var(--color-foreground); text-decoration: underline; opacity: .85;">{{ 'subscribe.unsubscribe' | t | default: 'Unsubscribe' }}</a>
+  </div>
+<script>
+  (function(){
+    const unsub = document.getElementById('unsubscribeLink');
+    if (!unsub) return;
+    const search = window.location.search || '';
+    if (search && search.length > 1) {
+  unsub.href = '{{ routes.root_url }}account/unsubscribe' + search;
+    }
+  })();
+</script>
+
+</section>
+
+<style>
+/* Reuse policy title styling so this page matches policy headers */
+.customers-subscribe .policy-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0 0 20px;
+  color: var(--color-foreground);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .customers-subscribe .policy-title { font-size: 2rem; margin-bottom: 16px; }
+}
+</style>

@@ -1,0 +1,35 @@
+{% comment %}
+  Price formatting snippet
+  Input: amount (integer, cents)
+  Output: 1.234,56 € (comma decimal, dot thousands, trailing euro)
+{% endcomment %}
+
+{% liquid
+  assign raw = amount | default: 0
+  assign cents = raw | abs
+  assign euros = cents | divided_by: 100
+  assign cents_part = cents | modulo: 100
+
+  # Two-digit cents string
+  assign cents_str = cents_part | prepend: '00'
+  assign cents_str = cents_str | slice: -2, 2
+
+  # Thousands separator for euros
+  assign s = euros | append: ''
+  assign chars = s | split: '' | reverse
+  assign grouped = ''
+%}
+{% for c in chars %}
+  {% liquid
+    assign idx = forloop.index0
+    assign mod = idx | modulo: 3
+    if idx != 0 and mod == 0
+      assign grouped = grouped | append: '.'
+    endif
+    assign grouped = grouped | append: c
+  %}
+{% endfor %}
+{% liquid
+  assign euros_grouped = grouped | split: '' | reverse | join: ''
+%}
+{{ euros_grouped }},{{ cents_str }} €

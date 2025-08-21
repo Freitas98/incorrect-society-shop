@@ -1,0 +1,130 @@
+{% comment %}
+  Clean homepage section for Incorrect Society theme
+{% endcomment %}
+
+<div class="homepage-hero">
+  <div class="hero-content">
+    <h1 class="hero-title">{{ section.settings.hero_title | default: 'Welcome to Incorrect Society' }}</h1>
+    <p class="hero-subtitle">{{ section.settings.hero_subtitle | default: 'Outsider mindset. Underground culture.' }}</p>
+    
+    {% if section.settings.hero_button_text and section.settings.hero_button_url %}
+      <a href="{{ section.settings.hero_button_url }}" class="hero-button">
+        {{ section.settings.hero_button_text }}
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .homepage-hero {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px var(--page-margin);
+    background-color: transparent;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    color: #ffffff;
+    line-height: 1.2;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: #cccccc;
+    margin-bottom: 40px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    line-height: 1.5;
+  }
+
+  .hero-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background-color: transparent;
+    color: #ffffff;
+    text-decoration: none;
+    border: 2px solid #8f2b3f;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 14px;
+  }
+
+  .hero-button:hover {
+    background-color: #8f2b3f;
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .homepage-hero {
+      min-height: 60vh;
+      padding: 60px var(--page-margin);
+    }
+    
+    .hero-title {
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    .hero-subtitle {
+      margin-bottom: 30px;
+    }
+    
+    .hero-button {
+      padding: 12px 30px;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Homepage Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "Welcome to Incorrect Society"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Hero Subtitle",
+      "default": "Outsider mindset. Underground culture."
+    },
+    {
+      "type": "text",
+      "id": "hero_button_text",
+      "label": "Button Text"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_url",
+      "label": "Button URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Homepage Hero",
+      "category": "Demo"
+    }
+  ]
+}
+{% endschema %}

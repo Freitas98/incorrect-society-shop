@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    {% # Inlined CSS Variables %}
+    {% render 'css-variables' %}
+
+  {% # Preload and load the critical CSS %}
+  {{ 'critical.css' | asset_url | preload_tag: as: 'style' }}
+  {{ 'critical.css' | asset_url | stylesheet_tag }}
+
+    {% # Social, title, etc. %}
+    {% render 'meta-tags' %}
+
+    {{ content_for_header }}
+  <link rel="icon" type="image/png" href="{{ 'favicon.ico' | asset_url }}">
+  <link rel="shortcut icon" href="{{ 'favicon.ico' | asset_url }}">
+  <link rel="apple-touch-icon" href="{{ 'favicon.ico' | asset_url }}">
+    <script>
+        window.themeStrings = Object.assign({}, window.themeStrings, {
+          cart_empty_title: {{ 'cart.empty_title' | t | json }},
+          adding: {{ 'theme.messages.adding' | t | json }},
+          added_to_cart: {{ 'theme.messages.added_to_cart' | t | json }},
+          error_adding_to_cart: {{ 'theme.messages.error_adding_to_cart' | t | json }},
+          sold_out: {{ 'products.product.sold_out' | t | json }},
+          add_to_cart: {{ 'products.product.add_to_cart' | t | json }},
+          cart_remove_item_message: {{ 'cart.remove_item_message_html' | t: title: '___TITLE___' | json }},
+          only_x_available: {{ 'cart.only_x_available' | t: count: '___COUNT___' | json }},
+          cart_update_failed: {{ 'cart.update_failed' | t | json }},
+          cart_clear_failed: {{ 'cart.clear_failed' | t | json }},
+          stock_available_suffix: {{ 'cart.stock_available_suffix' | t | json }},
+          option_size_label: {{ 'products.options.size' | t | json }},
+          option_color_label: {{ 'products.options.color' | t | json }}
+        });
+    </script>
+  </head>
+
+  <body>
+    {% # Announcement Bar %}
+    {% section 'announcement-bar' %}
+    
+    {% # Sidebar Navigation %}
+    {% section 'sidebar-navigation' %}
+    
+    {% # Main Content Area %}
+    <main class="main-content">
+      {% render 'newsletter-modal' %}
+      {% sections 'header-group' %}
+
+      {% if request.path contains '/challenge' and template.name != 'challenge' %}
+        <section class="shopify-challenge shopify-challenge__container" style="display: block; margin: 30px auto 40px; text-align: center; max-width: 760px; padding: 0 12px;">
+          <h1 class="shopify-challenge-title">{{ 'challenge.verify_heading' | t | default: 'Verification' }}</h1>
+          <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">{{ 'challenge.title' | t | default: "Please verify you are human" }}</p>
+
+          <div class="challenge-content" style="display: grid; gap: 16px; justify-items: center; margin-bottom: 22px;">
+            {{ content_for_layout }}
+          </div>
+            <p class="shopify-challenge-reason" style="opacity: .75; margin: 8px 0 0; font-size: .9rem;">
+              {{ 'challenge.footer' | t | default: 'This step protects our store from spam and abuse.' }}
+            </p>
+        </section>
+      {% else %}
+        {% if request.path contains '/account/subscribe' and template.name != 'customers/subscribe' %}
+          <section class="customers-subscribe" style="display: block; margin: 60px auto 80px; text-align: center; max-width: 760px; padding: 0 12px;">
+            <h1 class="policy-title">{{ 'subscribe.title' | t | default: 'Subscription confirmed' }}</h1>
+            <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">{{ 'subscribe.message' | t | default: 'Your email has been confirmed. You will now receive our updates.' }}</p>
+    <div style="display: grid; gap: 24px; justify-items: center; margin: 24px 0 4px;">
+              <a href="{{ routes.root_url }}" style="display: inline-block; background: var(--color-accent); color: var(--color-foreground); border: 1px solid var(--color-accent); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600;">{{ 'subscribe.shop_now' | t | default: 'Shop now' }}</a>
+              <a id="unsubscribeLink" href="#" style="font-size: .85rem; color: var(--color-foreground); text-decoration: underline; opacity: .85;">{{ 'subscribe.unsubscribe' | t | default: 'Unsubscribe' }}</a>
+            </div>
+            <script>
+              (function(){
+                const unsub = document.getElementById('unsubscribeLink');
+                if (!unsub) return;
+                const search = window.location.search || '';
+                if (search && search.length > 1) {
+      unsub.href = '{{ routes.root_url }}account/unsubscribe' + search;
+                }
+              })();
+            </script>
+          </section>
+        {% elsif request.path contains '/account/unsubscribe' %}
+          <section class="customers-unsubscribe" style="display: block; margin: 60px auto 80px; text-align: center; max-width: 760px; padding: 0 12px;">
+            <h1 class="policy-title">{{ 'unsubscribe.title' | t | default: 'Unsubscribed' }}</h1>
+            <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">{{ 'unsubscribe.message' | t | default: "You’ve been unsubscribed from our emails. You can subscribe again anytime." }}</p>
+            <div style="display: grid; gap: 10px; justify-items: center; margin: 24px 0 4px;">
+              <a href="{{ routes.root_url }}" style="display: inline-block; background: var(--color-accent); color: var(--color-foreground); border: 1px solid var(--color-accent); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600;">{{ 'subscribe.back_home' | t | default: 'Back to home' }}</a>
+            </div>
+            <div style="display:none">{{ content_for_layout }}</div>
+          </section>
+        {% else %}
+          {{ content_for_layout }}
+        {% endif %}
+      {% endif %}
+
+      {% sections 'footer-group' %}
+    </main>
+  </body>
+</html>

@@ -1,0 +1,273 @@
+{
+  "404": {
+    "title": "404",
+    "not_found": "Page not found.",
+    "back_to_shopping": "Back to shopping"
+  },
+  "homepage": {
+    "our_products": "OUR PRODUCTS"
+  },
+  "blog": {
+    "article_comments": "Comments",
+    "article_metadata_html": "{{ date }} by {{ author }}",
+    "comment_form_body": "Comment",
+    "comment_form_email": "Email",
+    "comment_form_name": "Name",
+    "comment_form_submit": "Post",
+    "comment_form_title": "Add a comment"
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "title": "Cart",
+    "update": "Update",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "discount": "Discount",
+    "quantity": "Quantity",
+    "each": "each",
+    "stock_available_html": "{{ count }} available",
+    "stock_available_suffix": "available",
+    "remove_item_title": "Remove Item",
+    "remove_item_message_html": "Are you sure you want to remove \"{{ title }}\" from your cart?",
+    "remove_item_confirm": "Remove Item",
+    "only_x_available": "Only {{ count }} items available in stock.",
+    "update_failed": "Failed to update item quantity. Please try again.",
+    "clear_failed": "Failed to clear cart. Please try again.",
+    "taxes_included": "Tax included",
+    "taxes_not_included": "Taxes and shipping calculated at checkout",
+    "clear": "Clear Cart",
+    "clear_confirm_title": "Clear Cart?",
+    "clear_confirm_message": "Are you sure you want to remove all items from your cart? This action cannot be undone.",
+    "empty_title": "Your cart is empty",
+    "empty_message": "Looks like you haven't added anything to your cart yet.",
+    "continue_shopping": "Continue Shopping"
+  },
+  "customers": {
+    "login": {
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "title": "Login"
+    }
+  },
+  "collections": {
+    "title": "Collections"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Add to Apple Wallet",
+    "card": "Gift card",
+    "expired": "This gift card has expired",
+    "expires_on": "Expires on {{ expires_on }}",
+    "use_at_checkout": "Use this gift card at checkout",
+    "copy": "Copy code",
+    "copied": "Copied!",
+    "print": "Print",
+    "view_product": "View gift card product",
+    "buy_more": "Buy more gift cards",
+    "start_at": "Starting at:"
+  },
+  "password": {
+    "title": "This shop is private",
+    "password": "Password",
+    "enter": "Enter"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search",
+    "submit": "Search",
+    "no_results_title": "No results found",
+    "no_results_html": "No results found for {{ terms }}",
+    "no_results_suggestion": "Try searching for different terms or explore our collections",
+    "results_title": "Search Results",
+    "results_for_html": "{{ count }} results found for {{ terms }}",
+    "welcome_subtitle": "Use the search bar above to find products",
+    "welcome_message": "Start typing in the search bar to discover our products"
+  },
+  "size_guide": {
+    "title": "Size Guide",
+    "cm": "CM",
+    "inches": "INCHES",
+    "t_shirts": "T-SHIRTS",
+    "hoodies": "HOODIES",
+    "point_size": "Point/Size",
+    "measurement_note": "ALL MEASUREMENTS MAY VARY UP TO 2 CM",
+    "measurement_note_inches": "ALL MEASUREMENTS MAY VARY UP TO 0.8\"",
+    "size_s": "S",
+    "size_m": "M",
+    "size_l": "L",
+    "size_xl": "XL",
+    "size_xs": "XS",
+    "size_xxl": "XXL"
+  },
+  "policies": {
+    "shipping_policy": "Shipping Policy",
+    "terms_of_service": "Terms of Service",
+    "privacy_policy": "Privacy Policy",
+    "refund_policy": "Refund Policy",
+    "newsletter": "Newsletter",
+    "size_guide": "Size Guide"
+  },
+  "general": {
+    "cancel": "Cancel",
+    "no_image": "No image",
+  "home": "Home",
+  "close": "Close"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "description": "Description"
+    },
+    "options": {
+      "size": "Size",
+      "color": "Color",
+      "tamanho": "Size",
+      "cor": "Color",
+      "preco": "Price"
+    }
+  },
+  "theme": {
+    "messages": {
+      "adding": "Adding...",
+      "added_to_cart": "Product added to cart successfully!",
+      "error_adding_to_cart": "Error adding product to cart. Please try again.",
+      "sold_out": "Sold out",
+      "add_to_cart": "Add to cart"
+    }
+  },
+  "newsletter": {
+    "stay_connected_title": "Stay Connected",
+    "intro_html": "Join the <strong>Incorrect Society</strong> community and be the first to know about new releases, exclusive drops, and special events.",
+    "offer_highlight_html": "Subscribe to our newsletter and get <strong>10% off</strong> your first order!",
+    "what_you_get_title": "What You'll Get",
+    "benefit_early_access_html": "<strong>Early Access:</strong> Be the first to shop new collections before they go public",
+    "benefit_discounts_html": "<strong>Exclusive Discounts:</strong> Subscriber-only promo codes and special offers",
+    "benefit_bts_html": "<strong>Behind the Scenes:</strong> Insider content from photoshoots and design process",
+    "benefit_events_html": "<strong>Event Invitations:</strong> VIP access to pop-up shops and special events",
+    "benefit_style_tips_html": "<strong>Style Tips:</strong> How to style your Incorrect Society pieces",
+    "signup_title": "Newsletter Signup",
+    "signup_prompt": "Ready to join the society? Enter your email below to subscribe to our newsletter.",
+    "subscribe_now": "SUBSCRIBE NOW",
+    "subscribe_prompt": "Enter your email to join the Incorrect Society community",
+    "subscribe_cta": "Subscribe & Get 10% Off",
+    "privacy_title": "Privacy & Frequency",
+    "privacy_intro": "We respect your privacy and will never share your email with third parties. You can expect to receive:",
+    "freq_per_week": "1-2 newsletters per week with new arrivals and updates",
+    "freq_special_announcements": "Special announcements for limited releases",
+    "freq_seasonal_lookbooks": "Seasonal lookbooks and style guides",
+    "freq_exclusive_content": "Exclusive subscriber-only content",
+    "unsubscribe_note": "You can unsubscribe at any time by clicking the unsubscribe link in any email.",
+    "social_highlight": "Follow us on social media for daily updates:",
+    "instagram_label": "Instagram:",
+    "tiktok_label": "TikTok:",
+    "success": "Thanks for subscribing! Please check your inbox to confirm.",
+    "name_placeholder": "Your name",
+    "email_placeholder": "Your email address",
+    "phone_placeholder": "Your phone number (optional)",
+    "error": "Something went wrong. Please try again.",
+    "accept_marketing_label": "I agree to receive marketing emails and SMS (optional)",
+    "accept_email_label": "I agree to receive marketing emails (optional)",
+    "accept_sms_label": "I agree to receive SMS marketing (optional)",
+    "sms_legal": "Message and data rates may apply. Consent is not a condition of purchase. Reply STOP to unsubscribe.",
+    "sms_phone_required": "Please enter a valid phone number to opt into SMS.",
+    "verifying": "Verifying...",
+    "captcha_message": "Please complete the verification to finish your subscription."
+  },
+  "shipping": {
+    "title": "Shipping Information",
+    "intro_html": "At <strong>Incorrect Society</strong>, we are committed to delivering your order quickly and securely. We ship worldwide and provide tracking information for all orders.",
+    "processing_highlight_html": "<strong>Important:</strong> All orders are processed within 24-48 hours during business days (Monday-Friday).",
+    "methods_title": "Shipping Methods & Delivery Times",
+    "methods_intro": "We offer the following shipping options:",
+    "methods_eu": "Europe (EU): 3-7 business days",
+    "methods_uk": "United Kingdom: 5-8 business days",
+    "methods_us": "United States: 7-12 business days",
+    "methods_ca": "Canada: 8-14 business days",
+    "methods_anz": "Australia & New Zealand: 10-16 business days",
+    "methods_row": "Rest of World: 10-20 business days",
+    "estimate_note_html": "<em>Please note that delivery times are estimates and may vary due to customs processing or unforeseen circumstances.</em>",
+    "costs_title": "Shipping Costs",
+    "costs_intro": "Shipping costs are calculated automatically at checkout based on your location and the items in your cart. We offer:",
+    "free_over_html": "<strong>Free shipping</strong> on orders over 80€ worldwide",
+    "standard_rates": "Standard shipping rates apply for orders below these thresholds",
+    "tracking_title": "Order Tracking",
+    "tracking_intro": "Once your order ships, you will receive a tracking number via email. You can use this number to track your package on our shipping partner's website.",
+    "customs_title": "Customs & Duties",
+    "customs_intro": "For international orders outside the EU, customers are responsible for any customs duties, taxes, or fees imposed by their country. These charges are not included in our pricing and are collected by the shipping carrier upon delivery.",
+    "restrictions_title": "Shipping Restrictions",
+    "restrictions_intro": "We currently ship to most countries worldwide. However, some remote locations may not be available for delivery. If your location is not supported, we will contact you to arrange an alternative solution.",
+    "lost_title": "Lost or Damaged Packages",
+    "lost_intro_html": "If your package is lost or damaged during shipping, please contact us immediately at <strong>geral@incorrectsociety.com</strong>. We will work with our shipping partners to resolve the issue and ensure you receive your order.",
+    "contact_highlight": "For any shipping-related questions, please don't hesitate to contact our customer service team."
+  },
+  "terms": {
+    "section1_title": "1. Agreement to Terms",
+    "section1_html": "By accessing and using the <strong>Incorrect Society</strong> website and purchasing our products, you agree to be bound by these Terms of Service and all applicable laws and regulations.",
+    "section2_title": "2. Products and Services",
+    "section2_html": "Incorrect Society offers high-quality streetwear and apparel. All product descriptions, prices, and availability are subject to change without notice.",
+    "section2_list1": "We reserve the right to limit quantities purchased",
+    "section2_list2": "All prices are listed in Euros (EUR) unless otherwise specified",
+    "section2_list3": "We reserve the right to refuse service to anyone for any reason",
+    "section3_title": "3. Orders and Payment",
+    "section3_html": "When you place an order, you are making an offer to purchase our products. We reserve the right to accept or decline your order.",
+    "processing_highlight": "Payment must be received before order processing begins. We accept major credit cards, PayPal, and other secure payment methods.",
+    "section4_title": "4. Pricing and Availability",
+    "section4_html": "All prices displayed on our website are in Euros and include applicable taxes where required. Product availability is subject to stock levels.",
+    "section4_list1": "Prices may change without prior notice",
+    "section4_list2": "We reserve the right to correct pricing errors",
+    "section4_list3": "Limited edition items are subject to availability",
+    "section5_title": "5. Returns and Exchanges",
+    "section5_html": "We want you to be completely satisfied with your purchase. Returns and exchanges are accepted within 30 days of delivery, subject to our return policy.",
+    "section6_title": "6. Intellectual Property",
+    "section6_html": "All content on this website, including designs, logos, text, and images, is the property of Incorrect Society and is protected by copyright and trademark laws.",
+    "section7_title": "7. Privacy Policy",
+    "section7_html": "Your privacy is important to us. We collect and use your personal information in accordance with our Privacy Policy, which forms part of these terms.",
+    "section8_title": "8. Limitation of Liability",
+    "section8_html": "Incorrect Society shall not be liable for any indirect, incidental, special, or consequential damages arising from the use of our products or website.",
+    "section9_title": "9. Governing Law",
+    "section9_html": "These terms are governed by the laws of Portugal. Any disputes will be resolved in the courts of Portugal.",
+    "section10_title": "10. Changes to Terms",
+    "section10_html": "We reserve the right to update these terms at any time. Continued use of our website constitutes acceptance of any changes.",
+    "last_updated_label": "Last updated:",
+    "contact_label": "For questions about these terms, contact us at"
+  },
+  "challenge": {
+    "title": "Please verify you are human",
+    "verify_heading": "Verification",
+    "subtitle": "Complete the verification below to continue.",
+    "footer": "This step protects our store from spam and abuse.",
+    "confirm_message": "Confirm you're not a robot.",
+    "tips_title": "If the verification doesn't load:",
+    "tip_reload": "Reload the page",
+    "tip_disable_blockers": "Temporarily disable ad or cookie blockers",
+    "tip_try_other": "Try another browser or your mobile network",
+    "back_home": "Back to home",
+    "back_previous": "Go back",
+    "why_title": "Why this step?",
+    "why_list_1": "Protects new drops from bots",
+    "why_list_2": "Prevents spam and abuse",
+    "why_list_3": "Keeps the experience fast and fair",
+    "next_title": "What happens next?",
+    "next_text": "After verification, we’ll continue your action automatically.",
+    "need_help": "Need help?",
+    "contact_us": "Contact us"
+  },
+  "subscribe": {
+    "title": "Subscription confirmed",
+    "subheading": "Thank you",
+    "message": "Your email has been confirmed. You will now receive our updates.",
+    "back_home": "Back to home",
+    "shop_now": "Shop now",
+    "unsubscribe": "Unsubscribe"
+  },
+  "unsubscribe": {
+    "title": "Unsubscribed",
+    "message": "You’ve been unsubscribed from our emails. You can subscribe again anytime."
+  },
+  "announcement": {
+    "default": "WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL",
+    "aria_label": "Store announcement"
+  }
+}

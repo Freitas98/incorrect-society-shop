@@ -1,0 +1,82 @@
+<div class="announcement-bar">
+  {% liquid
+    assign default_text = 'announcement.default' | t | default: 'WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+'
+    assign setting_text = section.settings.announcement_text | strip
+    assign announcement_text = default_text
+    if section.settings.use_translated_default == false and setting_text != blank
+      assign announcement_text = setting_text
+    endif
+  %}
+  <div class="announcement-content" aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}">
+    <span class="announcement-text">{{ announcement_text }}</span>
+    <span class="announcement-spacer"></span>
+    <span class="announcement-text">{{ announcement_text }}</span>
+    <span class="announcement-spacer"></span>
+    <span class="announcement-text">{{ announcement_text }}</span>
+  </div>
+</div>
+
+{% stylesheet %}
+  .announcement-bar {
+    background-color: black;
+    color: var(--color-announcement-fg);
+    height: 40px;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 1000;
+  }
+
+  .announcement-content {
+    position: absolute;
+    white-space: nowrap;
+    animation: scroll-left 25s linear infinite;
+    line-height: 40px;
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    width: max-content;
+  }
+
+  .announcement-text {
+    display: inline-block;
+  }
+
+  .announcement-spacer {
+    display: inline-block;
+    width: 150px;
+  }
+
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Pause animation on hover */
+  .announcement-bar:hover .announcement-content {
+    animation-play-state: paused;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Announcement Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "use_translated_default",
+      "label": "Use translated default",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Custom text (overrides)",
+      "default": " WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL"
+    }
+  ]
+}
+{% endschema %}

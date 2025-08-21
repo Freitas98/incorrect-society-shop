@@ -1,0 +1,341 @@
+{% comment %}
+  This section is used in the search template to render search results for
+  products, articles, and pages.
+
+  https://shopify.dev/docs/storefronts/themes/architecture/templates/search
+{% endcomment %}
+
+<div class="search-section">
+  <div class="search-header">
+    {% if search.performed %}
+      {% if search.results_count == 0 %}
+        <h1 class="search-title">{{ 'search.no_results_title' | t }}</h1>
+        <p class="search-subtitle">{{ 'search.no_results_html' | t: terms: search.terms }}</p>
+        <div class="no-results-illustration">
+          <svg width="280" height="280" viewBox="0 0 200 200" class="not-found-svg">
+            <!-- Search magnifying glass -->
+            <circle cx="80" cy="80" r="30" fill="none" stroke="var(--color-accent)" stroke-width="4"/>
+            <line x1="105" y1="105" x2="130" y2="130" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- X mark inside the magnifying glass -->
+            <line x1="65" y1="65" x2="95" y2="95" stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="95" y1="65" x2="65" y2="95" stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round"/>
+            
+            <!-- Dotted lines around for "searching" effect -->
+            <circle cx="100" cy="100" r="60" fill="none" stroke="var(--color-border)" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+          </svg>
+          <p class="no-results-message">{{ 'search.no_results_suggestion' | t }}</p>
+        </div>
+      {% else %}
+        <h1 class="search-title">{{ 'search.results_title' | t }}</h1>
+        <p class="search-subtitle">{{ 'search.results_for_html' | t: count: search.results_count, terms: search.terms }}</p>
+      {% endif %}
+    {% else %}
+      <h1 class="search-title">{{ 'search.title' | t }}</h1>
+      <p class="search-subtitle">{{ 'search.welcome_subtitle' | t }}</p>
+      <div class="search-welcome-illustration">
+    <svg width="280" height="280" viewBox="0 0 200 200" class="search-welcome-svg">
+          <!-- Search magnifying glass -->
+      <circle cx="80" cy="80" r="30" fill="none" stroke="var(--color-accent)" stroke-width="4"/>
+      <line x1="105" y1="105" x2="130" y2="130" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round"/>
+          
+          <!-- Question mark inside the magnifying glass -->
+          <path d="M75 70 Q75 65, 80 65 Q85 65, 85 70 Q85 75, 82 77 L82 82 M82 88 L82 92" 
+        stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round" fill="none"/>
+          
+          <!-- Dotted lines around for "searching" effect -->
+      <circle cx="100" cy="100" r="60" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>
+      <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-accent)" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        </svg>
+  <p class="search-welcome-message">{{ 'search.welcome_message' | t }}</p>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if search.performed and search.results_count > 0 %}
+    <div class="search-results">
+      {% paginate search.results by 12 %}
+        {% for result in search.results %}
+          {% if result.object_type == 'product' %}
+            <div class="product-card">
+              <a href="{{ result.url }}" class="product-link">
+                <div class="product-image">
+                  {% if result.featured_media %}
+                    <img src="{{ result.featured_media | image_url: width: 400 }}" 
+                         alt="{{ result.featured_media.alt | escape }}"
+                         width="400"
+                         height="400"
+                         loading="lazy">
+                  {% else %}
+                    <div class="product-image-placeholder">
+                      {{ 'general.no_image' | t }}
+                    </div>
+                  {% endif %}
+                </div>
+                
+                <div class="product-info">
+                  <h3 class="product-title">{{ result.title }}</h3>
+                  <p class="product-price">{% render 'price', amount: result.price %}</p>
+                </div>
+              </a>
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        {{ paginate | default_pagination }}
+      {% endpaginate %}
+    </div>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .search-section {
+    padding: 60px 40px;
+  }
+
+  .search-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .search-title {
+    font-size: 32px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-foreground);
+    margin: 0 0 20px 0;
+  }
+
+  .search-subtitle {
+    font-size: 16px;
+    color: var(--color-foreground);
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .no-results-image {
+    margin-bottom: 30px;
+  }
+
+  .no-results-logo {
+    max-width: 150px;
+    height: auto;
+    opacity: 0.6;
+    filter: grayscale(100%);
+  }
+
+  .no-results-illustration {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .not-found-svg {
+    opacity: 0.8;
+    animation: gentle-pulse 3s ease-in-out infinite;
+  }
+
+  .no-results-message {
+    font-size: 16px;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @keyframes gentle-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+
+  .search-welcome-illustration {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .search-welcome-svg {
+    opacity: 0.9;
+    animation: gentle-pulse 4s ease-in-out infinite;
+  }
+
+  .search-welcome-message {
+    font-size: 16px;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .search-results {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .product-card {
+    background-color: transparent;
+    width: calc(33.333% - 27px); /* 3 columns with gap */
+    min-width: 300px;
+  }
+
+  .product-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .product-link:hover {
+    transform: translateY(-5px);
+  }
+
+  .product-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 20px;
+    background-color: transparent;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    transform: scale(0.9);
+  }
+
+  .product-link:hover .product-image img {
+    transform: scale(1);
+  }
+
+  .product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+    color: var(--color-foreground);
+    opacity: 0.8;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .product-info {
+    text-align: center;
+  }
+
+  .product-title {
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 10px 0;
+    color: var(--color-foreground);
+    line-height: 1.4;
+  }
+
+  .product-price {
+    font-size: 14px;
+    color: var(--color-foreground);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Pagination styling */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 10px 15px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+  }
+
+  .pagination a:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  .pagination .current {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  /* Subtle product title hover color for consistency */
+  .product-link:hover .product-title { color: var(--color-accent); }
+
+  /* When fewer than 3 items, they'll be centered automatically */
+  @media (max-width: 1024px) {
+    .search-section {
+      padding: 40px 20px;
+    }
+
+    .search-results {
+      gap: 30px;
+    }
+
+    .search-header {
+      margin-bottom: 40px;
+    }
+
+    .search-title {
+      font-size: 24px;
+    }
+
+    .product-card {
+      width: calc(50% - 20px); /* 2 columns on tablet */
+      min-width: 280px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .search-title {
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+
+    .product-card {
+      width: 100%; /* 1 column on mobile */
+      max-width: 400px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .search-section {
+      padding: 20px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.search",
+  "settings": []
+}
+{% endschema %}

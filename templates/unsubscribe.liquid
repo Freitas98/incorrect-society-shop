@@ -1,0 +1,22 @@
+{% comment %}
+  Fallback template for /unsubscribe → forwards to /account/unsubscribe preserving the query string
+{% endcomment %}
+
+{% layout 'theme' %}
+
+<section class="customers-unsubscribe" style="display: block; margin: 60px auto 80px; text-align: center; max-width: 760px; padding: 0 12px;">
+  <h1 class="policy-title">{{ 'unsubscribe.title' | t | default: 'Unsubscribed' }}</h1>
+  <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">{{ 'unsubscribe.message' | t | default: "You’ve been unsubscribed from our emails. You can subscribe again anytime." }}</p>
+  <div style="display:none">{{ content_for_layout }}</div>
+  <script>
+    (function(){
+      const search = window.location.search || '';
+  window.location.replace('{{ routes.root_url }}account/unsubscribe' + search);
+    })();
+  </script>
+  <p style="opacity:.75; font-size:.9rem; margin-top:16px;">
+    <noscript>
+      <a href="{{ routes.account_url }}/unsubscribe{% if request.query_string != blank %}?{{ request.query_string }}{% endif %}">Click here to continue</a>
+    </noscript>
+  </p>
+</section>

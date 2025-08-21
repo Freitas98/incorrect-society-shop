@@ -1,0 +1,237 @@
+{% comment %}
+  This section is used in the collection template to render collection page
+  listing all products within a collection.
+
+  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+{% endcomment %}
+
+<div class="collection-section">
+  <div class="collection-header">
+    <h1 class="collection-title">{{ collection.title }}</h1>
+    {% if collection.description != blank %}
+      <div class="collection-description">{{ collection.description }}</div>
+    {% endif %}
+  </div>
+
+  <div class="collection-products">
+    {% paginate collection.products by 12 %}
+      {% for product in collection.products %}
+        <div class="product-card">
+          <a href="{{ product.url }}" class="product-link">
+            <div class="product-image">
+              {% if product.featured_media %}
+                <img src="{{ product.featured_media | image_url: width: 400 }}" 
+                     alt="{{ product.featured_media.alt | escape }}"
+                     width="400"
+                     height="400"
+                     loading="lazy">
+              {% else %}
+                <div class="product-image-placeholder">
+                  No Image
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="product-info">
+              <h3 class="product-title">{{ product.title }}</h3>
+              {% if product.gift_card? or product.type == 'Gift Card' %}
+              <p class="product-price">{{ 'gift_card.start_at' | t }} {% render 'price', amount: product.price %}</p>
+              {% else %}
+              <p class="product-price">{% render 'price', amount: product.price %}</p>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+
+      {{ paginate | default_pagination }}
+    {% endpaginate %}
+  </div>
+</div>
+
+{% stylesheet %}
+  .collection-section {
+    padding: 60px 40px;
+  color: var(--color-foreground);
+  }
+
+  .collection-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .collection-description {
+    margin-top: 12px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--color-foreground);
+    opacity: .9;
+    line-height: 1.6;
+  }
+
+  .collection-title {
+    font-size: 32px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .collection-products {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .product-card {
+    background-color: transparent;
+    width: calc(33.333% - 27px); /* 3 columns with gap */
+    min-width: 300px;
+  }
+
+  /* When fewer than 3 items, they'll be centered automatically */
+  @media (max-width: 1024px) {
+    .product-card {
+      width: calc(50% - 20px); /* 2 columns on tablet */
+      min-width: 280px;
+    }
+  }
+
+  .product-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .product-link:hover { transform: translateY(-5px); color: var(--color-accent); }
+
+  .product-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    margin-bottom: 20px;
+    background-color: transparent;
+    overflow: hidden;
+  }
+
+  .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+    transform: scale(0.9);
+  }
+
+  .product-link:hover .product-image img {
+    transform: scale(1);
+  }
+
+  .product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  background-color: var(--color-background);
+  color: var(--color-border);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .product-info {
+    text-align: center;
+  }
+
+  .product-title {
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 10px 0;
+    color: var(--color-foreground);
+    line-height: 1.4;
+  }
+
+  .product-price {
+    font-size: 14px;
+    color: var(--color-foreground);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* Pagination styling */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+    gap: 10px;
+  }
+
+  .pagination a,
+  .pagination span {
+    padding: 10px 15px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    transition: all 0.3s ease;
+  }
+
+  .pagination a:hover { background-color: transparent; border-color: var(--color-accent); color: var(--color-accent); }
+
+  .pagination .current { background-color: transparent; border-color: var(--color-accent); color: var(--color-accent); }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .collection-section {
+      padding: 40px 20px;
+    }
+
+    .collection-products {
+      gap: 30px;
+    }
+
+    .collection-header {
+      margin-bottom: 40px;
+    }
+
+    .collection-title {
+      font-size: 24px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .collection-products {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .collection-title {
+      font-size: 20px;
+      letter-spacing: 1px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .collection-products {
+      grid-template-columns: 1fr;
+    }
+
+    .collection-section {
+      padding: 20px;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.collection",
+  "settings": []
+}
+{% endschema %}

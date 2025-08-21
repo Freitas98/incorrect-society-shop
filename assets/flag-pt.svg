@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="24" viewBox="0 0 36 24" aria-hidden="true">
+  <rect width="36" height="24" fill="#ff0000"/>
+  <rect width="14.4" height="24" fill="#006600"/>
+  <!-- Simplified Portuguese coat circle -->
+  <circle cx="14.4" cy="12" r="4" fill="#ffcc00" stroke="#cc9900" stroke-width="0.5"/>
+</svg>

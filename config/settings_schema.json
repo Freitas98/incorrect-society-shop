@@ -1,0 +1,132 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "incorrect_society",
+    "theme_version": "0.2.0",
+    "theme_author": "Freitas",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "t:general.typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:general.fonts"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_primary_font",
+        "default": "work_sans_n4",
+        "label": "t:general.primary"
+      },
+    ]
+  },
+  {
+    "name": "t:general.layout",
+    "settings": [
+      {
+        "type": "select",
+        "id": "max_page_width",
+        "label": "t:labels.page_width",
+        "options": [
+          {
+            "value": "90rem",
+            "label": "t:options.page_width.narrow"
+          },
+          {
+            "value": "110rem",
+            "label": "t:options.page_width.wide"
+          }
+        ],
+        "default": "90rem"
+      },
+      {
+        "type": "range",
+        "id": "min_page_margin",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "t:labels.page_margin",
+        "default": 20
+      }
+    ]
+  },
+  {
+    "name": "Gift Card",
+    "settings": [
+      {
+        "type": "text",
+        "id": "gift_card_product_handle",
+        "label": "Gift card product handle",
+        "default": "gift-card"
+      }
+    ]
+  },
+  {
+    "name": "t:general.colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background_color",
+        "default": "#000000",
+        "label": "t:labels.background"
+      },
+      {
+        "type": "color",
+        "id": "foreground_color",
+        "default": "#FFFFFF",
+        "label": "t:labels.foreground"
+      },
+      {
+        "type": "color",
+        "id": "accent_color",
+        "default": "#8f2b3f",
+        "label": "t:labels.accent"
+      },
+      {
+        "type": "color",
+        "id": "surface_color",
+        "default": "#111111",
+        "label": "t:labels.surface"
+      },
+      {
+        "type": "color",
+        "id": "border_color",
+        "default": "#333333",
+        "label": "t:labels.border"
+      },
+      {
+        "type": "color",
+        "id": "announcement_bg_color",
+  "default": "#8f2b3f",
+        "label": "t:labels.announcement_bg"
+      },
+      {
+        "type": "color",
+        "id": "announcement_fg_color",
+        "default": "#FFFFFF",
+        "label": "t:labels.announcement_fg"
+      },
+      {
+        "type": "range",
+        "id": "input_corner_radius",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "label": "t:labels.input_corner_radius",
+        "default": 4
+      }
+    ]
+  },
+  {
+    "name": "Social",
+    "settings": [
+      { "type": "text", "id": "instagram_url", "label": "Instagram URL", "default": "https://www.instagram.com/incorrect.society" },
+      { "type": "text", "id": "tiktok_url", "label": "TikTok URL", "default": "https://www.tiktok.com/@.incorrectsociety" },
+      { "type": "text", "id": "youtube_url", "label": "YouTube URL", "default": "https://www.youtube.com/@incorrectsociety" }
+    ]
+  }
+]

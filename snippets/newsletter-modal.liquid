@@ -1,0 +1,309 @@
+{% comment %}
+  Quick Newsletter Subscription Modal
+  Shows on first visit (or after 7 days) to prompt for newsletter subscription.
+  Reuses the same customer/contact endpoint as the newsletter page.
+  Usage: {% render 'newsletter-modal' %} in layout/theme.liquid
+{% endcomment %}
+
+<div id="NewsletterModalOverlay" class="newsletter-modal-overlay" hidden></div>
+<div
+  id="NewsletterModalContainer"
+  class="newsletter-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="NewsletterModalTitle"
+  aria-describedby="NewsletterModalDesc"
+  hidden
+  data-adding="{{ 'theme.messages.adding' | t }}"
+  data-success="{{ 'newsletter.success' | t }}"
+  data-error="{{ 'newsletter.error' | t }}"
+  data-verifying="{{ 'newsletter.verifying' | t }}"
+  data-captcha="{{ 'newsletter.captcha_message' | t }}"
+>
+  <button class="newsletter-modal-close" aria-label="{{ 'general.close' | t | default: 'Close' }}">&times;</button>
+  <h2 id="NewsletterModalTitle" class="newsletter-modal-title">{{ 'newsletter.subscribe_now' | t }}</h2>
+  <p id="NewsletterModalDesc" class="newsletter-modal-desc">{{ 'newsletter.subscribe_prompt' | t }}</p>
+
+  {% form 'customer', id: 'NewsletterModalForm' %}
+    {% if form.posted_successfully? %}
+      <p class="newsletter-modal-success">{{ 'newsletter.success' | t }}</p>
+    {% endif %}
+    {% if form.errors %}
+      <div class="newsletter-modal-errors">{{ form.errors | default_errors }}</div>
+    {% endif %}
+
+  <div class="newsletter-modal-fieldset">
+      <label class="visually-hidden" for="NewsletterModalName">{{ 'newsletter.name_placeholder' | t }}</label>
+      <input
+        type="text"
+        name="contact[first_name]"
+        id="NewsletterModalName"
+        placeholder="{{ 'newsletter.name_placeholder' | t }}"
+        autocomplete="given-name"
+      >
+      <label class="visually-hidden" for="NewsletterModalEmail">{{ 'newsletter.email_placeholder' | t }}</label>
+      <input
+        type="email"
+        name="contact[email]"
+        id="NewsletterModalEmail"
+        placeholder="{{ 'newsletter.email_placeholder' | t }}"
+        autocomplete="email"
+        required
+      >
+  <input type="hidden" name="contact[tags]" id="NewsletterModalTags" value="newsletter">
+  <button type="submit" class="newsletter-modal-submit">{{ 'newsletter.subscribe_cta' | t }}</button>
+    </div>
+    <div class="newsletter-modal-message" aria-live="polite"></div>
+  {% endform %}
+
+  <p class="newsletter-modal-privacy"><small>{{ 'newsletter.privacy_intro' | t }}</small></p>
+</div>
+
+<style>
+  .newsletter-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.6);
+    z-index: 9998; display: block; backdrop-filter: blur(1px);
+  }
+  .newsletter-modal { 
+    position: fixed; z-index: 9999; inset: 50% auto auto 50%; transform: translate(-50%, -50%);
+    width: min(92vw, 520px); max-width: 92vw; background: var(--color-surface);
+    border: 1px solid var(--color-border); border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    padding: 28px; color: var(--color-foreground);
+  }
+  .newsletter-modal[hidden], .newsletter-modal-overlay[hidden] { display: none !important; }
+  .newsletter-modal-title { margin: 0 0 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .newsletter-modal-desc { margin: 0 0 18px; opacity: .9; }
+  .newsletter-modal-fieldset { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: center; }
+  .newsletter-modal-fieldset input[type="email"] {
+    padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 6px;
+    background: color-mix(in oklab, var(--color-surface), var(--color-background) 40%);
+    color: var(--color-foreground);
+  }
+  .newsletter-modal-fieldset input[type="text"] {
+    padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 6px;
+    background: color-mix(in oklab, var(--color-surface), var(--color-background) 40%);
+    color: var(--color-foreground);
+  }
+  .newsletter-modal-submit {
+  padding: 12px 16px; background: var(--color-accent); color: var(--color-foreground);
+  border: 1px solid var(--color-accent); border-radius: 6px; cursor: pointer; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  justify-self: center; min-width: 240px;
+  }
+  .newsletter-modal-submit:disabled { opacity: .6; cursor: not-allowed; }
+  .newsletter-modal-message { margin-top: 10px; min-height: 1.25em; font-size: .95rem; }
+  .newsletter-modal-success { color: var(--color-foreground); margin: 0 0 8px; }
+  .newsletter-modal-errors { color: #ff6666; margin: 0 0 8px; }
+  .newsletter-modal-privacy { margin: 14px 0 0; opacity: .75; }
+  .newsletter-modal-close {
+    position: absolute; top: 8px; right: 10px; background: transparent; border: 0; color: var(--color-foreground);
+    font-size: 28px; line-height: 1; cursor: pointer; opacity: .85;
+  }
+  .newsletter-modal-close:hover { opacity: 1; color: var(--color-accent); }
+  .visually-hidden { position: absolute !important; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap; }
+
+  @media (max-width: 480px) {
+    .newsletter-modal { padding: 22px; }
+    .newsletter-modal-fieldset { grid-template-columns: 1fr; }
+  }
+</style>
+
+{% javascript %}
+(function(){
+  const overlay = document.getElementById('NewsletterModalOverlay');
+  const modal = document.getElementById('NewsletterModalContainer');
+  if (!overlay || !modal) return;
+
+  const storageKey = 'newsletter_modal_status';
+  const expiryKey = 'newsletter_modal_expires';
+  const showDelayMs = 1200; // show shortly after first paint
+  const showDays = 7; // don't show again for this many days after close
+
+  const path = (window.location && window.location.pathname) || '';
+  const skipPaths = ['/challenge', '/account/subscribe', '/account/unsubscribe', '/checkout', '/pages/newsletter'];
+  const shouldSkip = skipPaths.some(p => path.indexOf(p) !== -1);
+
+  function openModal(){
+    overlay.hidden = false; modal.hidden = false; document.documentElement.classList.add('no-scroll');
+    document.body.style.overflow = 'hidden';
+    const emailInput = document.getElementById('NewsletterModalEmail');
+    if (emailInput) setTimeout(()=> emailInput.focus(), 50);
+  }
+  function hideModal(){
+    overlay.hidden = true; modal.hidden = true; document.documentElement.classList.remove('no-scroll');
+    document.body.style.overflow = '';
+  }
+  function dismissForDays(days){
+    const expiresAt = Date.now() + (days * 24 * 60 * 60 * 1000);
+    try { localStorage.setItem(storageKey, 'dismissed'); localStorage.setItem(expiryKey, String(expiresAt)); } catch(_){ }
+  }
+  function markSubscribed(){
+    try { localStorage.setItem(storageKey, 'subscribed'); localStorage.removeItem(expiryKey); } catch(_){ }
+  }
+
+  function shouldShow(){
+    try {
+      const status = localStorage.getItem(storageKey);
+      if (status === 'subscribed') return false;
+      const exp = parseInt(localStorage.getItem(expiryKey) || '0', 10);
+      if (exp && Date.now() < exp) return false;
+    } catch(_){ }
+    return true;
+  }
+
+  // open if allowed
+  if (!shouldSkip && shouldShow()) {
+    setTimeout(openModal, showDelayMs);
+  }
+
+  overlay.addEventListener('click', () => { hideModal(); dismissForDays(showDays); });
+  const closeBtn = modal.querySelector('.newsletter-modal-close');
+  if (closeBtn) closeBtn.addEventListener('click', () => { hideModal(); dismissForDays(showDays); });
+  window.addEventListener('keydown', (e)=> { if (e.key === 'Escape' && !modal.hidden) { hideModal(); dismissForDays(showDays); } });
+
+  // AJAX submit to keep modal open on success; fall back to full submit for challenges
+  const form = document.getElementById('NewsletterModalForm');
+  const message = modal.querySelector('.newsletter-modal-message');
+  const submitButton = form ? form.querySelector('button[type="submit"]') : null;
+  if (form && message && submitButton) {
+    const tagsInput = document.getElementById('NewsletterModalTags');
+
+    // Generate or retrieve a strong, uppercase, mostly-unique code and set as an extra tag
+    const generateRandomCode = (len = 16) => {
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      const out = [];
+      const arr = (window.crypto && window.crypto.getRandomValues)
+        ? window.crypto.getRandomValues(new Uint32Array(len))
+        : Array.from({ length: len }, () => Math.floor(Math.random() * 0xffffffff));
+      for (let i = 0; i < len; i++) {
+        out.push(alphabet[arr[i] % alphabet.length]);
+      }
+      return out.join('');
+    };
+
+    const getOrCreateCode = () => {
+      try {
+        const existing = localStorage.getItem('newsletter_discount_code');
+        if (existing) return existing;
+      } catch(_) { /* ignore */ }
+      const created = generateRandomCode(16);
+      try { localStorage.setItem('newsletter_discount_code', created); } catch(_) { /* ignore */ }
+      return created;
+    };
+
+    const ensureTagsContainNewsletterAndCode = () => {
+      const code = generateRandomCode(16);
+      if (tagsInput) {
+        tagsInput.value = code;
+      } else if (form) {
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = 'contact[tags]';
+        hidden.value = code;
+        form.appendChild(hidden);
+      }
+      return code;
+    };
+
+    const handleSubmit = async (event) => {
+      event.preventDefault(); event.stopPropagation(); if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+      const tAdding = modal.dataset.adding || 'Adding...';
+      const tSuccess = modal.dataset.success || 'Thanks for subscribing!';
+      const tError = modal.dataset.error || 'Something went wrong. Please try again.';
+      const tVerifying = modal.dataset.verifying || 'Verifying...';
+      const tCaptcha = modal.dataset.captcha || 'Please complete the verification to finish your subscription.';
+
+      message.textContent = '';
+      submitButton.disabled = true;
+      const originalText = submitButton.textContent;
+      submitButton.textContent = tAdding;
+
+      // Ensure tags include newsletter and the generated code before any submission path
+      const codeForThisSubmit = ensureTagsContainNewsletterAndCode();
+
+      let didFallback = false;
+      const safetyTimer = setTimeout(() => {
+        // If nothing happened, let Shopify handle it with normal submit
+        if (!didFallback) {
+          didFallback = true;
+          message.textContent = tVerifying;
+          form.removeEventListener('submit', handleSubmit);
+          form.submit();
+        }
+      }, 4000);
+
+      try {
+        const action = form.getAttribute('action') || '/contact';
+        const formData = new FormData(form);
+        const response = await fetch(action, {
+          method: 'POST', body: formData, credentials: 'same-origin'
+        });
+        clearTimeout(safetyTimer);
+
+        // Detect captcha/challenge
+  const is3xx = response.status >= 300 && response.status < 400;
+        const urlStr = (response && response.url) ? response.url : '';
+  let isChallenge = response.redirected || response.type === 'opaqueredirect' || is3xx || urlStr.indexOf('/challenge') !== -1 || response.status === 429 || response.status === 400 || response.status === 403;
+
+        if (!isChallenge && !response.ok) {
+          try {
+            const ct = response.headers.get('content-type') || '';
+            if (ct.includes('text/html')) {
+              const text = await response.text();
+              const lower = text.toLowerCase();
+              if (
+                lower.includes('shopify-challenge') ||
+                lower.includes('g-recaptcha') ||
+                lower.includes('h-captcha') ||
+                lower.includes('/challenge') ||
+                lower.includes('captcha') ||
+                lower.includes('verify you are human')
+              ) {
+                isChallenge = true;
+              }
+            }
+          } catch(_) { /* ignore */ }
+        }
+
+        if (isChallenge) {
+          if (!didFallback) {
+            didFallback = true;
+            message.textContent = tCaptcha || tVerifying;
+            form.removeEventListener('submit', handleSubmit);
+            form.submit();
+            return;
+          }
+        }
+
+        if (response.ok) {
+          // Treat as success without refreshing the page
+          message.textContent = tSuccess;
+          try { form.reset(); } catch(_){ }
+          markSubscribed();
+          // keep modal visible briefly, then close
+          setTimeout(() => { hideModal(); }, 1200);
+        } else {
+          // Non-OK but no redirect visible — show error and keep modal open
+          message.textContent = tError;
+        }
+      } catch (e) {
+        // Network failure — try full submit once to allow verification if needed
+        if (!didFallback) {
+          didFallback = true;
+          message.textContent = tVerifying;
+          form.removeEventListener('submit', handleSubmit);
+          form.submit();
+          return;
+        }
+        message.textContent = tError;
+      } finally {
+        // Restore button unless we navigated away
+        if (document.visibilityState === 'visible') {
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
+        }
+      }
+    };
+    form.addEventListener('submit', handleSubmit);
+  }
+})();
+{% endjavascript %}

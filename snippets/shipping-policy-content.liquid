@@ -1,0 +1,58 @@
+{% comment %}
+  Shipping Policy Content
+  Usage: {% render 'shipping-policy-content' %}
+{% endcomment %}
+
+<h2>{{ 'shipping.title' | t }}</h2>
+<p>{{ 'shipping.intro_html' | t }}</p>
+
+<div class="policy-highlight">
+  {{ 'shipping.processing_highlight_html' | t }}
+  
+  <style>
+    .policy-highlight strong { color: var(--color-foreground); }
+  </style>
+  
+  </div>
+
+<h2>{{ 'shipping.methods_title' | t }}</h2>
+<p>{{ 'shipping.methods_intro' | t }}</p>
+
+<ul>
+  <li>{{ 'shipping.methods_eu' | t }}</li>
+  <li>{{ 'shipping.methods_uk' | t }}</li>
+  <li>{{ 'shipping.methods_us' | t }}</li>
+  <li>{{ 'shipping.methods_ca' | t }}</li>
+  <li>{{ 'shipping.methods_anz' | t }}</li>
+  <li>{{ 'shipping.methods_row' | t }}</li>
+  
+  <style>
+    .policy-content ul { color: var(--color-foreground); opacity: 0.85; }
+  </style>
+</ul>
+
+<p>{{ 'shipping.estimate_note_html' | t }}</p>
+
+<h2>{{ 'shipping.costs_title' | t }}</h2>
+<p>{{ 'shipping.costs_intro' | t }}</p>
+
+<ul>
+  <li>{{ 'shipping.free_over_html' | t }}</li>
+  <li>{{ 'shipping.standard_rates' | t }}</li>
+</ul>
+
+<h2>{{ 'shipping.tracking_title' | t }}</h2>
+<p>{{ 'shipping.tracking_intro' | t }}</p>
+
+<h2>{{ 'shipping.customs_title' | t }}</h2>
+<p>{{ 'shipping.customs_intro' | t }}</p>
+
+<h2>{{ 'shipping.restrictions_title' | t }}</h2>
+<p>{{ 'shipping.restrictions_intro' | t }}</p>
+
+<h2>{{ 'shipping.lost_title' | t }}</h2>
+<p>{{ 'shipping.lost_intro_html' | t }}</p>
+
+<div class="policy-highlight">
+  {{ 'shipping.contact_highlight' | t }}
+</div>

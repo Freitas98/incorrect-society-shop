@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "product_grid": {
+      "type": "product-grid",
+      "settings": {
+        "products_to_show": 12
+      }
+    }
+  },
+  "order": [
+    "product_grid"
+  ]
+}

@@ -1,0 +1,21 @@
+{% style %}
+  {% # Loads all font variantions with display: swap %}
+  {% # Force Times New Roman stack regardless of picker %}
+  {% assign times_stack = '"Times New Roman", Times, serif' %}
+
+  :root {
+  --font-primary--family: {{ times_stack }};
+  --font-primary--style: normal;
+  --font-primary--weight: 400;
+    --page-width: {{ settings.max_page_width }};
+    --page-margin: {{ settings.min_page_margin }}px;
+    --color-background: {{ settings.background_color }};
+    --color-foreground: {{ settings.foreground_color }};
+  --color-accent: {{ settings.accent_color }};
+  --color-surface: {{ settings.surface_color }};
+  --color-border: {{ settings.border_color }};
+  --color-announcement-bg: {{ settings.announcement_bg_color }};
+  --color-announcement-fg: {{ settings.announcement_fg_color | default: '#FFFFFF' }};
+    --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+  }
+{% endstyle %}

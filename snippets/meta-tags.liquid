@@ -1,0 +1,131 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+{%- liquid
+  assign og_title = page_title | default: shop.name
+  assign og_url = canonical_url | default: request.origin
+  assign og_type = 'website'
+  assign og_description = page_description | default: shop.description | default: shop.name
+
+  if request.page_type == 'product'
+    assign og_type = 'product'
+  elsif request.page_type == 'article'
+    assign og_type = 'article'
+  elsif request.page_type == 'password'
+    assign og_url = request.origin
+  endif
+%}
+
+<meta
+  property="og:site_name"
+  content="{{ shop.name }}"
+>
+<meta
+  property="og:url"
+  content="{{ og_url }}"
+>
+<meta
+  property="og:title"
+  content="{{ og_title | escape }}"
+>
+<meta
+  property="og:type"
+  content="{{ og_type }}"
+>
+<meta
+  property="og:description"
+  content="{{ og_description | escape }}"
+>
+
+{%- if page_image -%}
+  <meta
+    property="og:image"
+    content="http:{{ page_image | image_url }}"
+  >
+  <meta
+    property="og:image:secure_url"
+    content="https:{{ page_image | image_url }}"
+  >
+  <meta
+    property="og:image:width"
+    content="{{ page_image.width }}"
+  >
+  <meta
+    property="og:image:height"
+    content="{{ page_image.height }}"
+  >
+{%- endif -%}
+
+{%- if request.page_type == 'product' -%}
+  <script type="application/ld+json">
+    {{ product | structured_data }}
+  </script>
+
+  <meta
+    property="og:price:amount"
+    content="{{ product.price | divided_by: 100.0 }}"
+  >
+  <meta
+    property="og:price:currency"
+    content="{{ cart.currency.iso_code }}"
+  >
+{%- endif -%}
+
+<meta
+  name="twitter:card"
+  content="summary_large_image"
+>
+<meta
+  name="twitter:title"
+  content="{{ og_title | escape }}"
+>
+<meta
+  name="twitter:description"
+  content="{{ og_description | escape }}"
+>
+
+{%- liquid
+  assign title_text = page_title
+  if template.name == 'gift_card'
+    assign masked = '●●●● ●●●● ●●●● ●●●●'
+    assign code_prefix = 'XXXX'
+    if gift_card and gift_card.code
+      assign code_prefix = gift_card.code | slice: 0, 4 | upcase
+    endif
+  assign title_text = code_prefix | append: ' ' | append: masked | append: ' - ' | append: shop.name | upcase
+  else
+    assign title_text = page_title | upcase
+  endif
+-%}
+
+<title>
+  {{ title_text }}
+  {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+  {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+  {%- assign title_text_lower = title_text | downcase -%}
+  {%- assign shop_name_lower = shop.name | downcase -%}
+  {%- unless title_text_lower contains shop_name_lower %} &ndash; {{ shop.name | upcase }}{% endunless -%}
+</title>
+
+<link
+  rel="canonical"
+  href="{{ canonical_url }}"
+>
+
+<!-- Favicon -->
+{%- capture favicon_png_content -%}{{ 'favicon.ico' | inline_asset_content }}{%- endcapture -%}
+{%- if favicon_png_content != '' -%}
+  <link rel="icon" type="image/x-icon" href="{{ 'favicon.ico' | asset_url }}">
+  <link rel="apple-touch-icon" href="{{ 'favicon.ico' | asset_url }}">
+{%- else -%}
+  <link rel="icon" type="image/png" href="{{ 'logo.png' | asset_url }}">
+  <link rel="apple-touch-icon" href="{{ 'logo.png' | asset_url }}">
+{%- endif -%}
+
+{% if page_description %}
+  <meta
+    name="description"
+    content="{{ page_description | escape }}"
+  >
+{% endif %}
