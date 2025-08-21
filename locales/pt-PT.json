@@ -200,7 +200,7 @@
     "estimate_note_html": "<em>Os prazos são estimativas e podem variar devido a alfândega ou imprevistos.</em>",
     "costs_title": "Custos de envio",
     "costs_intro": "Os custos são calculados no checkout com base na localização e artigos do carrinho. Oferecemos:",
-    "free_over_html": "<strong>Envio gratuito</strong> em encomendas acima de 80€",
+    "free_over_html": "<strong>Envio gratuito</strong> em encomendas acima de 80€ em Portugal",
     "standard_rates": "Taxas padrão aplicam-se para encomendas abaixo destes valores",
     "tracking_title": "Tracking da encomenda",
     "tracking_intro": "Quando a encomenda for enviada, receberás um número de tracking por email.",
@@ -209,7 +209,7 @@
     "restrictions_title": "Restrições de envio",
     "restrictions_intro": "Enviamos para a maioria dos países. Algumas zonas remotas podem não estar disponíveis.",
     "lost_title": "Encomendas perdidas ou danificadas",
-    "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, contacta-nos: <strong>geral@incorrectsociety.com</strong>.",
+    "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, contacta-nos.",
     "contact_highlight": "Para dúvidas, fala com a nossa equipa."
   },
   "terms": {
@@ -241,7 +241,7 @@
     "section10_title": "10. Alterações aos Termos",
     "section10_html": "Podemos atualizar estes termos a qualquer momento. O uso contínuo implica aceitação.",
     "last_updated_label": "Última atualização:",
-    "contact_label": "Para questões sobre estes termos, contacta-nos em"
+    "contact_label": "Para questões sobre estes termos, contacta-nos."
   },
   "challenge": {
     "title": "Por favor confirma que és humano",

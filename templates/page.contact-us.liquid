@@ -1,0 +1,29 @@
+{% comment %}
+  Contact Us Page - Portuguese (pt-PT)
+  This page provides contact information and a simple contact form for users to reach out to Incorrect Society.
+{% endcomment %}
+
+<section class="contact-page" style="max-width: 600px; margin: 48px auto 0 auto; padding: 2.5rem 2rem 2.5rem 2rem; font-family: 'Times New Roman', Times, serif; color: #fff; background: #000; border-radius: 10px; box-shadow: 0 0 0 4px #fff, 0 0 0 8px #000; border: 2px solid #fff;">
+  <h1 style="text-align: center; font-size: 2.5rem; margin-bottom: 2.2rem; letter-spacing: 2px; font-weight: normal; text-shadow: 0 2px 0 #222;">Contacta-nos</h1>
+  <p style="text-align: center; margin-bottom: 2.5rem; font-size: 1.15rem; line-height: 1.7;">
+    Se tiveres dúvidas, sugestões ou precisares de ajuda, preenche o formulário abaixo ou envia-nos um email para <a href="mailto:info@incorrectsociety.com" style="color: #fff; border-bottom: 1px dotted #fff; text-decoration: none;">info@incorrectsociety.com</a>.<br>
+    <span style="font-size: 0.98em; color: #bbb;">A nossa equipa responde normalmente em 1-2 dias úteis.</span>
+  </p>
+  <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <input type="hidden" name="form_type" value="contact" />
+    <input type="hidden" name="utf8" value="✓" />
+    <label for="ContactFormName" style="font-size: 1.08rem; margin-bottom: 0.2rem;">Nome</label>
+    <input type="text" id="ContactFormName" name="contact[name]" required style="padding: 0.85rem; border-radius: 0; border: 2px solid #fff; background: #000; color: #fff; font-size: 1.08rem; font-family: 'Times New Roman', Times, serif;">
+    <label for="ContactFormEmail" style="font-size: 1.08rem; margin-bottom: 0.2rem;">Email</label>
+    <input type="email" id="ContactFormEmail" name="contact[email]" required style="padding: 0.85rem; border-radius: 0; border: 2px solid #fff; background: #000; color: #fff; font-size: 1.08rem; font-family: 'Times New Roman', Times, serif;">
+    <label for="ContactFormMessage" style="font-size: 1.08rem; margin-bottom: 0.2rem;">Mensagem</label>
+    <textarea id="ContactFormMessage" name="contact[body]" rows="5" required style="padding: 0.85rem; border-radius: 0; border: 2px solid #fff; background: #000; color: #fff; font-size: 1.08rem; font-family: 'Times New Roman', Times, serif;"></textarea>
+    <button type="submit" style="background: #fff; color: #000; font-family: 'Times New Roman', Times, serif; font-size: 1.15rem; padding: 0.9rem 0; border: 2px solid #fff; border-radius: 0; margin-top: 0.5rem; cursor: pointer; letter-spacing: 1px; font-weight: bold; box-shadow: 0 2px 0 #222; transition: background 0.2s, color 0.2s;">ENVIAR MENSAGEM</button>
+  </form>
+  <div style="margin-top: 3rem; text-align: center; font-size: 1.08rem;">
+    <strong style="letter-spacing: 1px;">Redes sociais:</strong><br>
+    <a href="https://www.instagram.com/incorrect.society/" target="_blank" style="color: #fff; border-bottom: 1px dotted #fff; margin: 0 0.7rem; text-decoration: none;">Instagram</a>
+    <a href="https://www.tiktok.com/@.incorrectsociety" target="_blank" style="color: #fff; border-bottom: 1px dotted #fff; margin: 0 0.7rem; text-decoration: none;">TikTok</a>
+    <a href="https://www.youtube.com/@IncorrectSociety" target="_blank" style="color: #fff; border-bottom: 1px dotted #fff; margin: 0 0.7rem; text-decoration: none;">YouTube</a>
+  </div>
+</section>

@@ -200,7 +200,7 @@
     "estimate_note_html": "<em>Please note that delivery times are estimates and may vary due to customs processing or unforeseen circumstances.</em>",
     "costs_title": "Shipping Costs",
     "costs_intro": "Shipping costs are calculated automatically at checkout based on your location and the items in your cart. We offer:",
-    "free_over_html": "<strong>Free shipping</strong> on orders over 80€ worldwide",
+    "free_over_html": "<strong>Free shipping</strong> on orders over 80€ in Portugal",
     "standard_rates": "Standard shipping rates apply for orders below these thresholds",
     "tracking_title": "Order Tracking",
     "tracking_intro": "Once your order ships, you will receive a tracking number via email. You can use this number to track your package on our shipping partner's website.",
@@ -209,7 +209,7 @@
     "restrictions_title": "Shipping Restrictions",
     "restrictions_intro": "We currently ship to most countries worldwide. However, some remote locations may not be available for delivery. If your location is not supported, we will contact you to arrange an alternative solution.",
     "lost_title": "Lost or Damaged Packages",
-    "lost_intro_html": "If your package is lost or damaged during shipping, please contact us immediately at <strong>geral@incorrectsociety.com</strong>. We will work with our shipping partners to resolve the issue and ensure you receive your order.",
+    "lost_intro_html": "If your package is lost or damaged during shipping, please contact us.",
     "contact_highlight": "For any shipping-related questions, please don't hesitate to contact our customer service team."
   },
   "terms": {
@@ -241,7 +241,7 @@
     "section10_title": "10. Changes to Terms",
     "section10_html": "We reserve the right to update these terms at any time. Continued use of our website constitutes acceptance of any changes.",
     "last_updated_label": "Last updated:",
-    "contact_label": "For questions about these terms, contact us at"
+    "contact_label": "For questions about these terms, contact us."
   },
   "challenge": {
     "title": "Please verify you are human",
