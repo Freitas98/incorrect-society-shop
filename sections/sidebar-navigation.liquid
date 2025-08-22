@@ -257,7 +257,10 @@
       if (!sidebar) return;
       sidebar.classList.add('open');
       sidebarOverlay?.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      // Only disable scroll on mobile
+      if (window.matchMedia('(max-width: 770px)').matches) {
+        document.body.style.overflow = 'hidden';
+      }
       setExpanded(true);
     }
 
@@ -265,7 +268,10 @@
       if (!sidebar) return;
       sidebar.classList.remove('open');
       sidebarOverlay?.classList.remove('active');
-      document.body.style.overflow = '';
+      // Only reset scroll lock on mobile
+      if (window.matchMedia('(max-width: 770px)').matches) {
+        document.body.style.overflow = '';
+      }
       setExpanded(false);
     }
 
