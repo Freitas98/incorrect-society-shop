@@ -48,7 +48,7 @@
     position: fixed;
     left: 0;
     background: #000;
-    z-index: 1002;
+    z-index: 900; /* Always below header (998) and announcement (1000) */
     overflow-y: auto;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
@@ -71,12 +71,12 @@
 
   .sidebar-overlay {
     position: fixed;
-  top: calc(var(--announcement-height, 40px) + var(--site-header-height, 0px)); /* Start below announcement + header */
+    top: calc(var(--announcement-height, 40px) + var(--site-header-height, 0px)); /* Start below announcement + header */
     left: 0;
-  width: 100%;
-  height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px))); /* Respect announcement + header height */
+    width: 100%;
+    height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px))); /* Respect announcement + header height */
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1001;
+    z-index: 900; /* Always below header (998) and announcement (1000) */
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -223,6 +223,7 @@
     }
 
       .sidebar-content {
+        margin-top: 50px;
         height: 80%;
     }
   }
