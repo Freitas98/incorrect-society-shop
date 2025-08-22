@@ -61,22 +61,34 @@
   @media (max-width: 770px) {
     .sidebar {
       top: 0;
-      height: 100vh;
+      height: 100dvh;
+      min-height: 100vh;
+      max-height: 100dvh;
       background: #000 !important;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: auto;
+    }
+    body.sidebar-open {
+      overflow: hidden !important;
+      position: fixed;
+      width: 100vw;
     }
     .sidebar-header {
       display: flex !important;
-      position: relative;
+      position: sticky;
+      top: 0;
+      right: 0;
       width: 100%;
       justify-content: flex-end;
       align-items: center;
-      background: transparent;
+      background: #000;
       z-index: 1001;
-      padding: 0.5em 1em 0.5em 0;
+      padding: 0.75em 1.25em 0.75em 0;
+      min-height: 56px;
     }
     .sidebar-close {
       color: #fff !important;
-      font-size: 2.5em !important;
+      font-size: 2.2em !important;
       background: none;
       border: none;
       cursor: pointer;
@@ -85,6 +97,12 @@
       line-height: 1;
       z-index: 1002;
       display: block;
+    }
+    .sidebar-content {
+      margin-top: 16px;
+      max-height: calc(100dvh - 56px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
   }
 
@@ -138,10 +156,10 @@
     padding: 0;
   }
 
-  .sidebar-menu-section {
-    flex: 1;
-    padding: 20px 0;
-  }
+    .sidebar-menu-section {
+      flex: 0 0 auto;
+      padding: 10px 0 0 0;
+    }
 
   .sidebar-menu {
     list-style: none;
@@ -167,7 +185,7 @@
   .sidebar-menu-link:hover { background-color: transparent; color: var(--color-accent); }
 
   .sidebar-footer {
-    margin-top: auto;
+    margin-top: 180px;
     padding: 30px 20px;
     border-top: none;
     background-color: var(--color-background);
@@ -248,14 +266,21 @@
 
       .sidebar-content {
         height: 80%;
+        overflow: hidden;
     }
   }
 
     @media (max-width: 350px) {
-    .sidebar-content {
-        height: 80%;
+      .sidebar-content {
+          height: 80%;
+      }
     }
-  }
+
+    @media (max-width: 765px) {
+      .sidebar-footer {
+        margin-top: 120px;
+      }
+    }
   /* Desktop: never show overlay */
   @media (min-width: 771px) {
     .sidebar-overlay { display: none; }
