@@ -173,6 +173,8 @@
 	let current = parseInt(localStorage.getItem('musicPlayerTrack') || '10', 10);
 	const savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
 	const wasPlaying = localStorage.getItem('musicPlayerPlaying') === 'true';
+	const savedVolume = parseFloat(localStorage.getItem('musicPlayerVolume'));
+	const savedMuted = localStorage.getItem('musicPlayerMuted') === 'true';
 	const audio = document.getElementById('RetroAudioPlayer');
 	const toggleBtn = document.getElementById('RetroMusicToggle');
 	const muteBtn = document.getElementById('RetroMusicMute');
@@ -199,6 +201,8 @@
     if (durationEl) durationEl.textContent = '--:--';
     if (seek) seek.value = 0;
     audio.currentTime = 0;
+    localStorage.setItem('musicPlayerTrack', current);
+    localStorage.setItem('musicPlayerTime', 0);
     updateIcons();
 }
 	function nextTrack() {
@@ -233,14 +237,17 @@
 		updateIcons();
 	});
 		muteBtn.addEventListener('click', function(){
-			audio.muted = !audio.muted;
-			updateIcons();
-		});
+		audio.muted = !audio.muted;
+		localStorage.setItem('musicPlayerMuted', audio.muted);
+		updateIcons();
+	});
 		if (volumeBar) {
 			volumeBar.addEventListener('input', function(){
 				audio.volume = parseFloat(volumeBar.value);
 				if (audio.volume === 0) audio.muted = true;
 				else audio.muted = false;
+				localStorage.setItem('musicPlayerVolume', audio.volume);
+				localStorage.setItem('musicPlayerMuted', audio.muted);
 				updateIcons();
 			});
 		}
@@ -281,11 +288,13 @@
 		localStorage.setItem('musicPlayerTime', audio.currentTime);
 	});
 	// Set initial volume and track, update icons
-	audio.volume = 0.1;
-	setTrack(current);
-	updateIcons();
-	// Restore time and play state
-	audio.addEventListener('loadedmetadata', function(){
+if (!isNaN(savedVolume)) audio.volume = savedVolume;
+if (typeof savedMuted === 'boolean') audio.muted = savedMuted;
+setTrack(current);
+updateIcons();
+// Restore time and play state
+
+audio.addEventListener('loadedmetadata', function(){
     if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
         audio.currentTime = savedTime;
         // Force update of time display
@@ -294,7 +303,11 @@
     }
     if (wasPlaying) {
         audio.play().catch(()=>{});
+    } else {
+        audio.pause();
     }
+    if (!isNaN(savedVolume)) audio.volume = savedVolume;
+    if (typeof savedMuted === 'boolean') audio.muted = savedMuted;
 });
 // Always update time display on play
 audio.addEventListener('play', function(){
