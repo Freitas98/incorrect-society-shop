@@ -1,8 +1,0 @@
-{
-  "sections": {
-    "main": {
-      "type": "contact-us-section"
-    }
-  },
-  "order": ["main"]
-}

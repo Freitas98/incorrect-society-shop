@@ -324,5 +324,17 @@
       "signup_form_success": "We will send you an email right before we open!",
       "password_link": "Enter using password"
     }
+  },
+  "contact": {
+    "contact_us": "Contact Us",
+    "contact_highlight": "Get in touch",
+    "contact_intro": "Contact the Incorrect Society team for questions, suggestions, or support. Fill out the form below. We usually reply within 1-2 business days.",
+    "comment_form_name": "Your name",
+    "comment_form_email": "Your email",
+    "message": "How can we help?",
+    "send_message": "Send Message",
+    "contact_note": "Your message will be sent directly to the Incorrect Society team.",
+    "contact_now": "CONTACT US NOW",
+    "contact_prompt": "Contact us to give feedback or ask some questions."
   }
 }

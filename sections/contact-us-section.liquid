@@ -1,126 +1,112 @@
-.contact-section {
-  background: #000;
-  color: #fff;
-  font-family: 'Times New Roman', Times, serif;
-  padding: 0;
-}
-...existing CSS...
-@media (max-width: 600px) {
-  .contact-section__container {
-    padding: 28px 8px 24px 8px;
+{% stylesheet %}
+  .policy-page {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    padding: 60px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 100vh;
+    line-height: 1.7;
   }
-  .contact-section__title {
-    font-size: 1.4rem;
+
+  .policy-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 50px;
+    color: var(--color-foreground);
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }
-}
-{% comment %} End of stylesheet {% endcomment %}
-  .contact-policy-page {
-    background-color: #000;
-    color: #fff;
 
+  .policy-content {
+    border-radius: 8px;
+    padding: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
 
-    {% stylesheet %}
-      .policy-page {
-        background-color: #000;
-        color: #fff;
-        padding: 60px 20px;
-        max-width: 800px;
-        margin: 0 auto;
-        min-height: 100vh;
-        line-height: 1.7;
-        font-family: 'Times New Roman', Times, serif;
-      }
-      .policy-title {
-        text-align: center;
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 50px;
-        color: #fff;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-      }
-      .policy-content {
-        border-radius: 8px;
-        padding: 40px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        background: #111;
-      }
-      .policy-content label {
-        font-size: 1.08rem;
-        margin-bottom: 0.2rem;
-        display: block;
-      }
-      .policy-content input,
-      .policy-content textarea {
-        width: 100%;
-        padding: 0.85rem;
-        border-radius: 0;
-        border: 2px solid #fff;
-        background: #000;
-        color: #fff;
-        font-size: 1.08rem;
-        font-family: 'Times New Roman', Times, serif;
-        margin-bottom: 1.2rem;
-      }
-      .policy-content textarea {
-        min-height: 120px;
-      }
-      .policy-content button {
-        background: #fff;
-        color: #000;
-        font-family: 'Times New Roman', Times, serif;
-        font-size: 1.15rem;
-        padding: 0.9rem 0;
-        border: 2px solid #fff;
-        border-radius: 0;
-        margin-top: 0.5rem;
-        cursor: pointer;
-        letter-spacing: 1px;
-        font-weight: bold;
-        box-shadow: 0 2px 0 #222;
-        transition: background 0.2s, color 0.2s;
-        width: 100%;
-      }
-      .policy-content .contact-social {
-        margin-top: 2.5rem;
-        text-align: center;
-        font-size: 1.08rem;
-      }
-      .policy-content .contact-social a {
-        color: #fff;
-        border-bottom: 1px dotted #fff;
-        margin: 0 0.7rem;
-        text-decoration: none;
-      }
-      @media (max-width: 768px) {
-        .policy-page {
-          padding: 40px 15px;
-        }
-        .policy-title {
-          font-size: 2rem;
-          margin-bottom: 30px;
-        }
-        .policy-content {
-          padding: 30px 20px;
-        }
-      }
-    {% endstylesheet %}
+  .policy-content h2 {
+    color: var(--color-foreground);
+    font-size: 1.5rem;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .policy-content h2:first-child {
+    margin-top: 0;
+  }
+
+  .policy-content p {
+    margin-bottom: 20px;
+    color: var(--color-foreground);
+    opacity: 0.85;
+    font-size: 1rem;
+  }
+
+  .policy-content ul {
+    margin-bottom: 20px;
+    padding-left: 20px;
+  }
+
+  .policy-content li {
+    margin-bottom: 10px;
+    color: var(--color-foreground);
+    opacity: 0.85;
+  }
+
+  .policy-content strong {
+    color: var(--color-foreground);
+  }
+
+  .policy-highlight {
+    background-color: var(--color-accent);
+    color: var(--color-foreground);
+    padding: 20px;
+    border-radius: 5px;
+    margin: 30px 0;
+    font-weight: 500;
+  }
+
+  /* Utility for inline red highlights */
+  .policy-accent { color: var(--color-accent); }
+
+  @media (max-width: 768px) {
+    .policy-page {
+      padding: 40px 15px;
+    }
+
+    .policy-title {
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .policy-content {
+      padding: 30px 20px;
+    }
+
+    .policy-content h2 {
+      font-size: 1.3rem;
+    }
+  }
+{% endstylesheet %}
 
 
 <div class="policy-page">
   <h1 class="policy-title" style="font-size:3rem; margin-bottom:2.5rem; letter-spacing:2px;">CONTACTA-NOS</h1>
   <div style="font-size:1.4rem; font-weight:600; margin-bottom:2.2rem; letter-spacing:1px; text-align:left;">MANTÉM-TE EM CONTACTO</div>
   <div style="font-size:1.1rem; margin-bottom:2.8rem; color:#fff; opacity:0.95; text-align:left; max-width:700px;">Entra em contacto com a equipa <strong>Incorrect Society</strong> para dúvidas, sugestões ou apoio. Respondemos normalmente em 1-2 dias úteis.</div>
-  <div style="background:#181618; border-radius:14px; box-shadow:0 2px 16px #000a; max-width:700px; margin:0 auto 2.5rem auto; padding:2.5rem 2rem 2rem 2rem;">
+  <div style="background:#181618; border-radius:14px; box-shadow:0 2px 16px #000a; max-width:700px; margin:0 auto 2.5rem auto; padding:2.5rem 2rem;">
     <div style="font-size:1.3rem; color:#a03a4a; font-weight:700; text-align:center; margin-bottom:1.2rem; letter-spacing:1px;">ENVIA UMA MENSAGEM</div>
     <div style="text-align:center; margin-bottom:2rem; color:#fff; font-size:1.08rem;">Preenche o formulário para contactar a Incorrect Society</div>
     <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" style="display:flex; flex-direction:column; gap:1.2rem;">
       <input type="hidden" name="form_type" value="contact" />
       <input type="hidden" name="utf8" value="✓" />
-      <input type="text" id="ContactFormName" name="contact[name]" required placeholder="O teu nome" style="padding:1.1rem; border-radius:6px; border:none; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">
-      <input type="email" id="ContactFormEmail" name="contact[email]" required placeholder="O teu email" style="padding:1.1rem; border-radius:6px; border:none; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">
-      <textarea id="ContactFormMessage" name="contact[body]" rows="5" required placeholder="Como podemos ajudar?" style="padding:1.1rem; border-radius:6px; border:none; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"></textarea>
-      <button type="submit" style="background:#8a2d3c; color:#fff; font-family:'Times New Roman',Times,serif; font-size:1.15rem; padding:1.1rem 0; border:none; border-radius:6px; margin-top:0.5rem; cursor:pointer; letter-spacing:1px; font-weight:bold; box-shadow:0 2px 0 #222; transition:background 0.2s, color 0.2s; text-transform:uppercase;">ENVIAR MENSAGEM</button>
+      <input type="text" id="ContactFormName" name="contact[name]" required placeholder="O teu nome" style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">
+      <input type="email" id="ContactFormEmail" name="contact[email]" required placeholder="O teu email" style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">
+      <textarea id="ContactFormMessage" name="contact[body]" rows="5" required placeholder="Como podemos ajudar?" style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"></textarea>
+      <button type="submit" style="background-color:#a03a4a; color:#fff; padding:12px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">ENVIAR MENSAGEM</button>
     </form>
   </div>
   <div class="contact-social" style="text-align:center; font-size:1.08rem; margin-top:2.5rem;">
@@ -139,12 +125,3 @@
   "settings": []
 }
 {% endschema %}
-
-    {% schema %}
-    {
-      "name": "Contact Us Section",
-      "tag": "section",
-      "class": "shopify-section-contact-us",
-      "settings": []
-    }
-    {% endschema %}

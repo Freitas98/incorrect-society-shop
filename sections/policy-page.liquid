@@ -100,6 +100,8 @@
     {% assign translated_title = 'policies.terms_of_service' | t %}
   {% elsif page.handle == 'newsletter' %}
     {% assign translated_title = 'policies.newsletter' | t %}
+  {% elsif page.handle == 'contact-us' %}
+    {% assign translated_title = 'policies.contact_us' | t %}
   {% endif %}
   <h1 class="policy-title">{{ translated_title }}</h1>
   
@@ -110,6 +112,8 @@
       {% render 'terms-of-service-content' %}
     {% elsif page.handle == 'newsletter' %}
       {% render 'newsletter-content' %}
+    {% elsif page.handle == 'contact-us' %}
+      {% render 'contact-us-content' %}
     {% else %}
       {{ page.content }}
     {% endif %}
