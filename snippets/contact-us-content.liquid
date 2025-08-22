@@ -9,7 +9,7 @@
     <h3 style="color: var(--color-accent); margin-bottom: 20px;">{{ 'contact.contact_now' | t }}</h3>
     <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">{{ 'contact.contact_prompt' | t }}</p>
     
-    <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" style="display:flex;flex-direction:column;gap:12px;max-width:420px;margin:0 auto;">
+    <form method="post" action="/contact" id="contact_form" accept-charset="UTF-8" style="display:flex;flex-direction:column;gap:12px;max-width:420px;margin:0 auto;">
     <input type="hidden" name="form_type" value="contact" />
     <input type="hidden" name="utf8" value="✓" />
     <input type="text" id="ContactFormName" name="contact[name]" required placeholder="{{ 'contact.comment_form_name' | t }}" style="padding:12px;border-radius:4px;border:1px solid var(--color-border);background-color:color-mix(in oklab, var(--color-surface), var(--color-background) 50%);color:var(--color-foreground);font-size:1.08rem;font-family:'Times New Roman',Times,serif;">
