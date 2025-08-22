@@ -77,18 +77,19 @@
 	color: #ffb3c6;
 	border-radius: 10px;
 	font-family: 'Press Start 2P', monospace, sans-serif;
-	padding: 15px;
-		width: 100%;
-		max-width: 420px;
+	padding: 10px 10px 8px 10px;
+	width: 100%;
+	max-width: 420px;
 	user-select: none;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 8px;
-		margin-left: auto;
-		margin-right: auto;
-		box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	margin-left: auto;
+	margin-right: auto;
+	box-sizing: border-box;
     margin-bottom: 20px;
+    overflow-x: auto;
 }
 .retro-music-title-pixel {
 	font-size: 0.6em;
@@ -179,12 +180,25 @@
 }
 @media (max-width: 500px) {
 	.retro-music-player-pixel {
-        min-width: 275px;
+		min-width: 0;
 		max-width: 98vw;
-		padding: 6px 1vw;
+		padding: 15px;
+		font-size: 0.78em;
 	}
-	.retro-music-controls-pixel { gap: 6px; }
-	.retro-music-btn-pixel { width: 32px; height: 32px; font-size: 0.9em; }
+	.retro-music-title-pixel {
+		font-size: 0.5em;
+	}
+	.retro-music-controls-pixel { gap: 4px; }
+	.retro-music-btn-pixel { width: 28px; height: 28px; font-size: 0.8em; }
+	.retro-music-progress-bar-pixel { height: 5px; }
+	.spotify-btn-pixel {
+		font-size: 0.6em !important;
+		padding: 3px 4px !important;
+	}
+	.spotify-btn-pixel svg {
+		width: 9px !important;
+		height: 9px !important;
+	}
 }
 </style>
 
