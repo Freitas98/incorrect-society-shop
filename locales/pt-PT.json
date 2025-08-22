@@ -9,8 +9,9 @@
  */
 {
   "404": {
-    "title": "404",
-    "not_found": "Página não encontrada.",
+    "title": "Página Não Encontrada",
+    "subtitle": "Oops",
+    "not_found": "A página que você está procurando não pode ser encontrada.",
     "back_to_shopping": "Voltar às compras"
   },
   "homepage": {

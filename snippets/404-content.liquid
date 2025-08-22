@@ -1,0 +1,9 @@
+{% comment %}
+  404 Content - Card style, for use in policy-page.liquid layout
+{% endcomment %}
+
+<div class="policy-content" style="background: var(--color-surface); text-align: center;">
+  <h2 style="color: var(--color-accent); margin-bottom: 20px; text-align:center;">{{ '404.subtitle' | t }}</h2>
+  <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">{{ '404.not_found' | t }}</p>
+  <a href="{{ routes.root_url }}" style="display:inline-block;margin-top:18px;padding:12px 28px;background:var(--color-accent);color:var(--color-foreground);border-radius:6px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;text-decoration:none;box-shadow:0 2px 8px #0003;transition:background 0.2s;">{{ '404.back_to_shopping' | t }}</a>
+</div>
