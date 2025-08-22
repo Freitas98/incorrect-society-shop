@@ -46,17 +46,23 @@
 
   .sidebar {
     position: fixed;
-    top: calc(var(--announcement-height, 40px) + var(--site-header-height, 0px)); /* Below announcement + header */
-    left: 0; /* Always visible on desktop */
-    width: 300px;
-    height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
-    background-color: var(--color-background);
-    border-right: none;
-    transition: left 0.3s ease;
+    left: 0;
+    background: #000;
     z-index: 1002;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: none;
+    /* Default: below header/announcement */
+    top: calc(var(--announcement-height, 40px) + var(--site-header-height, 0px));
+    height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
+  }
+
+  @media (max-width: 770px) {
+    .sidebar {
+      top: 0;
+      height: 100vh;
+    }
   }
 
   .sidebar.open {
@@ -303,7 +309,33 @@
       closeSidebar();
     }
   });
-{% endjavascript %}
+{%  endjavascript %}
+<script>
+(function(){
+  function lockBodyScroll(lock) {
+    if (lock) {
+      document.body.classList.add('sidebar-open');
+    } else {
+      document.body.classList.remove('sidebar-open');
+    }
+  }
+  var sidebar = document.getElementById('sidebar');
+  var overlay = document.getElementById('sidebar-overlay');
+  var openSidebar = function() { lockBodyScroll(true); };
+  var closeSidebar = function() { lockBodyScroll(false); };
+  if (sidebar) {
+    sidebar.addEventListener('transitionend', function() {
+      if (sidebar.classList.contains('open')) lockBodyScroll(true);
+      else lockBodyScroll(false);
+    });
+  }
+  if (overlay) {
+    overlay.addEventListener('click', closeSidebar);
+  }
+  // Also unlock scroll on page load just in case
+  window.addEventListener('DOMContentLoaded', function(){ lockBodyScroll(false); });
+})();
+</script>
 
 {% schema %}
 {
