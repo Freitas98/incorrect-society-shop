@@ -24,6 +24,7 @@
     <div class="newsletter-message" aria-live="polite" style="margin: 0 0 10px; color: var(--color-foreground);"></div>
 
     <div style="display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto;">
+
       <input
         type="text"
         name="contact[first_name]"
@@ -43,7 +44,7 @@
         style="padding: 12px; border: 1px solid var(--color-border); background-color: color-mix(in oklab, var(--color-surface), var(--color-background) 50%); color: var(--color-foreground); border-radius: 4px;"
       >
 
-  <input type="hidden" name="contact[tags]" value="newsletter">
+      <input type="hidden" name="contact[tags]" id="NewsletterContentTags" value="">
 
       <button type="submit" style="background-color: var(--color-accent); color: var(--color-foreground); padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase;">
         {{ 'newsletter.subscribe_cta' | t }}
@@ -55,29 +56,42 @@
 {% javascript %}
   const form = document.getElementById('NewsletterForm');
   const container = document.getElementById('NewsletterContainer');
-  if (form && container) {
+  const tagsInput = document.getElementById('NewsletterContentTags');
+  // Generate a strong, uppercase, mostly-unique code
+  const generateRandomCode = (len = 16) => {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const out = [];
+    const arr = (window.crypto && window.crypto.getRandomValues)
+      ? window.crypto.getRandomValues(new Uint32Array(len))
+      : Array.from({ length: len }, () => Math.floor(Math.random() * 0xffffffff));
+    for (let i = 0; i < len; i++) {
+      out.push(alphabet[arr[i] % alphabet.length]);
+    }
+    return out.join('');
+  };
+  if (form && container && tagsInput) {
     form.addEventListener('submit', async (event) => {
-  event.preventDefault();
-  event.stopPropagation();
-  if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+      // Set unique code in tags before submit
+      tagsInput.value = generateRandomCode(16);
       const message = form.querySelector('.newsletter-message');
       const submitButton = form.querySelector('button[type="submit"]');
       if (!message || !submitButton) return;
 
       const tAdding = container.dataset.adding || 'Adding...';
-  const tSuccess = container.dataset.success || 'Thanks for subscribing!';
-  const tError = container.dataset.error || 'Something went wrong. Please try again.';
-  const tVerifying = container.dataset.verifying || 'Verifying...';
-  const tCaptcha = container.dataset.captcha || 'Please complete the verification to finish your subscription.';
-  const tSmsPhoneRequired = container.dataset.smsRequired || 'Phone number is required to opt into SMS.';
+      const tSuccess = container.dataset.success || 'Thanks for subscribing!';
+      const tError = container.dataset.error || 'Something went wrong. Please try again.';
+      const tVerifying = container.dataset.verifying || 'Verifying...';
+      const tCaptcha = container.dataset.captcha || 'Please complete the verification to finish your subscription.';
 
       message.textContent = '';
       submitButton.disabled = true;
       const originalText = submitButton.textContent;
       submitButton.textContent = tAdding;
 
-  try {
-
+      try {
         const action = form.getAttribute('action') || '/contact';
         const formData = new FormData(form);
         const response = await fetch(action, {
