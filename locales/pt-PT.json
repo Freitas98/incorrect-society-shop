@@ -112,6 +112,7 @@
   },
   "policies": {
     "shipping_policy": "Política de Envio",
+    "return_policy": "Política de Reembolsos",
     "terms_of_service": "Termos de Serviço",
     "privacy_policy": "Política de Privacidade",
     "refund_policy": "Política de Reembolso",
@@ -185,6 +186,12 @@
     "sms_phone_required": "Introduz um número de telemóvel válido para aderir aos SMS.",
     "verifying": "A verificar...",
     "captcha_message": "Conclui a verificação para finalizar a subscrição."
+  },
+  "return_policy": {
+    "title": "Caso você queira devolver algo",
+    "intro_html": "Na <strong>Incorrect Society</strong>, queremos que fiques totalmente satisfeito com a tua compra. Se não estiveres satisfeito, oferecemos uma política de reembolso sem complicações.",
+    "processing_highlight_html": "<strong>Importante:</strong> Todos os pedidos de reembolso devem ser iniciados dentro de 14 dias após receberes a tua encomenda.",
+    "refund_policy_html": "<h3>Política de Reembolso<\/h3>\n<p>Na Incorrect Society, oferecemos reembolsos para produtos que estejam claramente danificados ou apresentem erros conforme definido pelos nossos padrões de qualidade.<\/p>\n<p>Para solicitar um reembolso, <a href=\"/pt/pages/contact-us\">entre em contato<\/a> com a nossa equipa de apoio ao cliente dentro de 14 dias após receber o seu produto, fornecendo o número do pedido e uma descrição detalhada do problema, incluindo fotografias se aplicável.<\/p>\n<p>Se aprovado, o valor total pago será devolvido ao seu método de pagamento original.<\/p>\n<p>Esta política não cobre danos devido a uso indevido, alteração ou desgaste normal, e não se aplica a itens de liquidação ou venda final.<\/p>"
   },
   "shipping": {
     "title": "Informação de Envio",

@@ -1,0 +1,18 @@
+{% comment %}
+  Return Policy Content
+  Usage: {% render 'return-policy-content' %}
+{% endcomment %}
+
+<h2>{{ 'return_policy.title' | t }}</h2>
+<p>{{ 'return_policy.intro_html' | t }}</p>
+
+<div>{{ 'return_policy.refund_policy_html' | t }}</div>
+
+<div class="policy-highlight">
+  {{ 'return_policy.processing_highlight_html' | t }}
+
+  <style>
+    .policy-highlight strong { color: var(--color-foreground); }
+  </style>
+  
+  </div>

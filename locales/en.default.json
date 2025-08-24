@@ -112,6 +112,7 @@
   },
   "policies": {
     "shipping_policy": "Shipping Policy",
+    "return_policy": "Return Policy",
     "terms_of_service": "Terms of Service",
     "privacy_policy": "Privacy Policy",
     "refund_policy": "Refund Policy",
@@ -185,6 +186,12 @@
     "sms_phone_required": "Please enter a valid phone number to opt into SMS.",
     "verifying": "Verifying...",
     "captcha_message": "Please complete the verification to finish your subscription."
+  },
+  "return_policy": {
+    "title": "In case you would like to return something",
+    "intro_html": "At <strong>Incorrect Society</strong>, we want you to be completely satisfied with your purchase. If you are not satisfied, we offer a hassle-free return policy.",
+    "processing_highlight_html": "<strong>Important:</strong> All return requests must be initiated within 30 days of receiving your order.",
+    "refund_policy_html": "<h3>Refund policy<\/h3>\n<p>At Incorrect Society, we offer refunds for products that are clearly damaged or have mistakes as defined by our quality standards.<\/p>\n<p>To request a refund, <a href=\"/pt/pages/contact-us\">contact<\/a> our customer service team within 14 days of receiving your product, providing your order number and a detailed description of the issue, including photographs if applicable.<\/p>\n<p>If approved, the full amount paid will be applied to your original method of payment.<\/p>\n<p>This policy does not cover damage due to misuse, alteration, or normal wear and tear, and does not apply to final sale or clearance items.<\/p>"
   },
   "shipping": {
     "title": "Shipping Information",

@@ -1,0 +1,8 @@
+{
+  "sections": {
+    "main": {
+      "type": "return-policy-page"
+    }
+  },
+  "order": ["main"]
+}
