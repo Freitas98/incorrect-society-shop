@@ -210,8 +210,8 @@
     "restrictions_title": "Restrições de envio",
     "restrictions_intro": "Enviamos para a maioria dos países. Algumas zonas remotas podem não estar disponíveis.",
     "lost_title": "Encomendas perdidas ou danificadas",
-    "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, contacta-nos.",
-    "contact_highlight": "Para dúvidas, fala com a nossa equipa."
+  "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, <a href=\"/pt/pages/contact-us\">contacta-nos</a>.",
+    "contact_highlight_html": "Para dúvidas, <a href=\"/pt/pages/contact-us\">fala com a nossa equipa.</a>"
   },
   "terms": {
     "section1_title": "1. Acordo com os Termos",
@@ -242,7 +242,7 @@
     "section10_title": "10. Alterações aos Termos",
     "section10_html": "Podemos atualizar estes termos a qualquer momento. O uso contínuo implica aceitação.",
     "last_updated_label": "Última atualização:",
-    "contact_label": "Para questões sobre estes termos, contacta-nos."
+  "contact_label_html": "Para questões sobre estes termos, <a href=\"/pt/pages/contact-us\">contacta-nos</a>."
   },
   "challenge": {
     "title": "Por favor confirma que és humano",
@@ -336,6 +336,6 @@
     "send_message": "Enviar mensagem",
     "contact_note": "A tua mensagem será enviada diretamente para a equipa Incorrect Society.",
     "contact_now": "CONTACTA-NOS AGORA",
-    "contact_prompt": "Contacta-nos para dar feedback ou fazer perguntas."
+  "contact_prompt_html": "Contacta-nos para dar feedback ou fazer perguntas."
   }
 }

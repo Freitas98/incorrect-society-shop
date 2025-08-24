@@ -210,8 +210,8 @@
     "restrictions_title": "Shipping Restrictions",
     "restrictions_intro": "We currently ship to most countries worldwide. However, some remote locations may not be available for delivery. If your location is not supported, we will contact you to arrange an alternative solution.",
     "lost_title": "Lost or Damaged Packages",
-    "lost_intro_html": "If your package is lost or damaged during shipping, please contact us.",
-    "contact_highlight": "For any shipping-related questions, please don't hesitate to contact our customer service team."
+  "lost_intro_html": "If your package is lost or damaged during shipping, please <a href=\"/pages/contact-us\">contact us</a>.",
+    "contact_highlight_html": "For any shipping-related questions, please don't hesitate to <a href=\"/pages/contact-us\">contact our customer service team.</a>"
   },
   "terms": {
     "section1_title": "1. Agreement to Terms",
@@ -242,7 +242,7 @@
     "section10_title": "10. Changes to Terms",
     "section10_html": "We reserve the right to update these terms at any time. Continued use of our website constitutes acceptance of any changes.",
     "last_updated_label": "Last updated:",
-    "contact_label": "For questions about these terms, contact us."
+  "contact_label_html": "For questions about these terms, <a href=\"/pages/contact-us\">contact us</a>."
   },
   "challenge": {
     "title": "Please verify you are human",
@@ -336,6 +336,6 @@
     "send_message": "Send Message",
     "contact_note": "Your message will be sent directly to the Incorrect Society team.",
     "contact_now": "CONTACT US NOW",
-    "contact_prompt": "Contact us to give feedback or ask some questions."
+  "contact_prompt_html": "Contact us to give feedback or ask some questions."
   }
 }
