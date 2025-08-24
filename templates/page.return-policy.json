@@ -1,8 +1,11 @@
 {
   "sections": {
     "main": {
-      "type": "return-policy-page"
+      "type": "page",
+      "settings": {}
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
