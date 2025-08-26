@@ -1,5 +1,5 @@
 <div class="cd-music-player-minimal">
-	<a id="cdPlayPause" class="cd-play-btn-minimal" aria-label="Play/Pause">
+	<a id="cdPlayPause" class="cd-play-btn-minimal" aria-label="Play/Pause" type="button">
 		<span id="cd-icon-play">
 			<svg width="38" height="38" viewBox="0 0 38 38" fill="white"><polygon points="10,7 32,19 10,31"/></svg>
 		</span>
@@ -10,7 +10,7 @@
 	<a href="https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4" target="_blank" rel="noopener" tabindex="0">
 		<img height="50" width="50" src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo.jpg?v=1749137548" alt="CD Cover" class="cd-cover-minimal" id="cdCoverImg" />
 	</a>
-	<audio id="cdAudioPlayer" preload="auto" src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"></audio>
+	<audio id="cdAudioPlayer" preload="auto" autoplay src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"></audio>
 </div>
 <style>
 .cd-music-player-minimal {
@@ -64,7 +64,7 @@
 }
 </style>
 <script>
-// Minimal CD player: play/pause, rotating CD, click CD to open Spotify
+// Minimal CD player: play/pause, rotating CD, click CD to open Spotify, and persist state
 document.addEventListener('DOMContentLoaded', function() {
 	var audio = document.getElementById('cdAudioPlayer');
 	var playBtn = document.getElementById('cdPlayPause');
@@ -72,6 +72,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	var iconPause = document.getElementById('cd-icon-pause');
 	var cdCover = document.getElementById('cdCoverImg');
 
+	// Restore state from localStorage
+	var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
+	var wasPlaying = localStorage.getItem('musicPlayerPlaying') === 'true';
+
+	// Set initial UI state
 	function updateIcons() {
 		if (audio.paused) {
 			iconPlay.style.display = '';
@@ -84,17 +89,65 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 
-	playBtn.addEventListener('click', function() {
+	// Set up global play on any user interaction if needed
+	function globalTryPlay() {
+		if (audio.paused && !audio.muted && playBtn.getAttribute('data-intent') === 'play') {
+			audio.play().catch(function(){});
+		}
+	}
+	document.addEventListener('click', globalTryPlay, true);
+	document.addEventListener('touchstart', globalTryPlay, true);
+	document.addEventListener('keydown', globalTryPlay, true);
+
+	// Play/pause button logic
+	playBtn.addEventListener('click', function(e) {
+		e.preventDefault();
 		if (audio.paused) {
-			audio.play();
+			playBtn.setAttribute('data-intent', 'play');
+			audio.play().catch(function(){});
 		} else {
+			playBtn.setAttribute('data-intent', 'pause');
+			audio.pause();
+		}
+		updateIcons();
+		localStorage.setItem('musicPlayerPlaying', !audio.paused);
+	});
+
+	// If user tries to play via keyboard or other means, also set intent
+	playBtn.addEventListener('keydown', function(e) {
+		if (audio.paused) playBtn.setAttribute('data-intent', 'play');
+	});
+
+	// Save play state
+	audio.addEventListener('play', function() {
+		updateIcons();
+		localStorage.setItem('musicPlayerPlaying', 'true');
+	});
+	audio.addEventListener('pause', function() {
+		updateIcons();
+		localStorage.setItem('musicPlayerPlaying', 'false');
+	});
+	// Save time
+	audio.addEventListener('timeupdate', function() {
+		localStorage.setItem('musicPlayerTime', audio.currentTime);
+	});
+
+	// Restore time and play state on load
+	audio.addEventListener('loadedmetadata', function() {
+		if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
+			audio.currentTime = savedTime;
+		}
+		if (wasPlaying) {
+			playBtn.setAttribute('data-intent', 'play');
+			audio.play().catch(function(){});
+		} else {
+			playBtn.setAttribute('data-intent', 'pause');
 			audio.pause();
 		}
 		updateIcons();
 	});
 
-	audio.addEventListener('play', updateIcons);
-	audio.addEventListener('pause', updateIcons);
+	// Set UI to match state on first load
 	updateIcons();
 });
 </script>
