@@ -128,6 +128,30 @@
       </div>
     {% endif %}
 
+    {% if product.metafields.custom.model_info != blank %}
+      <div class="product-description">
+        <h3>{{ 'products.product.model_info' | t | default: 'Model Info' }}</h3>
+        {% if product.metafields.custom.model_info != blank %}
+          {{ product.metafields.custom.model_info | metafield_tag | newline_to_br }}
+        {% else %}
+          <p>{{ 'products.product.no_model_info' | t | default: 'Model height and size info coming soon.' }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="product-accordion">
+      <div class="accordion-item">
+        <button class="accordion-toggle" type="button">{{ 'products.product.details' | t | default: 'Product Details' }}</button>
+        <div class="accordion-content">
+          {% if product.metafields.custom.details != blank %}
+            {{ product.metafields.custom.details | metafield_tag | newline_to_br}}
+          {% else %}
+            <p>{{ 'products.product.no_details' | t | default: 'No additional details available.' }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
     <!-- Links: Size Guide & Shipping Policy -->
     <div class="product-links">
       <a href="{{ pages['size-guide'].url }}" class="product-link">{{ 'policies.size_guide' | t | default: 'Size guide' }}</a>
@@ -137,6 +161,82 @@
 </div>
 
 {% stylesheet %}
+  /* Accordion Styles - Modern Black Header */
+  .product-accordion {
+    margin-bottom: 30px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: none;
+    border: 1px solid var(--color-border);
+  }
+  .accordion-item:not(:last-child) {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .accordion-toggle {
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: left;
+    padding: 18px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    position: relative;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .accordion-toggle.active, .accordion-toggle:focus {
+    color: #fff;
+  }
+  .accordion-toggle::after {
+    content: '';
+    display: inline-block;
+    border: solid #fff;
+    border-width: 0 3px 3px 0;
+    padding: 6px;
+    transform: rotate(45deg);
+    transition: transform 0.3s;
+    margin-left: auto;
+    margin-right: 0;
+  }
+  .accordion-toggle.active::after {
+    transform: rotate(-135deg);
+  }
+  .accordion-content {
+    display: none;
+    padding: 22px 24px 18px 24px;
+    font-size: 16px;
+    line-height: 1.7;
+    border-radius: 0 0 8px 8px;
+    border-top: 1px solid var(--color-border);
+    animation: fadeIn 0.3s;
+  }
+  .accordion-content.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .model-info-block {
+    margin-bottom: 30px;
+    border-radius: 8px;
+    padding: 22px 24px;
+    color: var(--color-foreground);
+    border: 1px solid var(--color-border);
+  }
+  .model-info-block h3 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
   .product-page {
     display: grid;
     grid-template-columns: 1fr 400px;
@@ -463,7 +563,7 @@
   /* Product Description */
   .product-description {
     border-bottom: 1px solid #333333;
-    padding-bottom: 35px;
+    padding-bottom: 5px;
   }
 
   .product-description h3 {
@@ -659,6 +759,23 @@
 {% endstylesheet %}
 
 {% javascript %}
+// Accordion functionality for product details (single item, modern style)
+document.addEventListener('DOMContentLoaded', function() {
+  var toggles = document.querySelectorAll('.accordion-toggle');
+  toggles.forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      var content = this.nextElementSibling;
+      var isActive = this.classList.contains('active');
+      // Only one open at a time (but we have only one)
+      document.querySelectorAll('.accordion-toggle').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.accordion-content').forEach(function(c) { c.classList.remove('active'); });
+      if (!isActive) {
+        this.classList.add('active');
+        content.classList.add('active');
+      }
+    });
+  });
+});
 console.log('🎯 PRODUCT.LIQUID JAVASCRIPT STARTED!');
 
 document.addEventListener('DOMContentLoaded', function() {

@@ -128,9 +128,13 @@
   },
   "products": {
     "product": {
+      "details": "Detalhes do Produto",
+      "no_details": "Sem detalhes adicionais.",
+      "model_info": "Informação do Modelo",
+      "no_model_info": "Altura e tamanho do modelo em breve.",
+      "description": "Descrição",
       "add_to_cart": "Adicionar ao carrinho",
-      "sold_out": "Esgotado",
-      "description": "Descrição"
+      "sold_out": "Esgotado"
     },
     "options": {
       "size": "Tamanho",

@@ -128,9 +128,13 @@
   },
   "products": {
     "product": {
+      "details": "Product Details",
+      "no_details": "No additional details available.",
+      "model_info": "Model Info",
+      "no_model_info": "Model height and size info coming soon.",
+      "description": "Description",
       "add_to_cart": "Add to cart",
-      "sold_out": "Sold out",
-      "description": "Description"
+      "sold_out": "Sold out"
     },
     "options": {
       "size": "Size",
