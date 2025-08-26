@@ -22,7 +22,7 @@
 	border-radius: 16px;
 	padding: 0;
 	max-width: 220px;
-	margin: 0 auto 20px auto;
+	margin-left: -15px;
 }
 .cd-play-btn-minimal {
 	background: none;
@@ -73,21 +73,28 @@ document.addEventListener('DOMContentLoaded', function() {
 	var cdCover = document.getElementById('cdCoverImg');
 
 	// Restore state from localStorage
-	var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
-	var wasPlaying = localStorage.getItem('musicPlayerPlaying') === 'true';
+		var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
+		var wasPaused = localStorage.getItem('musicPlayerPaused') === 'true';
 
-	// Set initial UI state
-	function updateIcons() {
-		if (audio.paused) {
-			iconPlay.style.display = '';
-			iconPause.style.display = 'none';
-			cdCover.classList.remove('rotating');
-		} else {
-			iconPlay.style.display = 'none';
-			iconPause.style.display = '';
-			cdCover.classList.add('rotating');
+		// Set initial UI state
+		function updateIcons() {
+			if (audio.paused) {
+				if (playBtn.getAttribute('data-intent') === 'pause') {
+					iconPlay.style.display = '';
+					iconPause.style.display = 'none';
+					cdCover.classList.remove('rotating');
+				} else {
+					// If not intentionally paused, show pause icon and rotating CD
+					iconPlay.style.display = 'none';
+					iconPause.style.display = '';
+					cdCover.classList.add('rotating');
+				}
+			} else {
+				iconPlay.style.display = 'none';
+				iconPause.style.display = '';
+				cdCover.classList.add('rotating');
+			}
 		}
-	}
 
 	// Set up global play on any user interaction if needed
 	function globalTryPlay() {
@@ -99,53 +106,57 @@ document.addEventListener('DOMContentLoaded', function() {
 	document.addEventListener('touchstart', globalTryPlay, true);
 	document.addEventListener('keydown', globalTryPlay, true);
 
-	// Play/pause button logic
-	playBtn.addEventListener('click', function(e) {
-		e.preventDefault();
-		if (audio.paused) {
-			playBtn.setAttribute('data-intent', 'play');
-			audio.play().catch(function(){});
-		} else {
-			playBtn.setAttribute('data-intent', 'pause');
-			audio.pause();
-		}
-		updateIcons();
-		localStorage.setItem('musicPlayerPlaying', !audio.paused);
-	});
+		// Play/pause button logic
+		playBtn.addEventListener('click', function(e) {
+			e.preventDefault();
+			if (audio.paused) {
+				playBtn.setAttribute('data-intent', 'play');
+				localStorage.setItem('musicPlayerPaused', 'false');
+				audio.play().catch(function(){});
+			} else {
+				playBtn.setAttribute('data-intent', 'pause');
+				localStorage.setItem('musicPlayerPaused', 'true');
+				audio.pause();
+			}
+			updateIcons();
+		});
 
 	// If user tries to play via keyboard or other means, also set intent
 	playBtn.addEventListener('keydown', function(e) {
 		if (audio.paused) playBtn.setAttribute('data-intent', 'play');
 	});
 
-	// Save play state
-	audio.addEventListener('play', function() {
-		updateIcons();
-		localStorage.setItem('musicPlayerPlaying', 'true');
-	});
-	audio.addEventListener('pause', function() {
-		updateIcons();
-		localStorage.setItem('musicPlayerPlaying', 'false');
-	});
+		// Save play state
+		audio.addEventListener('play', function() {
+			updateIcons();
+			localStorage.setItem('musicPlayerPaused', 'false');
+		});
+		audio.addEventListener('pause', function() {
+			updateIcons();
+			// Only set paused if user intentionally paused
+			if (playBtn.getAttribute('data-intent') === 'pause') {
+				localStorage.setItem('musicPlayerPaused', 'true');
+			}
+		});
 	// Save time
 	audio.addEventListener('timeupdate', function() {
 		localStorage.setItem('musicPlayerTime', audio.currentTime);
 	});
 
-	// Restore time and play state on load
-	audio.addEventListener('loadedmetadata', function() {
-		if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
-			audio.currentTime = savedTime;
-		}
-		if (wasPlaying) {
-			playBtn.setAttribute('data-intent', 'play');
-			audio.play().catch(function(){});
-		} else {
-			playBtn.setAttribute('data-intent', 'pause');
-			audio.pause();
-		}
-		updateIcons();
-	});
+		// Restore time and play state on load
+		audio.addEventListener('loadedmetadata', function() {
+			if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
+				audio.currentTime = savedTime;
+			}
+			if (wasPaused) {
+				playBtn.setAttribute('data-intent', 'pause');
+				audio.pause();
+			} else {
+				playBtn.setAttribute('data-intent', 'play');
+				audio.play().catch(function(){});
+			}
+			updateIcons();
+		});
 
 	// Set UI to match state on first load
 	updateIcons();
