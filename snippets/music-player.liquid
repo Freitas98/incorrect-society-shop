@@ -1,393 +1,100 @@
-<div class="retro-music-player-pixel">
-	<div class="retro-music-title-pixel" id="RetroTrackName">MAFIA
-	</div>
-	<div class="retro-music-controls-pixel">
-		<button id="RetroMusicPrev" class="retro-music-btn-pixel" aria-label="Previous">
-			<span aria-hidden="true">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="15,3 7,10 15,17"/><rect x="4" y="3" width="2" height="14" rx="1"/></svg>
-			</span>
-		</button>
-		<button id="RetroMusicToggle" class="retro-music-btn-pixel" aria-label="Play/Pause">
-			<span id="icon-play" style="display:none">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="5,3 17,10 5,17"/></svg>
-			</span>
-			<span id="icon-pause">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><rect x="4" y="3" width="4" height="14" rx="1"/><rect x="12" y="3" width="4" height="14" rx="1"/></svg>
-			</span>
-		</button>
-		<button id="RetroMusicNext" class="retro-music-btn-pixel" aria-label="Next">
-			<span aria-hidden="true">
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="5,3 13,10 5,17"/><rect x="14" y="3" width="2" height="14" rx="1"/></svg>
-			</span>
-		</button>
-		<div class="retro-music-volume-wrap-pixel">
-			<button id="RetroMusicMute" class="retro-music-btn-pixel" aria-label="Mute" type="button">
-				<span id="icon-volume">
-					<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="3,8 7,8 12,4 12,16 7,12 3,12"/><rect x="14" y="7" width="2" height="6" rx="1"/></svg>
-				</span>
-				<span id="icon-mute" style="display:none">
-					<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><polygon points="3,8 7,8 12,4 12,16 7,12 3,12"/><line x1="15" y1="7" x2="19" y2="13" stroke="currentColor" stroke-width="2"/><line x1="19" y1="7" x2="15" y2="13" stroke="currentColor" stroke-width="2"/></svg>
-				</span>
-			</button>
-			<input type="range" id="RetroMusicVolume" min="0" max="1" step="0.01" value="0.1" class="retro-music-volume-bar-pixel" aria-label="Volume">
-		</div>
-		<!-- Spotify icon button to the right of the volume button -->
-		<button id="RetroMusicSpotify" class="retro-music-btn-pixel" aria-label="Open Spotify Playlist" type="button" style="display:flex;align-items:center;justify-content:center;">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="green" class="bi bi-spotify" viewBox="0 0 16 16">
-  		<path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0m3.669 11.538a.5.5 0 0 1-.686.165c-1.879-1.147-4.243-1.407-7.028-.77a.499.499 0 0 1-.222-.973c3.048-.696 5.662-.397 7.77.892a.5.5 0 0 1 .166.686m.979-2.178a.624.624 0 0 1-.858.205c-2.15-1.321-5.428-1.704-7.972-.932a.625.625 0 0 1-.362-1.194c2.905-.881 6.517-.454 8.986 1.063a.624.624 0 0 1 .206.858m.084-2.268C10.154 5.56 5.9 5.419 3.438 6.166a.748.748 0 1 1-.434-1.432c2.825-.857 7.523-.692 10.492 1.07a.747.747 0 1 1-.764 1.288"/>
-</svg>
-		</button>
-<script>
-// Add click event for Spotify button
-document.addEventListener('DOMContentLoaded', function() {
-	var spotifyBtn = document.getElementById('RetroMusicSpotify');
-	if (spotifyBtn) {
-		spotifyBtn.addEventListener('click', function() {
-			window.open('https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4', '_blank', 'noopener');
-		});
-	}
-});
-</script>
-	</div>
-		<div style="margin-bottom:10px; text-align:center;">
-			<!-- Removed the 'Open in Spotify' button -->
-	</div>
-	<div class="retro-music-progress-row-pixel">
-		<span id="RetroMusicCurrent" class="retro-music-time-pixel">0:00</span>
-		<input type="range" id="RetroMusicSeek" min="0" max="100" value="0" step="1" class="retro-music-progress-bar-pixel" aria-label="Seek">
-		<span id="RetroMusicDuration" class="retro-music-time-pixel">0:00</span>
-	</div>
-	<audio id="RetroAudioPlayer" preload="auto" autoplay></audio>
-
-		<style>
-		@media (max-width: 500px) {
-			.spotify-btn-pixel {
-				font-size: 0.62em !important;
-				padding: 4px 6px !important;
-			}
-			.spotify-btn-pixel svg {
-				width: 10px !important;
-				height: 10px !important;
-			}
-		}
-		</style>
-	<style>
-	@media (max-width: 500px) {
-		.spotify-btn-pixel {
-			font-size: 0.7em !important;
-			padding: 6px 8px !important;
-		}
-		.spotify-btn-pixel svg {
-			width: 13px !important;
-			height: 13px !important;
-		}
-	}
-	</style>
+<div class="cd-music-player-minimal">
+	<a id="cdPlayPause" class="cd-play-btn-minimal" aria-label="Play/Pause">
+		<span id="cd-icon-play">
+			<svg width="38" height="38" viewBox="0 0 38 38" fill="white"><polygon points="10,7 32,19 10,31"/></svg>
+		</span>
+		<span id="cd-icon-pause" style="display:none;">
+			<svg width="38" height="38" viewBox="0 0 38 38" fill="white"><rect x="10" y="7" width="7" height="24" rx="2"/><rect x="21" y="7" width="7" height="24" rx="2"/></svg>
+		</span>
+	</a>
+	<a href="https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4" target="_blank" rel="noopener" tabindex="0">
+		<img height="50" width="50" src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo.jpg?v=1749137548" alt="CD Cover" class="cd-cover-minimal" id="cdCoverImg" />
+	</a>
+	<audio id="cdAudioPlayer" preload="auto" src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"></audio>
 </div>
-
 <style>
-.retro-music-player-pixel {
-	background: #18181a;
-	color: #ffb3c6;
-	border-radius: 10px;
-	padding: 20px;
-	width: 100%;
-	max-width: 420px;
-	user-select: none;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 8px;
-	margin-left: auto;
-	margin-right: auto;
-	box-sizing: border-box;
-    margin-bottom: 20px;
-    overflow-x: auto;
-}
-.retro-music-title-pixel {
-	font-size: 0.9em;
-	color: #fff;
-	margin-bottom: 2px;
-	letter-spacing: 2px;
-	text-align: center;
-	width: 100%;
-	filter: blur(0.5px) brightness(1.2);
-}
-.retro-music-controls-pixel {
+.cd-music-player-minimal {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 12px;
-		width: 100%;
-	background: #18181a;
-	border-radius: 8px;
-	padding: 4px 0 4px 0;
+	gap: 18px;
+	background: transparent;
+	border-radius: 16px;
+	padding: 0;
+	max-width: 220px;
+	margin: 0 auto 20px auto;
 }
-.retro-music-btn-pixel {
-	background: #111;
-	border-radius: 6px;
-	font-size: 1.1em;
-	width: 48px;
-	height: 36px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: background 0.2s, color 0.2s;
+.cd-play-btn-minimal {
+	background: none;
+	border: none;
+	outline: none;
 	cursor: pointer;
 	padding: 0;
-}
-.retro-music-btn-pixel:focus {
-	outline: 2px solid #fff;
-}
-.retro-music-progress-row-pixel {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
-		width: 100%;
 }
-.retro-music-progress-bar-pixel {
-	width: 45%;
-	accent-color: #fff;
-	background: #222;
-	border-radius: 4px;
-	height: 6px;
-	margin: 0 2px;
+.cd-play-btn-minimal svg polygon {
+	transition: fill 0.15s;
 }
-.retro-music-time-pixel {
-	font-size: 0.8em;
-	color: #fff;
-	opacity: 0.8;
-	min-width: 32px;
-	text-align: center;
-	letter-spacing: 1px;
+.cd-play-btn-minimal:hover svg polygon {
+	fill: #8f2b3f;
 }
-.retro-music-volume-wrap-pixel {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+.cd-play-btn-minimal:hover svg rect {
+	fill: #8f2b3f;
 }
-.retro-music-volume-bar-pixel {
-    position: absolute;
-    left: 50%;
-    bottom: 36px;
-    transform: translateX(-50%);
-    width: 14px;
-    height: 64px;
-    background: #222;
-    border-radius: 6px;
-    z-index: 9999;
-    display: none;
-    margin: 0;
-    writing-mode: bt-lr;
-    -webkit-appearance: slider-vertical;
-    appearance: slider-vertical;
-    pointer-events: all;
+
+.cd-cover-minimal {
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	box-shadow: 0 2px 8px #000a;
+	border: 2px solid #222;
+	background: #111;
+	object-fit: cover;
+	transition: box-shadow 0.2s;
 }
-.retro-music-volume-wrap-pixel:hover .retro-music-volume-bar-pixel,
-.retro-music-volume-bar-pixel:hover,
-.retro-music-volume-bar-pixel:focus {
-    display: block;
+.cd-cover-minimal.rotating {
+	animation: cd-spin 2.5s linear infinite;
 }
-@media (max-width: 500px) {
-	.retro-music-player-pixel {
-		min-width: 0;
-		max-width: 98vw;
-		padding: 50px;
-		font-size: 0.78em;
-	}
-	.retro-music-title-pixel {
-		font-size: 0.5em;
-	}
-	.retro-music-controls-pixel { gap: 4px; }
-	.retro-music-btn-pixel { width: 28px; height: 28px; font-size: 0.8em; }
-	.retro-music-progress-bar-pixel { height: 5px; }
-	.spotify-btn-pixel {
-		font-size: 0.6em !important;
-		padding: 3px 4px !important;
-	}
-	.spotify-btn-pixel svg {
-		width: 9px !important;
-		height: 9px !important;
-	}
+@keyframes cd-spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
 }
 </style>
+<script>
+// Minimal CD player: play/pause, rotating CD, click CD to open Spotify
+document.addEventListener('DOMContentLoaded', function() {
+	var audio = document.getElementById('cdAudioPlayer');
+	var playBtn = document.getElementById('cdPlayPause');
+	var iconPlay = document.getElementById('cd-icon-play');
+	var iconPause = document.getElementById('cd-icon-pause');
+	var cdCover = document.getElementById('cdCoverImg');
 
-{% javascript %}
-(function(){
-	const tracks = [
-		{ name: "Port António", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842" },
-		{ name: "Isso é Sério", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842" },
-		{ name: "MAFIA", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841" },
-		{ name: "OLD SKOOL", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841" },
-		{ name: "Push ups", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841" },
-		{ name: "Toni do Rock", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841" },
-		{ name: "COFFEE BEAN", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841" },
-		{ name: "DOVE", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840" },
-		{ name: "Besta", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840" },
-		{ name: "Insomnia", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840" },
-		{ name: "CorDaPele", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839" },
-		{ name: "No Pole", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840" },
-		{ name: "DEEP IN THE WATER", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840" },
-		{ name: "PARKING LOT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839" },
-		{ name: "Nem Metade / Não Me Confundam", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839" },
-		{ name: "Mikasa", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838" },
-		{ name: "Levels", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838" },
-		{ name: "AMANHÃ", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838" },
-		{ name: "THAT'S THAT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837" },
-	];
-	// Restore state from localStorage
-	let current = parseInt(localStorage.getItem('musicPlayerTrack') || '10', 10);
-	const savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
-	const wasPlaying = localStorage.getItem('musicPlayerPlaying') === 'true';
-	const savedVolume = parseFloat(localStorage.getItem('musicPlayerVolume'));
-	const savedMuted = localStorage.getItem('musicPlayerMuted') === 'true';
-	const audio = document.getElementById('RetroAudioPlayer');
-	const toggleBtn = document.getElementById('RetroMusicToggle');
-	const muteBtn = document.getElementById('RetroMusicMute');
-	const iconPlay = document.getElementById('icon-play');
-	const iconPause = document.getElementById('icon-pause');
-	const iconVolume = document.getElementById('icon-volume');
-	const iconMute = document.getElementById('icon-mute');
-	const trackNameEl = document.getElementById('RetroTrackName');
-	const seek = document.getElementById('RetroMusicSeek');
-	const currentTimeEl = document.getElementById('RetroMusicCurrent');
-	const durationEl = document.getElementById('RetroMusicDuration');
-		const prevBtn = document.getElementById('RetroMusicPrev');
-		const nextBtn = document.getElementById('RetroMusicNext');
-		const volumeBar = document.getElementById('RetroMusicVolume');
-
-	function setTrack(idx) {
-    if (idx < 0 || idx >= tracks.length) return;
-    current = idx;
-    audio.src = tracks[current].url;
-    if (trackNameEl) trackNameEl.textContent = tracks[current].name;
-    audio.load();
-    // Reset time display to 0:00 and clear duration until loaded
-    if (currentTimeEl) currentTimeEl.textContent = '0:00';
-    if (durationEl) durationEl.textContent = '--:--';
-    if (seek) seek.value = 0;
-    audio.currentTime = 0;
-    localStorage.setItem('musicPlayerTrack', current);
-    localStorage.setItem('musicPlayerTime', 0);
-    updateIcons();
-}
-	function nextTrack() {
-		setTrack((current + 1) % tracks.length);
-	}
-	function prevTrack() {
-		setTrack((current - 1 + tracks.length) % tracks.length);
-	}
-		function updateIcons() {
-			if (audio.paused) {
-				iconPlay.style.display = '';
-				iconPause.style.display = 'none';
-			} else {
-				iconPlay.style.display = 'none';
-				iconPause.style.display = '';
-			}
-			if (audio.muted || audio.volume === 0) {
-				iconVolume.style.display = 'none';
-				iconMute.style.display = '';
-			} else {
-				iconVolume.style.display = '';
-				iconMute.style.display = 'none';
-			}
-			if (volumeBar) volumeBar.value = audio.volume;
-		}
-	toggleBtn.addEventListener('click', function(){
+	function updateIcons() {
 		if (audio.paused) {
-			audio.play().catch(()=>{});
+			iconPlay.style.display = '';
+			iconPause.style.display = 'none';
+			cdCover.classList.remove('rotating');
+		} else {
+			iconPlay.style.display = 'none';
+			iconPause.style.display = '';
+			cdCover.classList.add('rotating');
+		}
+	}
+
+	playBtn.addEventListener('click', function() {
+		if (audio.paused) {
+			audio.play();
 		} else {
 			audio.pause();
 		}
 		updateIcons();
 	});
-		muteBtn.addEventListener('click', function(){
-		audio.muted = !audio.muted;
-		localStorage.setItem('musicPlayerMuted', audio.muted);
-		updateIcons();
-	});
-		if (volumeBar) {
-			volumeBar.addEventListener('input', function(){
-				audio.volume = parseFloat(volumeBar.value);
-				if (audio.volume === 0) audio.muted = true;
-				else audio.muted = false;
-				localStorage.setItem('musicPlayerVolume', audio.volume);
-				localStorage.setItem('musicPlayerMuted', audio.muted);
-				updateIcons();
-			});
-		}
-	prevBtn.addEventListener('click', function(){
-		setTrack((current - 1 + tracks.length) % tracks.length);
-		localStorage.setItem('musicPlayerTrack', current);
-		localStorage.setItem('musicPlayerTime', 0);
-	});
-	nextBtn.addEventListener('click', function(){
-		setTrack((current + 1) % tracks.length);
-		localStorage.setItem('musicPlayerTrack', current);
-		localStorage.setItem('musicPlayerTime', 0);
-	});
-	audio.addEventListener('play', function(){
-		localStorage.setItem('musicPlayerPlaying', 'true');
-		updateIcons();
-	});
-	audio.addEventListener('pause', function(){
-		localStorage.setItem('musicPlayerPlaying', 'false');
-		updateIcons();
-	});
-	audio.addEventListener('ended', nextTrack);
-	audio.addEventListener('timeupdate', function(){
-		if (!seek || !audio.duration) return;
-		seek.value = Math.floor((audio.currentTime / audio.duration) * 100);
-		if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
-		if (durationEl) durationEl.textContent = formatTime(audio.duration);
-		localStorage.setItem('musicPlayerTime', audio.currentTime);
-	});
-	audio.addEventListener('loadedmetadata', function(){
-    if (durationEl) durationEl.textContent = formatTime(audio.duration);
-    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
-    if (seek && audio.duration) seek.value = Math.floor((audio.currentTime / audio.duration) * 100);
-});
-	seek.addEventListener('input', function(){
-		if (!audio.duration) return;
-		audio.currentTime = (seek.value / 100) * audio.duration;
-		localStorage.setItem('musicPlayerTime', audio.currentTime);
-	});
-	// Set initial volume and track, update icons
-if (!isNaN(savedVolume)) audio.volume = savedVolume;
-if (typeof savedMuted === 'boolean') audio.muted = savedMuted;
-setTrack(current);
-updateIcons();
-// Restore time and play state
 
-audio.addEventListener('loadedmetadata', function(){
-    if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
-        audio.currentTime = savedTime;
-        // Force update of time display
-        if (currentTimeEl) currentTimeEl.textContent = formatTime(savedTime);
-        if (seek && audio.duration) seek.value = Math.floor((savedTime / audio.duration) * 100);
-    }
-    if (wasPlaying) {
-        audio.play().catch(()=>{});
-    } else {
-        audio.pause();
-    }
-    if (!isNaN(savedVolume)) audio.volume = savedVolume;
-    if (typeof savedMuted === 'boolean') audio.muted = savedMuted;
+	audio.addEventListener('play', updateIcons);
+	audio.addEventListener('pause', updateIcons);
+	updateIcons();
 });
-// Always update time display on play
-audio.addEventListener('play', function(){
-    if (currentTimeEl) currentTimeEl.textContent = formatTime(audio.currentTime);
-    if (seek && audio.duration) seek.value = Math.floor((audio.currentTime / audio.duration) * 100);
-});
-// Place formatTime before any event listeners or calls
-function formatTime(sec) {
-    if (!isFinite(sec)) return '0:00';
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return m + ':' + (s < 10 ? '0' : '') + s;
-}
-})();
-{% endjavascript %}
+</script>
