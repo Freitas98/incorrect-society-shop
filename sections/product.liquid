@@ -179,8 +179,6 @@
     text-align: left;
     padding: 18px 24px;
     font-size: 18px;
-    font-weight: 600;
-    color: #fff;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
     position: relative;
@@ -188,7 +186,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: var(--color-foreground);
   }
+
   .accordion-toggle.active, .accordion-toggle:focus {
     color: #fff;
   }
@@ -197,11 +199,11 @@
     display: inline-block;
     border: solid #fff;
     border-width: 0 3px 3px 0;
-    padding: 6px;
+    padding: 4px;
     transform: rotate(45deg);
     transition: transform 0.3s;
     margin-left: auto;
-    margin-right: 0;
+    margin-right: 4px;
   }
   .accordion-toggle.active::after {
     transform: rotate(-135deg);
@@ -505,16 +507,17 @@
     width: 100%;
     padding: 20px 35px;
     background-color: transparent;
-    border: 2px solid var(--color-foreground);
     color: var(--color-foreground);
     font-size: 17px;
-    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 2px;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    text-transform: uppercase;
+    color: var(--color-foreground);
+    margin: 0 0 18px 0;
   }
 
   .add-to-cart-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background-color: color-mix(in oklab, var(--color-accent), transparent 80%); transition: left 0.3s ease; z-index: -1; }
