@@ -68,6 +68,15 @@
 </style>
 <script>
 
+// --- SHUFFLE UTILITY ---
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 const tracks = [
     { name: "Port António", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842" },
     { name: "Isso é Sério", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842" },
@@ -90,6 +99,28 @@ const tracks = [
     { name: "THAT'S THAT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837" },
 ];
 
+// --- SHUFFLE SESSION LOGIC ---
+function getShuffledOrder() {
+    let order = localStorage.getItem('musicPlayerShuffledOrder');
+    if (order) {
+        try {
+            order = JSON.parse(order);
+            if (Array.isArray(order) && order.length === tracks.length) return order;
+        } catch(e) {}
+    }
+    // If no order or invalid, create new shuffled order
+    const arr = Array.from({length: tracks.length}, (_, i) => i);
+    const shuffled = shuffleArray(arr);
+    localStorage.setItem('musicPlayerShuffledOrder', JSON.stringify(shuffled));
+    return shuffled;
+}
+
+const shuffledOrder = getShuffledOrder();
+
+function getTrackByShuffledIndex(idx) {
+    return tracks[shuffledOrder[idx]];
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var audio = document.getElementById('cdAudioPlayer');
     var playBtn = document.getElementById('cdPlayPause');
@@ -99,13 +130,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- TRACK INDEX LOGIC ---
     var savedTrack = parseInt(localStorage.getItem('musicPlayerTrack'), 10);
-    var currentTrack = !isNaN(savedTrack) ? savedTrack : 10; // Default to CorDaPele (index 10)
+    var currentTrack = !isNaN(savedTrack) ? savedTrack : 0; // Default to first in shuffled order
     // Only set track if not already set (prevents reset on navigation)
     function setTrack(idx) {
         if (idx < 0 || idx >= tracks.length) return;
         currentTrack = idx;
-        if (audio.src !== tracks[currentTrack].url) {
-            audio.src = tracks[currentTrack].url;
+        var trackObj = getTrackByShuffledIndex(currentTrack);
+        if (audio.src !== trackObj.url) {
+            audio.src = trackObj.url;
         }
         localStorage.setItem('musicPlayerTrack', currentTrack);
         // Reset time for new track
@@ -121,16 +153,22 @@ document.addEventListener('DOMContentLoaded', function() {
         setTrack(currentTrack);
     } else {
         // If the src is not correct (e.g. after navigation), restore it without resetting time
-        if (audio.src !== tracks[currentTrack].url) {
-            audio.src = tracks[currentTrack].url;
+        var trackObj = getTrackByShuffledIndex(currentTrack);
+        if (audio.src !== trackObj.url) {
+            audio.src = trackObj.url;
         }
     }
 
     // Restore state from localStorage
     var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
     var wasPaused = localStorage.getItem('musicPlayerPaused') === 'true';
+    // Always set play intent unless user intentionally paused
     if (!wasPaused) {
         playBtn.setAttribute('data-intent', 'play');
+        // Try to play immediately
+        audio.play().catch(function(){});
+    } else {
+        playBtn.setAttribute('data-intent', 'pause');
     }
     function updateIcons() {
         if (audio.paused) {
@@ -145,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     function globalTryPlay(e) {
         if (e && playBtn.contains(e.target)) return;
+        // Always try to play unless user intentionally paused
         if (audio.paused && localStorage.getItem('musicPlayerPaused') !== 'true') {
             playBtn.setAttribute('data-intent', 'play');
             audio.play().catch(function(){});
@@ -175,11 +214,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     audio.addEventListener('play', function() {
         updateIcons();
-        localStorage.setItem('musicPlayerPaused', 'false');
+        // Only set paused to false if user did not intentionally pause
+        if (playBtn.getAttribute('data-intent') === 'play') {
+            localStorage.setItem('musicPlayerPaused', 'false');
+        }
     });
     audio.addEventListener('pause', function() {
         updateIcons();
-        localStorage.setItem('musicPlayerPaused', 'true');
+        // Only set paused to true if user intentionally paused
+        if (playBtn.getAttribute('data-intent') === 'pause') {
+            localStorage.setItem('musicPlayerPaused', 'true');
+        }
     });
     audio.addEventListener('timeupdate', function() {
         localStorage.setItem('musicPlayerTime', audio.currentTime);
@@ -188,12 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
             audio.currentTime = savedTime;
         }
-        if (wasPaused) {
-            playBtn.setAttribute('data-intent', 'pause');
-            audio.pause();
-        } else {
+        // Always try to play unless user intentionally paused
+        if (localStorage.getItem('musicPlayerPaused') !== 'true') {
             playBtn.setAttribute('data-intent', 'play');
             audio.play().catch(function(){});
+        } else {
+            playBtn.setAttribute('data-intent', 'pause');
+            audio.pause();
         }
         updateIcons();
     });
