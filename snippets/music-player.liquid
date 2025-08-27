@@ -67,95 +67,136 @@
 }
 </style>
 <script>
-// Minimal CD player: play/pause, rotating CD, click CD to open Spotify, and persist state
+
+const tracks = [
+    { name: "Port António", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842" },
+    { name: "Isso é Sério", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842" },
+    { name: "MAFIA", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841" },
+    { name: "OLD SKOOL", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841" },
+    { name: "Push ups", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841" },
+    { name: "Toni do Rock", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841" },
+    { name: "COFFEE BEAN", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841" },
+    { name: "DOVE", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840" },
+    { name: "Besta", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840" },
+    { name: "Insomnia", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840" },
+    { name: "CorDaPele", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839" },
+    { name: "No Pole", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840" },
+    { name: "DEEP IN THE WATER", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840" },
+    { name: "PARKING LOT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839" },
+    { name: "Nem Metade / Não Me Confundam", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839" },
+    { name: "Mikasa", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838" },
+    { name: "Levels", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838" },
+    { name: "AMANHÃ", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838" },
+    { name: "THAT'S THAT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837" },
+];
+
 document.addEventListener('DOMContentLoaded', function() {
-	var audio = document.getElementById('cdAudioPlayer');
-	var playBtn = document.getElementById('cdPlayPause');
-	var iconPlay = document.getElementById('cd-icon-play');
-	var iconPause = document.getElementById('cd-icon-pause');
-	var cdCover = document.getElementById('cdCoverImg');
+    var audio = document.getElementById('cdAudioPlayer');
+    var playBtn = document.getElementById('cdPlayPause');
+    var iconPlay = document.getElementById('cd-icon-play');
+    var iconPause = document.getElementById('cd-icon-pause');
+    var cdCover = document.getElementById('cdCoverImg');
 
-	// Restore state from localStorage
-		var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
-			var wasPaused = localStorage.getItem('musicPlayerPaused') === 'true';
-			// Always set intent to play by default unless user paused
-			if (!wasPaused) {
-				playBtn.setAttribute('data-intent', 'play');
-			}
+    // --- TRACK INDEX LOGIC ---
+    var savedTrack = parseInt(localStorage.getItem('musicPlayerTrack'), 10);
+    var currentTrack = !isNaN(savedTrack) ? savedTrack : 10; // Default to CorDaPele (index 10)
+    // Only set track if not already set (prevents reset on navigation)
+    function setTrack(idx) {
+        if (idx < 0 || idx >= tracks.length) return;
+        currentTrack = idx;
+        if (audio.src !== tracks[currentTrack].url) {
+            audio.src = tracks[currentTrack].url;
+        }
+        localStorage.setItem('musicPlayerTrack', currentTrack);
+        // Reset time for new track
+        localStorage.setItem('musicPlayerTime', 0);
+        audio.currentTime = 0;
+        // If not paused, play immediately
+        if (playBtn.getAttribute('data-intent') === 'play' && !audio.paused) {
+            audio.play().catch(function(){});
+        }
+    }
+    // Only set initial track if no saved track
+    if (isNaN(savedTrack)) {
+        setTrack(currentTrack);
+    } else {
+        // If the src is not correct (e.g. after navigation), restore it without resetting time
+        if (audio.src !== tracks[currentTrack].url) {
+            audio.src = tracks[currentTrack].url;
+        }
+    }
 
-			// Set initial UI state
-			function updateIcons() {
-				if (audio.paused) {
-					iconPlay.style.display = '';
-					iconPause.style.display = 'none';
-					cdCover.classList.remove('rotating');
-				} else {
-					iconPlay.style.display = 'none';
-					iconPause.style.display = '';
-					cdCover.classList.add('rotating');
-				}
-			}
-
-		// Set up global play on any user interaction if needed
-		function globalTryPlay() {
-			if (audio.paused && playBtn.getAttribute('data-intent') === 'play') {
-				audio.play().catch(function(){});
-			}
-		}
-		document.addEventListener('click', globalTryPlay, true);
-		document.addEventListener('touchstart', globalTryPlay, true);
-		document.addEventListener('keydown', globalTryPlay, true);
-
-			// Play/pause button logic
-			playBtn.addEventListener('click', function(e) {
-				e.preventDefault();
-				if (audio.paused) {
-					playBtn.setAttribute('data-intent', 'play');
-					localStorage.setItem('musicPlayerPaused', 'false');
-					audio.play().catch(function(){});
-				} else {
-					playBtn.setAttribute('data-intent', 'pause');
-					localStorage.setItem('musicPlayerPaused', 'true');
-					audio.pause();
-				}
-				// updateIcons will be called by play/pause event listeners
-			});
-
-	// If user tries to play via keyboard or other means, also set intent
-	playBtn.addEventListener('keydown', function(e) {
-		if (audio.paused) playBtn.setAttribute('data-intent', 'play');
-	});
-
-			// Save play state
-			audio.addEventListener('play', function() {
-				updateIcons();
-				localStorage.setItem('musicPlayerPaused', 'false');
-			});
-			audio.addEventListener('pause', function() {
-				updateIcons();
-				localStorage.setItem('musicPlayerPaused', 'true');
-			});
-	// Save time
-	audio.addEventListener('timeupdate', function() {
-		localStorage.setItem('musicPlayerTime', audio.currentTime);
-	});
-
-		// Restore time and play state on load
-		audio.addEventListener('loadedmetadata', function() {
-			if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
-				audio.currentTime = savedTime;
-			}
-			if (wasPaused) {
-				playBtn.setAttribute('data-intent', 'pause');
-				audio.pause();
-			} else {
-				playBtn.setAttribute('data-intent', 'play');
-				audio.play().catch(function(){});
-			}
-			updateIcons();
-		});
-
-	// Set UI to match state on first load
-	updateIcons();
+    // Restore state from localStorage
+    var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
+    var wasPaused = localStorage.getItem('musicPlayerPaused') === 'true';
+    if (!wasPaused) {
+        playBtn.setAttribute('data-intent', 'play');
+    }
+    function updateIcons() {
+        if (audio.paused) {
+            iconPlay.style.display = '';
+            iconPause.style.display = 'none';
+            cdCover.classList.remove('rotating');
+        } else {
+            iconPlay.style.display = 'none';
+            iconPause.style.display = '';
+            cdCover.classList.add('rotating');
+        }
+    }
+    function globalTryPlay(e) {
+        if (e && playBtn.contains(e.target)) return;
+        if (audio.paused && localStorage.getItem('musicPlayerPaused') !== 'true') {
+            playBtn.setAttribute('data-intent', 'play');
+            audio.play().catch(function(){});
+        }
+    }
+    document.addEventListener('click', globalTryPlay, true);
+    document.addEventListener('touchstart', globalTryPlay, true);
+    document.addEventListener('keydown', globalTryPlay, true);
+    playBtn.addEventListener('click', function(e) {
+        if (playBtn.getAttribute('data-intent') === 'play' && audio.paused) {
+            audio.play().catch(function(){});
+        }
+    });
+    playBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (audio.paused) {
+            playBtn.setAttribute('data-intent', 'play');
+            localStorage.setItem('musicPlayerPaused', 'false');
+            audio.play().catch(function(){});
+        } else {
+            playBtn.setAttribute('data-intent', 'pause');
+            localStorage.setItem('musicPlayerPaused', 'true');
+            audio.pause();
+        }
+    });
+    playBtn.addEventListener('keydown', function(e) {
+        if (audio.paused) playBtn.setAttribute('data-intent', 'play');
+    });
+    audio.addEventListener('play', function() {
+        updateIcons();
+        localStorage.setItem('musicPlayerPaused', 'false');
+    });
+    audio.addEventListener('pause', function() {
+        updateIcons();
+        localStorage.setItem('musicPlayerPaused', 'true');
+    });
+    audio.addEventListener('timeupdate', function() {
+        localStorage.setItem('musicPlayerTime', audio.currentTime);
+    });
+    audio.addEventListener('loadedmetadata', function() {
+        if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
+            audio.currentTime = savedTime;
+        }
+        if (wasPaused) {
+            playBtn.setAttribute('data-intent', 'pause');
+            audio.pause();
+        } else {
+            playBtn.setAttribute('data-intent', 'play');
+            audio.play().catch(function(){});
+        }
+        updateIcons();
+    });
+    updateIcons();
 });
 </script>
