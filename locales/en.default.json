@@ -189,7 +189,8 @@
     "sms_legal": "Message and data rates may apply. Consent is not a condition of purchase. Reply STOP to unsubscribe.",
     "sms_phone_required": "Please enter a valid phone number to opt into SMS.",
     "verifying": "Verifying...",
-    "captcha_message": "Please complete the verification to finish your subscription."
+    "captcha_message": "Please complete the verification to finish your subscription.",
+    "check_email_discount": "After subscribing, check your email to get your exclusive discount code!"
   },
   "return_policy": {
     "title": "In case you would like to return something",

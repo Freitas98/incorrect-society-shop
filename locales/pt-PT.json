@@ -189,7 +189,8 @@
     "sms_legal": "Podem aplicar-se custos de mensagens. O consentimento não é condição de compra. Responde STOP para cancelar.",
     "sms_phone_required": "Introduz um número de telemóvel válido para aderir aos SMS.",
     "verifying": "A verificar...",
-    "captcha_message": "Conclui a verificação para finalizar a subscrição."
+    "captcha_message": "Conclui a verificação para finalizar a subscrição.",
+    "check_email_discount": "Após subscrever, verifique o seu email para receber o seu código de desconto exclusivo!"
   },
   "return_policy": {
     "title": "Caso você queira devolver algo",
