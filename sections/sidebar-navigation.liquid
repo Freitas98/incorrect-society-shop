@@ -56,6 +56,7 @@
     transition: left 0.3s ease;
     z-index: 1002;
     overflow-y: auto;
+  overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
   }
@@ -104,15 +105,19 @@
   }
 
   .sidebar-content {
-    display: flex;
-    flex-direction: column;
-    height: 90%;
-    padding: 0;
+  display: flex;
+  flex-direction: column;
+  /* Let content grow and scroll if needed */
+  height: auto;
+  max-height: 100%;
+  padding: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   }
 
   .sidebar-menu-section {
-    flex: 1;
-    padding: 20px 0;
+  flex: 1 1 auto;
+  padding: 20px 0;
   }
 
   .sidebar-menu {
@@ -139,7 +144,7 @@
   .sidebar-menu-link:hover { background-color: transparent; color: var(--color-accent); }
 
   .sidebar-footer {
-    margin-top: auto;
+    margin-top: 100px;
     padding: 30px 20px;
     border-top: none;
     background-color: var(--color-background);
@@ -210,27 +215,43 @@
     .sidebar {
       width: 100%;
       left: -100%;
+      height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
     }
     
     .sidebar.open {
-      height: 100%;
+      height: calc(100% - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
       left: 0;
     }
 
-      .sidebar-content {
-        height: 70%;
+    .sidebar-content {
+      height: auto;
+      max-height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
     }
+
+    
+    .sidebar-footer {
+      margin-top: auto;
+    } 
   }
 
     @media (max-width: 350px) {
-    .sidebar-content {
-        height: 70%;
+      .sidebar-content {
+        height: auto;
+        max-height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      } 
     }
-  }
+
   /* Desktop: never show overlay */
   @media (min-width: 771px) {
     .sidebar-overlay { display: none; }
   }
+  
 {% endstylesheet %}
 
 {% javascript %}
