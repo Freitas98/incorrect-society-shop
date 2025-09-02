@@ -353,8 +353,8 @@
   "shopify": {
     "checkout": {
       "contact": {
-        "company_label": "NIF",
-        "optional_company_label": "NIF (opcional)"
+        "company_label": "VAT",
+        "optional_company_label": "VAT (opcional)"
       }
     }
   }
