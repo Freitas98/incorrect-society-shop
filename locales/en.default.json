@@ -354,7 +354,7 @@
     "checkout": {
       "contact": {
         "company_label": "VAT",
-        "optional_company_label": "VAT (opcional)"
+        "optional_company_label": "VAT (optional)"
       }
     }
   }
