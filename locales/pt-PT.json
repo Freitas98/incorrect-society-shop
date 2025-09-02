@@ -118,7 +118,7 @@
     "refund_policy": "Política de Reembolso",
     "newsletter": "Newsletter",
     "size_guide": "Guia de Tamanhos",
-    "contact_us": "Contacta-nos",
+    "contact_us": "Contacta-nos"
   },
   "general": {
     "cancel": "Cancelar",
@@ -196,7 +196,7 @@
     "title": "Caso você queira devolver algo",
     "intro_html": "Na <strong>Incorrect Society</strong>, queremos que fiques totalmente satisfeito com a tua compra. Se não estiveres satisfeito, oferecemos uma política de reembolso sem complicações.",
     "processing_highlight_html": "<strong>Importante:</strong> Todos os pedidos de reembolso devem ser iniciados dentro de 14 dias após receberes a tua encomenda.",
-    "refund_policy_html": "<h3>Política de Reembolso<\/h3>\n<p>Na Incorrect Society, oferecemos reembolsos para produtos que estejam claramente danificados ou apresentem erros conforme definido pelos nossos padrões de qualidade.<\/p>\n<p>Para solicitar um reembolso, <a href=\"/pt/pages/contact-us\">entre em contato<\/a> com a nossa equipa de apoio ao cliente dentro de 14 dias após receber o seu produto, fornecendo o número do pedido e uma descrição detalhada do problema, incluindo fotografias se aplicável.<\/p>\n<p>Se aprovado, o valor total pago será devolvido ao seu método de pagamento original.<\/p>\n<p>Esta política não cobre danos devido a uso indevido, alteração ou desgaste normal, e não se aplica a itens de liquidação ou venda final.<\/p>"
+    "refund_policy_html": "<h3>Política de Reembolso</h3>\n<p>Na Incorrect Society, oferecemos reembolsos para produtos que estejam claramente danificados ou apresentem erros conforme definido pelos nossos padrões de qualidade.</p>\n<p>Para solicitar um reembolso, <a href=\"/pt/pages/contact-us\">entre em contato</a> com a nossa equipa de apoio ao cliente dentro de 14 dias após receber o seu produto, fornecendo o número do pedido e uma descrição detalhada do problema, incluindo fotografias se aplicável.</p>\n<p>Se aprovado, o valor total pago será devolvido ao seu método de pagamento original.</p>\n<p>Esta política não cobre danos devido a uso indevido, alteração ou desgaste normal, e não se aplica a itens de liquidação ou venda final.</p>"
   },
   "shipping": {
     "title": "Informação de Envio",
@@ -222,7 +222,7 @@
     "restrictions_title": "Restrições de envio",
     "restrictions_intro": "Enviamos para a maioria dos países. Algumas zonas remotas podem não estar disponíveis.",
     "lost_title": "Encomendas perdidas ou danificadas",
-  "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, <a href=\"/pt/pages/contact-us\">contacta-nos</a>.",
+    "lost_intro_html": "Se a tua encomenda se perder ou sofrer danos, <a href=\"/pt/pages/contact-us\">contacta-nos</a>.",
     "contact_highlight_html": "Para dúvidas, <a href=\"/pt/pages/contact-us\">fala com a nossa equipa.</a>"
   },
   "terms": {
@@ -254,7 +254,7 @@
     "section10_title": "10. Alterações aos Termos",
     "section10_html": "Podemos atualizar estes termos a qualquer momento. O uso contínuo implica aceitação.",
     "last_updated_label": "Última atualização:",
-  "contact_label_html": "Para questões sobre estes termos, <a href=\"/pt/pages/contact-us\">contacta-nos</a>."
+    "contact_label_html": "Para questões sobre estes termos, <a href=\"/pt/pages/contact-us\">contacta-nos</a>."
   },
   "challenge": {
     "title": "Por favor confirma que és humano",
@@ -348,6 +348,14 @@
     "send_message": "Enviar mensagem",
     "contact_note": "A tua mensagem será enviada diretamente para a equipa Incorrect Society.",
     "contact_now": "CONTACTA-NOS AGORA",
-  "contact_prompt_html": "Contacta-nos para dar feedback ou fazer perguntas."
+    "contact_prompt_html": "Contacta-nos para dar feedback ou fazer perguntas."
+  },
+  "shopify": {
+    "checkout": {
+      "contact": {
+        "company_label": "NIF",
+        "optional_company_label": "NIF (opcional)"
+      }
+    }
   }
 }
