@@ -1,7 +1,7 @@
 <style>
   .size-guide-container {
-  background-color: var(--color-background);
-  color: var(--color-foreground);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     padding: 60px 20px;
     max-width: 1200px;
     margin: 0 auto;
@@ -43,14 +43,16 @@
     flex-direction: column;
     gap: 20px;
   }
-  .table-with-diagram.stacked .garment-diagram { width: 100%; }
+  .table-with-diagram.stacked .garment-diagram {
+    width: 100%;
+  }
 
   .table-container {
     flex: 1;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-x: contain;
-  position: relative;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    position: relative;
   }
 
   .table-title {
@@ -94,7 +96,9 @@
   }
 
   /* Mobile stacked list for measurements */
-  .mobile-size-list { display: none; }
+  .mobile-size-list {
+    display: none;
+  }
   .size-list-grid {
     display: flex;
     flex-wrap: wrap;
@@ -211,7 +215,7 @@
   }
 
   .diagram-image {
-  max-width: 280px;
+    max-width: 280px;
     height: auto;
     filter: invert(1);
     opacity: 0.9;
@@ -223,7 +227,9 @@
       flex-direction: column;
       gap: 20px;
     }
-    .garment-diagram { width: 100%; }
+    .garment-diagram {
+      width: 100%;
+    }
   }
 
   @media (max-width: 1050px) {
@@ -232,7 +238,7 @@
       gap: 20px;
     }
 
-  .size-guide-container {
+    .size-guide-container {
       padding: 40px 15px;
     }
 
@@ -251,49 +257,66 @@
       font-size: 1.5rem;
     }
 
-  .size-table {
+    .size-table {
       font-size: 0.9rem;
     }
 
-  .size-table th,
-  .size-table td {
+    .size-table th,
+    .size-table td {
       padding: 15px 8px;
     }
 
-  .unit-tab {
+    .unit-tab {
       padding: 8px 16px;
       font-size: 0.9rem;
     }
 
-    .garment-diagram { width: 100%; }
-    .diagram-image { max-width: min(80vw, 320px); }
+    .garment-diagram {
+      width: 100%;
+    }
+    .diagram-image {
+      max-width: min(80vw, 320px);
+    }
   }
 
   /* Swap to stacked list on small screens */
   @media (max-width: 1050px) {
-    .table-container { display: none; }
-    .mobile-size-list { display: block; }
+    .table-container {
+      display: none;
+    }
+    .mobile-size-list {
+      display: block;
+    }
   }
 
   @media (max-width: 480px) {
-  .size-table th,
-  .size-table td {
+    .size-table th,
+    .size-table td {
       padding: 12px 4px;
       font-size: 0.9rem;
     }
-  .diagram-image { max-width: min(90vw, 300px); }
+    .diagram-image {
+      max-width: min(90vw, 300px);
+    }
   }
 
   /* Extra-small devices */
   @media (max-width: 360px) {
-    .size-guide-title { font-size: 1.8rem; }
+    .size-guide-title {
+      font-size: 1.8rem;
+    }
     .size-table th,
     .size-table td {
       min-width: 100px;
       font-size: 0.85rem;
     }
-    .unit-tab { font-size: 0.85rem; padding: 8px 12px; }
-    .diagram-image { max-width: min(92vw, 280px); }
+    .unit-tab {
+      font-size: 0.85rem;
+      padding: 8px 12px;
+    }
+    .diagram-image {
+      max-width: min(92vw, 280px);
+    }
   }
 </style>
 
@@ -378,76 +401,122 @@
       <div class="mobile-size-list">
         <div id="tshirt-list-cm" class="size-list-grid" style="display: flex;">
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">S</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">M</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">L</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">XL</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XL</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
         </div>
-  <div id="tshirt-list-inches" class="size-list-grid" style="display: none;">
+        <div id="tshirt-list-inches" class="size-list-grid" style="display: none;">
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">S</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">M</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">L</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">XL</span> {{ 'size_guide.t_shirts' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XL</span> {{ 'size_guide.t_shirts' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
         </div>
       </div>
-      
+
       <div class="garment-diagram">
-        <img src="{{ 'tshirt-diagram.svg' | asset_url }}" alt="T-Shirt Measurement Diagram" class="diagram-image" width="280" height="326">
+        <img
+          src="{{ 'tshirt-diagram.svg' | asset_url }}"
+          alt="T-Shirt Measurement Diagram"
+          class="diagram-image"
+          width="280"
+          height="326"
+        >
       </div>
     </div>
   </div>
@@ -522,83 +591,133 @@
       <div class="mobile-size-list">
         <div id="hoodie-list-cm" class="size-list-grid" style="display: flex;">
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">S</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">M</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">L</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">XL</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XL</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'a', unit: 'cm' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'b', unit: 'cm' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'c', unit: 'cm' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'c', unit: 'cm' %}</dd>
             </dl>
           </div>
         </div>
-  <div id="hoodie-list-inches" class="size-list-grid" style="display: none;">
+        <div id="hoodie-list-inches" class="size-list-grid" style="display: none;">
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">S</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 's', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">M</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'm', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">L</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'l', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
           <div class="mobile-size-card">
-            <div class="mobile-size-card__title"><span class="mobile-size-card__badge">XL</span> {{ 'size_guide.hoodies' | t }}</div>
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XL</span> {{ 'size_guide.hoodies' | t }}
+            </div>
             <dl class="mobile-size-measurements">
-              <dt>A</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'a', unit: 'inches' %}</dd>
-              <dt>B</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'b', unit: 'inches' %}</dd>
-              <dt>C</dt><dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'c', unit: 'inches' %}</dd>
+              <dt>A</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt>
+              <dd>{% render 'size-measurements', garment: 'hoodie', size: 'xl', point: 'c', unit: 'inches' %}</dd>
             </dl>
           </div>
         </div>
       </div>
-      
+
       <div class="garment-diagram">
-        <img src="{{ 'hoodie-diagram.svg' | asset_url }}" alt="Hoodie Measurement Diagram" class="diagram-image" width="280" height="373">
+        <img
+          src="{{ 'hoodie-diagram.svg' | asset_url }}"
+          alt="Hoodie Measurement Diagram"
+          class="diagram-image"
+          width="280"
+          height="373"
+        >
       </div>
     </div>
   </div>
 
   <p class="measurement-note">
-    <span id="measurement-note-cm" style="display: block;">{% render 'size-measurements', action: 'note', unit: 'cm' %}</span>
-    <span id="measurement-note-inches" style="display: none;">{% render 'size-measurements', action: 'note', unit: 'inches' %}</span>
+    <span id="measurement-note-cm" style="display: block;">
+      {%- render 'size-measurements', action: 'note', unit: 'cm' -%}
+    </span>
+    <span id="measurement-note-inches" style="display: none;">
+      {%- render 'size-measurements', action: 'note', unit: 'inches' -%}
+    </span>
   </p>
 </div>
 
@@ -634,7 +753,7 @@
       tab.classList.remove('active');
       tab.setAttribute('aria-pressed', 'false');
     });
-    
+
     // Add active class to the clicked unit tabs
   const activeTabs = document.querySelectorAll('.unit-tab');
   activeTabs.forEach(tab => {
@@ -644,23 +763,23 @@
     tab.setAttribute('aria-pressed', 'true');
       }
     });
-    
+
     // Switch T-shirt table units
     const tshirtCmBody = document.getElementById('tshirt-cm');
     const tshirtInchesBody = document.getElementById('tshirt-inches');
   const tshirtListCm = document.getElementById('tshirt-list-cm');
   const tshirtListInches = document.getElementById('tshirt-list-inches');
-    
+
     // Switch Hoodie table units
     const hoodieCmBody = document.getElementById('hoodie-cm');
     const hoodieInchesBody = document.getElementById('hoodie-inches');
   const hoodieListCm = document.getElementById('hoodie-list-cm');
   const hoodieListInches = document.getElementById('hoodie-list-inches');
-    
+
     // Switch measurement note
     const noteCm = document.getElementById('measurement-note-cm');
     const noteInches = document.getElementById('measurement-note-inches');
-    
+
     if (unit === 'cm') {
       // Show CM, hide inches for both tables
       tshirtCmBody.style.display = 'table-row-group';

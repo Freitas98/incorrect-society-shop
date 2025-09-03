@@ -70,7 +70,9 @@
   }
 
   /* Utility for inline red highlights */
-  .policy-accent { color: var(--color-accent); }
+  .policy-accent {
+    color: var(--color-accent);
+  }
 
   @media (max-width: 768px) {
     .policy-page {
@@ -97,7 +99,7 @@
   {% if page.handle == 'shipping-policy' %}
     {% assign translated_title = 'policies.shipping_policy' | t %}
   {% elsif page.handle == 'terms-of-service' %}
-    {% assign translated_title = 'policies.terms_of_service' | t %}  
+    {% assign translated_title = 'policies.terms_of_service' | t %}
   {% elsif page.handle == 'return-policy' %}
     {% assign translated_title = 'policies.return_policy' | t %}
   {% elsif page.handle == 'newsletter' %}
@@ -106,7 +108,7 @@
     {% assign translated_title = 'policies.contact_us' | t %}
   {% endif %}
   <h1 class="policy-title">{{ translated_title }}</h1>
-  
+
   <div class="policy-content">
     {% if page.handle == 'shipping-policy' %}
       {% render 'shipping-policy-content' %}

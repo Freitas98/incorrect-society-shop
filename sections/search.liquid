@@ -16,11 +16,11 @@
             <!-- Search magnifying glass -->
             <circle cx="80" cy="80" r="30" fill="none" stroke="var(--color-accent)" stroke-width="4"/>
             <line x1="105" y1="105" x2="130" y2="130" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round"/>
-            
+
             <!-- X mark inside the magnifying glass -->
             <line x1="65" y1="65" x2="95" y2="95" stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round"/>
             <line x1="95" y1="65" x2="65" y2="95" stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round"/>
-            
+
             <!-- Dotted lines around for "searching" effect -->
             <circle cx="100" cy="100" r="60" fill="none" stroke="var(--color-border)" stroke-width="2" stroke-dasharray="5,5" opacity="0.5"/>
             <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
@@ -29,26 +29,28 @@
         </div>
       {% else %}
         <h1 class="search-title">{{ 'search.results_title' | t }}</h1>
-        <p class="search-subtitle">{{ 'search.results_for_html' | t: count: search.results_count, terms: search.terms }}</p>
+        <p class="search-subtitle">
+          {{ 'search.results_for_html' | t: count: search.results_count, terms: search.terms }}
+        </p>
       {% endif %}
     {% else %}
       <h1 class="search-title">{{ 'search.title' | t }}</h1>
       <p class="search-subtitle">{{ 'search.welcome_subtitle' | t }}</p>
       <div class="search-welcome-illustration">
-    <svg width="280" height="280" viewBox="0 0 200 200" class="search-welcome-svg">
-          <!-- Search magnifying glass -->
-      <circle cx="80" cy="80" r="30" fill="none" stroke="var(--color-accent)" stroke-width="4"/>
-      <line x1="105" y1="105" x2="130" y2="130" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round"/>
-          
-          <!-- Question mark inside the magnifying glass -->
-          <path d="M75 70 Q75 65, 80 65 Q85 65, 85 70 Q85 75, 82 77 L82 82 M82 88 L82 92" 
-        stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round" fill="none"/>
-          
-          <!-- Dotted lines around for "searching" effect -->
-      <circle cx="100" cy="100" r="60" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>
-      <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-accent)" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        <svg width="280" height="280" viewBox="0 0 200 200" class="search-welcome-svg">
+              <!-- Search magnifying glass -->
+          <circle cx="80" cy="80" r="30" fill="none" stroke="var(--color-accent)" stroke-width="4"/>
+          <line x1="105" y1="105" x2="130" y2="130" stroke="var(--color-accent)" stroke-width="4" stroke-linecap="round"/>
+
+              <!-- Question mark inside the magnifying glass -->
+              <path d="M75 70 Q75 65, 80 65 Q85 65, 85 70 Q85 75, 82 77 L82 82 M82 88 L82 92"
+            stroke="var(--color-foreground)" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+              <!-- Dotted lines around for "searching" effect -->
+          <circle cx="100" cy="100" r="60" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-dasharray="5,5" opacity="0.6"/>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="var(--color-accent)" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
         </svg>
-  <p class="search-welcome-message">{{ 'search.welcome_message' | t }}</p>
+        <p class="search-welcome-message">{{ 'search.welcome_message' | t }}</p>
       </div>
     {% endif %}
   </div>
@@ -62,18 +64,20 @@
               <a href="{{ result.url }}" class="product-link">
                 <div class="product-image">
                   {% if result.featured_media %}
-                    <img src="{{ result.featured_media | image_url: width: 400 }}" 
-                         alt="{{ result.featured_media.alt | escape }}"
-                         width="400"
-                         height="400"
-                         loading="lazy">
+                    <img
+                      src="{{ result.featured_media | image_url: width: 400 }}"
+                      alt="{{ result.featured_media.alt | escape }}"
+                      width="400"
+                      height="400"
+                      loading="lazy"
+                    >
                   {% else %}
                     <div class="product-image-placeholder">
                       {{ 'general.no_image' | t }}
                     </div>
                   {% endif %}
                 </div>
-                
+
                 <div class="product-info">
                   <h3 class="product-title">{{ result.title }}</h3>
                   <p class="product-price">{% render 'price', amount: result.price %}</p>
@@ -150,8 +154,15 @@
   }
 
   @keyframes gentle-pulse {
-    0%, 100% { transform: scale(1); opacity: 0.8; }
-    50% { transform: scale(1.05); opacity: 1; }
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 1;
+    }
   }
 
   .search-welcome-illustration {
@@ -288,7 +299,9 @@
   }
 
   /* Subtle product title hover color for consistency */
-  .product-link:hover .product-title { color: var(--color-accent); }
+  .product-link:hover .product-title {
+    color: var(--color-accent);
+  }
 
   /* When fewer than 3 items, they'll be centered automatically */
   @media (max-width: 1024px) {

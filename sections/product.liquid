@@ -13,16 +13,24 @@
         {% if product.images.size > 0 %}
           <div class="main-image-wrapper">
             {% for image in product.images %}
-              <div class="main-image" data-image-index="{{ forloop.index0 }}" {% unless forloop.first %}style="display: none;"{% endunless %}>
-       <img src="{{ image | image_url: width: 1200 }}" 
-                     alt="{{ image.alt | escape }}"
-         width="1200"
-         height="1200"
-                     loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+              <div
+                class="main-image"
+                data-image-index="{{ forloop.index0 }}"
+                {% unless forloop.first %}
+                  style="display: none;"
+                {% endunless %}
+              >
+                <img
+                  src="{{ image | image_url: width: 1200 }}"
+                  alt="{{ image.alt | escape }}"
+                  width="1200"
+                  height="1200"
+                  loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                >
               </div>
             {% endfor %}
           </div>
-          
+
           {% if product.images.size > 1 %}
             <button class="gallery-nav gallery-prev" aria-label="Previous image">
               <svg width="24" height="24" viewBox="0 0 24 24">
@@ -34,10 +42,13 @@
                 <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
               </svg>
             </button>
-            
+
             <div class="gallery-indicators">
               {% for image in product.images %}
-                <button class="indicator {% if forloop.first %}active{% endif %}" data-image-index="{{ forloop.index0 }}"></button>
+                <button
+                  class="indicator {% if forloop.first %}active{% endif %}"
+                  data-image-index="{{ forloop.index0 }}"
+                ></button>
               {% endfor %}
             </div>
           {% endif %}
@@ -54,12 +65,12 @@
   <div class="product-details">
     <div class="product-info">
       <h1 class="product-title">{{ product.title }}</h1>
-  <div class="product-price">{% render 'price', amount: product.price %}</div>
+      <div class="product-price">{% render 'price', amount: product.price %}</div>
     </div>
 
     {% form 'product', product %}
       {% assign current_variant = product.selected_or_first_available_variant %}
-      
+
       <!-- Size Selection -->
       {% unless product.has_only_default_variant %}
         <div class="product-options">
@@ -70,13 +81,19 @@
               <label class="option-label">{{ option_translation_key | t | default: option.name }}</label>
               <div class="option-values">
                 {% for value in option.values %}
-                  <input type="radio" 
-                         name="option-{{ option.position }}" 
-                         value="{{ value | escape }}" 
-                         id="option-{{ option.position }}-{{ value | handleize }}"
-                         {% if option.selected_value == value %}checked{% endif %}>
-                  <label for="option-{{ option.position }}-{{ value | handleize }}" 
-                         class="option-value">
+                  <input
+                    type="radio"
+                    name="option-{{ option.position }}"
+                    value="{{ value | escape }}"
+                    id="option-{{ option.position }}-{{ value | handleize }}"
+                    {% if option.selected_value == value %}
+                      checked
+                    {% endif %}
+                  >
+                  <label
+                    for="option-{{ option.position }}-{{ value | handleize }}"
+                    class="option-value"
+                  >
                     {{ value }}
                   </label>
                 {% endfor %}
@@ -96,9 +113,15 @@
         {% else %}
           <!-- Multiple variants for products with options -->
           {% for variant in product.variants %}
-            <option value="{{ variant.id }}" 
-                    {% if variant == current_variant %}selected{% endif %}
-                    {% unless variant.available %}disabled{% endunless %}>
+            <option
+              value="{{ variant.id }}"
+              {% if variant == current_variant %}
+                selected
+              {% endif %}
+              {% unless variant.available %}
+                disabled
+              {% endunless %}
+            >
               {{ variant.title }} - {% render 'price', amount: variant.price %}
             </option>
           {% endfor %}
@@ -107,7 +130,13 @@
 
       <!-- Add to Cart Button -->
       <div class="product-actions">
-        <button type="submit" class="add-to-cart-btn" {% unless current_variant.available %}disabled{% endunless %}>
+        <button
+          type="submit"
+          class="add-to-cart-btn"
+          {% unless current_variant.available %}
+            disabled
+          {% endunless %}
+        >
           <span class="btn-text">
             {% if current_variant.available %}
               {{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}
@@ -141,10 +170,12 @@
 
     <div class="product-accordion">
       <div class="accordion-item">
-        <button class="accordion-toggle" type="button">{{ 'products.product.details' | t | default: 'Product Details' }}</button>
+        <button class="accordion-toggle" type="button">
+          {{ 'products.product.details' | t | default: 'Product Details' }}
+        </button>
         <div class="accordion-content">
           {% if product.metafields.custom.details != blank %}
-            {{ product.metafields.custom.details | metafield_tag | newline_to_br}}
+            {{ product.metafields.custom.details | metafield_tag | newline_to_br }}
           {% else %}
             <p>{{ 'products.product.no_details' | t | default: 'No additional details available.' }}</p>
           {% endif %}
@@ -154,8 +185,12 @@
 
     <!-- Links: Size Guide & Shipping Policy -->
     <div class="product-links">
-      <a href="{{ pages['size-guide'].url }}" class="product-link">{{ 'policies.size_guide' | t | default: 'Size guide' }}</a>
-      <a href="{{ pages['shipping-policy'].url }}" class="product-link">{{ 'policies.shipping_policy' | t | default: 'Shipping policy' }}</a>
+      <a href="{{ pages['size-guide'].url }}" class="product-link">
+        {{- 'policies.size_guide' | t | default: 'Size guide' -}}
+      </a>
+      <a href="{{ pages['shipping-policy'].url }}" class="product-link">
+        {{- 'policies.shipping_policy' | t | default: 'Shipping policy' -}}
+      </a>
     </div>
   </div>
 </div>
@@ -173,7 +208,7 @@
     border-bottom: 1px solid var(--color-border);
   }
   .accordion-toggle {
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Times New Roman', Times, serif;
     letter-spacing: 1px;
     width: 100%;
     border: none;
@@ -193,7 +228,8 @@
     background-color: #000;
   }
 
-  .accordion-toggle.active, .accordion-toggle:focus {
+  .accordion-toggle.active,
+  .accordion-toggle:focus {
     color: #fff;
   }
   .accordion-toggle::after {
@@ -223,8 +259,12 @@
     display: block;
   }
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .model-info-block {
@@ -262,9 +302,9 @@
 
   .main-image-container {
     position: relative;
-  width: 100%;
-  height: 100vh; /* full screen on large displays */
-  min-height: 700px;
+    width: 100%;
+    height: 100vh; /* full screen on large displays */
+    min-height: 700px;
     background-color: transparent;
     overflow: hidden;
     display: flex;
@@ -450,7 +490,7 @@
     justify-content: center;
   }
 
-  .option-values input[type="radio"] {
+  .option-values input[type='radio'] {
     position: absolute;
     opacity: 0;
     width: 0;
@@ -478,11 +518,18 @@
     text-decoration: none;
   }
 
-  .option-value:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .option-value:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 
-  .option-values input[type="radio"]:checked + .option-value { background-color: transparent; border-color: var(--color-accent); color: var(--color-accent); }
+  .option-values input[type='radio']:checked + .option-value {
+    background-color: transparent;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 
-  .option-values input[type="radio"]:disabled + .option-value,
+  .option-values input[type='radio']:disabled + .option-value,
   .option-value.option-unavailable {
     background-color: #1a1a1a !important;
     border-color: var(--color-border) !important;
@@ -493,7 +540,7 @@
   }
 
   .option-value.option-unavailable:hover,
-  .option-values input[type="radio"]:disabled + .option-value:hover {
+  .option-values input[type='radio']:disabled + .option-value:hover {
     background-color: #1a1a1a !important;
     border-color: #444444 !important;
     color: #666666 !important;
@@ -506,7 +553,7 @@
   }
 
   .add-to-cart-btn {
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Times New Roman', Times, serif;
     width: 100%;
     padding: 20px 35px;
     background-color: transparent;
@@ -523,7 +570,17 @@
     margin: 0 0 18px 0;
   }
 
-  .add-to-cart-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background-color: color-mix(in oklab, var(--color-accent), transparent 80%); transition: left 0.3s ease; z-index: -1; }
+  .add-to-cart-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: color-mix(in oklab, var(--color-accent), transparent 80%);
+    transition: left 0.3s ease;
+    z-index: -1;
+  }
 
   .add-to-cart-btn:hover::before {
     left: 0;
@@ -616,9 +673,20 @@
     position: relative;
   }
 
-  .product-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background-color: var(--color-accent); transition: width 0.3s ease; }
+  .product-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background-color: var(--color-accent);
+    transition: width 0.3s ease;
+  }
 
-  .product-link:hover { color: var(--color-accent); }
+  .product-link:hover {
+    color: var(--color-accent);
+  }
 
   .product-link:hover::after {
     width: 100%;
@@ -630,7 +698,9 @@
     .product-page {
       padding: 0; /* remove internal padding to let media truly fill */
     }
-    .product-details { min-height: auto; }
+    .product-details {
+      min-height: auto;
+    }
   }
 
   /* Stack earlier so image stays on top and content comes below */
@@ -666,7 +736,6 @@
       min-height: 520px;
     }
   }
-  
 
   @media (max-width: 1024px) {
     .product-page {
@@ -675,12 +744,21 @@
       gap: 30px;
     }
 
-    .product-media { padding: 0; }
+    .product-media {
+      padding: 0;
+    }
 
-    .main-image-container { height: 70vh; min-height: 480px; }
+    .main-image-container {
+      height: 70vh;
+      min-height: 480px;
+    }
 
-    .product-title { font-size: 28px; }
-    .product-price { font-size: 24px; }
+    .product-title {
+      font-size: 28px;
+    }
+    .product-price {
+      font-size: 24px;
+    }
 
     .product-details {
       width: 100%;
@@ -688,8 +766,12 @@
       min-height: auto;
     }
 
-    .gallery-prev { left: 10px; }
-    .gallery-next { right: 10px; }
+    .gallery-prev {
+      left: 10px;
+    }
+    .gallery-next {
+      right: 10px;
+    }
   }
 
   @media (max-width: 768px) {
@@ -765,294 +847,301 @@
 {% endstylesheet %}
 
 {% javascript %}
-// Accordion functionality for product details (single item, modern style)
-document.addEventListener('DOMContentLoaded', function() {
-  var toggles = document.querySelectorAll('.accordion-toggle');
-  toggles.forEach(function(toggle) {
-    toggle.addEventListener('click', function() {
-      var content = this.nextElementSibling;
-      var isActive = this.classList.contains('active');
-      // Only one open at a time (but we have only one)
-      document.querySelectorAll('.accordion-toggle').forEach(function(t) { t.classList.remove('active'); });
-      document.querySelectorAll('.accordion-content').forEach(function(c) { c.classList.remove('active'); });
-      if (!isActive) {
-        this.classList.add('active');
-        content.classList.add('active');
+  // Accordion functionality for product details (single item, modern style)
+  document.addEventListener('DOMContentLoaded', function () {
+    var toggles = document.querySelectorAll('.accordion-toggle');
+    toggles.forEach(function (toggle) {
+      toggle.addEventListener('click', function () {
+        var content = this.nextElementSibling;
+        var isActive = this.classList.contains('active');
+        // Only one open at a time (but we have only one)
+        document.querySelectorAll('.accordion-toggle').forEach(function (t) {
+          t.classList.remove('active');
+        });
+        document.querySelectorAll('.accordion-content').forEach(function (c) {
+          c.classList.remove('active');
+        });
+        if (!isActive) {
+          this.classList.add('active');
+          content.classList.add('active');
+        }
+      });
+    });
+  });
+  console.log('🎯 PRODUCT.LIQUID JAVASCRIPT STARTED!');
+
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log('📄 DOM LOADED - Starting product page initialization...');
+    // Image Gallery Functionality
+    const images = document.querySelectorAll('.main-image');
+    const indicators = document.querySelectorAll('.indicator');
+    const prevBtn = document.querySelector('.gallery-prev');
+    const nextBtn = document.querySelector('.gallery-next');
+    let currentImageIndex = 0;
+    let autoSlideInterval;
+
+    function showImage(index) {
+      // Hide all images
+      images.forEach((img) => {
+        img.style.display = 'none';
+        img.classList.remove('active');
+      });
+
+      // Remove active class from all indicators
+      indicators.forEach((indicator) => {
+        indicator.classList.remove('active');
+      });
+
+      // Show current image
+      if (images[index]) {
+        images[index].style.display = 'block';
+        images[index].classList.add('active');
       }
-    });
-  });
-});
-console.log('🎯 PRODUCT.LIQUID JAVASCRIPT STARTED!');
 
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('📄 DOM LOADED - Starting product page initialization...');
-  // Image Gallery Functionality
-  const images = document.querySelectorAll('.main-image');
-  const indicators = document.querySelectorAll('.indicator');
-  const prevBtn = document.querySelector('.gallery-prev');
-  const nextBtn = document.querySelector('.gallery-next');
-  let currentImageIndex = 0;
-  let autoSlideInterval;
+      // Activate current indicator
+      if (indicators[index]) {
+        indicators[index].classList.add('active');
+      }
 
-  function showImage(index) {
-    // Hide all images
-    images.forEach(img => {
-      img.style.display = 'none';
-      img.classList.remove('active');
-    });
-    
-    // Remove active class from all indicators
-    indicators.forEach(indicator => {
-      indicator.classList.remove('active');
-    });
-
-    // Show current image
-    if (images[index]) {
-      images[index].style.display = 'block';
-      images[index].classList.add('active');
-    }
-    
-    // Activate current indicator
-    if (indicators[index]) {
-      indicators[index].classList.add('active');
-    }
-    
-    currentImageIndex = index;
-  }
-
-  function nextImage() {
-    const nextIndex = (currentImageIndex + 1) % images.length;
-    showImage(nextIndex);
-  }
-
-  function prevImage() {
-    const prevIndex = (currentImageIndex - 1 + images.length) % images.length;
-    showImage(prevIndex);
-  }
-
-  function startAutoSlide() {
-    if (images.length > 1) {
-      autoSlideInterval = setInterval(nextImage, 4000); // Change image every 4 seconds
-    }
-  }
-
-  function stopAutoSlide() {
-    clearInterval(autoSlideInterval);
-  }
-
-  // Event listeners
-  if (nextBtn) {
-    nextBtn.addEventListener('click', function() {
-      stopAutoSlide();
-      nextImage();
-      startAutoSlide();
-    });
-  }
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', function() {
-      stopAutoSlide();
-      prevImage();
-      startAutoSlide();
-    });
-  }
-
-  indicators.forEach((indicator, index) => {
-    indicator.addEventListener('click', function() {
-      stopAutoSlide();
-      showImage(index);
-      startAutoSlide();
-    });
-  });
-
-  // Pause auto-slide on hover
-  const mainImageContainer = document.querySelector('.main-image-container');
-  if (mainImageContainer) {
-    mainImageContainer.addEventListener('mouseenter', stopAutoSlide);
-    mainImageContainer.addEventListener('mouseleave', startAutoSlide);
-  }
-
-  // Initialize
-  showImage(0);
-  startAutoSlide();
-
-  // Variant Selection - Simple and Fast (works for all products)
-  function initVariantSelection() {
-    console.log('🚀 Starting variant selection...');
-    
-    const variantSelector = document.querySelector('.variant-selector');
-    if (!variantSelector) {
-      console.log('❌ No variant selector found');
-      return;
+      currentImageIndex = index;
     }
 
-    // Check if this is a product with variants or a simple product
-    const hasVariantOptions = document.querySelectorAll('input[name^="option-"]').length > 0;
-    
-    if (hasVariantOptions) {
-      console.log('📋 Product with variants detected');
-      
-      // Get all available variant data immediately
-      const availableVariants = new Set();
-      Array.from(variantSelector.options).forEach(option => {
-        if (!option.disabled && option.value) {
-          const variantTitle = option.textContent.split(' - ')[0].trim();
-          availableVariants.add(variantTitle.toLowerCase());
-          console.log('✅ Available variant:', variantTitle);
-        }
+    function nextImage() {
+      const nextIndex = (currentImageIndex + 1) % images.length;
+      showImage(nextIndex);
+    }
+
+    function prevImage() {
+      const prevIndex = (currentImageIndex - 1 + images.length) % images.length;
+      showImage(prevIndex);
+    }
+
+    function startAutoSlide() {
+      if (images.length > 1) {
+        autoSlideInterval = setInterval(nextImage, 4000); // Change image every 4 seconds
+      }
+    }
+
+    function stopAutoSlide() {
+      clearInterval(autoSlideInterval);
+    }
+
+    // Event listeners
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        stopAutoSlide();
+        nextImage();
+        startAutoSlide();
       });
-
-      // Immediately check and disable unavailable options
-      document.querySelectorAll('input[name^="option-"]').forEach(input => {
-        const optionValue = input.value.toLowerCase();
-        const label = document.querySelector(`label[for="${input.id}"]`);
-        
-        if (!availableVariants.has(optionValue)) {
-          // Disable unavailable options
-          input.disabled = true;
-          if (label) {
-            label.classList.add('option-unavailable');
-            label.style.pointerEvents = 'none';
-          }
-          console.log('❌ Disabled:', input.value);
-        } else {
-          // Enable available options
-          input.disabled = false;
-          if (label) {
-            label.classList.remove('option-unavailable');
-            label.style.pointerEvents = 'auto';
-          }
-          console.log('✅ Enabled:', input.value);
-        }
-      });
-
-      // Add event listeners for variant products
-      document.querySelectorAll('input[name^="option-"]').forEach(input => {
-        input.addEventListener('change', updateVariant);
-      });
-    } else {
-      console.log('🎁 Simple product (no variants) detected');
     }
 
-    // Simple variant update function (works for both types)
-    function updateVariant() {
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        stopAutoSlide();
+        prevImage();
+        startAutoSlide();
+      });
+    }
+
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', function () {
+        stopAutoSlide();
+        showImage(index);
+        startAutoSlide();
+      });
+    });
+
+    // Pause auto-slide on hover
+    const mainImageContainer = document.querySelector('.main-image-container');
+    if (mainImageContainer) {
+      mainImageContainer.addEventListener('mouseenter', stopAutoSlide);
+      mainImageContainer.addEventListener('mouseleave', startAutoSlide);
+    }
+
+    // Initialize
+    showImage(0);
+    startAutoSlide();
+
+    // Variant Selection - Simple and Fast (works for all products)
+    function initVariantSelection() {
+      console.log('🚀 Starting variant selection...');
+
+      const variantSelector = document.querySelector('.variant-selector');
+      if (!variantSelector) {
+        console.log('❌ No variant selector found');
+        return;
+      }
+
+      // Check if this is a product with variants or a simple product
+      const hasVariantOptions = document.querySelectorAll('input[name^="option-"]').length > 0;
+
       if (hasVariantOptions) {
-        const selectedInput = document.querySelector('input[name^="option-"]:checked');
-        if (!selectedInput) return;
+        console.log('📋 Product with variants detected');
 
-        const selectedValue = selectedInput.value.toLowerCase();
-        
-        // Find matching variant option
-        const matchingOption = Array.from(variantSelector.options).find(option => {
-          const variantTitle = option.textContent.split(' - ')[0].trim().toLowerCase();
-          return variantTitle === selectedValue;
+        // Get all available variant data immediately
+        const availableVariants = new Set();
+        Array.from(variantSelector.options).forEach((option) => {
+          if (!option.disabled && option.value) {
+            const variantTitle = option.textContent.split(' - ')[0].trim();
+            availableVariants.add(variantTitle.toLowerCase());
+            console.log('✅ Available variant:', variantTitle);
+          }
         });
 
-        if (matchingOption) {
-          variantSelector.value = matchingOption.value;
-          
-          // Update price
-          const price = matchingOption.textContent.split(' - ')[1];
-          const priceElement = document.querySelector('.product-price');
-          if (priceElement && price) {
-            priceElement.textContent = price;
-          }
-          
-          // Update button
-          const addToCartBtn = document.querySelector('.add-to-cart-btn');
-          if (addToCartBtn) {
-            addToCartBtn.disabled = matchingOption.disabled;
-            const btnText = addToCartBtn.querySelector('.btn-text');
-            if (btnText) {
-              btnText.textContent = matchingOption.disabled ? (window.themeStrings?.sold_out || 'Sold out') : (window.themeStrings?.add_to_cart || 'Add to cart');
+        // Immediately check and disable unavailable options
+        document.querySelectorAll('input[name^="option-"]').forEach((input) => {
+          const optionValue = input.value.toLowerCase();
+          const label = document.querySelector(`label[for="${input.id}"]`);
+
+          if (!availableVariants.has(optionValue)) {
+            // Disable unavailable options
+            input.disabled = true;
+            if (label) {
+              label.classList.add('option-unavailable');
+              label.style.pointerEvents = 'none';
             }
+            console.log('❌ Disabled:', input.value);
+          } else {
+            // Enable available options
+            input.disabled = false;
+            if (label) {
+              label.classList.remove('option-unavailable');
+              label.style.pointerEvents = 'auto';
+            }
+            console.log('✅ Enabled:', input.value);
           }
-          
-          console.log('Updated to variant:', matchingOption.textContent);
-        }
+        });
+
+        // Add event listeners for variant products
+        document.querySelectorAll('input[name^="option-"]').forEach((input) => {
+          input.addEventListener('change', updateVariant);
+        });
+      } else {
+        console.log('🎁 Simple product (no variants) detected');
       }
-      // For simple products, variant selector is already set correctly
+
+      // Simple variant update function (works for both types)
+      function updateVariant() {
+        if (hasVariantOptions) {
+          const selectedInput = document.querySelector('input[name^="option-"]:checked');
+          if (!selectedInput) return;
+
+          const selectedValue = selectedInput.value.toLowerCase();
+
+          // Find matching variant option
+          const matchingOption = Array.from(variantSelector.options).find((option) => {
+            const variantTitle = option.textContent.split(' - ')[0].trim().toLowerCase();
+            return variantTitle === selectedValue;
+          });
+
+          if (matchingOption) {
+            variantSelector.value = matchingOption.value;
+
+            // Update price
+            const price = matchingOption.textContent.split(' - ')[1];
+            const priceElement = document.querySelector('.product-price');
+            if (priceElement && price) {
+              priceElement.textContent = price;
+            }
+
+            // Update button
+            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            if (addToCartBtn) {
+              addToCartBtn.disabled = matchingOption.disabled;
+              const btnText = addToCartBtn.querySelector('.btn-text');
+              if (btnText) {
+                btnText.textContent = matchingOption.disabled
+                  ? window.themeStrings?.sold_out || 'Sold out'
+                  : window.themeStrings?.add_to_cart || 'Add to cart';
+              }
+            }
+
+            console.log('Updated to variant:', matchingOption.textContent);
+          }
+        }
+        // For simple products, variant selector is already set correctly
+      }
+
+      // Initial update
+      updateVariant();
+
+      console.log('✅ Variant selection initialized');
     }
 
-    // Initial update
-    updateVariant();
-    
-    console.log('✅ Variant selection initialized');
-  }
-  
-  // Initialize variant selection
-  initVariantSelection();
+    // Initialize variant selection
+    initVariantSelection();
 
-  // AJAX Add to Cart Functionality - Works for ALL products
-  const productForm = document.querySelector('form[action*="/cart/add"]');
-  const cartMessage = document.querySelector('.cart-message');
+    // AJAX Add to Cart Functionality - Works for ALL products
+    const productForm = document.querySelector('form[action*="/cart/add"]');
+    const cartMessage = document.querySelector('.cart-message');
 
-  console.log('🛒 Add to cart form found:', !!productForm);
+    console.log('🛒 Add to cart form found:', !!productForm);
 
-  if (productForm) {
-    console.log('✅ Setting up AJAX add to cart for all products');
-    productForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      console.log('🛒 Adding product to cart via AJAX...');
-      
-      const formData = new FormData(productForm);
-  const addButton = productForm.querySelector('.add-to-cart-btn');
-      const btnText = addButton.querySelector('.btn-text');
-      const originalText = btnText.textContent;
-      
-      // Show loading state
-      addButton.disabled = true;
-  btnText.textContent = window.themeStrings?.adding || 'Adding...';
-      
-      // Hide previous messages
-      if (cartMessage) {
-        cartMessage.style.display = 'none';
-        cartMessage.className = 'cart-message';
-      }
+    if (productForm) {
+      console.log('✅ Setting up AJAX add to cart for all products');
+      productForm.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-      // Use the global cart update function if available, otherwise fallback to direct fetch
-      const addToCartPromise = window.addToCartAndUpdate ? 
-        window.addToCartAndUpdate(formData) : 
-        fetch('/cart/add.js', { method: 'POST', body: formData }).then(r => r.json());
+        console.log('🛒 Adding product to cart via AJAX...');
 
-      addToCartPromise
-      .then(data => {
-        // Success
+        const formData = new FormData(productForm);
+        const addButton = productForm.querySelector('.add-to-cart-btn');
+        const btnText = addButton.querySelector('.btn-text');
+        const originalText = btnText.textContent;
+
+        // Show loading state
+        addButton.disabled = true;
+        btnText.textContent = window.themeStrings?.adding || 'Adding...';
+
+        // Hide previous messages
         if (cartMessage) {
-          cartMessage.className = 'cart-message success';
-          cartMessage.textContent = window.themeStrings?.added_to_cart || 'Product added to cart successfully!';
-          cartMessage.style.display = 'block';
+          cartMessage.style.display = 'none';
+          cartMessage.className = 'cart-message';
         }
-        
-        // Reset button
-        addButton.disabled = false;
-        btnText.textContent = originalText;
-        
-        // Hide message after 3 seconds
-        setTimeout(() => {
-          if (cartMessage) {
-            cartMessage.style.display = 'none';
-          }
-        }, 3000);
-      })
-      .catch(error => {
-        // Error
-        if (cartMessage) {
-          cartMessage.className = 'cart-message error';
-          cartMessage.textContent = window.themeStrings?.error_adding_to_cart || 'Error adding product to cart. Please try again.';
-          cartMessage.style.display = 'block';
-        }
-        
-        // Reset button
-        addButton.disabled = false;
-        btnText.textContent = originalText;
+
+        // Use the global cart update function if available, otherwise fallback to direct fetch
+        const addToCartPromise = window.addToCartAndUpdate
+          ? window.addToCartAndUpdate(formData)
+          : fetch('/cart/add.js', { method: 'POST', body: formData }).then((r) => r.json());
+
+        addToCartPromise
+          .then((data) => {
+            // Success
+            if (cartMessage) {
+              cartMessage.className = 'cart-message success';
+              cartMessage.textContent = window.themeStrings?.added_to_cart || 'Product added to cart successfully!';
+              cartMessage.style.display = 'block';
+            }
+
+            // Reset button
+            addButton.disabled = false;
+            btnText.textContent = originalText;
+
+            // Hide message after 3 seconds
+            setTimeout(() => {
+              if (cartMessage) {
+                cartMessage.style.display = 'none';
+              }
+            }, 3000);
+          })
+          .catch((error) => {
+            // Error
+            if (cartMessage) {
+              cartMessage.className = 'cart-message error';
+              cartMessage.textContent =
+                window.themeStrings?.error_adding_to_cart || 'Error adding product to cart. Please try again.';
+              cartMessage.style.display = 'block';
+            }
+
+            // Reset button
+            addButton.disabled = false;
+            btnText.textContent = originalText;
+          });
       });
-    });
-  }
-  
-  console.log('🏁 ALL PRODUCT PAGE SCRIPTS LOADED SUCCESSFULLY!');
-});
+    }
+
+    console.log('🏁 ALL PRODUCT PAGE SCRIPTS LOADED SUCCESSFULLY!');
+  });
 {% endjavascript %}
 
 {% schema %}

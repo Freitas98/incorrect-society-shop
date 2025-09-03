@@ -19,7 +19,7 @@
         "id": "type_primary_font",
         "default": "work_sans_n4",
         "label": "t:general.primary"
-      },
+      }
     ]
   },
   {
@@ -100,7 +100,7 @@
       {
         "type": "color",
         "id": "announcement_bg_color",
-  "default": "#8f2b3f",
+        "default": "#8f2b3f",
         "label": "t:labels.announcement_bg"
       },
       {
@@ -124,9 +124,24 @@
   {
     "name": "Social",
     "settings": [
-      { "type": "text", "id": "instagram_url", "label": "Instagram URL", "default": "https://www.instagram.com/incorrect.society" },
-      { "type": "text", "id": "tiktok_url", "label": "TikTok URL", "default": "https://www.tiktok.com/@.incorrectsociety" },
-      { "type": "text", "id": "youtube_url", "label": "YouTube URL", "default": "https://www.youtube.com/@incorrectsociety" }
+      {
+        "type": "text",
+        "id": "instagram_url",
+        "label": "Instagram URL",
+        "default": "https://www.instagram.com/incorrect.society"
+      },
+      {
+        "type": "text",
+        "id": "tiktok_url",
+        "label": "TikTok URL",
+        "default": "https://www.tiktok.com/@.incorrectsociety"
+      },
+      {
+        "type": "text",
+        "id": "youtube_url",
+        "label": "YouTube URL",
+        "default": "https://www.youtube.com/@incorrectsociety"
+      }
     ]
   }
 ]

@@ -20,24 +20,27 @@
           <a href="{{ product.url }}" class="product-link">
             <div class="product-image">
               {% if product.featured_media %}
-                <img src="{{ product.featured_media | image_url: width: 400 }}" 
-                     alt="{{ product.featured_media.alt | escape }}"
-                     width="400"
-                     height="400"
-                     loading="lazy">
+                <img
+                  src="{{ product.featured_media | image_url: width: 400 }}"
+                  alt="{{ product.featured_media.alt | escape }}"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                >
               {% else %}
-                <div class="product-image-placeholder">
-                  No Image
-                </div>
+                <div class="product-image-placeholder">No Image</div>
               {% endif %}
             </div>
-            
+
             <div class="product-info">
               <h3 class="product-title">{{ product.title }}</h3>
               {% if product.gift_card? or product.type == 'Gift Card' %}
-              <p class="product-price">{{ 'gift_card.start_at' | t }} {% render 'price', amount: product.price %}</p>
+                <p class="product-price">
+                  {{ 'gift_card.start_at' | t }}
+                  {% render 'price', amount: product.price %}
+                </p>
               {% else %}
-              <p class="product-price">{% render 'price', amount: product.price %}</p>
+                <p class="product-price">{% render 'price', amount: product.price %}</p>
               {% endif %}
             </div>
           </a>
@@ -52,7 +55,7 @@
 {% stylesheet %}
   .collection-section {
     padding: 60px 40px;
-  color: var(--color-foreground);
+    color: var(--color-foreground);
   }
 
   .collection-header {
@@ -66,7 +69,7 @@
     margin-left: auto;
     margin-right: auto;
     color: var(--color-foreground);
-    opacity: .9;
+    opacity: 0.9;
     line-height: 1.6;
   }
 
@@ -109,7 +112,10 @@
     transition: transform 0.3s ease;
   }
 
-  .product-link:hover { transform: translateY(-5px); color: var(--color-accent); }
+  .product-link:hover {
+    transform: translateY(-5px);
+    color: var(--color-accent);
+  }
 
   .product-image {
     position: relative;
@@ -138,8 +144,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  background-color: var(--color-background);
-  color: var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-border);
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -183,9 +189,17 @@
     transition: all 0.3s ease;
   }
 
-  .pagination a:hover { background-color: transparent; border-color: var(--color-accent); color: var(--color-accent); }
+  .pagination a:hover {
+    background-color: transparent;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 
-  .pagination .current { background-color: transparent; border-color: var(--color-accent); color: var(--color-accent); }
+  .pagination .current {
+    background-color: transparent;
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
 
   /* Responsive Design */
   @media (max-width: 1024px) {

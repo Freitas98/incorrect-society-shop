@@ -1,5 +1,4 @@
-
-  {% if shop.metafields.pagefly.acceptTracking and shop.metafields.pagefly.measurementId %}
+{% if shop.metafields.pagefly.acceptTracking and shop.metafields.pagefly.measurementId %}
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id={{ shop.metafields.pagefly.measurementId }}"></script>
   <script>
@@ -99,14 +98,12 @@
     }
   }, { once: true });
   </script>
-  {% endif %}
-  <script>
-    window.addEventListener('load', () => {
-      // fallback for gtag when not initialized
-      if(typeof window.gtag !== 'function') {
-        window.gtag = (str1, str2, obj) => {
-        }
-      }
-    }) 
-  </script>
-  
+{% endif %}
+<script>
+  window.addEventListener('load', () => {
+    // fallback for gtag when not initialized
+    if (typeof window.gtag !== 'function') {
+      window.gtag = (str1, str2, obj) => {};
+    }
+  });
+</script>

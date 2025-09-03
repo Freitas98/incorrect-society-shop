@@ -2,17 +2,17 @@
 
 ![Shop Logo](assets/logo.png)
 
-A custom Shopify theme for Incorrect Society, designed for a modern, minimal, and retro-inspired shopping experience. This theme is built for flexibility, pixel-perfect design, and easy customization.
+A custom Shopify theme for Incorrect Society with a modern, minimal, retro-inspired UX. Built for flexibility, performance, and easy customization.
 
 ---
 
-## Project Structure
+## Project structure (current)
 
 ```
 incorrect-society-theme/
 ├── assets/                # Theme images, icons, and critical CSS
 │   ├── critical.css
-│   ├── favicon.png
+│   ├── favicon.ico
 │   ├── flag-pt.svg
 │   ├── flag-us.svg
 │   ├── hoodie-diagram.svg
@@ -20,21 +20,20 @@ incorrect-society-theme/
 │   ├── icon-cart.svg
 │   ├── logo.png
 │   ├── shoppy-x-ray.svg
-│   ├── tshirt-diagram.svg
+│   └── tshirt-diagram.svg
 ├── blocks/                # Custom Liquid blocks
 │   ├── group.liquid
-│   ├── text.liquid
+│   └── text.liquid
 ├── config/                # Theme settings and schema
 │   ├── settings_data.json
-│   ├── settings_schema.json
+│   └── settings_schema.json
 ├── layout/                # Main theme layout files
 │   ├── password.liquid
-│   ├── theme.liquid
-├── locales/               # Language and translation files
+│   └── theme.liquid
+├── locales/               # Languages and translations
 │   ├── en.default.json
 │   ├── en.default.schema.json
-│   ├── pt-PT.json
-│   ├── pt.json
+│   └── pt-PT.json
 ├── sections/              # Theme sections (homepage, product, cart, etc.)
 │   ├── 404.liquid
 │   ├── announcement-bar.liquid
@@ -43,12 +42,12 @@ incorrect-society-theme/
 │   ├── cart.liquid
 │   ├── collection.liquid
 │   ├── collections.liquid
+│   ├── contact-us-section.liquid
 │   ├── custom-section.liquid
 │   ├── footer-group.json
 │   ├── footer.liquid
 │   ├── header-group.json
 │   ├── header.liquid
-│   ├── hello-world.liquid
 │   ├── page.liquid
 │   ├── password.liquid
 │   ├── policy-page.liquid
@@ -56,18 +55,22 @@ incorrect-society-theme/
 │   ├── product.liquid
 │   ├── search.liquid
 │   ├── sidebar-navigation.liquid
-│   ├── sizing-guide.liquid
+│   └── sizing-guide.liquid
 ├── snippets/              # Reusable Liquid snippets
+│   ├── 404-content.liquid
+│   ├── contact-us-content.liquid
 │   ├── css-variables.liquid
 │   ├── image.liquid
 │   ├── meta-tags.liquid
 │   ├── music-player.liquid
 │   ├── newsletter-content.liquid
+│   ├── newsletter-modal.liquid
 │   ├── price.liquid
+│   ├── return-policy-content.liquid
 │   ├── shipping-policy-content.liquid
 │   ├── size-measurements.liquid
 │   ├── social-icons.liquid
-│   ├── terms-of-service-content.liquid
+│   └── terms-of-service-content.liquid
 ├── templates/             # Page templates (JSON and Liquid)
 │   ├── 404.json
 │   ├── article.json
@@ -75,11 +78,15 @@ incorrect-society-theme/
 │   ├── cart.json
 │   ├── challenge.liquid
 │   ├── collection.json
+│   ├── contact-us.liquid
 │   ├── gift_card.liquid
 │   ├── index.json
 │   ├── list-collections.json
+│   ├── page.contact-us.liquid
+│   ├── page.contact.liquid
 │   ├── page.json
 │   ├── page.newsletter.json
+│   ├── page.return-policy.json
 │   ├── page.shipping-policy.json
 │   ├── page.size-guide.json
 │   ├── page.terms-of-service.json
@@ -92,59 +99,42 @@ incorrect-society-theme/
 ├── CODE_OF_CONDUCT.md     # Community guidelines
 ├── CONTRIBUTING.md        # Contribution guidelines
 ├── LICENSE.md             # License information
-├── README.md              # Project documentation (this file)
-└── _trash/                # (Optional) Deprecated or backup files
+└── README.md              # Project documentation (this file)
 ```
 
 ---
 
 ## Features
 
-- **Pixel-perfect, retro-inspired UI** with custom music player and SVG icons
-- **Multi-language support** (English, Portuguese)
-- **Customizable theme settings** via `config/settings_schema.json`
-- **Reusable snippets** for pricing, newsletter, social icons, and more
-- **Product metafield support** (e.g., Tecido, Cor, Tamanho)
-- **Modern, responsive layout** for all devices
-- **Accessible navigation and controls**
+- Minimal, accessible UI with responsive layout and SVG icons
+- Multi-language support (English, Portuguese) via `locales/`
+- Customizable theme settings (`config/settings_schema.json`)
+- Product details accordion and model info on product pages
+- Password page with countdown to a fixed Lisbon time and clean release state
+- Lightweight newsletter modal with logo, centered content, and localized “check email” copy
+- Minimal music player (rotating CD) with autoplay-on-interaction, persistence across navigation, and per-session shuffled playlist
+- Left sidebar optimized for mobile with smooth internal scrolling
 
 ---
 
-## Getting Started
+## Getting started
 
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/Freitas98/incorrect-society-shop.git
-   ```
-2. **Upload the theme to Shopify:**
-   - Zip the theme folder and upload via Shopify admin, or use Shopify CLI for local development.
-3. **Customize settings:**
-   - Edit `config/settings_schema.json` and `settings_data.json` for theme options.
-   - Update assets and snippets as needed.
-4. **Translations:**
-   - Edit files in `locales/` for language support.
+1. Clone the repository
+2. Zip and upload the theme in Shopify admin, or use Shopify CLI for local dev
+3. Customize in Theme Editor; adjust settings in `config/`
+4. Update assets and snippets as needed; translations live in `locales/`
 
 ---
 
 ## Customization
 
-- **Logo:** Replace `assets/logo.png` with your own logo if desired.
-- **Music Player:** Edit `snippets/music-player.liquid` for playlist and style.
-- **Sections & Snippets:** Add or modify Liquid files in `sections/` and `snippets/` for custom features.
-- **Metafields:** Add product/category metafields in Shopify admin and reference them in section files.
+- Logo: replace `assets/logo.png` if desired
+- Music player: edit `snippets/music-player.liquid` to change playlist/links
+- Sections & snippets: modify files in `sections/` and `snippets/`
+- Metafields: define in Shopify admin and reference in sections/snippets
 
 ---
 
-## Contributing
+## License & contributions
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## License
-
-See [LICENSE.md](LICENSE.md) for details.
-
----
-
-## Contact
-
-For questions or support, open an issue or contact the repository owner.
+- License: see [LICENSE.md](LICENSE.md)

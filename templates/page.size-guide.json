@@ -7,7 +7,5 @@
       }
     }
   },
-  "order": [
-    "size-guide-section"
-  ]
+  "order": ["size-guide-section"]
 }

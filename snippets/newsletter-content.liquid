@@ -8,13 +8,25 @@
 <h2 style="color: var(--color-foreground);">{{ 'newsletter.stay_connected_title' | t }}</h2>
 <p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.intro_html' | t }}</p>
 
-<div id="NewsletterContainer" style="background-color: var(--color-surface); padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;" data-adding="{{ 'theme.messages.adding' | t }}" data-success="{{ 'newsletter.success' | t }}" data-error="{{ 'newsletter.error' | t }}" data-verifying="{{ 'newsletter.verifying' | t }}" data-captcha="{{ 'newsletter.captcha_message' | t }}">
+<div
+  id="NewsletterContainer"
+  style="background-color: var(--color-surface); padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;"
+  data-adding="{{ 'theme.messages.adding' | t }}"
+  data-success="{{ 'newsletter.success' | t }}"
+  data-error="{{ 'newsletter.error' | t }}"
+  data-verifying="{{ 'newsletter.verifying' | t }}"
+  data-captcha="{{ 'newsletter.captcha_message' | t }}"
+>
   <h3 style="color: var(--color-accent); margin-bottom: 20px;">{{ 'newsletter.subscribe_now' | t }}</h3>
-  <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.subscribe_prompt' | t }}</p>
+  <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">
+    {{ 'newsletter.subscribe_prompt' | t }}
+  </p>
 
   {% form 'customer', id: 'NewsletterForm' %}
     {% if form.posted_successfully? %}
-      <p class="newsletter-success" style="margin: 0 0 15px; color: var(--color-foreground);">{{ 'newsletter.success' | t }}</p>
+      <p class="newsletter-success" style="margin: 0 0 15px; color: var(--color-foreground);">
+        {{ 'newsletter.success' | t }}
+      </p>
     {% endif %}
     {% if form.errors %}
       <div class="newsletter-errors" style="margin: 0 0 15px; color: var(--color-foreground);">
@@ -24,7 +36,6 @@
     <div class="newsletter-message" aria-live="polite" style="margin: 0 0 10px; color: var(--color-foreground);"></div>
 
     <div style="display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto;">
-
       <input
         type="text"
         name="contact[first_name]"
@@ -46,7 +57,10 @@
 
       <input type="hidden" name="contact[tags]" id="NewsletterContentTags" value="">
 
-      <button type="submit" style="background-color: var(--color-accent); color: var(--color-foreground); padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase;">
+      <button
+        type="submit"
+        style="background-color: var(--color-accent); color: var(--color-foreground); padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase;"
+      >
         {{ 'newsletter.subscribe_cta' | t }}
       </button>
     </div>
@@ -61,9 +75,10 @@
   const generateRandomCode = (len = 16) => {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const out = [];
-    const arr = (window.crypto && window.crypto.getRandomValues)
-      ? window.crypto.getRandomValues(new Uint32Array(len))
-      : Array.from({ length: len }, () => Math.floor(Math.random() * 0xffffffff));
+    const arr =
+      window.crypto && window.crypto.getRandomValues
+        ? window.crypto.getRandomValues(new Uint32Array(len))
+        : Array.from({ length: len }, () => Math.floor(Math.random() * 0xffffffff));
     for (let i = 0; i < len; i++) {
       out.push(alphabet[arr[i] % alphabet.length]);
     }
@@ -97,7 +112,7 @@
         const response = await fetch(action, {
           method: 'POST',
           body: formData,
-          credentials: 'same-origin'
+          credentials: 'same-origin',
         });
         if (response.ok) {
           message.textContent = tSuccess;
@@ -119,11 +134,11 @@
   }
 {% endjavascript %}
 
-<p><em style="color: var(--color-foreground); opacity: 0.75;">{{ 'newsletter.unsubscribe_note' | t }}</em></p>
+<p>
+  <em style="color: var(--color-foreground); opacity: 0.75;">{{ 'newsletter.unsubscribe_note' | t }}</em>
+</p>
 
 <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-direction: column;">
   <p>To stay updated, follow us on social media:</p>
-{% render 'social-icons', size: 32 %}
+  {% render 'social-icons', size: 32 %}
 </div>
-
-

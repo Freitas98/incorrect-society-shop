@@ -70,7 +70,9 @@
   }
 
   /* Utility for inline red highlights */
-  .policy-accent { color: var(--color-accent); }
+  .policy-accent {
+    color: var(--color-accent);
+  }
 
   @media (max-width: 768px) {
     .policy-page {
@@ -92,28 +94,83 @@
   }
 {% endstylesheet %}
 
-
 <div class="policy-page">
   <h1 class="policy-title" style="font-size:3rem; margin-bottom:2.5rem; letter-spacing:2px;">CONTACTA-NOS</h1>
-  <div style="font-size:1.4rem; font-weight:600; margin-bottom:2.2rem; letter-spacing:1px; text-align:left;">MANTÉM-TE EM CONTACTO</div>
-  <div style="font-size:1.1rem; margin-bottom:2.8rem; color:#fff; opacity:0.95; text-align:left; max-width:700px;">Entra em contacto com a equipa <strong>Incorrect Society</strong> para dúvidas, sugestões ou apoio. Respondemos normalmente em 1-2 dias úteis.</div>
+  <div style="font-size:1.4rem; font-weight:600; margin-bottom:2.2rem; letter-spacing:1px; text-align:left;">
+    MANTÉM-TE EM CONTACTO
+  </div>
+  <div style="font-size:1.1rem; margin-bottom:2.8rem; color:#fff; opacity:0.95; text-align:left; max-width:700px;">
+    Entra em contacto com a equipa <strong>Incorrect Society</strong> para dúvidas, sugestões ou apoio. Respondemos
+    normalmente em 1-2 dias úteis.
+  </div>
   <div style="background:#181618; border-radius:14px; box-shadow:0 2px 16px #000a; max-width:700px; margin:0 auto 2.5rem auto; padding:2.5rem 2rem;">
-    <div style="font-size:1.3rem; color:#a03a4a; font-weight:700; text-align:center; margin-bottom:1.2rem; letter-spacing:1px;">ENVIA UMA MENSAGEM</div>
-    <div style="text-align:center; margin-bottom:2rem; color:#fff; font-size:1.08rem;">Preenche o formulário para contactar a Incorrect Society</div>
-    <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" style="display:flex; flex-direction:column; gap:1.2rem;">
-      <input type="hidden" name="form_type" value="contact" />
-      <input type="hidden" name="utf8" value="✓" />
-      <input type="text" id="ContactFormName" name="contact[name]" required placeholder="O teu nome" style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">
-      <input type="email" id="ContactFormEmail" name="contact[email]" required placeholder="O teu email" style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">
-      <textarea id="ContactFormMessage" name="contact[body]" rows="5" required placeholder="Como podemos ajudar?" style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"></textarea>
-      <button type="submit" style="background-color:#a03a4a; color:#fff; padding:12px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-size:1.08rem; font-family:'Times New Roman',Times,serif;">ENVIAR MENSAGEM</button>
+    <div style="font-size:1.3rem; color:#a03a4a; font-weight:700; text-align:center; margin-bottom:1.2rem; letter-spacing:1px;">
+      ENVIA UMA MENSAGEM
+    </div>
+    <div style="text-align:center; margin-bottom:2rem; color:#fff; font-size:1.08rem;">
+      Preenche o formulário para contactar a Incorrect Society
+    </div>
+    <form
+      method="post"
+      action="/contact#contact_form"
+      id="contact_form"
+      accept-charset="UTF-8"
+      style="display:flex; flex-direction:column; gap:1.2rem;"
+    >
+      <input type="hidden" name="form_type" value="contact">
+      <input type="hidden" name="utf8" value="✓">
+      <input
+        type="text"
+        id="ContactFormName"
+        name="contact[name]"
+        required
+        placeholder="O teu nome"
+        style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"
+      >
+      <input
+        type="email"
+        id="ContactFormEmail"
+        name="contact[email]"
+        required
+        placeholder="O teu email"
+        style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"
+      >
+      <textarea
+        id="ContactFormMessage"
+        name="contact[body]"
+        rows="5"
+        required
+        placeholder="Como podemos ajudar?"
+        style="padding:12px; border-radius:4px; border:1px solid #333; background:#000; color:#fff; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"
+      ></textarea>
+      <button
+        type="submit"
+        style="background-color:#a03a4a; color:#fff; padding:12px; border:none; border-radius:4px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-size:1.08rem; font-family:'Times New Roman',Times,serif;"
+      >
+        ENVIAR MENSAGEM
+      </button>
     </form>
   </div>
   <div class="contact-social" style="text-align:center; font-size:1.08rem; margin-top:2.5rem;">
     <strong style="letter-spacing:1px;">Redes sociais:</strong><br>
-    <a href="https://www.instagram.com/incorrect.society/" target="_blank" style="color:#fff; border-bottom:1px dotted #fff; margin:0 0.7rem; text-decoration:none;">Instagram</a>
-    <a href="https://www.tiktok.com/@.incorrectsociety" target="_blank" style="color:#fff; border-bottom:1px dotted #fff; margin:0 0.7rem; text-decoration:none;">TikTok</a>
-    <a href="https://www.youtube.com/@IncorrectSociety" target="_blank" style="color:#fff; border-bottom:1px dotted #fff; margin:0 0.7rem; text-decoration:none;">YouTube</a>
+    <a
+      href="https://www.instagram.com/incorrect.society/"
+      target="_blank"
+      style="color:#fff; border-bottom:1px dotted #fff; margin:0 0.7rem; text-decoration:none;"
+      >Instagram</a
+    >
+    <a
+      href="https://www.tiktok.com/@.incorrectsociety"
+      target="_blank"
+      style="color:#fff; border-bottom:1px dotted #fff; margin:0 0.7rem; text-decoration:none;"
+      >TikTok</a
+    >
+    <a
+      href="https://www.youtube.com/@IncorrectSociety"
+      target="_blank"
+      style="color:#fff; border-bottom:1px dotted #fff; margin:0 0.7rem; text-decoration:none;"
+      >YouTube</a
+    >
   </div>
 </div>
 

@@ -1,6 +1,12 @@
 /** Critical CSS for the theme. This file is included on every page. */
 
 /* Reset styles inspired by https://www.joshwcomeau.com/css/custom-css-reset/ */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent)
+    color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -110,7 +116,8 @@ body {
     calc(100% - var(--page-margin) * 2)
   );
   --content-margin: minmax(var(--page-margin), 1fr);
-  --content-grid: var(--content-margin) var(--content-width) var(--content-margin);
+  --content-grid: var(--content-margin) var(--content-width)
+    var(--content-margin);
 
   /* This is required to make <img> elements work as background images */
   position: relative;
@@ -148,13 +155,30 @@ body {
 }
 
 /* Ensure all links are white by default */
-a { color: var(--color-foreground); transition: color 0.3s ease; }
+a {
+  color: var(--color-foreground);
+  transition: color 0.3s ease;
+}
 /* Accent hover uses theme accent color */
-a:hover { color: var(--color-accent); }
+a:hover {
+  color: var(--color-accent);
+}
 
 /* Form elements styling */
-input, textarea, select, button { background-color: var(--color-surface); color: var(--color-foreground); border: 1px solid var(--color-border); }
-input:focus, textarea:focus, select:focus { border-color: var(--color-accent); outline: none; }
+input,
+textarea,
+select,
+button {
+  background-color: var(--color-surface);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
 
 button {
   cursor: pointer;
@@ -235,7 +259,6 @@ header {
   transition: color 0.3s ease;
 }
 
-
 .header-actions {
   display: flex;
   align-items: center;
@@ -253,7 +276,9 @@ header {
 
 .header-account:hover,
 .header-cart:hover,
-.checkout-link:hover { color: var(--color-accent); }
+.checkout-link:hover {
+  color: var(--color-accent);
+}
 
 .cart-count {
   font-weight: bold;
@@ -264,11 +289,11 @@ header {
   .header-content {
     padding: 0 1rem;
   }
-  
+
   .header-right {
     gap: 1rem;
   }
-  
+
   .search-input {
     width: 200px;
   }
@@ -345,4 +370,8 @@ form[action*="/challenge"] ~ hr {
 
 /* Fallback: style native /challenge forms even if container class changes */
 /* Slight grid centering for native challenge forms */
-form[action*="/challenge"] { display: grid; gap: 16px; justify-items: center; }
+form[action*="/challenge"] {
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+}

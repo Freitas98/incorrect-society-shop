@@ -1,127 +1,169 @@
 <div class="cd-music-player-minimal">
-	<a id="cdPlayPause" class="cd-play-btn-minimal" aria-label="Play/Pause" type="button">
-		<span id="cd-icon-play">
-			<svg width="38" height="38" viewBox="0 0 38 38" fill="white"><polygon points="10,7 32,19 10,31"/></svg>
-		</span>
-		<span id="cd-icon-pause" style="display:none;">
-			<svg width="38" height="38" viewBox="0 0 38 38" fill="white"><rect x="10" y="7" width="7" height="24" rx="2"/><rect x="21" y="7" width="7" height="24" rx="2"/></svg>
-		</span>
-	</a>
-	<a href="https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4" target="_blank" rel="noopener" tabindex="0">
-		<img height="50" width="50" src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo.jpg?v=1749137548" alt="CD Cover" class="cd-cover-minimal" id="cdCoverImg" />
-	</a>
-	<audio id="cdAudioPlayer" preload="auto" autoplay src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"></audio>
+  <a id="cdPlayPause" class="cd-play-btn-minimal" aria-label="Play/Pause" type="button">
+    <span id="cd-icon-play">
+      <svg width="38" height="38" viewBox="0 0 38 38" fill="white">
+        <polygon points="10,7 32,19 10,31"/>
+      </svg>
+    </span>
+    <span id="cd-icon-pause" style="display:none;">
+      <svg width="38" height="38" viewBox="0 0 38 38" fill="white">
+        <rect x="10" y="7" width="7" height="24" rx="2"/><rect x="21" y="7" width="7" height="24" rx="2"/>
+      </svg>
+    </span>
+  </a>
+  <a
+    href="https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4"
+    target="_blank"
+    rel="noopener"
+    tabindex="0"
+  >
+    <img
+      height="50"
+      width="50"
+      src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo.jpg?v=1749137548"
+      alt="CD Cover"
+      class="cd-cover-minimal"
+      id="cdCoverImg"
+    >
+  </a>
+  <audio
+    id="cdAudioPlayer"
+    preload="auto"
+    autoplay
+    src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"
+  ></audio>
 </div>
 <style>
-.cd-music-player-minimal {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 18px;
-	background: transparent;
-	border-radius: 16px;
-	padding: 0;
-	max-width: 220px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 0;
-	margin-bottom: 20px;
-}
-.cd-play-btn-minimal {
-	background: none;
-	border: none;
-	outline: none;
-	cursor: pointer;
-	padding: 0;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.cd-play-btn-minimal svg polygon {
-	transition: fill 0.15s;
-}
-.cd-play-btn-minimal:hover svg polygon {
-	fill: #8f2b3f;
-}
+  .cd-music-player-minimal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    background: transparent;
+    border-radius: 16px;
+    padding: 0;
+    max-width: 220px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  .cd-play-btn-minimal {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cd-play-btn-minimal svg polygon {
+    transition: fill 0.15s;
+  }
+  .cd-play-btn-minimal:hover svg polygon {
+    fill: #8f2b3f;
+  }
 
-.cd-play-btn-minimal:hover svg rect {
-	fill: #8f2b3f;
-}
+  .cd-play-btn-minimal:hover svg rect {
+    fill: #8f2b3f;
+  }
 
-.cd-cover-minimal {
-	width: 64px;
-	height: 64px;
-	border-radius: 50%;
-	box-shadow: 0 2px 8px #000a;
-	border: 2px solid #222;
-	background: #111;
-	object-fit: cover;
-	transition: box-shadow 0.2s;
-}
-.cd-cover-minimal.rotating {
-	animation: cd-spin 2.5s linear infinite;
-}
-@keyframes cd-spin {
-	0% { transform: rotate(0deg); }
-	100% { transform: rotate(360deg); }
-}
+  .cd-cover-minimal {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px #000a;
+    border: 2px solid #222;
+    background: #111;
+    object-fit: cover;
+    transition: box-shadow 0.2s;
+  }
+  .cd-cover-minimal.rotating {
+    animation: cd-spin 2.5s linear infinite;
+  }
+  @keyframes cd-spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 </style>
 <script>
-
-// --- SHUFFLE UTILITY ---
-function shuffleArray(array) {
+  // --- SHUFFLE UTILITY ---
+  function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
-}
+  }
 
-const tracks = [
-    { name: "Port António", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842" },
-    { name: "Isso é Sério", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842" },
-    { name: "MAFIA", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841" },
-    { name: "OLD SKOOL", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841" },
-    { name: "Push ups", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841" },
-    { name: "Toni do Rock", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841" },
-    { name: "COFFEE BEAN", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841" },
-    { name: "DOVE", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840" },
-    { name: "Besta", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840" },
-    { name: "Insomnia", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840" },
-    { name: "CorDaPele", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839" },
-    { name: "No Pole", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840" },
-    { name: "DEEP IN THE WATER", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840" },
-    { name: "PARKING LOT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839" },
-    { name: "Nem Metade / Não Me Confundam", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839" },
-    { name: "Mikasa", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838" },
-    { name: "Levels", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838" },
-    { name: "AMANHÃ", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838" },
-    { name: "THAT'S THAT", url: "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837" },
-];
+  const tracks = [
+    {
+      name: 'Port António',
+      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842',
+    },
+    {
+      name: 'Isso é Sério',
+      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842',
+    },
+    { name: 'MAFIA', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841' },
+    { name: 'OLD SKOOL', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841' },
+    { name: 'Push ups', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841' },
+    {
+      name: 'Toni do Rock',
+      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841',
+    },
+    { name: 'COFFEE BEAN', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841' },
+    { name: 'DOVE', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840' },
+    {
+      name: 'Besta',
+      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840',
+    },
+    { name: 'Insomnia', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840' },
+    { name: 'CorDaPele', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839' },
+    { name: 'No Pole', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840' },
+    {
+      name: 'DEEP IN THE WATER',
+      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840',
+    },
+    { name: 'PARKING LOT', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839' },
+    {
+      name: 'Nem Metade / Não Me Confundam',
+      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839',
+    },
+    { name: 'Mikasa', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838' },
+    { name: 'Levels', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838' },
+    { name: 'AMANHÃ', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838' },
+    { name: "THAT'S THAT", url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837' },
+  ];
 
-// --- SHUFFLE SESSION LOGIC ---
-function getShuffledOrder() {
+  // --- SHUFFLE SESSION LOGIC ---
+  function getShuffledOrder() {
     let order = localStorage.getItem('musicPlayerShuffledOrder');
     if (order) {
-        try {
-            order = JSON.parse(order);
-            if (Array.isArray(order) && order.length === tracks.length) return order;
-        } catch(e) {}
+      try {
+        order = JSON.parse(order);
+        if (Array.isArray(order) && order.length === tracks.length) return order;
+      } catch (e) {}
     }
     // If no order or invalid, create new shuffled order
-    const arr = Array.from({length: tracks.length}, (_, i) => i);
+    const arr = Array.from({ length: tracks.length }, (_, i) => i);
     const shuffled = shuffleArray(arr);
     localStorage.setItem('musicPlayerShuffledOrder', JSON.stringify(shuffled));
     return shuffled;
-}
+  }
 
-const shuffledOrder = getShuffledOrder();
+  const shuffledOrder = getShuffledOrder();
 
-function getTrackByShuffledIndex(idx) {
+  function getTrackByShuffledIndex(idx) {
     return tracks[shuffledOrder[idx]];
-}
+  }
 
-document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     var audio = document.getElementById('cdAudioPlayer');
     var playBtn = document.getElementById('cdPlayPause');
     var iconPlay = document.getElementById('cd-icon-play');
@@ -133,30 +175,30 @@ document.addEventListener('DOMContentLoaded', function() {
     var currentTrack = !isNaN(savedTrack) ? savedTrack : 0; // Default to first in shuffled order
     // Only set track if not already set (prevents reset on navigation)
     function setTrack(idx) {
-        if (idx < 0 || idx >= tracks.length) return;
-        currentTrack = idx;
-        var trackObj = getTrackByShuffledIndex(currentTrack);
-        if (audio.src !== trackObj.url) {
-            audio.src = trackObj.url;
-        }
-        localStorage.setItem('musicPlayerTrack', currentTrack);
-        // Reset time for new track
-        localStorage.setItem('musicPlayerTime', 0);
-        audio.currentTime = 0;
-        // If not paused, play immediately
-        if (playBtn.getAttribute('data-intent') === 'play' && !audio.paused) {
-            audio.play().catch(function(){});
-        }
+      if (idx < 0 || idx >= tracks.length) return;
+      currentTrack = idx;
+      var trackObj = getTrackByShuffledIndex(currentTrack);
+      if (audio.src !== trackObj.url) {
+        audio.src = trackObj.url;
+      }
+      localStorage.setItem('musicPlayerTrack', currentTrack);
+      // Reset time for new track
+      localStorage.setItem('musicPlayerTime', 0);
+      audio.currentTime = 0;
+      // If not paused, play immediately
+      if (playBtn.getAttribute('data-intent') === 'play' && !audio.paused) {
+        audio.play().catch(function () {});
+      }
     }
     // Only set initial track if no saved track
     if (isNaN(savedTrack)) {
-        setTrack(currentTrack);
+      setTrack(currentTrack);
     } else {
-        // If the src is not correct (e.g. after navigation), restore it without resetting time
-        var trackObj = getTrackByShuffledIndex(currentTrack);
-        if (audio.src !== trackObj.url) {
-            audio.src = trackObj.url;
-        }
+      // If the src is not correct (e.g. after navigation), restore it without resetting time
+      var trackObj = getTrackByShuffledIndex(currentTrack);
+      if (audio.src !== trackObj.url) {
+        audio.src = trackObj.url;
+      }
     }
 
     // Restore state from localStorage
@@ -164,85 +206,85 @@ document.addEventListener('DOMContentLoaded', function() {
     var wasPaused = localStorage.getItem('musicPlayerPaused') === 'true';
     // Always set play intent unless user intentionally paused
     if (!wasPaused) {
-        playBtn.setAttribute('data-intent', 'play');
-        // Try to play immediately
-        audio.play().catch(function(){});
+      playBtn.setAttribute('data-intent', 'play');
+      // Try to play immediately
+      audio.play().catch(function () {});
     } else {
-        playBtn.setAttribute('data-intent', 'pause');
+      playBtn.setAttribute('data-intent', 'pause');
     }
     function updateIcons() {
-        if (audio.paused) {
-            iconPlay.style.display = '';
-            iconPause.style.display = 'none';
-            cdCover.classList.remove('rotating');
-        } else {
-            iconPlay.style.display = 'none';
-            iconPause.style.display = '';
-            cdCover.classList.add('rotating');
-        }
+      if (audio.paused) {
+        iconPlay.style.display = '';
+        iconPause.style.display = 'none';
+        cdCover.classList.remove('rotating');
+      } else {
+        iconPlay.style.display = 'none';
+        iconPause.style.display = '';
+        cdCover.classList.add('rotating');
+      }
     }
     function globalTryPlay(e) {
-        if (e && playBtn.contains(e.target)) return;
-        // Always try to play unless user intentionally paused
-        if (audio.paused && localStorage.getItem('musicPlayerPaused') !== 'true') {
-            playBtn.setAttribute('data-intent', 'play');
-            audio.play().catch(function(){});
-        }
+      if (e && playBtn.contains(e.target)) return;
+      // Always try to play unless user intentionally paused
+      if (audio.paused && localStorage.getItem('musicPlayerPaused') !== 'true') {
+        playBtn.setAttribute('data-intent', 'play');
+        audio.play().catch(function () {});
+      }
     }
     document.addEventListener('click', globalTryPlay, true);
     document.addEventListener('touchstart', globalTryPlay, true);
     document.addEventListener('keydown', globalTryPlay, true);
-    playBtn.addEventListener('click', function(e) {
-        if (playBtn.getAttribute('data-intent') === 'play' && audio.paused) {
-            audio.play().catch(function(){});
-        }
+    playBtn.addEventListener('click', function (e) {
+      if (playBtn.getAttribute('data-intent') === 'play' && audio.paused) {
+        audio.play().catch(function () {});
+      }
     });
-    playBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (audio.paused) {
-            playBtn.setAttribute('data-intent', 'play');
-            localStorage.setItem('musicPlayerPaused', 'false');
-            audio.play().catch(function(){});
-        } else {
-            playBtn.setAttribute('data-intent', 'pause');
-            localStorage.setItem('musicPlayerPaused', 'true');
-            audio.pause();
-        }
+    playBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (audio.paused) {
+        playBtn.setAttribute('data-intent', 'play');
+        localStorage.setItem('musicPlayerPaused', 'false');
+        audio.play().catch(function () {});
+      } else {
+        playBtn.setAttribute('data-intent', 'pause');
+        localStorage.setItem('musicPlayerPaused', 'true');
+        audio.pause();
+      }
     });
-    playBtn.addEventListener('keydown', function(e) {
-        if (audio.paused) playBtn.setAttribute('data-intent', 'play');
+    playBtn.addEventListener('keydown', function (e) {
+      if (audio.paused) playBtn.setAttribute('data-intent', 'play');
     });
-    audio.addEventListener('play', function() {
-        updateIcons();
-        // Only set paused to false if user did not intentionally pause
-        if (playBtn.getAttribute('data-intent') === 'play') {
-            localStorage.setItem('musicPlayerPaused', 'false');
-        }
+    audio.addEventListener('play', function () {
+      updateIcons();
+      // Only set paused to false if user did not intentionally pause
+      if (playBtn.getAttribute('data-intent') === 'play') {
+        localStorage.setItem('musicPlayerPaused', 'false');
+      }
     });
-    audio.addEventListener('pause', function() {
-        updateIcons();
-        // Only set paused to true if user intentionally paused
-        if (playBtn.getAttribute('data-intent') === 'pause') {
-            localStorage.setItem('musicPlayerPaused', 'true');
-        }
+    audio.addEventListener('pause', function () {
+      updateIcons();
+      // Only set paused to true if user intentionally paused
+      if (playBtn.getAttribute('data-intent') === 'pause') {
+        localStorage.setItem('musicPlayerPaused', 'true');
+      }
     });
-    audio.addEventListener('timeupdate', function() {
-        localStorage.setItem('musicPlayerTime', audio.currentTime);
+    audio.addEventListener('timeupdate', function () {
+      localStorage.setItem('musicPlayerTime', audio.currentTime);
     });
-    audio.addEventListener('loadedmetadata', function() {
-        if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
-            audio.currentTime = savedTime;
-        }
-        // Always try to play unless user intentionally paused
-        if (localStorage.getItem('musicPlayerPaused') !== 'true') {
-            playBtn.setAttribute('data-intent', 'play');
-            audio.play().catch(function(){});
-        } else {
-            playBtn.setAttribute('data-intent', 'pause');
-            audio.pause();
-        }
-        updateIcons();
+    audio.addEventListener('loadedmetadata', function () {
+      if (!isNaN(savedTime) && savedTime > 0 && savedTime < audio.duration) {
+        audio.currentTime = savedTime;
+      }
+      // Always try to play unless user intentionally paused
+      if (localStorage.getItem('musicPlayerPaused') !== 'true') {
+        playBtn.setAttribute('data-intent', 'play');
+        audio.play().catch(function () {});
+      } else {
+        playBtn.setAttribute('data-intent', 'pause');
+        audio.pause();
+      }
+      updateIcons();
     });
     updateIcons();
-});
+  });
 </script>

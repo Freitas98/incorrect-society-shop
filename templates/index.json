@@ -7,7 +7,5 @@
       }
     }
   },
-  "order": [
-    "product_grid"
-  ]
+  "order": ["product_grid"]
 }

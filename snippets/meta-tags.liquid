@@ -93,7 +93,7 @@
     if gift_card and gift_card.code
       assign code_prefix = gift_card.code | slice: 0, 4 | upcase
     endif
-  assign title_text = code_prefix | append: ' ' | append: masked | append: ' - ' | append: shop.name | upcase
+    assign title_text = code_prefix | append: ' ' | append: masked | append: ' - ' | append: shop.name | upcase
   else
     assign title_text = page_title | upcase
   endif

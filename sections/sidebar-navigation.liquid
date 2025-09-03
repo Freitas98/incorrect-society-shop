@@ -5,7 +5,7 @@
       <span>&times;</span>
     </button>
   </div>
-  
+
   <div class="sidebar-content">
     <div class="sidebar-menu-section">
       <ul class="sidebar-menu">
@@ -13,28 +13,38 @@
           <a href="{{ collections.new.url | default: '/collections/outsider' }}" class="sidebar-menu-link">OUTSIDER</a>
         </li>
         <li class="sidebar-menu-item">
-          <a href="{{ collections.t-shirts.url | default: '/collections/gift-cards' }}" class="sidebar-menu-link">GIFT CARDS</a>
+          <a href="{{ collections.t-shirts.url | default: '/collections/gift-cards' }}" class="sidebar-menu-link"
+            >GIFT CARDS</a
+          >
         </li>
       </ul>
     </div>
-    
+
     <div class="sidebar-footer">
       {% if shop.customer_accounts_enabled %}
-        <a href="{{ routes.account_url }}" class="sidebar-account">
-          MY ACCOUNT
-        </a>
+        <a href="{{ routes.account_url }}" class="sidebar-account"> MY ACCOUNT </a>
       {% endif %}
-      
+
       {% render 'social-icons', size: 24 %}
 
       <div class="sidebar-links">
-  <a href="{{ pages['newsletter'].url }}" class="sidebar-footer-link">{{ 'policies.newsletter' | t | default: 'Newsletter' }}</a>
-  <a href="{{ pages['contact-us'].url }}" class="sidebar-footer-link">{{ 'policies.contact_us' | t | default: 'Contact Us' }}</a>
-  <a href="{{ pages['shipping-policy'].url }}" class="sidebar-footer-link">{{ 'policies.shipping_policy' | t | default: 'Shipping policy' }}</a>
-  <a href="{{ pages['return-policy'].url }}" class="sidebar-footer-link">{{ 'policies.return_policy' | t | default: 'Return policy' }}</a>
-  <a href="{{ pages['terms-of-service'].url }}" class="sidebar-footer-link">{{ 'policies.terms_of_service' | t | default: 'Terms of Service' }}</a>
+        <a href="{{ pages['newsletter'].url }}" class="sidebar-footer-link">
+          {{- 'policies.newsletter' | t | default: 'Newsletter' -}}
+        </a>
+        <a href="{{ pages['contact-us'].url }}" class="sidebar-footer-link">
+          {{- 'policies.contact_us' | t | default: 'Contact Us' -}}
+        </a>
+        <a href="{{ pages['shipping-policy'].url }}" class="sidebar-footer-link">
+          {{- 'policies.shipping_policy' | t | default: 'Shipping policy' -}}
+        </a>
+        <a href="{{ pages['return-policy'].url }}" class="sidebar-footer-link">
+          {{- 'policies.return_policy' | t | default: 'Return policy' -}}
+        </a>
+        <a href="{{ pages['terms-of-service'].url }}" class="sidebar-footer-link">
+          {{- 'policies.terms_of_service' | t | default: 'Terms of Service' -}}
+        </a>
       </div>
-        {% render 'music-player' %}
+      {% render 'music-player' %}
     </div>
   </div>
 </nav>
@@ -56,7 +66,7 @@
     transition: left 0.3s ease;
     z-index: 1002;
     overflow-y: auto;
-  overscroll-behavior: contain;
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
   }
@@ -67,10 +77,14 @@
 
   .sidebar-overlay {
     position: fixed;
-  top: calc(var(--announcement-height, 40px) + var(--site-header-height, 0px)); /* Start below announcement + header */
+    top: calc(
+      var(--announcement-height, 40px) + var(--site-header-height, 0px)
+    ); /* Start below announcement + header */
     left: 0;
-  width: 100%;
-  height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px))); /* Respect announcement + header height */
+    width: 100%;
+    height: calc(
+      100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px))
+    ); /* Respect announcement + header height */
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1001;
     opacity: 0;
@@ -105,19 +119,21 @@
   }
 
   .sidebar-content {
-  display: flex;
-  flex-direction: column;
-  /* Let content grow and scroll if needed */
-  height: auto;
-  max-height: 100%;
-  padding: 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-accent) color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
+    display: flex;
+    flex-direction: column;
+    /* Let content grow and scroll if needed */
+    height: auto;
+    max-height: 100%;
+    padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .sidebar-menu-section {
-  flex: 1 1 auto;
-  padding: 20px 0;
+    flex: 1 1 auto;
+    padding: 20px 0;
   }
 
   .sidebar-menu {
@@ -141,7 +157,10 @@
     transition: all 0.3s ease;
   }
 
-  .sidebar-menu-link:hover { background-color: transparent; color: var(--color-accent); }
+  .sidebar-menu-link:hover {
+    background-color: transparent;
+    color: var(--color-accent);
+  }
 
   .sidebar-footer {
     margin-top: 100px;
@@ -164,7 +183,9 @@
     margin-bottom: 20px;
   }
 
-  .sidebar-account:hover { color: var(--color-accent); }
+  .sidebar-account:hover {
+    color: var(--color-accent);
+  }
 
   .sidebar-links {
     margin-top: 25px;
@@ -182,7 +203,9 @@
     transition: color 0.3s ease;
   }
 
-  .sidebar-footer-link:hover { color: var(--color-accent); }
+  .sidebar-footer-link:hover {
+    color: var(--color-accent);
+  }
 
   .sidebar-social {
     display: flex;
@@ -199,7 +222,9 @@
     justify-content: center;
   }
 
-  .social-link:hover { color: var(--color-accent); }
+  .social-link:hover {
+    color: var(--color-accent);
+  }
 
   .social-link svg {
     width: 24px;
@@ -211,13 +236,13 @@
     .sidebar-header {
       display: flex; /* Show close button on mobile */
     }
-    
+
     .sidebar {
       width: 100%;
       left: -100%;
       height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
     }
-    
+
     .sidebar.open {
       height: calc(100% - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
       left: 0;
@@ -231,31 +256,31 @@
       padding-bottom: max(20px, env(safe-area-inset-bottom));
     }
 
-    
     .sidebar-footer {
       margin-top: auto;
-    } 
+    }
   }
 
-    @media (max-width: 350px) {
-      .sidebar-content {
-        height: auto;
-        max-height: 100%;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-      } 
+  @media (max-width: 350px) {
+    .sidebar-content {
+      height: auto;
+      max-height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
+  }
 
   /* Desktop: never show overlay */
   @media (min-width: 771px) {
-    .sidebar-overlay { display: none; }
+    .sidebar-overlay {
+      display: none;
+    }
   }
-  
 {% endstylesheet %}
 
 {% javascript %}
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const sidebar = document.getElementById('sidebar');
     const sidebarToggles = document.querySelectorAll('.sidebar-toggle--in-header');
     const sidebarClose = document.getElementById('sidebar-close');
@@ -300,7 +325,7 @@
     if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
 
     // Close sidebar on escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && sidebar && sidebar.classList.contains('open')) {
         closeSidebar();
       }

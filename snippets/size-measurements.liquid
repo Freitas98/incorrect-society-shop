@@ -45,7 +45,7 @@
   Get measurement value
   Parameters: garment, size, point, unit
   Usage: {% render 'size-measurements', garment: 'tshirt', size: 's', point: 'a', unit: 'cm' %}
-  
+
   Get measurement note
   Parameters: action: 'note', unit: 'cm' or 'inches'
   Usage: {% render 'size-measurements', action: 'note', unit: 'cm' %}
@@ -62,30 +62,54 @@
   {% assign cm_value = 0 %}
 
   {% case variable_name %}
-    {% when 'tshirt_s_a' %}{% assign cm_value = tshirt_s_a %}
-    {% when 'tshirt_s_b' %}{% assign cm_value = tshirt_s_b %}
-    {% when 'tshirt_s_c' %}{% assign cm_value = tshirt_s_c %}
-    {% when 'tshirt_m_a' %}{% assign cm_value = tshirt_m_a %}
-    {% when 'tshirt_m_b' %}{% assign cm_value = tshirt_m_b %}
-    {% when 'tshirt_m_c' %}{% assign cm_value = tshirt_m_c %}
-    {% when 'tshirt_l_a' %}{% assign cm_value = tshirt_l_a %}
-    {% when 'tshirt_l_b' %}{% assign cm_value = tshirt_l_b %}
-    {% when 'tshirt_l_c' %}{% assign cm_value = tshirt_l_c %}
-    {% when 'tshirt_xl_a' %}{% assign cm_value = tshirt_xl_a %}
-    {% when 'tshirt_xl_b' %}{% assign cm_value = tshirt_xl_b %}
-    {% when 'tshirt_xl_c' %}{% assign cm_value = tshirt_xl_c %}
-    {% when 'hoodie_s_a' %}{% assign cm_value = hoodie_s_a %}
-    {% when 'hoodie_s_b' %}{% assign cm_value = hoodie_s_b %}
-    {% when 'hoodie_s_c' %}{% assign cm_value = hoodie_s_c %}
-    {% when 'hoodie_m_a' %}{% assign cm_value = hoodie_m_a %}
-    {% when 'hoodie_m_b' %}{% assign cm_value = hoodie_m_b %}
-    {% when 'hoodie_m_c' %}{% assign cm_value = hoodie_m_c %}
-    {% when 'hoodie_l_a' %}{% assign cm_value = hoodie_l_a %}
-    {% when 'hoodie_l_b' %}{% assign cm_value = hoodie_l_b %}
-    {% when 'hoodie_l_c' %}{% assign cm_value = hoodie_l_c %}
-    {% when 'hoodie_xl_a' %}{% assign cm_value = hoodie_xl_a %}
-    {% when 'hoodie_xl_b' %}{% assign cm_value = hoodie_xl_b %}
-    {% when 'hoodie_xl_c' %}{% assign cm_value = hoodie_xl_c %}
+    {% when 'tshirt_s_a' -%}
+      {%- assign cm_value = tshirt_s_a %}
+    {% when 'tshirt_s_b' -%}
+      {%- assign cm_value = tshirt_s_b %}
+    {% when 'tshirt_s_c' -%}
+      {%- assign cm_value = tshirt_s_c %}
+    {% when 'tshirt_m_a' -%}
+      {%- assign cm_value = tshirt_m_a %}
+    {% when 'tshirt_m_b' -%}
+      {%- assign cm_value = tshirt_m_b %}
+    {% when 'tshirt_m_c' -%}
+      {%- assign cm_value = tshirt_m_c %}
+    {% when 'tshirt_l_a' -%}
+      {%- assign cm_value = tshirt_l_a %}
+    {% when 'tshirt_l_b' -%}
+      {%- assign cm_value = tshirt_l_b %}
+    {% when 'tshirt_l_c' -%}
+      {%- assign cm_value = tshirt_l_c %}
+    {% when 'tshirt_xl_a' -%}
+      {%- assign cm_value = tshirt_xl_a %}
+    {% when 'tshirt_xl_b' -%}
+      {%- assign cm_value = tshirt_xl_b %}
+    {% when 'tshirt_xl_c' -%}
+      {%- assign cm_value = tshirt_xl_c %}
+    {% when 'hoodie_s_a' -%}
+      {%- assign cm_value = hoodie_s_a %}
+    {% when 'hoodie_s_b' -%}
+      {%- assign cm_value = hoodie_s_b %}
+    {% when 'hoodie_s_c' -%}
+      {%- assign cm_value = hoodie_s_c %}
+    {% when 'hoodie_m_a' -%}
+      {%- assign cm_value = hoodie_m_a %}
+    {% when 'hoodie_m_b' -%}
+      {%- assign cm_value = hoodie_m_b %}
+    {% when 'hoodie_m_c' -%}
+      {%- assign cm_value = hoodie_m_c %}
+    {% when 'hoodie_l_a' -%}
+      {%- assign cm_value = hoodie_l_a %}
+    {% when 'hoodie_l_b' -%}
+      {%- assign cm_value = hoodie_l_b %}
+    {% when 'hoodie_l_c' -%}
+      {%- assign cm_value = hoodie_l_c %}
+    {% when 'hoodie_xl_a' -%}
+      {%- assign cm_value = hoodie_xl_a %}
+    {% when 'hoodie_xl_b' -%}
+      {%- assign cm_value = hoodie_xl_b %}
+    {% when 'hoodie_xl_c' -%}
+      {%- assign cm_value = hoodie_xl_c %}
   {% endcase %}
 
   {% if unit == 'inches' %}

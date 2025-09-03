@@ -10,7 +10,7 @@
       assign limit = section.settings.products_to_show | default: 6
     %}
 
-    {% for product in collections['all'].products %}
+    {% for product in collections.all.products %}
       {% liquid
         assign exclude_handle = 'gift-cards'
         assign in_excluded = false
@@ -26,18 +26,18 @@
         <a href="{{ product.url }}" class="product-link">
           <div class="product-image">
             {% if product.featured_media %}
-              <img src="{{ product.featured_media | image_url: width: 400 }}" 
-                   alt="{{ product.featured_media.alt | escape }}"
-                   width="400"
-                   height="400"
-                   loading="lazy">
+              <img
+                src="{{ product.featured_media | image_url: width: 400 }}"
+                alt="{{ product.featured_media.alt | escape }}"
+                width="400"
+                height="400"
+                loading="lazy"
+              >
             {% else %}
-              <div class="product-image-placeholder">
-                No Image
-              </div>
+              <div class="product-image-placeholder">No Image</div>
             {% endif %}
           </div>
-          
+
           <div class="product-info">
             <h3 class="product-title">{{ product.title }}</h3>
             <p class="product-price">{% render 'price', amount: product.price %}</p>
@@ -57,7 +57,7 @@
 {% stylesheet %}
   .product-grid-section {
     padding: 60px 40px;
-  color: var(--color-foreground);
+    color: var(--color-foreground);
   }
 
   .product-grid-title {
@@ -70,12 +70,12 @@
   }
 
   .product-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
   .product-card {
@@ -99,7 +99,10 @@
     transition: transform 0.3s ease;
   }
 
-  .product-link:hover { transform: translateY(-5px); color: var(--color-accent); }
+  .product-link:hover {
+    transform: translateY(-5px);
+    color: var(--color-accent);
+  }
 
   .product-image {
     position: relative;
@@ -128,8 +131,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  background-color: var(--color-background);
-  color: var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-border);
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -145,7 +148,7 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     margin: 0 0 10px 0;
-  color: var(--color-foreground);
+    color: var(--color-foreground);
     line-height: 1.4;
   }
 
@@ -168,16 +171,31 @@
   }
 
   @media (max-width: 768px) {
-    .product-grid { gap: 20px; }
-    .product-card { width: calc(50% - 12px); min-width: 0; }
-    .product-grid-section { padding: 30px 15px; }
+    .product-grid {
+      gap: 20px;
+    }
+    .product-card {
+      width: calc(50% - 12px);
+      min-width: 0;
+    }
+    .product-grid-section {
+      padding: 30px 15px;
+    }
   }
 
   @media (max-width: 480px) {
-    .product-grid { gap: 18px; }
-    .product-card { width: 100%; }
-    .product-title { font-size: 13px; }
-    .product-price { font-size: 13px; }
+    .product-grid {
+      gap: 18px;
+    }
+    .product-card {
+      width: 100%;
+    }
+    .product-title {
+      font-size: 13px;
+    }
+    .product-price {
+      font-size: 13px;
+    }
   }
 {% endstylesheet %}
 
