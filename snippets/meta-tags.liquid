@@ -113,15 +113,15 @@
   href="{{ canonical_url }}"
 >
 
-<!-- Favicon -->
-{%- capture favicon_png_content -%}{{ 'favicon.ico' | inline_asset_content }}{%- endcapture -%}
-{%- if favicon_png_content != '' -%}
-  <link rel="icon" type="image/x-icon" href="{{ 'favicon.ico' | asset_url }}">
-  <link rel="apple-touch-icon" href="{{ 'favicon.ico' | asset_url }}">
-{%- else -%}
-  <link rel="icon" type="image/png" href="{{ 'logo.png' | asset_url }}">
-  <link rel="apple-touch-icon" href="{{ 'logo.png' | asset_url }}">
-{%- endif -%}
+<!-- Favicons & Touch Icons -->
+<link rel="icon" href="{{ 'favicon.ico' | asset_url }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ 'favicon.ico' | asset_url }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ 'favicon.ico' | asset_url }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ 'favicon.ico' | asset_url }}">
+<link rel="icon" type="image/png" sizes="192x192" href="{{ 'favicon.ico' | asset_url }}">
+<link rel="icon" type="image/png" sizes="512x512" href="{{ 'favicon.ico' | asset_url }}">
+<meta name="theme-color" content="#000000">
+<meta name="application-name" content="{{ shop.name }}">
 
 {% if page_description %}
   <meta
