@@ -94,7 +94,9 @@
       assign code_prefix = gift_card.code | slice: 0, 4 | upcase
     endif
     assign title_text = code_prefix | append: ' ' | append: masked | append: ' - ' | append: shop.name | upcase
-  else
+    elsif template.name == 'password'
+    assign title_text = shop.name | append: ' - Welcome' | upcase
+    else
     assign title_text = page_title | upcase
   endif
 -%}
@@ -123,9 +125,9 @@
 <meta name="theme-color" content="#000000">
 <meta name="application-name" content="{{ shop.name }}">
 
-{% if page_description %}
+{% if shop.description %}
   <meta
     name="description"
-    content="{{ page_description | escape }}"
+    content="{{ shop.description | escape }}"
   >
 {% endif %}
