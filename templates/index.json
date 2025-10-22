@@ -1,4 +1,5 @@
 {
+  "layout": "landing",
   "sections": {
     "product_grid": {
       "type": "product-grid",
