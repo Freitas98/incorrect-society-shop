@@ -788,7 +788,8 @@ form[action*="/challenge"] {
   outline-offset: 2px;
 }
 
-.feature-input--textarea {
+.feature-input--textarea,
+.contact-field--textarea {
   min-height: 180px;
   resize: vertical;
 }
@@ -857,6 +858,120 @@ form[action*="/challenge"] {
   border-color: var(--color-primary);
 }
 
+/* Contact form inside policy pages */
+.contact-card {
+  background: color-mix(in oklab, var(--color-surface), var(--color-background) 15%);
+  border-radius: 16px;
+  border: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+  padding: var(--space-2xl) var(--space-xl);
+  max-width: 660px;
+  margin: 0 auto var(--space-xl);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.contact-field {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  background: #000;
+  color: var(--color-foreground);
+  font-size: 1rem;
+}
+
+.contact-field::placeholder {
+  color: color-mix(in oklab, var(--color-foreground), transparent 55%);
+}
+
+.contact-field:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--color-primary), transparent 40%);
+  outline-offset: 2px;
+}
+
+/* Newsletter page */
+.newsletter-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  text-align: center;
+  margin-bottom: var(--space-sm);
+}
+
+.newsletter-intro {
+  max-width: 640px;
+  margin: 0 auto var(--space-lg);
+  text-align: center;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+.newsletter-card {
+  text-align: center;
+}
+
+.newsletter-highlight {
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: var(--space-sm);
+}
+
+.newsletter-copy {
+  max-width: 520px;
+  margin: 0 auto var(--space-lg);
+  opacity: 0.9;
+}
+
+.newsletter-feedback {
+  margin: 0;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.newsletter-success {
+  color: var(--color-primary);
+}
+
+.newsletter-errors {
+  color: color-mix(in oklab, #ff5454 75%, var(--color-foreground) 25%);
+}
+
+.newsletter-message {
+  min-height: 1.2rem;
+  margin-top: var(--space-xs);
+}
+
+.newsletter-message[data-state="success"] {
+  color: var(--color-primary);
+}
+
+.newsletter-message[data-state="error"] {
+  color: color-mix(in oklab, #ff5454 75%, var(--color-foreground) 25%);
+}
+
+.newsletter-message[data-state="info"] {
+  color: color-mix(in oklab, var(--color-foreground), transparent 35%);
+}
+
+.newsletter-social {
+  margin-top: var(--space-xl);
+  text-align: center;
+}
+
+.newsletter-social p {
+  margin-bottom: var(--space-sm);
+}
+
 @media (max-width: 640px) {
   .feature-section {
     padding: var(--space-3xl) var(--space-sm);
@@ -864,5 +979,10 @@ form[action*="/challenge"] {
 
   .feature-card {
     padding: var(--space-xl);
+  }
+
+  .contact-card,
+  .newsletter-card {
+    padding: var(--space-xl) var(--space-lg);
   }
 }

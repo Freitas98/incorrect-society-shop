@@ -6,7 +6,7 @@
 <p class="text-soft u-mb-lg">{{ 'contact.contact_intro' | t }}</p>
 
 <div
-  class="policy-content u-text-center"
+  class="contact-card u-text-center"
 >
   <h3 class="text-primary u-mb-lg">{{ 'contact.contact_now' | t }}</h3>
   <p class="text-soft u-mb-lg">
@@ -15,10 +15,10 @@
 
   <form
     method="post"
-    action="/contact"
+    action="/contact#contact_form"
     id="contact_form"
     accept-charset="UTF-8"
-    class="u-flex-column u-gap-12 u-max-w-420 u-mx-auto"
+    class="contact-form"
   >
     <input type="hidden" name="form_type" value="contact">
     <input type="hidden" name="utf8" value="✓">
@@ -28,14 +28,16 @@
       name="contact[name]"
       required
       placeholder="{{ 'contact.comment_form_name' | t }}"
+      autocomplete="name"
       class="contact-field"
     >
     <input
       type="email"
-      id="ContactFormReply"
+      id="ContactFormEmail"
       name="contact[email]"
       required
       placeholder="{{ 'contact.comment_form_email' | t }}"
+      autocomplete="email"
       class="contact-field"
     >
     <textarea
@@ -44,7 +46,7 @@
       rows="5"
       required
       placeholder="{{ 'contact.message' | t }}"
-      class="contact-field no-resize"
+      class="contact-field contact-field--textarea no-resize"
     ></textarea>
     <button
       type="submit"
