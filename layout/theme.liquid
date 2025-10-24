@@ -11,10 +11,7 @@
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
 
-    {{ content_for_header }}
-    <link rel="icon" type="image/png" href="{{ 'favicon.ico' | asset_url }}">
-    <link rel="shortcut icon" href="{{ 'favicon.ico' | asset_url }}">
-    <link rel="apple-touch-icon" href="{{ 'favicon.ico' | asset_url }}">
+  {{ content_for_header }}
     <script>
       window.themeStrings = Object.assign({}, window.themeStrings, {
         cart_empty_title: {{ 'cart.empty_title' | t | json }},
@@ -48,47 +45,41 @@
       {% sections 'header-group' %}
 
       {% if request.path contains '/challenge' and template.name != 'challenge' %}
-        <section
-          class="shopify-challenge shopify-challenge__container"
-          style="display: block; margin: 30px auto 40px; text-align: center; max-width: 760px; padding: 0 12px;"
-        >
+        <section class="shopify-challenge shopify-challenge__container panel-constrained u-text-center u-stack-compact">
           <h1 class="shopify-challenge-title">{{ 'challenge.verify_heading' | t | default: 'Verification' }}</h1>
-          <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">
+          <p class="text-lead">
             {{ 'challenge.title' | t | default: 'Please verify you are human' }}
           </p>
 
-          <div class="challenge-content" style="display: grid; gap: 16px; justify-items: center; margin-bottom: 22px;">
+          <div class="challenge-content u-grid-center u-gap-16 u-mb-22">
             {{ content_for_layout }}
           </div>
-          <p class="shopify-challenge-reason" style="opacity: .75; margin: 8px 0 0; font-size: .9rem;">
+          <p class="shopify-challenge-reason text-muted text-small u-mt-xs">
             {{ 'challenge.footer' | t | default: 'This step protects our store from spam and abuse.' }}
           </p>
         </section>
       {% else %}
         {% if request.path contains '/account/subscribe' and template.name != 'customers/subscribe' %}
-          <section
-            class="customers-subscribe"
-            style="display: block; margin: 60px auto 80px; text-align: center; max-width: 760px; padding: 0 12px;"
-          >
+          <section class="customers-subscribe panel-constrained u-text-center u-stack-spacious">
             <h1 class="policy-title">{{ 'subscribe.title' | t | default: 'Subscription confirmed' }}</h1>
-            <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">
+            <p class="text-lead">
               {{
                 'subscribe.message'
                 | t
                 | default: 'Your email has been confirmed. You will now receive our updates.'
               }}
             </p>
-            <div style="display: grid; gap: 24px; justify-items: center; margin: 24px 0 4px;">
+            <div class="u-grid-center u-gap-24 u-mt-lg u-mb-2xs">
               <a
                 href="{{ routes.root_url }}"
-                style="display: inline-block; background: var(--color-accent); color: var(--color-foreground); border: 1px solid var(--color-accent); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600;"
+                class="btn btn-primary"
               >
                 {{- 'subscribe.shop_now' | t | default: 'Shop now' -}}
               </a>
               <a
                 id="unsubscribeLink"
                 href="#"
-                style="font-size: .85rem; color: var(--color-foreground); text-decoration: underline; opacity: .85;"
+                class="link-underline link-muted text-xs"
               >
                 {{- 'subscribe.unsubscribe' | t | default: 'Unsubscribe' -}}
               </a>
@@ -105,27 +96,24 @@
             </script>
           </section>
         {% elsif request.path contains '/account/unsubscribe' %}
-          <section
-            class="customers-unsubscribe"
-            style="display: block; margin: 60px auto 80px; text-align: center; max-width: 760px; padding: 0 12px;"
-          >
+          <section class="customers-unsubscribe panel-constrained u-text-center u-stack-spacious">
             <h1 class="policy-title">{{ 'unsubscribe.title' | t | default: 'Unsubscribed' }}</h1>
-            <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">
+            <p class="text-lead">
               {{
                 'unsubscribe.message'
                 | t
                 | default: 'You’ve been unsubscribed from our emails. You can subscribe again anytime.'
               }}
             </p>
-            <div style="display: grid; gap: 10px; justify-items: center; margin: 24px 0 4px;">
+            <div class="u-grid-center u-gap-10 u-mt-lg u-mb-2xs">
               <a
                 href="{{ routes.root_url }}"
-                style="display: inline-block; background: var(--color-accent); color: var(--color-foreground); border: 1px solid var(--color-accent); padding: 10px 16px; border-radius: 4px; text-decoration: none; font-weight: 600;"
+                class="btn btn-primary"
               >
                 {{- 'subscribe.back_home' | t | default: 'Back to home' -}}
               </a>
             </div>
-            <div style="display:none">{{ content_for_layout }}</div>
+            <div class="u-hidden">{{ content_for_layout }}</div>
           </section>
         {% else %}
           {{ content_for_layout }}

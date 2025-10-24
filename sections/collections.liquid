@@ -7,9 +7,11 @@
 
 <h1>{{ 'collections.title' | t }}</h1>
 
+{% assign collections_id = 'CollectionsGrid-' | append: section.id %}
+
 <div
+  id="{{ collections_id }}"
   class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
 >
   {% for collection in collections %}
     <a class="collection-card" href="{{ collection.url }}">
@@ -33,6 +35,12 @@
     </a>
   {% endfor %}
 </div>
+
+{% style %}
+  #{{ collections_id }} {
+    --grid-gap: {{ section.settings.grid_gap }}px;
+  }
+{% endstyle %}
 
 {% stylesheet %}
   .collections {

@@ -5,7 +5,7 @@
         <polygon points="10,7 32,19 10,31"/>
       </svg>
     </span>
-    <span id="cd-icon-pause" style="display:none;">
+  <span id="cd-icon-pause" class="u-hidden">
       <svg width="38" height="38" viewBox="0 0 38 38" fill="white">
         <rect x="10" y="7" width="7" height="24" rx="2"/><rect x="21" y="7" width="7" height="24" rx="2"/>
       </svg>
@@ -62,11 +62,11 @@
     transition: fill 0.15s;
   }
   .cd-play-btn-minimal:hover svg polygon {
-    fill: #8f2b3f;
+    fill: var(--color-primary);
   }
 
   .cd-play-btn-minimal:hover svg rect {
-    fill: #8f2b3f;
+    fill: var(--color-primary);
   }
 
   .cd-cover-minimal {
@@ -214,12 +214,12 @@
     }
     function updateIcons() {
       if (audio.paused) {
-        iconPlay.style.display = '';
-        iconPause.style.display = 'none';
+        iconPlay.classList.remove('u-hidden');
+        iconPause.classList.add('u-hidden');
         cdCover.classList.remove('rotating');
       } else {
-        iconPlay.style.display = 'none';
-        iconPause.style.display = '';
+        iconPlay.classList.add('u-hidden');
+        iconPause.classList.remove('u-hidden');
         cdCover.classList.add('rotating');
       }
     }

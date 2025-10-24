@@ -332,15 +332,15 @@
   },
   "contact": {
     "contact_us": "Contacta-nos",
-    "contact_highlight": "Fala connosco",
-    "contact_intro": "Entra em contacto com a equipa Incorrect Society para dúvidas, sugestões ou apoio. Preenche o formulário abaixo. Respondemos normalmente em 1-2 dias úteis.",
+    "contact_highlight": "Mantém-te em contacto",
+    "contact_intro": "Fala com a equipa Incorrect Society para dúvidas sobre produtos, colaborações ou apoio. Envia-nos uma mensagem e respondemos em 1-2 dias úteis.",
     "comment_form_name": "O teu nome",
     "comment_form_email": "O teu email",
     "message": "Como podemos ajudar?",
     "send_message": "Enviar mensagem",
-    "contact_note": "A tua mensagem será enviada diretamente para a equipa Incorrect Society.",
-    "contact_now": "CONTACTA-NOS AGORA",
-    "contact_prompt_html": "Contacta-nos para dar feedback ou fazer perguntas."
+    "contact_note": "Respondemos a todas as mensagens pessoalmente — fica atento ao teu email!",
+    "contact_now": "Envia-nos uma mensagem",
+    "contact_prompt_html": "Preenche o formulário e entraremos em contacto contigo."
   },
   "shopify": {
     "checkout": {

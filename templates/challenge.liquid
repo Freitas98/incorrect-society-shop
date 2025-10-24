@@ -5,20 +5,17 @@
 
 {% layout 'theme' %}
 
-<section
-  class="shopify-challenge shopify-challenge__container"
-  style="display: block; margin: 30px auto 40px; text-align: center; max-width: 760px; padding: 0 12px;"
->
+<section class="shopify-challenge shopify-challenge__container panel-constrained u-text-center u-stack-compact">
   <h1 class="shopify-challenge-title">{{ 'challenge.verify_heading' | t | default: 'Verification' }}</h1>
-  <p style="color: var(--color-foreground); opacity: .9; margin: 0 0 16px;">
+  <p class="text-lead">
     {{ 'challenge.title' | t | default: 'Please verify you are human' }}
   </p>
 
-  <div class="challenge-content" style="display: grid; gap: 16px; justify-items: center; margin-bottom: 22px;">
+  <div class="challenge-content u-grid-center u-gap-16 u-mb-22">
     {{ content_for_layout }}
   </div>
 
-  <p class="shopify-challenge-reason" style="opacity: .75; margin: 8px 0 0; font-size: .9rem;">
+  <p class="shopify-challenge-reason text-muted text-small u-mt-xs">
     {{ 'challenge.footer' | t | default: 'This step protects our store from spam and abuse.' }}
   </p>
 </section>
@@ -26,9 +23,9 @@
 <style>
   .shopify-challenge .shopify-challenge__button,
   .shopify-challenge button[type='submit'] {
-    background-color: var(--color-accent);
+  background-color: var(--color-primary);
     color: var(--color-foreground);
-    border: 1px solid var(--color-accent);
+  border: 1px solid var(--color-primary);
     padding: 10px 16px;
     border-radius: 4px;
     cursor: pointer;
@@ -39,7 +36,7 @@
   }
   .shopify-challenge .shopify-challenge__button:focus-visible,
   .shopify-challenge button[type='submit']:focus-visible {
-    outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary);
     outline-offset: 2px;
   }
   .shopify-challenge .g-recaptcha,

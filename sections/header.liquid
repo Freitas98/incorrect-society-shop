@@ -335,7 +335,7 @@
     transition: background-color 0.2s ease;
   }
   .header-left .sidebar-toggle--in-header:hover {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   .header-content.header-content--no-logo .header-search {
@@ -373,7 +373,7 @@
     line-height: 1;
   }
   .locale-switcher summary:hover {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
   .locale-switcher summary::-webkit-details-marker {
     display: none;
@@ -426,7 +426,7 @@
     cursor: default;
   }
   .locale-option:hover:not([disabled]) {
-    background: var(--color-accent);
+    background: var(--color-primary);
     color: var(--color-foreground);
   }
   .locale-option .locale-name {
@@ -487,7 +487,7 @@
     -webkit-appearance: none;
     height: 14px;
     width: 14px;
-    background-color: var(--color-accent);
+    background-color: var(--color-primary);
     /* Use mask to color the SVG with background-color */
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 3l10 10M13 3L3 13' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat;
@@ -502,7 +502,7 @@
 
   .search-input:focus {
     outline: none;
-    border-color: #8f2b3f;
+    border-color: var(--color-primary);
   }
 
   /* Search trigger (mobile only) */
@@ -515,7 +515,7 @@
     cursor: pointer;
   }
   .search-trigger:hover {
-    color: var(--color-accent);
+    color: var(--color-primary);
     background-color: transparent;
     border-color: transparent;
   }
@@ -608,7 +608,7 @@
   }
   .header-actions a:hover,
   .search-trigger:hover {
-    color: var(--color-accent);
+    color: var(--color-primary);
     background: transparent;
   }
 
@@ -662,10 +662,10 @@
     color: var(--color-foreground);
   }
   .header-cart:hover .cart-count {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
   .header-cart:hover .nav-icon {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
   .header-right {
     display: flex;
@@ -690,7 +690,7 @@
   .header-account:hover,
   .header-cart:hover,
   .checkout-link:hover {
-    color: var(--color-accent);
+    color: var(--color-primary);
   }
 
   .cart-count {
@@ -775,7 +775,7 @@
   /* Custom scrollbar for cart items */
   .cart-items {
     scrollbar-width: thin; /* Firefox */
-    scrollbar-color: var(--color-accent) color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
+    scrollbar-color: var(--color-primary) color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
   }
   .cart-items::-webkit-scrollbar {
     width: 10px;
@@ -785,12 +785,12 @@
     border-left: 1px solid var(--color-border);
   }
   .cart-items::-webkit-scrollbar-thumb {
-    background: var(--color-accent);
+    background: var(--color-primary);
     border: 2px solid color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
     border-radius: 8px;
   }
   .cart-items::-webkit-scrollbar-thumb:hover {
-    background: color-mix(in oklab, var(--color-accent), var(--color-foreground) 15%);
+    background: color-mix(in oklab, var(--color-primary), var(--color-foreground) 15%);
   }
 
   .cart-item-image {
@@ -828,7 +828,7 @@
   }
 
   .cart-item-price {
-    color: var(--color-accent);
+    color: var(--color-primary);
     font-size: 15px;
     font-weight: 600;
   }
@@ -874,8 +874,8 @@
   }
 
   .quantity-btn:hover {
-    background-color: var(--color-accent);
-    border-color: var(--color-accent);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
     color: var(--color-foreground);
   }
 
@@ -1622,8 +1622,8 @@
       position: fixed;
       top: 20px;
       right: 20px;
-      background-color: #8f2b3f;
-      color: white;
+  background-color: var(--color-primary);
+  color: var(--color-foreground);
       padding: 15px 20px;
       border-radius: 6px;
       z-index: 10000;

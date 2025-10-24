@@ -5,44 +5,44 @@
 
 <!-- Social icons are shown in the left sidebar above the newsletter link -->
 
-<h2 style="color: var(--color-foreground);">{{ 'newsletter.stay_connected_title' | t }}</h2>
-<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'newsletter.intro_html' | t }}</p>
+<h2 class="newsletter-heading">{{ 'newsletter.stay_connected_title' | t }}</h2>
+<p class="newsletter-intro">{{ 'newsletter.intro_html' | t }}</p>
 
 <div
   id="NewsletterContainer"
-  style="background-color: var(--color-surface); padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;"
+  class="newsletter-card"
   data-adding="{{ 'theme.messages.adding' | t }}"
   data-success="{{ 'newsletter.success' | t }}"
   data-error="{{ 'newsletter.error' | t }}"
   data-verifying="{{ 'newsletter.verifying' | t }}"
   data-captcha="{{ 'newsletter.captcha_message' | t }}"
 >
-  <h3 style="color: var(--color-accent); margin-bottom: 20px;">{{ 'newsletter.subscribe_now' | t }}</h3>
-  <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">
+  <h3 class="newsletter-highlight">{{ 'newsletter.subscribe_now' | t }}</h3>
+  <p class="newsletter-copy">
     {{ 'newsletter.subscribe_prompt' | t }}
   </p>
 
   {% form 'customer', id: 'NewsletterForm' %}
     {% if form.posted_successfully? %}
-      <p class="newsletter-success" style="margin: 0 0 15px; color: var(--color-foreground);">
+      <p class="newsletter-success newsletter-feedback">
         {{ 'newsletter.success' | t }}
       </p>
     {% endif %}
     {% if form.errors %}
-      <div class="newsletter-errors" style="margin: 0 0 15px; color: var(--color-foreground);">
+      <div class="newsletter-errors newsletter-feedback">
         {{ form.errors | default_errors }}
       </div>
     {% endif %}
-    <div class="newsletter-message" aria-live="polite" style="margin: 0 0 10px; color: var(--color-foreground);"></div>
+    <div class="newsletter-message newsletter-feedback" aria-live="polite"></div>
 
-    <div style="display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto;">
+    <div class="newsletter-stack">
       <input
         type="text"
         name="contact[first_name]"
         id="NewsletterForm-name"
         placeholder="{{ 'newsletter.name_placeholder' | t }}"
         autocomplete="given-name"
-        style="padding: 12px; border: 1px solid var(--color-border); background-color: color-mix(in oklab, var(--color-surface), var(--color-background) 50%); color: var(--color-foreground); border-radius: 4px;"
+        class="newsletter-field"
       >
 
       <input
@@ -52,14 +52,14 @@
         placeholder="{{ 'newsletter.email_placeholder' | t }}"
         autocomplete="email"
         required
-        style="padding: 12px; border: 1px solid var(--color-border); background-color: color-mix(in oklab, var(--color-surface), var(--color-background) 50%); color: var(--color-foreground); border-radius: 4px;"
+        class="newsletter-field"
       >
 
       <input type="hidden" name="contact[tags]" id="NewsletterContentTags" value="">
 
       <button
         type="submit"
-        style="background-color: var(--color-accent); color: var(--color-foreground); padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase;"
+        class="newsletter-submit"
       >
         {{ 'newsletter.subscribe_cta' | t }}
       </button>
@@ -135,10 +135,10 @@
 {% endjavascript %}
 
 <p>
-  <em style="color: var(--color-foreground); opacity: 0.75;">{{ 'newsletter.unsubscribe_note' | t }}</em>
+  <em class="text-soft text-small">{{ 'newsletter.unsubscribe_note' | t }}</em>
 </p>
 
-<div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-direction: column;">
+<div class="newsletter-social">
   <p>To stay updated, follow us on social media:</p>
   {% render 'social-icons', size: 32 %}
 </div>

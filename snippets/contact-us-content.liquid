@@ -2,15 +2,14 @@
   Contact Us Content - Card style, for use in policy-page.liquid layout
 {% endcomment %}
 
-<h2 style="color: var(--color-foreground);">{{ 'contact.contact_highlight' | t }}</h2>
-<p style="color: var(--color-foreground); opacity: 0.85;">{{ 'contact.contact_intro' | t }}</p>
+<h2 class="text-lead">{{ 'contact.contact_highlight' | t }}</h2>
+<p class="text-soft u-mb-lg">{{ 'contact.contact_intro' | t }}</p>
 
 <div
-  class="policy-content"
-  style="background-color: var(--color-surface); padding: 30px; border-radius: 8px; margin: 30px 0; text-align: center;"
+  class="policy-content u-text-center"
 >
-  <h3 style="color: var(--color-accent); margin-bottom: 20px;">{{ 'contact.contact_now' | t }}</h3>
-  <p style="margin-bottom: 20px; color: var(--color-foreground); opacity: 0.85;">
+  <h3 class="text-primary u-mb-lg">{{ 'contact.contact_now' | t }}</h3>
+  <p class="text-soft u-mb-lg">
     {{ 'contact.contact_prompt_html' | t }}
   </p>
 
@@ -19,7 +18,7 @@
     action="/contact"
     id="contact_form"
     accept-charset="UTF-8"
-    style="display:flex;flex-direction:column;gap:12px;max-width:420px;margin:0 auto;"
+    class="u-flex-column u-gap-12 u-max-w-420 u-mx-auto"
   >
     <input type="hidden" name="form_type" value="contact">
     <input type="hidden" name="utf8" value="✓">
@@ -29,7 +28,7 @@
       name="contact[name]"
       required
       placeholder="{{ 'contact.comment_form_name' | t }}"
-      style="padding:12px;border-radius:4px;border:1px solid var(--color-border);background-color:color-mix(in oklab, var(--color-surface), var(--color-background) 50%);color:var(--color-foreground);font-size:1.08rem;font-family:'Times New Roman',Times,serif;"
+      class="contact-field"
     >
     <input
       type="email"
@@ -37,7 +36,7 @@
       name="contact[email]"
       required
       placeholder="{{ 'contact.comment_form_email' | t }}"
-      style="padding:12px;border-radius:4px;border:1px solid var(--color-border);background-color:color-mix(in oklab, var(--color-surface), var(--color-background) 50%);color:var(--color-foreground);font-size:1.08rem;font-family:'Times New Roman',Times,serif;"
+      class="contact-field"
     >
     <textarea
       id="ContactFormMessage"
@@ -45,19 +44,19 @@
       rows="5"
       required
       placeholder="{{ 'contact.message' | t }}"
-      style="resize: none;padding:12px;border-radius:4px;border:1px solid var(--color-border);background-color:color-mix(in oklab, var(--color-surface), var(--color-background) 50%);color:var(--color-foreground);font-size:1.08rem;font-family:'Times New Roman',Times,serif;"
+      class="contact-field no-resize"
     ></textarea>
     <button
       type="submit"
-      style="background-color:var(--color-accent);color:var(--color-foreground);padding:12px;border:none;border-radius:4px;cursor:pointer;font-weight:bold;text-transform:uppercase;font-size:1.08rem;font-family:'Times New Roman',Times,serif;letter-spacing:1px;margin-top:0.5rem;"
+      class="btn btn-primary u-mt-xs"
     >
       {{ 'contact.send_message' | t }}
     </button>
   </form>
-  <div style="margin-top:2.5rem;text-align:left;font-size:1.02rem;color:#bbb;font-style:italic;">
+  <div class="text-soft text-small text-italic u-mt-40 u-text-left">
     {{ 'contact.contact_note' | t }}
   </div>
-  <div style="margin-top:2.5rem;text-align:center;">
+  <div class="u-mt-40 u-text-center">
     {% render 'social-icons', size: 32 %}
   </div>
 </div>

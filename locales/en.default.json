@@ -332,15 +332,15 @@
   },
   "contact": {
     "contact_us": "Contact Us",
-    "contact_highlight": "Get in touch",
-    "contact_intro": "Contact the Incorrect Society team for questions, suggestions, or support. Fill out the form below. We usually reply within 1-2 business days.",
+    "contact_highlight": "Stay in touch",
+    "contact_intro": "Reach out to the Incorrect Society crew for product questions, collabs, or support. Drop us a message and we’ll get back within 1-2 business days.",
     "comment_form_name": "Your name",
     "comment_form_email": "Your email",
     "message": "How can we help?",
     "send_message": "Send Message",
-    "contact_note": "Your message will be sent directly to the Incorrect Society team.",
-    "contact_now": "CONTACT US NOW",
-    "contact_prompt_html": "Contact us to give feedback or ask some questions."
+    "contact_note": "We reply to every message personally — expect a response soon!",
+    "contact_now": "Send us a message",
+    "contact_prompt_html": "Fill out the form and we’ll follow up with next steps."
   },
   "shopify": {
     "checkout": {
