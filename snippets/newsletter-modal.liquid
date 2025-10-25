@@ -67,7 +67,7 @@
         class="newsletter-modal-input"
       >
       <input type="hidden" name="contact[tags]" id="NewsletterModalTags" value="">
-      <button type="submit" class="newsletter-modal-submit">
+      <button type="submit" class="btn btn--primary btn--block newsletter-modal-submit">
         {{ 'newsletter.subscribe_cta' | t }}
       </button>
     </div>
@@ -149,24 +149,11 @@
     max-width: 320px;
   }
   .newsletter-modal-submit {
-    padding: 12px 16px;
-    background: var(--color-primary);
-    color: var(--color-foreground);
-    border: 1px solid var(--color-primary);
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    justify-self: center;
-    min-width: 180px;
-    width: 100%;
-    max-width: 240px;
     margin-top: 5px;
+    max-width: 240px;
   }
   .newsletter-modal-submit:disabled {
     opacity: 0.6;
-    cursor: not-allowed;
   }
   .newsletter-modal-message {
     margin: 15px;

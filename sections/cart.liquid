@@ -70,15 +70,13 @@
             </div>
           </div>
 
-          <!-- Quantity & Actions -->
           <div class="item-actions">
-            <!-- Quantity Controls -->
             <div class="quantity-section">
               <label class="quantity-label">{{ 'cart.quantity' | t }}</label>
               <div class="quantity-controls">
                 <button
                   type="button"
-                  class="qty-btn qty-decrease"
+                  class="btn btn--outline btn--icon quantity-btn quantity-decrease"
                   data-key="{{ item.key }}"
                   {% if item.quantity <= 1 %}
                     disabled
@@ -89,7 +87,7 @@
                 <span class="qty-display" data-key="{{ item.key }}">{{ item.quantity }}</span>
                 <button
                   type="button"
-                  class="qty-btn qty-increase"
+                  class="btn btn--outline btn--icon quantity-btn quantity-increase"
                   data-key="{{ item.key }}"
                   {% if item.variant.inventory_management == 'shopify'
                     and item.variant.inventory_policy == 'deny'
@@ -118,7 +116,7 @@
             <!-- Remove Button -->
             <button
               type="button"
-              class="remove-item-btn"
+              class="btn btn--outline"
               data-key="{{ item.key }}"
               data-title="{{ item.product.title }}"
             >
@@ -155,17 +153,9 @@
 
         <!-- Action Buttons -->
         <div class="cart-actions">
-          <a href="/checkout" class="checkout-btn">
-            {{ 'cart.checkout' | t }}
-          </a>
-
-          <button type="button" id="clear-cart-btn-main" class="clear-cart-btn">
-            {{ 'cart.clear' | t }}
-          </button>
-
-          <a href="{{ routes.root_url }}" class="continue-shopping">
-            {{ 'cart.continue_shopping' | t }}
-          </a>
+          <button type="button" id="clear-cart-btn-main" class="btn btn--secondary btn--block">{{ 'cart.clear' | t }}</button>
+          <a href="{{ routes.root_url }}" class="btn btn--secondary btn--block">{{ 'cart.continue_shopping' | t }}</a>
+          <a href="/checkout" class="btn btn--primary btn--block">{{ 'cart.checkout' | t }}</a>
         </div>
       </div>
     </div>
@@ -177,7 +167,7 @@
         <div class="empty-icon">🛒</div>
         <h2>{{ 'cart.empty_title' | t }}</h2>
         <p>{{ 'cart.empty_message' | t }}</p>
-        <a href="{{ routes.root_url }}" class="continue-shopping-btn">
+        <a href="{{ routes.root_url }}" class="btn btn--primary btn--block continue-shopping-btn">
           {{ 'cart.continue_shopping' | t }}
         </a>
       </div>
@@ -191,8 +181,8 @@
     <h3>{{ 'cart.remove_item_title' | t }}</h3>
     <p id="remove-item-message">{{ 'cart.remove_item_message_html' | t: title: '' }}</p>
     <div class="modal-actions">
-      <button type="button" id="remove-cancel" class="modal-btn modal-cancel">{{ 'general.cancel' | t }}</button>
-      <button type="button" id="remove-confirm" class="modal-btn modal-confirm">
+      <button type="button" id="remove-cancel" class="btn btn--primary btn--block">{{ 'general.cancel' | t }}</button>
+      <button type="button" id="remove-confirm" class="btn btn--primary btn--block">
         {{ 'cart.remove_item_confirm' | t }}
       </button>
     </div>
@@ -205,8 +195,8 @@
     <h3>{{ 'cart.clear_confirm_title' | t }}</h3>
     <p>{{ 'cart.clear_confirm_message' | t }}</p>
     <div class="modal-actions">
-      <button type="button" id="clear-cancel" class="modal-btn modal-cancel">{{ 'general.cancel' | t }}</button>
-      <button type="button" id="clear-confirm" class="modal-btn modal-confirm">{{ 'cart.clear' | t }}</button>
+      <button type="button" id="clear-cancel" class="btn btn--primary btn--block">{{ 'general.cancel' | t }}</button>
+      <button type="button" id="clear-confirm" class="btn btn--primary btn--block">{{ 'cart.clear' | t }}</button>
     </div>
   </div>
 </div>
@@ -565,6 +555,7 @@
   }
 
   .cart-actions {
+    margin-top: 30px;
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -572,65 +563,6 @@
 
   .checkout-form {
     margin: 0;
-  }
-
-  .checkout-btn {
-    display: block;
-    width: 100%;
-    padding: 14px 18px;
-    background: transparent;
-    border: 1px solid var(--color-foreground);
-    color: var(--color-foreground);
-    text-decoration: none;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-    border-radius: 0;
-  }
-
-  .checkout-btn:hover {
-    background: var(--color-foreground);
-    color: var(--color-background);
-  }
-
-  .clear-cart-btn {
-    width: 100%;
-    padding: 12px 18px;
-    background-color: transparent;
-    border: 1px solid var(--color-foreground);
-    color: var(--color-foreground);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-    border-radius: 0;
-  }
-
-  .clear-cart-btn:hover {
-    background: var(--color-foreground);
-    color: var(--color-background);
-  }
-
-  .continue-shopping {
-    text-align: center;
-    color: var(--color-foreground);
-    text-decoration: none;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 10px;
-    transition: color 0.3s ease;
-  }
-
-  .continue-shopping:hover {
-    color: var(--color-foreground);
-    text-decoration: underline;
   }
 
   /* Empty Cart */
@@ -671,23 +603,8 @@
   }
 
   .continue-shopping-btn {
-    display: inline-block;
-    padding: 12px 18px;
-    background: transparent;
-    border: 1px solid var(--color-foreground);
-    color: var(--color-foreground);
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    transition: background-color 0.15s ease, color 0.15s ease;
-    border-radius: 0;
-    font-size: 14px;
-  }
-
-  .continue-shopping-btn:hover {
-    background: var(--color-foreground);
-    color: var(--color-background);
+    display: inline-flex;
+    justify-content: center;
   }
 
   /* Modals */
@@ -743,29 +660,26 @@
 
   .modal-actions {
     display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     justify-content: center;
   }
 
-  .modal-btn {
-    padding: 10px 18px;
-    border: 1px solid var(--modal-fg);
-    background: transparent;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-    min-width: 130px;
-    border-radius: 0;
-    font-size: 14px;
-    color: var(--modal-fg);
+  .modal-actions .btn {
+    flex: 1;
+    min-width: 140px;
+    text-align: center;
   }
 
-  .modal-cancel:hover,
-  .modal-confirm:hover {
-    background: var(--modal-fg);
-    color: var(--modal-bg);
+  .modal-btn.modal-cancel {
+    --btn-color: var(--modal-fg);
+    --btn-border: color-mix(in oklab, var(--modal-fg), transparent 55%);
+    --btn-hover-bg: color-mix(in oklab, var(--modal-fg), transparent 88%);
+    --btn-hover-border: color-mix(in oklab, var(--modal-fg), transparent 35%);
+  }
+
+  .modal-btn.modal-confirm {
+    --btn-color: var(--modal-bg);
   }
 
   .modal-overlay {
@@ -895,12 +809,6 @@
       font-size: 24px;
     }
 
-    .checkout-btn {
-      padding: 18px 25px;
-      font-size: 14px;
-      letter-spacing: 2px;
-    }
-
     .empty-cart-content {
       padding: 40px 25px;
     }
@@ -914,7 +822,7 @@
       gap: 10px;
     }
 
-    .modal-btn {
+    .modal-actions .btn {
       width: 100%;
     }
   }
