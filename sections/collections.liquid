@@ -1,81 +1,98 @@
-{% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
+{% liquid
+  assign collections_id = 'collections-grid-' | append: section.id
+%}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
-
-<h1>{{ 'collections.title' | t }}</h1>
-
-{% assign collections_id = 'CollectionsGrid-' | append: section.id %}
-
-<div
-  id="{{ collections_id }}"
-  class="collections {{ section.settings.grid_item_width }}"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
+<section class="collections-page">
+  <div class="collections-page__inner">
+    <header class="collections-page__header">
+      {% if section.settings.heading != blank %}
+        <h1 class="collection-title">{{ section.settings.heading }}</h1>
+      {% else %}
+        <h1 class="collection-title">{{ 'collections.title' | t }}</h1>
       {% endif %}
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
+      {% if section.settings.subheading != blank %}
+        <p class="collection-description">{{ section.settings.subheading }}</p>
+      {% endif %}
+    </header>
 
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
-</div>
+    <div
+      id="{{ collections_id }}"
+      class="collections-grid"
+      style="--collections-gap: {{ section.settings.grid_gap }}px;"
+    >
+      {% for collection in collections %}
+        <article class="collection-card">
+          <a class="collection-card__link" href="{{ collection.url }}">
+            <div class="collection-card__media">
+              {% if collection.featured_image %}
+                {% render 'image',
+                  class: 'collection-card__image',
+                  image: collection.featured_image,
+                  width: 900,
+                  height: 600,
+                %}
+              {% else %}
+                <div class="collection-card__placeholder">{{ 'general.no_image' | t }}</div>
+              {% endif %}
+              <span class="collection-card__overlay"></span>
+              {% if section.settings.show_counts %}
+                <span class="collection-card__badge">
+                  {{ collection.all_products_count }}
+                  {{ collection.all_products_count | pluralize: 'item', 'items' }}
+                </span>
+              {% endif %}
+            </div>
 
-{% style %}
-  #{{ collections_id }} {
-    --grid-gap: {{ section.settings.grid_gap }}px;
-  }
-{% endstyle %}
+            <div class="collection-card__body">
+              <h2 class="collection-card__title">{{ collection.title }}</h2>
 
-{% stylesheet %}
-  .collections {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
-    color: var(--color-foreground);
-  }
-  .collections--compact {
-    --collection-card-size: 160px;
-  }
-  .collections--full {
-    --collection-card-size: 280px;
-  }
-  .collection-card {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    color: var(--color-foreground);
-  }
-{% endstylesheet %}
+              {% if section.settings.show_description and collection.description != blank %}
+                <p class="collection-card__excerpt">
+                  {{ collection.description | strip_html | truncatewords: 18 }}
+                </p>
+              {% elsif section.settings.show_counts %}
+                <p class="collection-card__excerpt collection-card__excerpt--muted">
+                  Explore {{ collection.title | downcase }}
+                </p>
+              {% endif %}
+            </div>
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% comment %} Styles moved to assets/theme-sections.css {% endcomment %}
 
 {% schema %}
 {
   "name": "t:general.collections_grid",
   "settings": [
     {
-      "type": "select",
-      "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
-      "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
-      ],
-      "default": "collections--full"
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Collections"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Intro copy",
+      "default": "Move through curated drops, limited capsules, and core staples. Pick your world and stay incorrect."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "label": "Show collection description excerpt",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_counts",
+      "label": "Show product counts",
+      "default": true
     },
     {
       "type": "range",
