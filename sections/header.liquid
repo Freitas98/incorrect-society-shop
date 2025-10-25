@@ -3,25 +3,14 @@
     <div class="header-left">
       <!-- Desktop brand logo on the left -->
       <a href="{{ routes.root_url }}" class="header-brand" aria-label="{{ 'general.home' | t }}">
-        {% if section.settings.logo != blank %}
-          <img
-            src="{{ section.settings.logo | image_url: width: 220 }}"
+        <img
+            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logo.png?v=1761399870"
             alt="{{ shop.name }}"
             class="brand-logo"
             loading="eager"
             width="220"
             height="60"
-          >
-        {% else %}
-          <img
-            src="{{ 'logo.png' | asset_url }}"
-            alt="{{ shop.name }}"
-            class="brand-logo"
-            loading="eager"
-            width="220"
-            height="60"
-          >
-        {% endif %}
+        >
       </a>
       <!-- In-header burger (left), mobile/tablet only -->
       <button type="button" class="sidebar-toggle sidebar-toggle--in-header" aria-label="Open menu">
@@ -33,7 +22,7 @@
     <!-- Center logo (star) - mobile/tablet only -->
     <div class="header-center">
       <a href="{{ routes.root_url }}" class="star-logo" aria-label="{{ 'general.home' | t }}">
-        <img src="{{ 'star.png' | asset_url }}" alt="{{ shop.name }}" width="28" height="28" loading="eager">
+        <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/star.png?v=1761400046" alt="{{ shop.name }}" width="28" height="28" loading="eager">
       </a>
     </div>
     <div class="header-right">
@@ -511,6 +500,8 @@
 
   /* Search trigger (mobile only) */
   .search-trigger {
+    border: none !important;
+    background-color: transparent !important;
     display: none;
     background: transparent;
     border: 0;
