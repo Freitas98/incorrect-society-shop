@@ -10,12 +10,10 @@
     <div class="sidebar-menu-section">
       <ul class="sidebar-menu">
         <li class="sidebar-menu-item">
-          <a href="{{ collections.new.url | default: '/collections/outsider' }}" class="sidebar-menu-link">OUTSIDER</a>
+          <a href="{{ routes.collections_url }}/outsider" class="sidebar-menu-link">OUTSIDER</a>
         </li>
         <li class="sidebar-menu-item">
-          <a href="{{ collections.t-shirts.url | default: '/collections/gift-cards' }}" class="sidebar-menu-link"
-            >GIFT CARDS</a
-          >
+          <a href="{{ routes.collections_url }}/gift-cards" class="sidebar-menu-link">GIFT CARDS</a>
         </li>
       </ul>
     </div>
