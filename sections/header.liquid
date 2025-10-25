@@ -526,15 +526,21 @@
 
   .search-button {
     position: absolute;
-    right: 0;
+    right: 2px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
-    border: none;
-    color: var(--color-foreground);
-    padding: 12px 15px;
+    border: none !important;
+    color: var(--color-foreground) !important;
+    padding: 8px 12px;
     cursor: pointer;
     transition: color 0.3s ease;
+  }
+
+  .search-button:hover{
+    border-color: var(--color-primary);
+    padding: 12px 14px;
+    right: 0;
   }
 
   /* Modal search */
