@@ -22,7 +22,23 @@
     <!-- Center logo (star) - mobile/tablet only -->
     <div class="header-center">
       <a href="{{ routes.root_url }}" class="star-logo" aria-label="{{ 'general.home' | t }}">
-        <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/star.png?v=1761400046" alt="{{ shop.name }}" width="28" height="28" loading="eager">
+        <img
+          class="star-logo__img star-logo__img--default"
+          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logo_white.png?v=1761517669"
+          alt="{{ shop.name }}"
+          width="28"
+          height="28"
+          loading="eager"
+        >
+        <img
+          class="star-logo__img star-logo__img--hover"
+          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logo_9a4827e8-bf2c-4da8-b43b-dc53bfbf1ea0.png?v=1761517669"
+          alt=""
+          aria-hidden="true"
+          width="28"
+          height="28"
+          loading="eager"
+        >
       </a>
     </div>
     <div class="header-right">
@@ -1033,10 +1049,9 @@
       margin-top: 0;
     }
     .star-logo {
-      position: static;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      position: relative;
+      display: grid;
+      place-items: center;
     }
     .header-right {
       flex: 1 1 auto;
@@ -1049,16 +1064,27 @@
       grid-column: 3;
     }
     .star-logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       min-height: var(--header-row-min-height);
     }
-    .star-logo img,
+    .star-logo__img,
     .star-logo .star-fallback {
       display: block;
       width: var(--star-logo-size-mobile);
       height: var(--star-logo-size-mobile);
+      transition: opacity 160ms ease;
+      grid-area: 1 / 1;
+    }
+    .star-logo__img--hover {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .star-logo:hover .star-logo__img--hover,
+    .star-logo:focus-visible .star-logo__img--hover {
+      opacity: 1;
+    }
+    .star-logo:hover .star-logo__img--default,
+    .star-logo:focus-visible .star-logo__img--default {
+      opacity: 0;
     }
 
     /* Icons to the right; show only trigger on mobile */
