@@ -433,7 +433,7 @@
     margin-bottom: 8px;
   }
 
-  .qty-btn {
+  .quantity-btn {
     background: transparent;
     border: 1px solid var(--color-foreground);
     color: var(--color-foreground);
@@ -448,14 +448,15 @@
     font-weight: 700;
   }
 
-  .qty-btn:hover:not(:disabled) {
+  .quantity-btn:hover:not(:disabled) {
     background: var(--color-foreground);
     color: var(--color-background);
   }
 
-  .qty-btn:disabled {
+  .quantity-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   .qty-display {
@@ -962,6 +963,9 @@
     let currentItemKey = null;
     let currentItemTitle = null;
 
+    // Track ongoing cart updates to prevent spamming
+    const ongoingUpdates = new Map();
+
     // Clear Cart Modal Functions
     if (clearCartBtn) {
       clearCartBtn.addEventListener('click', function () {
@@ -1019,7 +1023,7 @@
         const newQty = currentQty + 1;
 
         // Check if we can increase (verify stock availability)
-        if (canIncreaseQuantity(key, newQty)) {
+        if (canIncreaseQuantity(key, newQty) && !this.disabled) {
           updateCartItem(key, newQty);
         }
       });
@@ -1031,6 +1035,8 @@
         const qtyDisplay = document.querySelector(`.qty-display[data-key="${key}"]`);
         const currentQty = parseInt(qtyDisplay.textContent);
         const newQty = currentQty - 1;
+
+        if (this.disabled) return;
 
         if (newQty <= 0) {
           // If quantity would be 0 or less, trigger the remove item modal
@@ -1107,17 +1113,34 @@
 
     // Cart API Functions
     function updateCartItem(key, quantity) {
+      // Prevent multiple simultaneous updates for the same item
+      if (ongoingUpdates.has(key)) {
+        return;
+      }
+
+      // Mark this item as being updated
+      ongoingUpdates.set(key, true);
+
+      // Disable buttons to prevent spamming
+      const qtyIncreaseBtn = document.querySelector(`.quantity-increase[data-key="${key}"]`);
+      const qtyDecreaseBtn = document.querySelector(`.quantity-decrease[data-key="${key}"]`);
+      
+      if (qtyIncreaseBtn) qtyIncreaseBtn.disabled = true;
+      if (qtyDecreaseBtn) qtyDecreaseBtn.disabled = true;
+
       // Update the display immediately with the new quantity (optimistic update)
       const qtyDisplay = document.querySelector(`.qty-display[data-key="${key}"]`);
       const totalPrice = document.querySelector(`.total-price[data-key="${key}"]`);
-      const qtyDecreaseBtn = document.querySelector(`.qty-decrease[data-key="${key}"]`);
-      const qtyIncreaseBtn = document.querySelector(`.qty-increase[data-key="${key}"]`);
 
+      // Store original quantity for error reversion
+      const originalQuantity = qtyDisplay ? parseInt(qtyDisplay.textContent) : quantity;
+
+      // Update quantity display immediately (optimistic)
       if (qtyDisplay) {
         qtyDisplay.textContent = quantity;
       }
 
-      // Calculate and update price immediately
+      // Calculate and update price immediately (optimistic)
       if (totalPrice) {
         const cartItemCard = document.querySelector(`.cart-item-card[data-key="${key}"]`);
         const unitPriceElement = cartItemCard.querySelector('.unit-price') || cartItemCard.querySelector('.discounted-price');
@@ -1136,21 +1159,13 @@
         }
       }
 
-      // Update button states immediately
+      // Update button states immediately (but keep them disabled during update)
       if (qtyDecreaseBtn) {
-        qtyDecreaseBtn.disabled = quantity <= 1;
+        qtyDecreaseBtn.disabled = true; // Keep disabled during update
       }
 
       if (qtyIncreaseBtn) {
-        // Check stock limits
-        const stockInfo = document.querySelector(`.cart-item-card[data-key="${key}"] .stock-info`);
-        if (stockInfo) {
-          const stockText = stockInfo.textContent;
-          const availableStock = parseInt(stockText.match(/(\d+)\s*available/i)?.[1]);
-          qtyIncreaseBtn.disabled = availableStock && quantity >= availableStock;
-        } else {
-          qtyIncreaseBtn.disabled = false;
-        }
+        qtyIncreaseBtn.disabled = true; // Keep disabled during update
       }
 
       const formData = new FormData();
@@ -1167,7 +1182,14 @@
           return response.json();
         })
         .then((cart) => {
+          // Remove from ongoing updates
+          ongoingUpdates.delete(key);
+
           updateCartDisplay(cart);
+
+          // Re-enable buttons after successful update
+          if (qtyIncreaseBtn) qtyIncreaseBtn.disabled = false;
+          if (qtyDecreaseBtn) qtyDecreaseBtn.disabled = false;
 
           // Broadcast cart update event for sidebar cart
           window.dispatchEvent(
@@ -1178,9 +1200,17 @@
         })
         .catch((error) => {
           console.error('❌ Error updating cart:', error);
-          // If there's an error, revert changes
+          
+          // Remove from ongoing updates
+          ongoingUpdates.delete(key);
+          
+          // Re-enable buttons after error
+          if (qtyIncreaseBtn) qtyIncreaseBtn.disabled = false;
+          if (qtyDecreaseBtn) qtyDecreaseBtn.disabled = false;
+          
+          // If there's an error, revert quantity display
           if (qtyDisplay) {
-            qtyDisplay.textContent = quantity > 1 ? quantity - 1 : 1;
+            qtyDisplay.textContent = originalQuantity;
           }
           showError(window.themeStrings?.cart_update_failed || 'Failed to update item quantity. Please try again.');
         });
@@ -1263,8 +1293,8 @@
       cart.items.forEach((item) => {
         const qtyDisplay = document.querySelector(`.qty-display[data-key="${item.key}"]`);
         const totalPrice = document.querySelector(`.total-price[data-key="${item.key}"]`);
-        const qtyIncreaseBtn = document.querySelector(`.qty-increase[data-key="${item.key}"]`);
-        const qtyDecreaseBtn = document.querySelector(`.qty-decrease[data-key="${item.key}"]`);
+        const qtyIncreaseBtn = document.querySelector(`.quantity-increase[data-key="${item.key}"]`);
+        const qtyDecreaseBtn = document.querySelector(`.quantity-decrease[data-key="${item.key}"]`);
 
         // Confirm the quantity and price from API
         if (qtyDisplay) {
@@ -1377,8 +1407,8 @@
         cart.items.forEach((item) => {
           const qtyDisplay = document.querySelector(`.qty-display[data-key="${item.key}"]`);
           const totalPrice = document.querySelector(`.total-price[data-key="${item.key}"]`);
-          const qtyIncreaseBtn = document.querySelector(`.qty-increase[data-key="${item.key}"]`);
-          const qtyDecreaseBtn = document.querySelector(`.qty-decrease[data-key="${item.key}"]`);
+          const qtyIncreaseBtn = document.querySelector(`.quantity-increase[data-key="${item.key}"]`);
+          const qtyDecreaseBtn = document.querySelector(`.quantity-decrease[data-key="${item.key}"]`);
 
           // Update quantity and price from sidebar changes
           if (qtyDisplay) {
