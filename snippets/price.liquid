@@ -1,7 +1,7 @@
 {% comment %}
-  Price formatting snippet
-  Input: amount (integer, cents)
-  Output: 1.234,56 € (comma decimal, dot thousands, trailing euro)
+  Price formatting snippet with Black Friday discount support
+  Input: amount (integer, cents), product (optional)
+  Output: Formatted price with discount display if applicable
 {% endcomment %}
 
 {% liquid
@@ -18,18 +18,61 @@
   assign s = euros | append: ''
   assign chars = s | split: '' | reverse
   assign grouped = ''
-%}
-{% for c in chars %}
-  {% liquid
+  for c in chars
     assign idx = forloop.index0
     assign mod = idx | modulo: 3
     if idx != 0 and mod == 0
       assign grouped = grouped | append: '.'
     endif
     assign grouped = grouped | append: c
-  %}
-{% endfor %}
-{% liquid
+  endfor
   assign euros_grouped = grouped | split: '' | reverse | join: ''
+  assign formatted_price = euros_grouped | append: ',' | append: cents_str | append: ' €'
+
+  # Black Friday discount logic
+  assign has_discount = false
+  assign discount_percentage = 0
+  assign formatted_discounted_price = formatted_price
+
+  if product and settings.black_friday_enabled
+    assign discount_metafield = product.metafields.custom.black_friday_discount
+    if discount_metafield and discount_metafield != blank
+      assign discount_percentage = discount_metafield | times: 1
+      if discount_percentage > 0 and discount_percentage <= 100
+        assign has_discount = true
+        assign discount_amount = raw | times: discount_percentage | divided_by: 100
+        assign discounted_cents = raw | minus: discount_amount
+        if discounted_cents < 0
+          assign discounted_cents = 0
+        endif
+        assign discounted_euros = discounted_cents | divided_by: 100
+        assign discounted_cents_part = discounted_cents | modulo: 100
+        assign discounted_cents_str = discounted_cents_part | prepend: '00'
+        assign discounted_cents_str = discounted_cents_str | slice: -2, 2
+        assign discounted_s = discounted_euros | append: ''
+        assign discounted_chars = discounted_s | split: '' | reverse
+        assign discounted_grouped = ''
+        for c in discounted_chars
+          assign idx = forloop.index0
+          assign mod = idx | modulo: 3
+          if idx != 0 and mod == 0
+            assign discounted_grouped = discounted_grouped | append: '.'
+          endif
+          assign discounted_grouped = discounted_grouped | append: c
+        endfor
+        assign discounted_euros_grouped = discounted_grouped | split: '' | reverse | join: ''
+        assign formatted_discounted_price = discounted_euros_grouped | append: ',' | append: discounted_cents_str | append: ' €'
+      endif
+    endif
+  endif
 %}
-{{ euros_grouped }},{{ cents_str }} €
+
+{% if has_discount %}
+  <div class="price-container">
+    <span class="original-price">{{ formatted_price }}</span>
+    <span class="discounted-price">{{ formatted_discounted_price }}</span>
+    <span class="discount-badge">{{ discount_percentage }}% OFF</span>
+  </div>
+{% else %}
+  {{ formatted_price }}
+{% endif %}

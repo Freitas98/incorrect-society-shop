@@ -283,6 +283,7 @@
   },
   "announcement": {
     "default": "WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL",
+    "black_friday": "BLACK FRIDAY SALE | UP TO 50% OFF | LIMITED TIME ONLY",
     "aria_label": "Store announcement"
   },
   "pagefly": {

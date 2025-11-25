@@ -37,10 +37,10 @@
               {% if product.gift_card? or product.type == 'Gift Card' %}
                 <p class="product-price">
                   {{ 'gift_card.start_at' | t }}
-                  {% render 'price', amount: product.price %}
+                  {% render 'price', amount: product.price, product: product %}
                 </p>
               {% else %}
-                <p class="product-price">{% render 'price', amount: product.price %}</p>
+                <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
               {% endif %}
             </div>
           </a>
@@ -170,6 +170,9 @@
     color: var(--color-foreground);
     font-weight: 600;
     margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* Pagination styling */

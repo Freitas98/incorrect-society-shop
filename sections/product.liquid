@@ -61,15 +61,16 @@
     </div>
   </div>
 
+  {% assign current_variant = product.selected_or_first_available_variant %}
+
   <!-- Right Side: Product Information -->
   <div class="product-details">
     <div class="product-info">
       <h1 class="product-title">{{ product.title }}</h1>
-      <div class="product-price">{% render 'price', amount: product.price %}</div>
+      <div class="product-price">{% render 'price', amount: current_variant.price, product: product %}</div>
     </div>
 
     {% form 'product', product %}
-      {% assign current_variant = product.selected_or_first_available_variant %}
 
       <!-- Size Selection -->
       {% unless product.has_only_default_variant %}
@@ -103,30 +104,43 @@
         </div>
       {% endunless %}
 
-      <!-- Hidden variant selector - Always present for consistent AJAX behavior -->
+      <!-- Hidden variant selector for form submission -->
       <select name="id" class="variant-selector" style="display: none;">
-        {% if product.has_only_default_variant %}
-          <!-- Single variant for products without options -->
-          <option value="{{ product.selected_or_first_available_variant.id }}" selected>
-            {{ product.title }} - {% render 'price', amount: product.price %}
+        {% for variant in product.variants %}
+          <option value="{{ variant.id }}" {% if variant == current_variant %}selected{% endif %}>
+            {{ variant.title }}
           </option>
-        {% else %}
-          <!-- Multiple variants for products with options -->
-          {% for variant in product.variants %}
-            <option
-              value="{{ variant.id }}"
-              {% if variant == current_variant %}
-                selected
-              {% endif %}
-              {% unless variant.available %}
-                disabled
-              {% endunless %}
-            >
-              {{ variant.title }} - {% render 'price', amount: variant.price %}
-            </option>
-          {% endfor %}
-        {% endif %}
+        {% endfor %}
       </select>
+
+      <!-- Hidden variant data for JavaScript -->
+      <script type="application/json" id="variant-data">
+        {
+          "variants": [
+            {% for variant in product.variants %}
+              {% capture price_html %}{% render 'price', amount: variant.price, product: product %}{% endcapture %}
+              {
+                "id": {{ variant.id | json }},
+                "title": {{ variant.title | json }},
+                "available": {{ variant.available | json }},
+                "price": {{ variant.price | json }},
+                "priceHtml": {{ price_html | json }},
+                "option1": {{ variant.option1 | json }},
+                "option2": {{ variant.option2 | json }},
+                "option3": {{ variant.option3 | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ],
+          "options": [
+            {% for option in product.options %}
+              {
+                "name": {{ option | json }},
+                "values": {{ option.values | json }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ]
+        }
+      </script>
 
       <!-- Add to Cart Button -->
       <div class="product-actions">
@@ -461,6 +475,9 @@
     color: var(--color-foreground);
     font-weight: 600;
     margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* Product Options (Size Selection) */
@@ -962,60 +979,169 @@
     showImage(0);
     startAutoSlide();
 
-    // Variant Selection - Simple and Fast (works for all products)
+    // Variant Selection - Simple and Reliable
     function initVariantSelection() {
       console.log('🚀 Starting variant selection...');
 
-      const variantSelector = document.querySelector('.variant-selector');
-      if (!variantSelector) {
-        console.log('❌ No variant selector found');
+      // Get variant data from the script tag
+      const variantDataScript = document.getElementById('variant-data');
+      if (!variantDataScript) {
+        console.log('❌ No variant data found');
         return;
       }
 
+      const variantData = JSON.parse(variantDataScript.textContent);
+      console.log('📋 Variant data loaded:', variantData);
+
       // Check if this is a product with variants or a simple product
-      const hasVariantOptions = document.querySelectorAll('input[name^="option-"]').length > 0;
+      const hasVariantOptions = variantData.options && variantData.options.length > 0;
 
       if (hasVariantOptions) {
         console.log('📋 Product with variants detected');
 
-        // Get all available variant data immediately
-        const availableVariants = new Set();
-        Array.from(variantSelector.options).forEach((option) => {
-          if (!option.disabled && option.value) {
-            const variantTitle = option.textContent.split(' - ')[0].trim();
-            availableVariants.add(variantTitle.toLowerCase());
-            console.log('✅ Available variant:', variantTitle);
+        // Build maps of available options for each position
+        const availableOptionsByPosition = {};
+        
+        // Process all available variants
+        variantData.variants.forEach((variant) => {
+          if (variant.available) {
+            // Store each option value by its position
+            if (variant.option1) {
+              if (!availableOptionsByPosition[0]) availableOptionsByPosition[0] = new Set();
+              availableOptionsByPosition[0].add(variant.option1.toLowerCase());
+            }
+            if (variant.option2) {
+              if (!availableOptionsByPosition[1]) availableOptionsByPosition[1] = new Set();
+              availableOptionsByPosition[1].add(variant.option2.toLowerCase());
+            }
+            if (variant.option3) {
+              if (!availableOptionsByPosition[2]) availableOptionsByPosition[2] = new Set();
+              availableOptionsByPosition[2].add(variant.option3.toLowerCase());
+            }
           }
         });
 
-        // Immediately check and disable unavailable options
+        console.log('Available options by position:', availableOptionsByPosition);
+
+        // Get all option inputs grouped by position
+        const optionGroups = {};
         document.querySelectorAll('input[name^="option-"]').forEach((input) => {
-          const optionValue = input.value.toLowerCase();
+          const optionPosition = input.name.match(/option-(\d+)/)[1];
+          if (!optionGroups[optionPosition]) {
+            optionGroups[optionPosition] = [];
+          }
+          optionGroups[optionPosition].push(input);
+        });
+
+        // For each option input, check if its value is available at that position
+        console.log('Checking option inputs:');
+        document.querySelectorAll('input[name^="option-"]').forEach((input) => {
+          const optionPosition = parseInt(input.name.match(/option-(\d+)/)[1]) - 1; // 0-based index
+          const optionValue = input.value.trim().toLowerCase();
           const label = document.querySelector(`label[for="${input.id}"]`);
 
-          if (!availableVariants.has(optionValue)) {
-            // Disable unavailable options
+          console.log(`Input: name=${input.name}, value=${input.value}, position=${optionPosition}`);
+
+          // Check if this option value is available at this position
+          const positionOptions = availableOptionsByPosition[optionPosition];
+          const isAvailable = positionOptions && positionOptions.has(optionValue);
+
+          console.log(`Position ${optionPosition} options:`, positionOptions ? Array.from(positionOptions) : 'none');
+          console.log(`Is ${optionValue} available at position ${optionPosition}?`, isAvailable);
+
+          if (!isAvailable) {
+            // Option is not available - disable it
             input.disabled = true;
             if (label) {
               label.classList.add('option-unavailable');
               label.style.pointerEvents = 'none';
             }
-            console.log('❌ Disabled:', input.value);
+            console.log('❌ Disabled unavailable option:', input.value, 'at position', optionPosition);
           } else {
-            // Enable available options
+            // Option is available - enable it
             input.disabled = false;
             if (label) {
               label.classList.remove('option-unavailable');
               label.style.pointerEvents = 'auto';
             }
-            console.log('✅ Enabled:', input.value);
+            console.log('✅ Enabled available option:', input.value, 'at position', optionPosition);
           }
         });
 
-        // Add event listeners for variant products
+        // Function to update option availability based on current selections
+        function updateOptionAvailability() {
+          // Get current selections
+          const currentSelections = {};
+          document.querySelectorAll('input[name^="option-"]:checked').forEach((input) => {
+            const optionPosition = parseInt(input.name.match(/option-(\d+)/)[1]) - 1;
+            currentSelections[optionPosition] = input.value.trim().toLowerCase();
+          });
+
+          // For each option position, check which values are still available
+          const optionPositions = Object.keys(optionGroups).map(pos => parseInt(pos) - 1);
+          
+          optionPositions.forEach((checkPosition) => {
+            optionGroups[(checkPosition + 1).toString()].forEach((input) => {
+              const optionValue = input.value.trim().toLowerCase();
+              const label = document.querySelector(`label[for="${input.id}"]`);
+
+              // Check if this option value can be combined with current selections
+              let isAvailable = false;
+              
+              // If no selections made yet, check if option exists in any variant
+              if (Object.keys(currentSelections).length === 0) {
+                const positionOptions = availableOptionsByPosition[checkPosition];
+                isAvailable = positionOptions && positionOptions.has(optionValue);
+              } else {
+                // Check against available variants that match current selections
+                variantData.variants.forEach((variant) => {
+                  if (variant.available) {
+                    // Check if this variant matches all current selections
+                    let matches = true;
+                    for (const [pos, selectedValue] of Object.entries(currentSelections)) {
+                      const variantOption = [variant.option1, variant.option2, variant.option3][pos];
+                      if (parseInt(pos) !== checkPosition && variantOption && variantOption.toLowerCase() !== selectedValue) {
+                        matches = false;
+                        break;
+                      }
+                    }
+                    
+                    // If it matches current selections and has this option value at the check position
+                    const checkOption = [variant.option1, variant.option2, variant.option3][checkPosition];
+                    if (matches && checkOption && checkOption.toLowerCase() === optionValue) {
+                      isAvailable = true;
+                    }
+                  }
+                });
+              }
+
+              if (!isAvailable) {
+                input.disabled = true;
+                if (label) {
+                  label.classList.add('option-unavailable');
+                  label.style.pointerEvents = 'none';
+                }
+              } else {
+                input.disabled = false;
+                if (label) {
+                  label.classList.remove('option-unavailable');
+                  label.style.pointerEvents = 'auto';
+                }
+              }
+            });
+          });
+        }
+
+        // Add event listeners for variant products with dynamic updating
         document.querySelectorAll('input[name^="option-"]').forEach((input) => {
-          input.addEventListener('change', updateVariant);
+          input.addEventListener('change', () => {
+            updateOptionAvailability();
+            updateVariant();
+          });
         });
+
+        // Initial option availability update
+        updateOptionAvailability();
       } else {
         console.log('🎁 Simple product (no variants) detected');
       }
@@ -1023,40 +1149,60 @@
       // Simple variant update function (works for both types)
       function updateVariant() {
         if (hasVariantOptions) {
-          const selectedInput = document.querySelector('input[name^="option-"]:checked');
-          if (!selectedInput) return;
-
-          const selectedValue = selectedInput.value.toLowerCase();
-
-          // Find matching variant option
-          const matchingOption = Array.from(variantSelector.options).find((option) => {
-            const variantTitle = option.textContent.split(' - ')[0].trim().toLowerCase();
-            return variantTitle === selectedValue;
+          // Get all currently selected options
+          const selectedOptions = [];
+          document.querySelectorAll('input[name^="option-"]:checked').forEach((input) => {
+            const optionPosition = parseInt(input.name.match(/option-(\d+)/)[1]) - 1; // 0-based index
+            selectedOptions[optionPosition] = input.value.trim().toLowerCase();
           });
 
-          if (matchingOption) {
-            variantSelector.value = matchingOption.value;
+          // If we don't have selections for all option positions, don't update yet
+          const uniquePositions = variantData.options.length;
+          
+          if (selectedOptions.length < uniquePositions) {
+            return; // Not all options selected yet
+          }
 
-            // Update price
-            const price = matchingOption.textContent.split(' - ')[1];
+          // Find matching variant
+          const matchingVariant = variantData.variants.find((variant) => {
+            if (!variant.available) return false;
+            
+            // Check if all selected options match this variant
+            const variantOptions = [variant.option1, variant.option2, variant.option3]
+              .slice(0, uniquePositions)
+              .map(opt => opt ? opt.toLowerCase() : '');
+            
+            return selectedOptions.every((selected, index) => variantOptions[index] === selected);
+          });
+
+          if (matchingVariant) {
+            // Update the hidden select if it exists
+            const variantSelector = document.querySelector('.variant-selector');
+            if (variantSelector) {
+              variantSelector.value = matchingVariant.id;
+            }
+
+            // Update price using the pre-rendered price HTML
             const priceElement = document.querySelector('.product-price');
-            if (priceElement && price) {
-              priceElement.textContent = price;
+            if (priceElement && matchingVariant.priceHtml) {
+              priceElement.innerHTML = matchingVariant.priceHtml;
             }
 
             // Update button
             const addToCartBtn = document.querySelector('.add-to-cart-btn');
             if (addToCartBtn) {
-              addToCartBtn.disabled = matchingOption.disabled;
+              addToCartBtn.disabled = !matchingVariant.available;
               const btnText = addToCartBtn.querySelector('.btn-text');
               if (btnText) {
-                btnText.textContent = matchingOption.disabled
+                btnText.textContent = !matchingVariant.available
                   ? window.themeStrings?.sold_out || 'Sold out'
                   : window.themeStrings?.add_to_cart || 'Add to cart';
               }
             }
 
-            console.log('Updated to variant:', matchingOption.textContent);
+            console.log('Updated to variant:', matchingVariant.title, 'with options:', selectedOptions);
+          } else {
+            console.log('No matching variant found for options:', selectedOptions);
           }
         }
         // For simple products, variant selector is already set correctly

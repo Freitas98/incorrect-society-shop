@@ -283,6 +283,7 @@
   },
   "announcement": {
     "default": "WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL",
+    "black_friday": "BLACK FRIDAY | ATÉ 50% DESCONTO | TEMPO LIMITADO",
     "aria_label": "Anúncio da loja"
   },
   "pagefly": {

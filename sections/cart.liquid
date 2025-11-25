@@ -60,12 +60,42 @@
 
             <!-- Price -->
             <div class="item-pricing">
-              <span class="unit-price">
-                {%- render 'price', amount: item.price %}
-                {{ 'cart.each' | t -}}
-              </span>
-              {% if item.original_price != item.price %}
-                <span class="original-price">{% render 'price', amount: item.original_price %}</span>
+              {% liquid
+                # Check for Black Friday discount
+                assign has_black_friday_discount = false
+                assign discount_percentage = 0
+                assign original_amount = item.price
+                assign discounted_amount = item.price
+
+                if item.product and settings.black_friday_enabled
+                  assign discount_metafield = item.product.metafields.custom.black_friday_discount
+                  if discount_metafield and discount_metafield != blank
+                    assign discount_percentage = discount_metafield | times: 1
+                    if discount_percentage > 0 and discount_percentage <= 100
+                      assign has_black_friday_discount = true
+                      assign discount_amount = item.price | times: discount_percentage | divided_by: 100
+                      assign original_amount = item.price | plus: discount_amount
+                      assign discounted_amount = item.price
+                    endif
+                  endif
+                endif
+              %}
+
+              {% if has_black_friday_discount %}
+                <div class="price-container">
+                  <span class="original-price">{{ original_amount | money }}</span>
+                  <span class="discounted-price">{{ discounted_amount | money }}</span>
+                  <span class="discount-badge">{{ discount_percentage }}% OFF</span>
+                </div>
+                <span class="unit-price">{{ 'cart.each' | t }}</span>
+              {% else %}
+                <span class="unit-price">
+                  {%- render 'price', amount: item.price, product: item.product %}
+                  {{ 'cart.each' | t -}}
+                </span>
+                {% if item.original_price != item.price %}
+                  <span class="original-price">{% render 'price', amount: item.original_price, product: item.product %}</span>
+                {% endif %}
               {% endif %}
             </div>
           </div>
@@ -110,7 +140,7 @@
             <!-- Line Total -->
             <div class="line-total">
               <span class="total-label">{{ 'cart.total' | t }}</span>
-              <span class="total-price" data-key="{{ item.key }}">{% render 'price', amount: item.line_price %}</span>
+              <span class="total-price" data-key="{{ item.key }}">{{ item.line_price | money }}</span>
             </div>
 
             <!-- Remove Button -->
@@ -133,13 +163,13 @@
       <div class="summary-content">
         <div class="subtotal-row">
           <span class="subtotal-label">{{ 'cart.subtotal' | t }}</span>
-          <span class="subtotal-amount" id="cart-subtotal">{% render 'price', amount: cart.total_price %}</span>
+          <span class="subtotal-amount" id="cart-subtotal">{{ cart.total_price | money }}</span>
         </div>
 
         {% if cart.total_discounts > 0 %}
           <div class="discount-row">
             <span class="discount-label">{{ 'cart.discount' | t }}</span>
-            <span class="discount-amount">-{% render 'price', amount: cart.total_discounts %}</span>
+            <span class="discount-amount">-{{ cart.total_discounts | money }}</span>
           </div>
         {% endif %}
 
@@ -342,6 +372,7 @@
   .item-pricing {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 20px;
   }
@@ -855,6 +886,41 @@
       padding: 8px 16px;
       font-size: 11px;
     }
+  }
+
+  /* Black Friday Price Styles for Cart */
+  .price-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .price-container .original-price {
+    text-decoration: line-through;
+    color: #666666;
+    font-size: 14px;
+  }
+
+  .price-container .discounted-price {
+    color: var(--color-foreground);
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .price-container .discount-badge {
+    background-color: var(--color-black-friday-primary, #ff4444);
+    color: var(--color-foreground);
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
   }
 {% endstylesheet %}
 

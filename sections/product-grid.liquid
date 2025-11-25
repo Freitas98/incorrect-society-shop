@@ -40,7 +40,7 @@
 
           <div class="product-info">
             <h3 class="product-title">{{ product.title }}</h3>
-            <p class="product-price">{% render 'price', amount: product.price %}</p>
+            <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
           </div>
         </a>
       </div>
@@ -157,6 +157,9 @@
     color: var(--color-foreground);
     font-weight: 600;
     margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* Responsive Design */
