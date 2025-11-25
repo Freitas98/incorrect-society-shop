@@ -8,5 +8,23 @@
  * ------------------------------------------------------------
  */
 {
-  "current": {}
+  "current": {
+    "black_friday_enabled": true,
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "settings": {
+          "use_translated_default": true,
+          "announcement_text": "WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL"
+        }
+      },
+      "sidebar-navigation": {
+        "type": "sidebar-navigation",
+        "settings": {
+          "menu": "main-menu"
+        }
+      }
+    },
+    "content_for_index": []
+  }
 }
