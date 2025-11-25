@@ -143,5 +143,28 @@
         "default": "https://www.youtube.com/@incorrectsociety"
       }
     ]
+  },
+  {
+    "name": "Black Friday",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "black_friday_enabled",
+        "label": "Ativar modo Black Friday em todo o site",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_black_friday_badge",
+        "label": "Ativar destaque Black Friday nos produtos",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "black_friday_message",
+        "label": "Mensagem de Black Friday para artigos",
+        "default": "Black Friday: até 20% de desconto em peças selecionadas."
+      }
+    ]
   }
 ]
