@@ -175,6 +175,95 @@
   }
 </style>
 
+<style>
+  /* Mobile responsive styles */
+  @media (max-width: 768px) {
+    .bf-modal {
+      width: min(90vw, 400px);
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .bf-modal-close {
+      background-color: transparent !important;
+    }
+
+    .bf-modal-inner {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    .bf-image {
+      flex: 0 0 200px;
+      order: -1;
+    }
+
+    .bf-content {
+      flex: 1;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .bf-modal-title {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+
+    .bf-modal-main {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .bf-modal-discount {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+    }
+
+    .bf-modal-desc {
+      margin-bottom: 25px;
+      font-size: 1rem;
+    }
+
+    .bf-modal-fieldset {
+      gap: 12px;
+    }
+
+    .bf-modal-input {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+
+    .bf-modal-submit {
+      padding: 10px;
+      font-size: 0.9rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .bf-modal {
+      width: min(95vw, 350px);
+      max-width: 95vw;
+    }
+
+    .bf-image {
+      flex: 0 0 150px;
+    }
+
+    .bf-content {
+      padding: 25px 15px;
+    }
+
+    .bf-modal-main {
+      font-size: 2rem;
+    }
+
+    .bf-modal-discount {
+      font-size: 1.4rem;
+    }
+  }
+</style>
+
 {% javascript %}
 (function () {
   const overlay = document.getElementById('BlackFridayModalOverlay');
