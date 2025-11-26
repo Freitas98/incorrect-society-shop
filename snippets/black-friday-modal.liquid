@@ -1,6 +1,6 @@
 {% comment %}
   Black Friday Subscription Modal
-  Shows when black_friday_enabled is true.
+  Shows when black_friday_countdown is true.
   Usage: {% render 'black-friday-modal' %} in layout/theme.liquid
 {% endcomment %}
 
@@ -8,12 +8,8 @@
 <div
   id="BlackFridayModalContainer"
   class="bf-modal"
-  data-adding="{{ 'theme.messages.adding' | t }}"
-  data-success=""
-  data-error="{{ 'newsletter.error' | t }}"
-  data-verifying="{{ 'newsletter.verifying' | t }}"
-  data-captcha="{{ 'newsletter.captcha_message' | t }}"
-  data-black-friday-enabled="{{ settings.black_friday_enabled }}"
+  data-black-friday-countdown="{{ settings.black_friday_countdown }}"
+  data-success="{{ form.posted_successfully }}"
 >
   <button class="bf-modal-close" aria-label="{{ 'general.close' | t | default: 'Close' }}">&times;</button>
   <div class="bf-modal-inner">
@@ -33,12 +29,7 @@
       <p id="BlackFridayModalDesc" class="bf-modal-desc">SIGN UP AND BE THE FIRST TO KNOW WHEN IT STARTS</p>
 
       {% form 'customer', id: 'BlackFridayModalForm' %}
-        {% if form.posted_successfully? %}
-          <p class="bf-modal-success">{{ 'newsletter.black_friday_success' | t }}</p>
-        {% endif %}
-        {% if form.errors %}
-          <div class="bf-modal-errors">{{ form.errors | default_errors }}</div>
-        {% endif %}
+        <div id="bf-message" class="bf-modal-message"></div>
 
         <div class="bf-modal-fieldset">
           <label class="visually-hidden" for="BlackFridayModalName">Name</label>
@@ -190,14 +181,9 @@
   const modal = document.getElementById('BlackFridayModalContainer');
   const closeBtn = document.querySelector('.bf-modal-close');
   const form = document.getElementById('BlackFridayModalForm');
+  const message = document.getElementById('bf-message');
 
-  if (!overlay || !modal || !closeBtn || !form) return;
-
-  const tAdding = modal.dataset.adding;
-  const tSuccess = modal.dataset.success;
-  const tError = modal.dataset.error;
-  const tVerifying = modal.dataset.verifying;
-  const tCaptcha = modal.dataset.captcha;
+  if (!overlay || !modal || !closeBtn || !form || !message) return;
 
   function openModal() {
     overlay.style.display = 'block';
@@ -221,54 +207,66 @@
   });
 
   // Show modal on load if not dismissed
-  const showDelayMs = 1200;
-  const dismissDaysOnClose = 10 / (24 * 60); // 10 minutes
-  const storageKey = 'bf-modal-dismissed';
-  const successFlag = 'bf-show-success';
-  const subscribedFlag = 'bf-subscribed';
+  const showDelayMs = 0; // Show immediately for testing
+  const dismissDaysOnClose = 7; // 7 days
+  const storageKey = 'bf-modal-dismissed-v2';
+  const subscribedFlag = 'bf-subscribed-v2';
+  const captchaPendingFlag = 'bf-captcha-pending';
 
   function shouldShow() {
-    return modal.dataset.blackFridayEnabled === 'true' && !isDismissed() && !sessionStorage.getItem(subscribedFlag);
+    const countdownEnabled = modal.dataset.blackFridayCountdown === 'true';
+    const notDismissed = !isDismissed();
+    const notSubscribed = !localStorage.getItem(subscribedFlag);
+    console.log('Modal shouldShow:', { countdownEnabled, notDismissed, notSubscribed });
+    return countdownEnabled && notDismissed && notSubscribed;
   }
 
   function dismissForDays(days) {
     const expiry = Date.now() + (days * 24 * 60 * 60 * 1000);
-    sessionStorage.setItem(storageKey, expiry);
+    localStorage.setItem(storageKey, expiry);
   }
 
   function isDismissed() {
-    const expiry = sessionStorage.getItem(storageKey);
+    const expiry = localStorage.getItem(storageKey);
     if (!expiry) return false;
     return Date.now() < parseInt(expiry);
   }
 
-  if (sessionStorage.getItem(successFlag)) {
-    // Show success message and close
-    sessionStorage.removeItem(successFlag);
+  if (localStorage.getItem(captchaPendingFlag)) {
+    localStorage.removeItem(captchaPendingFlag);
     message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
+    message.style.color = '#8f2b3f';
+    localStorage.setItem(subscribedFlag, 'true');
     openModal();
     setTimeout(() => {
       hideModal();
-    }, 1000);
-  } else if (!isDismissed() && shouldShow()) {
+    }, 2000);
+  } else if (modal.dataset.success === 'true') {
+    message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
+    message.style.color = '#8f2b3f';
+    localStorage.setItem(subscribedFlag, 'true');
+    openModal();
+    setTimeout(() => {
+      hideModal();
+    }, 2000);
+  } else if (shouldShow()) {
     setTimeout(openModal, showDelayMs);
   }
 
   // Handle form submission
   if (form) {
-    let didFallback = false;
     const submitButton = form.querySelector('.bf-modal-submit');
     const originalText = submitButton ? submitButton.textContent : '';
 
     const handleSubmit = async (e) => {
       e.preventDefault();
+      message.textContent = '';
       if (submitButton) {
         submitButton.disabled = true;
-        submitButton.textContent = tAdding;
+        submitButton.textContent = 'Subscribing...';
       }
 
       const formData = new FormData(form);
-      let isChallenge = false;
 
       try {
         const response = await fetch(form.action, {
@@ -280,70 +278,63 @@
         });
 
         if (response.redirected) {
-          // Redirected — likely success, but check for challenge
           const url = response.url;
           if (url.includes('/challenge') || url.includes('shopify-challenge')) {
-            isChallenge = true;
-          } else {
-            // Assume success and redirect
+            console.log('Captcha detected in redirect URL');
+            // Captcha required - hide modal and redirect
+            hideModal();
             window.location.href = url;
             return;
+          } else {
+            // Assume success - show message and close
+            message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
+            message.style.color = '#8f2b3f';
+            localStorage.setItem(subscribedFlag, 'true');
+            form.reset();
+            setTimeout(() => {
+              hideModal();
+            }, 2000);
           }
         } else {
           // Check response text for challenge indicators
-          try {
-            const text = await response.text();
-            const lower = text.toLowerCase();
-            if (
-              lower.includes('shopify-challenge') ||
-              lower.includes('g-recaptcha') ||
-              lower.includes('h-captcha') ||
-              lower.includes('/challenge') ||
-              lower.includes('captcha') ||
-              lower.includes('verify you are human')
-            ) {
-              isChallenge = true;
-            }
-          } catch (_) {
-            /* ignore */
-          }
-        }
-
-        if (isChallenge) {
-          if (!didFallback) {
-            didFallback = true;
+          const text = await response.text();
+          const lower = text.toLowerCase();
+          if (
+            lower.includes('shopify-challenge') ||
+            lower.includes('g-recaptcha') ||
+            lower.includes('h-captcha') ||
+            lower.includes('/challenge') ||
+            lower.includes('captcha') ||
+            lower.includes('verify you are human')
+          ) {
+            console.log('Captcha detected in response text');
+            // Captcha required - hide modal and submit form normally
+            localStorage.setItem(captchaPendingFlag, 'true');
             hideModal();
-            sessionStorage.setItem(successFlag, 'true');
             form.removeEventListener('submit', handleSubmit);
             form.submit();
             return;
-          }
-        }
-
-        if (response.ok) {
-          // Success - show message, close after delay
-          message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
-          sessionStorage.setItem(subscribedFlag, 'true');
-          try {
+          } else if (response.ok) {
+            // Success - show message and close
+            message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
+            message.style.color = '#8f2b3f';
+            localStorage.setItem(subscribedFlag, 'true');
             form.reset();
-          } catch (_) {}
-          setTimeout(() => {
-            hideModal();
-          }, 1000);
+            setTimeout(() => {
+              hideModal();
+            }, 2000);
+          } else {
+            message.textContent = 'An error occurred. Please try again.';
+            message.style.color = 'red';
+          }
         }
       } catch (e) {
-        if (!didFallback) {
-          didFallback = true;
-          form.removeEventListener('submit', handleSubmit);
-          form.submit();
-          return;
-        }
+        message.textContent = 'An error occurred. Please try again.';
+        message.style.color = 'red';
       } finally {
-        if (document.visibilityState === 'visible') {
-          if (submitButton) {
-            submitButton.disabled = false;
-            submitButton.textContent = originalText;
-          }
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalText;
         }
       }
     };
