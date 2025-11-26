@@ -4,15 +4,10 @@
   Usage: {% render 'black-friday-modal' %} in layout/theme.liquid
 {% endcomment %}
 
-<div id="BlackFridayModalOverlay" class="bf-modal-overlay" hidden></div>
+<div id="BlackFridayModalOverlay" class="bf-modal-overlay"></div>
 <div
   id="BlackFridayModalContainer"
   class="bf-modal"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="BlackFridayModalTitle"
-  aria-describedby="BlackFridayModalDesc"
-  hidden
   data-adding="{{ 'theme.messages.adding' | t }}"
   data-success=""
   data-error="{{ 'newsletter.error' | t }}"
@@ -81,6 +76,7 @@
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
     z-index: 9998;
+    display: none;
   }
   .bf-modal {
     position: fixed;
@@ -96,18 +92,25 @@
     padding: 0;
     color: var(--color-foreground);
     overflow: hidden;
+    display: none;
   }
   .bf-modal-close {
     position: absolute;
     top: 10px;
     right: 15px;
     background: none;
-    border: none;
+    border: none !important;
     font-size: 24px;
     cursor: pointer;
     color: var(--color-foreground);
     z-index: 10;
   }
+
+  .bf-modal-close:hover {
+    color: var(--color-primary) !important;
+    background: none !important;
+  }
+
   .bf-modal-inner {
     display: flex;
     min-height: 400px;
@@ -197,14 +200,14 @@
   const tCaptcha = modal.dataset.captcha;
 
   function openModal() {
-    overlay.hidden = false;
-    modal.hidden = false;
+    overlay.style.display = 'block';
+    modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
   }
 
   function hideModal() {
-    overlay.hidden = true;
-    modal.hidden = true;
+    overlay.style.display = 'none';
+    modal.style.display = 'none';
     document.body.style.overflow = '';
   }
 
@@ -219,12 +222,13 @@
 
   // Show modal on load if not dismissed
   const showDelayMs = 1200;
-  const dismissDaysOnClose = 1 / 24; // 1 hour
+  const dismissDaysOnClose = 10 / (24 * 60); // 10 minutes
   const storageKey = 'bf-modal-dismissed';
   const successFlag = 'bf-show-success';
+  const subscribedFlag = 'bf-subscribed';
 
   function shouldShow() {
-    return modal.dataset.blackFridayEnabled === 'true' && !isDismissed();
+    return modal.dataset.blackFridayEnabled === 'true' && !isDismissed() && !sessionStorage.getItem(subscribedFlag);
   }
 
   function dismissForDays(days) {
@@ -245,7 +249,7 @@
     openModal();
     setTimeout(() => {
       hideModal();
-    }, 2000);
+    }, 1000);
   } else if (!isDismissed() && shouldShow()) {
     setTimeout(openModal, showDelayMs);
   }
@@ -319,12 +323,13 @@
         if (response.ok) {
           // Success - show message, close after delay
           message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
+          sessionStorage.setItem(subscribedFlag, 'true');
           try {
             form.reset();
           } catch (_) {}
           setTimeout(() => {
             hideModal();
-          }, 2000);
+          }, 1000);
         }
       } catch (e) {
         if (!didFallback) {
