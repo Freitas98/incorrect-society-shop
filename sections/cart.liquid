@@ -326,14 +326,17 @@
     line-height: 1.3;
     word-break: break-word;
     hyphens: auto;
+    text-align: center;
   }
 
   .item-variant-price-wrapper {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 15px;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 12px;
+    min-height: 32px;
   }
 
   .item-variant {
@@ -341,15 +344,18 @@
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+    justify-content: center;
+    flex: 1;
   }
 
   .variant-price {
-    margin-left: auto;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    gap: 6px;
     font-size: 16px;
     font-weight: 500;
+    flex: 1;
   }
 
   .price-label {
@@ -369,6 +375,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.8px;
+    text-align: center;
   }
 
   .item-properties {
