@@ -41,6 +41,9 @@
 
     {% # Main Content Area %}
     <main class="main-content">
+      {% if settings.black_friday_enabled %}
+        {% render 'black-friday-modal' %}
+      {% endif %}
       {% sections 'header-group' %}
 
       {% if request.path contains '/challenge' and template.name != 'challenge' %}

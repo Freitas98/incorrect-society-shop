@@ -1,0 +1,336 @@
+{% comment %}
+  Black Friday Subscription Modal
+  Shows when black_friday_enabled is true.
+  Usage: {% render 'black-friday-modal' %} in layout/theme.liquid
+{% endcomment %}
+
+<div id="BlackFridayModalOverlay" class="bf-modal-overlay" hidden></div>
+<div
+  id="BlackFridayModalContainer"
+  class="bf-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="BlackFridayModalTitle"
+  aria-describedby="BlackFridayModalDesc"
+  hidden
+  data-adding="{{ 'theme.messages.adding' | t }}"
+  data-success=""
+  data-error="{{ 'newsletter.error' | t }}"
+  data-verifying="{{ 'newsletter.verifying' | t }}"
+  data-captcha="{{ 'newsletter.captcha_message' | t }}"
+  data-black-friday-enabled="{{ settings.black_friday_enabled }}"
+>
+  <button class="bf-modal-close" aria-label="{{ 'general.close' | t | default: 'Close' }}">&times;</button>
+  <div class="bf-modal-inner">
+    <div class="bf-image">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CAR01650-2.jpg?v=1764120484"
+        alt="Black Friday"
+        class="bf-modal-image"
+        width="400"
+        height="400"
+      >
+    </div>
+    <div class="bf-content">
+      <h2 id="BlackFridayModalTitle" class="bf-modal-title">EARLY ACCESS</h2>
+      <h1 class="bf-modal-main">BLACK FRIDAY</h1>
+      <p class="bf-modal-discount">UP to 50%</p>
+      <p id="BlackFridayModalDesc" class="bf-modal-desc">SIGN UP AND BE THE FIRST TO KNOW WHEN IT STARTS</p>
+
+      {% form 'customer', id: 'BlackFridayModalForm' %}
+        {% if form.posted_successfully? %}
+          <p class="bf-modal-success">{{ 'newsletter.black_friday_success' | t }}</p>
+        {% endif %}
+        {% if form.errors %}
+          <div class="bf-modal-errors">{{ form.errors | default_errors }}</div>
+        {% endif %}
+
+        <div class="bf-modal-fieldset">
+          <label class="visually-hidden" for="BlackFridayModalName">Name</label>
+          <input
+            type="text"
+            name="contact[first_name]"
+            id="BlackFridayModalName"
+            placeholder="Name"
+            autocomplete="given-name"
+            class="bf-modal-input"
+          >
+          <label class="visually-hidden" for="BlackFridayModalEmail">Email</label>
+          <input
+            type="email"
+            name="contact[email]"
+            id="BlackFridayModalEmail"
+            placeholder="Email"
+            autocomplete="email"
+            required
+            class="bf-modal-input"
+          >
+          <input type="hidden" name="contact[tags]" id="BlackFridayModalTags" value="black-friday">
+          <button type="submit" class="btn btn--primary btn--block bf-modal-submit">
+            Subscribe
+          </button>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .bf-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9998;
+  }
+  .bf-modal {
+    position: fixed;
+    z-index: 9999;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    width: min(95vw, 800px);
+    max-width: 95vw;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    padding: 0;
+    color: var(--color-foreground);
+    overflow: hidden;
+  }
+  .bf-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--color-foreground);
+    z-index: 10;
+  }
+  .bf-modal-inner {
+    display: flex;
+    min-height: 400px;
+  }
+  .bf-image {
+    flex: 1;
+    background: #000;
+  }
+  .bf-modal-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .bf-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
+  .bf-modal-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #8f2b3f;
+  }
+  .bf-modal-main {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .bf-modal-discount {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #8f2b3f;
+  }
+  .bf-modal-desc {
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+  }
+  .bf-modal-fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .bf-modal-input {
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  .bf-modal-submit {
+    padding: 12px;
+    background: #8f2b3f;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .bf-modal-message {
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }
+  .bf-modal-success {
+    color: #8f2b3f;
+    margin-bottom: 5px;
+  }
+  .bf-modal-errors {
+    color: red;
+  }
+</style>
+
+{% javascript %}
+(function () {
+  const overlay = document.getElementById('BlackFridayModalOverlay');
+  const modal = document.getElementById('BlackFridayModalContainer');
+  const closeBtn = document.querySelector('.bf-modal-close');
+  const form = document.getElementById('BlackFridayModalForm');
+
+  if (!overlay || !modal || !closeBtn || !form) return;
+
+  const tAdding = modal.dataset.adding;
+  const tSuccess = modal.dataset.success;
+  const tError = modal.dataset.error;
+  const tVerifying = modal.dataset.verifying;
+  const tCaptcha = modal.dataset.captcha;
+
+  function openModal() {
+    overlay.hidden = false;
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function hideModal() {
+    overlay.hidden = true;
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', () => {
+    hideModal();
+    dismissForDays(dismissDaysOnClose);
+  });
+  overlay.addEventListener('click', () => {
+    hideModal();
+    dismissForDays(dismissDaysOnClose);
+  });
+
+  // Show modal on load if not dismissed
+  const showDelayMs = 1200;
+  const dismissDaysOnClose = 1 / 24; // 1 hour
+  const dismissDaysOnSuccess = 365; // 1 year
+  const storageKey = 'bf-modal-dismissed';
+
+  function shouldShow() {
+    return modal.dataset.blackFridayEnabled === 'true' && !isDismissed();
+  }
+
+  function dismissForDays(days) {
+    const expiry = Date.now() + (days * 24 * 60 * 60 * 1000);
+    localStorage.setItem(storageKey, expiry);
+  }
+
+  function isDismissed() {
+    const expiry = localStorage.getItem(storageKey);
+    if (!expiry) return false;
+    return Date.now() < parseInt(expiry);
+  }
+
+  if (!isDismissed() && shouldShow()) {
+    setTimeout(openModal, showDelayMs);
+  }
+
+  // Handle form submission
+  if (form) {
+    let didFallback = false;
+    const submitButton = form.querySelector('.bf-modal-submit');
+    const originalText = submitButton ? submitButton.textContent : '';
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = tAdding;
+      }
+
+      const formData = new FormData(form);
+      let isChallenge = false;
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          },
+        });
+
+        if (response.redirected) {
+          // Redirected — likely success, but check for challenge
+          const url = response.url;
+          if (url.includes('/challenge') || url.includes('shopify-challenge')) {
+            isChallenge = true;
+          } else {
+            // Assume success and redirect
+            window.location.href = url;
+            return;
+          }
+        } else {
+          // Check response text for challenge indicators
+          try {
+            const text = await response.text();
+            const lower = text.toLowerCase();
+            if (
+              lower.includes('shopify-challenge') ||
+              lower.includes('g-recaptcha') ||
+              lower.includes('h-captcha') ||
+              lower.includes('/challenge') ||
+              lower.includes('captcha') ||
+              lower.includes('verify you are human')
+            ) {
+              isChallenge = true;
+            }
+          } catch (_) {
+            /* ignore */
+          }
+        }
+
+        if (isChallenge) {
+          if (!didFallback) {
+            didFallback = true;
+            form.removeEventListener('submit', handleSubmit);
+            form.submit();
+            return;
+          }
+        }
+
+        if (response.ok) {
+          // Success - close modal and don't show again
+          try {
+            form.reset();
+          } catch (_) {}
+          dismissForDays(dismissDaysOnSuccess);
+          hideModal();
+        }
+      } catch (e) {
+        if (!didFallback) {
+          didFallback = true;
+          form.removeEventListener('submit', handleSubmit);
+          form.submit();
+          return;
+        }
+      } finally {
+        if (document.visibilityState === 'visible') {
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+          }
+        }
+      }
+    };
+    form.addEventListener('submit', handleSubmit);
+  }
+})();
+{% endjavascript %}
