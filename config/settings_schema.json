@@ -152,6 +152,18 @@
         "id": "black_friday_enabled",
         "label": "Enable black friday mode",
         "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "black_friday_countdown",
+        "label": "Enable black friday countdown",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "black_friday_countdown_message",
+        "label": "Black friday countdown message",
+        "default": "BLACK FRIDAY SALES COMING SOON!"
       }
     ]
   }
