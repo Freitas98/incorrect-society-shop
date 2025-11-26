@@ -220,8 +220,8 @@
   // Show modal on load if not dismissed
   const showDelayMs = 1200;
   const dismissDaysOnClose = 1 / 24; // 1 hour
-  const dismissDaysOnSuccess = 365; // 1 year
   const storageKey = 'bf-modal-dismissed';
+  const successFlag = 'bf-show-success';
 
   function shouldShow() {
     return modal.dataset.blackFridayEnabled === 'true' && !isDismissed();
@@ -229,16 +229,24 @@
 
   function dismissForDays(days) {
     const expiry = Date.now() + (days * 24 * 60 * 60 * 1000);
-    localStorage.setItem(storageKey, expiry);
+    sessionStorage.setItem(storageKey, expiry);
   }
 
   function isDismissed() {
-    const expiry = localStorage.getItem(storageKey);
+    const expiry = sessionStorage.getItem(storageKey);
     if (!expiry) return false;
     return Date.now() < parseInt(expiry);
   }
 
-  if (!isDismissed() && shouldShow()) {
+  if (sessionStorage.getItem(successFlag)) {
+    // Show success message and close
+    sessionStorage.removeItem(successFlag);
+    message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
+    openModal();
+    setTimeout(() => {
+      hideModal();
+    }, 2000);
+  } else if (!isDismissed() && shouldShow()) {
     setTimeout(openModal, showDelayMs);
   }
 
@@ -300,6 +308,8 @@
         if (isChallenge) {
           if (!didFallback) {
             didFallback = true;
+            hideModal();
+            sessionStorage.setItem(successFlag, 'true');
             form.removeEventListener('submit', handleSubmit);
             form.submit();
             return;
@@ -307,12 +317,14 @@
         }
 
         if (response.ok) {
-          // Success - close modal and don't show again
+          // Success - show message, close after delay
+          message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
           try {
             form.reset();
           } catch (_) {}
-          dismissForDays(dismissDaysOnSuccess);
-          hideModal();
+          setTimeout(() => {
+            hideModal();
+          }, 2000);
         }
       } catch (e) {
         if (!didFallback) {
