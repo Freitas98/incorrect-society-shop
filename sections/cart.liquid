@@ -156,13 +156,6 @@
           <span class="subtotal-amount" id="cart-subtotal">{{ cart.total_price | money }}</span>
         </div>
 
-        {% if cart.total_discounts > 0 %}
-          <div class="discount-row">
-            <span class="discount-label">{{ 'cart.discount' | t }}</span>
-            <span class="discount-amount">-{{ cart.total_discounts | money }}</span>
-          </div>
-        {% endif %}
-
         <div class="tax-info">
           {% if cart.taxes_included %}
             <p>{{ 'cart.taxes_included' | t }}</p>
@@ -574,14 +567,6 @@
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 1px;
-  }
-
-  .discount-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    color: var(--color-primary);
   }
 
   .discount-label {
