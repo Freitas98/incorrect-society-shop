@@ -161,9 +161,15 @@
       },
       {
         "type": "text",
-        "id": "black_friday_countdown_message",
+        "id": "black_friday_countdown_title",
         "label": "Black friday countdown message",
-        "default": "BLACK FRIDAY SALES COMING SOON!"
+        "default": "BLACK FRIDAY BLOWOUT!"
+      },
+      {
+        "type": "text",
+        "id": "black_friday_countdown_subtitle",
+        "label": "Black friday countdown subtitle",
+        "default": "Up to 50% OFF!"
       }
     ]
   }
