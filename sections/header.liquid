@@ -1362,6 +1362,10 @@
     // Event listeners
     cartToggle.addEventListener('click', function (e) {
       e.preventDefault();
+
+      if (document.body.dataset.template === 'cart') {
+        return;
+      }
       openCart();
     });
 
