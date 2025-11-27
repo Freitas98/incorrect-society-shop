@@ -10,12 +10,26 @@
       assign announcement_text = setting_text
     endif
   %}
+  {% capture announcement_block %}
+    <span class="announcement-text">
+      <span class="announcement-copy">{{ announcement_text }}</span>
+      <img
+        src="{{ 'smallLogo.png' | asset_url }}"
+        alt=""
+        class="announcement-icon"
+        width="20"
+        height="20"
+        loading="lazy"
+        aria-hidden="true"
+      >
+    </span>
+  {% endcapture %}
   <div class="announcement-content" aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}">
-    <span class="announcement-text">{{ announcement_text }}</span>
+    {{ announcement_block }}
     <span class="announcement-spacer"></span>
-    <span class="announcement-text">{{ announcement_text }}</span>
+    {{ announcement_block }}
     <span class="announcement-spacer"></span>
-    <span class="announcement-text">{{ announcement_text }}</span>
+    {{ announcement_block }}
   </div>
 </div>
 
@@ -45,7 +59,16 @@
   }
 
   .announcement-text {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .announcement-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
   }
 
   .announcement-spacer {
