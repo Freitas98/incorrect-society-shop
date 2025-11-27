@@ -319,7 +319,9 @@
 
   const SUCCESS_MESSAGE = "Subscribed! You'll be the first to know when Black Friday starts.";
   const ERROR_MESSAGE = 'An error occurred. Please try again.';
-  const SUCCESS_AUTO_CLOSE_DELAY = 2200;
+  const VERIFICATION_MESSAGE = 'Verification required. Please complete the captcha to finish subscribing.';
+  const SUCCESS_AUTO_CLOSE_DELAY = 3200;
+  const VERIFICATION_NOTICE_DELAY = 900;
 
   function clearMessage() {
     if (!message) return;
@@ -398,27 +400,52 @@
 
   function handleSuccess({ showModal = false, messageText = SUCCESS_MESSAGE, resetForm = true } = {}) {
     markSubscribed();
+    localStorage.removeItem(captchaPendingFlag);
 
     if (resetForm && form) {
       form.reset();
     }
 
-    showMessage(messageText, 'success');
-
     if (showModal && modal.style.display !== 'block') {
       openModal();
     }
+
+    showMessage(messageText, 'success');
 
     setTimeout(() => {
       hideModal();
     }, SUCCESS_AUTO_CLOSE_DELAY);
   }
 
-  if (localStorage.getItem(captchaPendingFlag)) {
-    localStorage.removeItem(captchaPendingFlag);
+  function handleVerificationStep(onProceed) {
+    showMessage(VERIFICATION_MESSAGE, 'info');
+
+    setTimeout(() => {
+      hideModal();
+      if (typeof onProceed === 'function') {
+        onProceed();
+      }
+    }, VERIFICATION_NOTICE_DELAY);
+  }
+
+  const captchaState = localStorage.getItem(captchaPendingFlag);
+  const cameFromChallenge = document.referrer && document.referrer.indexOf('/challenge') !== -1;
+
+  if (modal.dataset.success === 'true') {
+    if (captchaState) {
+      localStorage.removeItem(captchaPendingFlag);
+    }
     handleSuccess({ showModal: true, resetForm: false });
-  } else if (modal.dataset.success === 'true') {
+  } else if (captchaState === 'pending' && cameFromChallenge) {
     handleSuccess({ showModal: true, resetForm: false });
+  } else if (captchaState === 'pending') {
+    if (modal.style.display !== 'block') {
+      openModal();
+    }
+    showMessage(VERIFICATION_MESSAGE, 'info');
+    setTimeout(() => {
+      hideModal();
+    }, VERIFICATION_NOTICE_DELAY);
   } else if (shouldShow()) {
     setTimeout(openModal, showDelayMs);
   }
@@ -452,9 +479,10 @@
           if (url.includes('/challenge') || url.includes('shopify-challenge')) {
             console.log('Captcha detected in redirect URL');
             // Captcha required - hide modal and redirect
-            localStorage.setItem(captchaPendingFlag, 'true');
-            hideModal();
-            window.location.href = url;
+            localStorage.setItem(captchaPendingFlag, 'pending');
+            handleVerificationStep(() => {
+              window.location.href = url;
+            });
             return;
           } else {
             // Assume success - show message and close
@@ -474,10 +502,11 @@
           ) {
             console.log('Captcha detected in response text');
             // Captcha required - hide modal and submit form normally
-            localStorage.setItem(captchaPendingFlag, 'true');
-            hideModal();
-            form.removeEventListener('submit', handleSubmit);
-            form.submit();
+            localStorage.setItem(captchaPendingFlag, 'pending');
+            handleVerificationStep(() => {
+              form.removeEventListener('submit', handleSubmit);
+              form.submit();
+            });
             return;
           } else if (response.ok) {
             // Success - show message and close
