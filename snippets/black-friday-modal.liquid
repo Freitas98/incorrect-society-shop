@@ -32,15 +32,6 @@
         <div id="bf-message" class="bf-modal-message"></div>
 
         <div class="bf-modal-fieldset">
-          <label class="visually-hidden" for="BlackFridayModalName">Name</label>
-          <input
-            type="text"
-            name="contact[first_name]"
-            id="BlackFridayModalName"
-            placeholder="Name"
-            autocomplete="given-name"
-            class="bf-modal-input"
-          >
           <label class="visually-hidden" for="BlackFridayModalEmail">Email</label>
           <input
             type="email"
@@ -74,8 +65,8 @@
     z-index: 9999;
     inset: 50% auto auto 50%;
     transform: translate(-50%, -50%);
-    width: min(95vw, 800px);
-    max-width: 95vw;
+    width: min(90vw, 600px);
+    max-width: 90vw;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 10px;
@@ -104,7 +95,7 @@
 
   .bf-modal-inner {
     display: flex;
-    min-height: 400px;
+    min-height: 320px;
   }
   .bf-image {
     flex: 1;
@@ -117,7 +108,7 @@
   }
   .bf-content {
     flex: 1;
-    padding: 40px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -139,19 +130,20 @@
     color: #8f2b3f;
   }
   .bf-modal-desc {
-    margin-bottom: 30px;
+    margin-bottom: -12px;
     font-size: 1.1rem;
   }
   .bf-modal-fieldset {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
   }
   .bf-modal-input {
     padding: 12px;
     border: 1px solid var(--color-border);
     border-radius: 4px;
     font-size: 1rem;
+    background: rgba(0, 0, 0, 0.7);
   }
   .bf-modal-submit {
     padding: 12px;
@@ -163,26 +155,29 @@
     cursor: pointer;
   }
   .bf-modal-message {
-    margin-top: 10px;
+    margin-top: 25px;
     font-size: 0.9rem;
   }
+
   .bf-modal-success {
     color: #8f2b3f;
     margin-bottom: 5px;
   }
+  
   .bf-modal-errors {
     color: red;
   }
+  
 </style>
 
 <style>
   /* Mobile responsive styles */
   @media (max-width: 768px) {
     .bf-modal {
-      width: min(90vw, 400px);
-      max-width: 90vw;
+      width: min(88vw, 360px);
+      max-width: 88vw;
       max-height: 80vh;
-      overflow-y: auto;
+      overflow: hidden;
     }
 
     .bf-modal-close {
@@ -190,76 +185,125 @@
     }
 
     .bf-modal-inner {
-      flex-direction: column;
-      min-height: auto;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 36px 22px;
+      min-height: 320px;
     }
 
     .bf-image {
-      flex: 0 0 200px;
-      order: -1;
+      position: absolute;
+      inset: 0;
+      display: block;
+      flex: none;
+      max-height: none;
+      order: initial;
+      z-index: 0;
+    }
+
+    .bf-modal-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.35;
     }
 
     .bf-content {
-      flex: 1;
-      padding: 30px 20px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 280px;
+      padding: 28px 24px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 14px;
       text-align: center;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+      color: #f5f5f5;
     }
 
     .bf-modal-title {
-      font-size: 1.2rem;
-      margin-bottom: 8px;
+      font-size: 1.25rem;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+      color: #8f2b3f;
     }
 
     .bf-modal-main {
-      font-size: 2.2rem;
-      margin-bottom: 8px;
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      color: #ffffff;
     }
 
     .bf-modal-discount {
-      font-size: 1.6rem;
-      margin-bottom: 15px;
+      font-size: 1.7rem;
+      margin-bottom: 16px;
+      color: #8f2b3f;
     }
 
     .bf-modal-desc {
-      margin-bottom: 25px;
+      margin-bottom: -12px;
       font-size: 1rem;
+      line-height: 1.5;
+      color: #ededed;
     }
 
     .bf-modal-fieldset {
-      gap: 12px;
+      gap: 14px;
     }
 
     .bf-modal-input {
-      padding: 10px;
-      font-size: 0.9rem;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #f5f5f5;
+    }
+
+    .bf-modal-input::placeholder {
+      color: #f5f5f5;
     }
 
     .bf-modal-submit {
-      padding: 10px;
-      font-size: 0.9rem;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 6px;
     }
   }
 
   @media (max-width: 480px) {
     .bf-modal {
-      width: min(95vw, 350px);
-      max-width: 95vw;
+      width: min(92vw, 300px);
+      max-width: 92vw;
     }
 
-    .bf-image {
-      flex: 0 0 150px;
+    .bf-modal-inner {
+      padding: 32px 18px;
+      min-height: 300px;
     }
 
     .bf-content {
-      padding: 25px 15px;
+      max-width: 260px;
+      padding: 24px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #f5f5f5;
+    }
+
+    .bf-modal-title {
+      font-size: 1.1rem;
+      color: #8f2b3f;
     }
 
     .bf-modal-main {
-      font-size: 2rem;
+      font-size: 2.1rem;
+      color: #ffffff;
     }
 
     .bf-modal-discount {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      color: #8f2b3f;
     }
   }
 </style>
