@@ -42,6 +42,7 @@
             required
             class="bf-modal-input"
           >
+          <input type="hidden" name="contact[accepts_marketing]" value="true">
           <input type="hidden" name="contact[tags]" id="BlackFridayModalTags" value="blackFridaySubscribed">
           <button type="submit" class="btn btn--primary btn--block bf-modal-submit">
             Subscribe
@@ -320,6 +321,7 @@
   const SUCCESS_MESSAGE = "Subscribed! You'll be the first to know when Black Friday starts.";
   const ERROR_MESSAGE = 'An error occurred. Please try again.';
   const VERIFICATION_MESSAGE = 'Verification required. Please complete the captcha to finish subscribing.';
+  const EXISTING_SUBSCRIBER_MESSAGE = "You're already on the list! Your access tag is active.";
   const SUCCESS_AUTO_CLOSE_DELAY = 3200;
   const VERIFICATION_NOTICE_DELAY = 900;
 
@@ -492,6 +494,17 @@
           // Check response text for challenge indicators
           const text = await response.text();
           const lower = text.toLowerCase();
+
+          const alreadySubscribed =
+            lower.includes('already subscribed') ||
+            lower.includes('already been subscribed') ||
+            lower.includes('already signed up');
+
+          if (alreadySubscribed) {
+            handleSuccess({ messageText: EXISTING_SUBSCRIBER_MESSAGE, resetForm: false });
+            return;
+          }
+
           if (
             lower.includes('shopify-challenge') ||
             lower.includes('g-recaptcha') ||
