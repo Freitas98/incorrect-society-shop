@@ -130,7 +130,7 @@
     color: #8f2b3f;
   }
   .bf-modal-desc {
-    margin-bottom: -12px;
+    margin-bottom: 15px;
     font-size: 1.1rem;
   }
   .bf-modal-fieldset {
@@ -155,7 +155,6 @@
     cursor: pointer;
   }
   .bf-modal-message {
-    margin-top: 25px;
     font-size: 0.9rem;
   }
 
@@ -163,7 +162,7 @@
     color: #8f2b3f;
     margin-bottom: 5px;
   }
-  
+
   .bf-modal-errors {
     color: red;
   }
@@ -244,7 +243,7 @@
     }
 
     .bf-modal-desc {
-      margin-bottom: -12px;
+      margin-bottom: 15px;
       font-size: 1rem;
       line-height: 1.5;
       color: #ededed;
@@ -318,6 +317,30 @@
 
   if (!overlay || !modal || !closeBtn || !form || !message) return;
 
+  const SUCCESS_MESSAGE = "Subscribed! You'll be the first to know when Black Friday starts.";
+  const ERROR_MESSAGE = 'An error occurred. Please try again.';
+  const SUCCESS_AUTO_CLOSE_DELAY = 2200;
+
+  function clearMessage() {
+    if (!message) return;
+    message.textContent = '';
+    message.className = 'bf-modal-message';
+    message.style.display = 'none';
+  }
+
+  function showMessage(text, type = 'info') {
+    if (!message) return;
+    message.textContent = text;
+    message.style.display = text ? 'block' : 'none';
+    message.className = 'bf-modal-message';
+
+    if (type === 'success') {
+      message.classList.add('bf-modal-success');
+    } else if (type === 'error') {
+      message.classList.add('bf-modal-errors');
+    }
+  }
+
   function openModal() {
     overlay.style.display = 'block';
     modal.style.display = 'block';
@@ -328,6 +351,7 @@
     overlay.style.display = 'none';
     modal.style.display = 'none';
     document.body.style.overflow = '';
+    clearMessage();
   }
 
   closeBtn.addEventListener('click', () => {
@@ -338,6 +362,8 @@
     hideModal();
     dismissForDays(dismissDaysOnClose);
   });
+
+  clearMessage();
 
   // Show modal on load if not dismissed
   const showDelayMs = 0; // Show immediately for testing
@@ -365,23 +391,34 @@
     return Date.now() < parseInt(expiry);
   }
 
+  function markSubscribed() {
+    localStorage.setItem(subscribedFlag, 'true');
+    dismissForDays(dismissDaysOnClose);
+  }
+
+  function handleSuccess({ showModal = false, messageText = SUCCESS_MESSAGE, resetForm = true } = {}) {
+    markSubscribed();
+
+    if (resetForm && form) {
+      form.reset();
+    }
+
+    showMessage(messageText, 'success');
+
+    if (showModal && modal.style.display !== 'block') {
+      openModal();
+    }
+
+    setTimeout(() => {
+      hideModal();
+    }, SUCCESS_AUTO_CLOSE_DELAY);
+  }
+
   if (localStorage.getItem(captchaPendingFlag)) {
     localStorage.removeItem(captchaPendingFlag);
-    message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
-    message.style.color = '#8f2b3f';
-    localStorage.setItem(subscribedFlag, 'true');
-    openModal();
-    setTimeout(() => {
-      hideModal();
-    }, 2000);
+    handleSuccess({ showModal: true, resetForm: false });
   } else if (modal.dataset.success === 'true') {
-    message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
-    message.style.color = '#8f2b3f';
-    localStorage.setItem(subscribedFlag, 'true');
-    openModal();
-    setTimeout(() => {
-      hideModal();
-    }, 2000);
+    handleSuccess({ showModal: true, resetForm: false });
   } else if (shouldShow()) {
     setTimeout(openModal, showDelayMs);
   }
@@ -393,7 +430,7 @@
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      message.textContent = '';
+      clearMessage();
       if (submitButton) {
         submitButton.disabled = true;
         submitButton.textContent = 'Subscribing...';
@@ -415,18 +452,13 @@
           if (url.includes('/challenge') || url.includes('shopify-challenge')) {
             console.log('Captcha detected in redirect URL');
             // Captcha required - hide modal and redirect
+            localStorage.setItem(captchaPendingFlag, 'true');
             hideModal();
             window.location.href = url;
             return;
           } else {
             // Assume success - show message and close
-            message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
-            message.style.color = '#8f2b3f';
-            localStorage.setItem(subscribedFlag, 'true');
-            form.reset();
-            setTimeout(() => {
-              hideModal();
-            }, 2000);
+            handleSuccess();
           }
         } else {
           // Check response text for challenge indicators
@@ -449,21 +481,13 @@
             return;
           } else if (response.ok) {
             // Success - show message and close
-            message.textContent = 'Subscribed! You\'ll be the first to know when Black Friday starts.';
-            message.style.color = '#8f2b3f';
-            localStorage.setItem(subscribedFlag, 'true');
-            form.reset();
-            setTimeout(() => {
-              hideModal();
-            }, 2000);
+            handleSuccess();
           } else {
-            message.textContent = 'An error occurred. Please try again.';
-            message.style.color = 'red';
+            showMessage(ERROR_MESSAGE, 'error');
           }
         }
       } catch (e) {
-        message.textContent = 'An error occurred. Please try again.';
-        message.style.color = 'red';
+        showMessage(ERROR_MESSAGE, 'error');
       } finally {
         if (submitButton) {
           submitButton.disabled = false;
