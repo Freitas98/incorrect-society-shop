@@ -52,25 +52,7 @@
                 
                 <!-- Price inline with variant -->
                 <span class="variant-price">
-                  {% liquid
-                    assign has_black_friday_discount = false
-                    assign discount_percentage = 0
-                    if item.product and settings.black_friday_enabled
-                      assign discount_metafield = item.product.metafields.custom.black_friday_discount
-                      if discount_metafield and discount_metafield != blank
-                        assign discount_percentage = discount_metafield | times: 1
-                        if discount_percentage > 0 and discount_percentage <= 100
-                          assign has_black_friday_discount = true
-                        endif
-                      endif
-                    endif
-                  %}
-
-                  {% if has_black_friday_discount %}
-                    <span class="original-price">{{ item.original_price | money }}</span>
-                    <span class="discounted-price">{{ item.price | money }}</span>
-                    <span class="discount-badge">{{ discount_percentage }}% OFF</span>
-                  {% elsif item.original_price != item.price %}
+                  {% if item.original_price != item.price %}
                     <span class="original-price">{{ item.original_price | money }}</span>
                     <span class="discounted-price">{{ item.price | money }}</span>
                   {% else %}
@@ -892,41 +874,6 @@
       padding: 8px 16px;
       font-size: 11px;
     }
-  }
-
-  /* Black Friday Price Styles for Cart */
-  .price-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 4px;
-    text-align: center;
-  }
-
-  .price-container .original-price {
-    text-decoration: line-through;
-    color: #666666;
-    font-size: 14px;
-  }
-
-  .price-container .discounted-price {
-    color: var(--color-foreground);
-    font-weight: 600;
-    font-size: 16px;
-  }
-
-  .price-container .discount-badge {
-    background-color: var(--color-black-friday-primary, #ff4444);
-    color: var(--color-foreground);
-    padding: 2px 6px;
-    border-radius: 12px;
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
   }
 {% endstylesheet %}
 

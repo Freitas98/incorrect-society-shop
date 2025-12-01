@@ -24,7 +24,7 @@
       <a href="{{ routes.root_url }}" class="star-logo" aria-label="{{ 'general.home' | t }}">
         <img
           class="star-logo__img star-logo__img--default"
-          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/smallLogo.png?v=1764216060"
+          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257555"
           alt="{{ shop.name }}"
           width="28"
           height="28"
@@ -32,7 +32,7 @@
         >
         <img
           class="star-logo__img star-logo__img--hover"
-          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/smallLogo.png?v=1764216060"
+          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_red.svg?v=1764257556"
           alt=""
           aria-hidden="true"
           width="28"
@@ -911,6 +911,7 @@
     .star-logo__img--hover {
       opacity: 0;
       pointer-events: none;
+      filter: brightness(67%);
     }
     .star-logo:hover .star-logo__img--hover,
     .star-logo:focus-visible .star-logo__img--hover {

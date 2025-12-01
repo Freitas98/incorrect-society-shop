@@ -9,9 +9,6 @@
  */
 {
   "current": {
-    "black_friday_enabled": false,
-    "black_friday_countdown": true,
-    "black_friday_message": "Black Friday Blowout: Up to 50% OFF our most popular pieces — don’t miss out!",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",

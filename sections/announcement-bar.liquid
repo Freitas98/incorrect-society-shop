@@ -1,20 +1,26 @@
 <div class="announcement-bar">
   {% liquid
     assign default_text = 'announcement.default' | t | default: 'WORLDWIDE SHIPPING | OUTSIDER OUT NOW | FREE SHIPPING 80€+'
-    assign black_friday_text = 'announcement.black_friday' | t | default: 'BLACK FRIDAY SALE | UP TO 70% OFF | LIMITED TIME ONLY'
     assign setting_text = section.settings.announcement_text | strip
     assign announcement_text = default_text
-    if settings.black_friday_enabled
-      assign announcement_text = black_friday_text
-    elsif section.settings.use_translated_default == false and setting_text != blank
+    if section.settings.use_translated_default == false and setting_text != blank
       assign announcement_text = setting_text
     endif
   %}
   {% capture announcement_block %}
     <span class="announcement-text">
+      <img
+        src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257555"
+        alt=""
+        class="announcement-icon"
+        width="20"
+        height="20"
+        loading="lazy"
+        aria-hidden="true"
+      >
       <span class="announcement-copy">{{ announcement_text }}</span>
       <img
-        src="{{ 'smallLogo.png' | asset_url }}"
+        src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257555"
         alt=""
         class="announcement-icon"
         width="20"

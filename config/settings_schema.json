@@ -143,34 +143,5 @@
         "default": "https://www.youtube.com/@incorrectsociety"
       }
     ]
-  },
-  {
-    "name": "Black Friday",
-    "settings": [
-      {
-        "type": "checkbox",
-        "id": "black_friday_enabled",
-        "label": "Enable black friday mode",
-        "default": false
-      },
-      {
-        "type": "checkbox",
-        "id": "black_friday_countdown",
-        "label": "Enable black friday countdown",
-        "default": false
-      },
-      {
-        "type": "text",
-        "id": "black_friday_countdown_title",
-        "label": "Black friday countdown message",
-        "default": "BLACK FRIDAY BLOWOUT!"
-      },
-      {
-        "type": "text",
-        "id": "black_friday_countdown_subtitle",
-        "label": "Black friday countdown subtitle",
-        "default": "Up to 50% OFF!"
-      }
-    ]
   }
 ]
