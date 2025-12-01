@@ -40,7 +40,11 @@
 
           <div class="product-info">
             <h3 class="product-title">{{ product.title }}</h3>
-            <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
+            {% if product.available %}
+              <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
+            {% else %}
+              <p class="product-price product-out-of-stock">{{ 'products.product.sold_out' | t }}</p>
+            {% endif %}
           </div>
         </a>
       </div>
@@ -160,6 +164,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .product-out-of-stock {
+    color: var(--color-border);
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   /* Responsive Design */

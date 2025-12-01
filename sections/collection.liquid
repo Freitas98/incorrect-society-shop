@@ -34,13 +34,17 @@
 
             <div class="product-info">
               <h3 class="product-title">{{ product.title }}</h3>
-              {% if product.gift_card? or product.type == 'Gift Card' %}
-                <p class="product-price">
-                  {{ 'gift_card.start_at' | t }}
-                  {% render 'price', amount: product.price, product: product %}
-                </p>
+              {% if product.available %}
+                {% if product.gift_card? or product.type == 'Gift Card' %}
+                  <p class="product-price">
+                    {{ 'gift_card.start_at' | t }}
+                    {% render 'price', amount: product.price, product: product %}
+                  </p>
+                {% else %}
+                  <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
+                {% endif %}
               {% else %}
-                <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
+                <p class="product-price product-out-of-stock">{{ 'products.product.sold_out' | t }}</p>
               {% endif %}
             </div>
           </a>
@@ -173,6 +177,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .product-out-of-stock {
+    color: var(--color-border);
+    text-transform: uppercase;
+    letter-spacing: 1px;
   }
 
   /* Pagination styling */
