@@ -1,134 +1,101 @@
 <header class="site-header" role="banner">
-  <div class="header-content{% if section.settings.logo == blank %} header-content--no-logo{% endif %}">
+  
+  <div class="site-header-inner">
+    <div class="header-content">
     <div class="header-left">
-      <!-- Desktop brand logo on the left -->
-      <a href="{{ routes.root_url }}" class="header-brand" aria-label="{{ 'general.home' | t }}">
-        <img
-            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_standard_white.svg?v=1764257555"
+      <div class="header-identity">
+        <a href="{{ routes.root_url }}" class="header-logo-link" aria-label="{{ 'general.home' | t }}">
+          <img
+            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logo_standard_black.svg?v=1764257556"
             alt="{{ shop.name }}"
-            class="brand-logo"
+            class="header-logo"
             loading="eager"
             width="220"
             height="60"
-        >
-      </a>
-      <!-- In-header burger (left), mobile/tablet only -->
-      <button type="button" class="sidebar-toggle sidebar-toggle--in-header" aria-label="Open menu">
-        <span class="hamburger-line" aria-hidden="true"></span>
-        <span class="hamburger-line" aria-hidden="true"></span>
-        <span class="hamburger-line" aria-hidden="true"></span>
-      </button>
+          >
+        </a>
+        <!-- tagline removed for compact header -->
+      </div>
     </div>
-    <!-- Center logo (star) - mobile/tablet only -->
-    <div class="header-center">
-      <a href="{{ routes.root_url }}" class="star-logo" aria-label="{{ 'general.home' | t }}">
-        <img
-          class="star-logo__img star-logo__img--default"
-          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257555"
-          alt="{{ shop.name }}"
-          width="28"
-          height="28"
-          loading="eager"
-        >
-        <img
-          class="star-logo__img star-logo__img--hover"
-          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_red.svg?v=1764257556"
-          alt=""
-          aria-hidden="true"
-          width="28"
-          height="28"
-          loading="eager"
-        >
-      </a>
-    </div>
+    <!-- Center navigation menu -->
+    <nav class="header-nav">
+      <ul class="header-menu">
+        <li class="header-menu-item">
+          <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">OUTSIDER</a>
+        </li>
+        <li class="header-menu-item">
+          <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">GIFT CARDS</a>
+        </li>
+      </ul>
+    </nav>
     <div class="header-right">
-      <!-- Actions: SEARCHBAR → CART → CHECKOUT -->
       <div class="header-actions">
-        <!-- Inline search bar placed after flag (desktop), hidden on mobile -->
-        <div class="header-search">
-          <form action="{{ routes.search_url }}" method="get" class="search-form">
-            <div class="search-input-wrapper">
-              <input
-                type="search"
-                name="q"
-                placeholder="{{ 'search.placeholder' | t }}"
-                class="search-input"
-                value="{{ search.terms | escape }}"
-                aria-label="{{ 'search.title' | t }}"
-              >
-              <button type="submit" class="search-button" aria-label="{{ 'search.submit' | t }}">
-                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2"/>
-                </svg>
-              </button>
-            </div>
+        <div class="header-search" data-search>
+          <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form" aria-label="{{ 'search.title' | t }}">
+            <label for="header-search-input" class="visually-hidden">{{ 'search.title' | t }}</label>
+            <input
+              id="header-search-input"
+              class="header-search-input"
+              type="search"
+              name="q"
+              placeholder="{{ 'search.placeholder' | t }}"
+              value="{{ search.terms | escape }}"
+              autocomplete="off"
+            >
+            <button type="submit" class="header-search-submit" aria-label="{{ 'search.submit' | t }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
           </form>
+          <button
+            type="button"
+            class="header-action header-search-toggle"
+            aria-label="{{ 'search.title' | t }}"
+            aria-expanded="false"
+            aria-controls="header-search-input"
+          >
+            <svg class="search-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </button>
         </div>
-
-        <!-- Mobile search trigger (icon); hidden on desktop -->
-        <button type="button" class="search-trigger search-trigger--actions" aria-label="{{ 'search.title' | t }}">
-          <svg class="search-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2"/>
-          </svg>
-        </button>
         {% if shop.customer_accounts_enabled %}
-          <a href="{{ routes.account_url }}" class="header-account" aria-label="{{ 'customers.login.title' | t }}">
+          <a href="{{ routes.account_url }}" class="header-action header-account" aria-label="{{ 'customers.login.title' | t }}">
             <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" fill="currentColor"/>
             </svg>
-            <span class="nav-text">{{ 'customers.login.title' | t }}</span>
+            <span class="visually-hidden">{{ 'customers.login.title' | t }}</span>
           </a>
         {% endif %}
-
-        <a href="{{ routes.cart_url }}" class="header-cart" id="cart-toggle" aria-label="{{ 'cart.title' | t }}">
+        <a href="{{ routes.cart_url }}" class="header-action header-cart" id="cart-toggle" aria-label="{{ 'cart.title' | t }}">
           <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <!-- Simple cart icon with wheels -->
             <path d="M6 6h14l-2 8H8L6 6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
             <path d="M6 6L5 3H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             <circle cx="9" cy="18" r="1.5" fill="currentColor"/>
             <circle cx="17" cy="18" r="1.5" fill="currentColor"/>
           </svg>
-          <span class="cart-text nav-text">{{ 'cart.title' | t }}</span>
-          <span class="cart-count" id="cart-count">({{ cart.item_count }})</span>
+          <span class="visually-hidden">{{ 'cart.title' | t }}</span>
+          <span
+            class="cart-count{% if cart.item_count > 0 %} cart-count--visible{% endif %}"
+            id="cart-count"
+            aria-hidden="true"
+          >
+            {% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}
+          </span>
         </a>
-
-        <a href="/checkout" class="checkout-link" aria-label="{{ 'cart.checkout' | t }}">
-          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect x="3" y="5" width="18" height="14" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
-            <path d="M3 10h18" stroke="currentColor" stroke-width="2"/>
-            <rect x="6.5" y="12.5" width="6" height="3" fill="currentColor"/>
-          </svg>
-          <span class="nav-text">{{ 'cart.checkout' | t }}</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</header>
-<div id="site-header-spacer" class="site-header-spacer" aria-hidden="true"></div>
-
-<!-- Search Modal (mobile) -->
-<div class="search-overlay" id="search-overlay"></div>
-<div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="{{ 'search.title' | t }}">
-  <div class="search-modal-content">
-    <form action="{{ routes.search_url }}" method="get">
-      <div class="search-input-wrapper">
-        <input
-          id="search-modal-input"
-          type="search"
-          name="q"
-          placeholder="{{ 'search.placeholder' | t }}"
-          class="search-input"
-          aria-label="{{ 'search.title' | t }}"
-        >
-        <button type="submit" class="search-button" aria-label="{{ 'search.submit' | t }}">
-          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M21 21L16.514 16.506L21 21ZM19 10.5C19 15.194 15.194 19 10.5 19C5.806 19 2 15.194 2 10.5C2 5.806 5.806 2 10.5 2C15.194 2 19 5.806 19 10.5Z" stroke="currentColor" stroke-width="2"/>
+        <!-- Hamburger for mobile nav -->
+        <button type="button" class="header-action header-hamburger" id="mobile-nav-toggle" aria-label="Open menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
       </div>
-    </form>
-  </div>
+    </div>
 </div>
+  </div>
+</header>
+<div id="site-header-spacer" class="site-header-spacer" aria-hidden="true"></div>
 
 <!-- Cart Sidebar -->
 <div class="cart-sidebar" id="cart-sidebar">
@@ -162,6 +129,75 @@
 
 <div class="cart-overlay" id="cart-overlay"></div>
 
+<!-- Mobile nav overlay/drawer -->
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
+  <div class="mobile-nav-inner">
+    <button class="mobile-nav-close" id="mobile-nav-close" aria-label="Close menu">✕</button>
+    <div class="mobile-nav-logo">
+      <a href="{{ routes.root_url }}" class="header-logo-link" aria-label="{{ 'general.home' | t }}">
+        <img
+          src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logo_standard_black.svg?v=1764257556"
+          alt="{{ shop.name }}"
+          class="header-logo"
+          loading="eager"
+          width="220"
+          height="60"
+        >
+      </a>
+    </div>
+    <div class="mobile-nav-search" data-search>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form" aria-label="{{ 'search.title' | t }}">
+        <label for="mobile-search-input" class="visually-hidden">{{ 'search.title' | t }}</label>
+        <input
+          id="mobile-search-input"
+          class="header-search-input"
+          type="search"
+          name="q"
+          placeholder="{{ 'search.placeholder' | t }}"
+          value="{{ search.terms | escape }}"
+          autocomplete="off"
+        >
+        <button type="submit" class="header-search-submit" aria-label="{{ 'search.submit' | t }}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <ul class="mobile-nav-menu">
+      <li><a href="{{ routes.collections_url }}/outsider">OUTSIDER</a></li>
+      <li><a href="{{ routes.collections_url }}/gift-cards">GIFT CARDS</a></li>
+    </ul>
+    <div class="mobile-nav-actions">
+      {% if shop.customer_accounts_enabled %}
+        <a href="{{ routes.account_url }}" class="header-action header-account" aria-label="{{ 'customers.login.title' | t }}">
+          <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" fill="currentColor"/>
+          </svg>
+          <span class="visually-hidden">{{ 'customers.login.title' | t }}</span>
+        </a>
+      {% endif %}
+      <a href="{{ routes.cart_url }}" class="header-action header-cart" id="mobile-cart-toggle" aria-label="{{ 'cart.title' | t }}">
+        <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6h14l-2 8H8L6 6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
+          <path d="M6 6L5 3H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="9" cy="18" r="1.5" fill="currentColor"/>
+          <circle cx="17" cy="18" r="1.5" fill="currentColor"/>
+        </svg>
+        <span class="visually-hidden">{{ 'cart.title' | t }}</span>
+        <span
+          class="cart-count{% if cart.item_count > 0 %} cart-count--visible{% endif %}"
+          id="mobile-cart-count"
+          aria-hidden="true"
+        >
+          {% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}
+        </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
 <!-- Clear Cart Confirmation Modal -->
 <div class="clear-cart-modal" id="clear-cart-modal">
   <div class="modal-content">
@@ -177,101 +213,140 @@
 
 {% stylesheet %}
   :root {
-    --announcement-height: 40px;
-    --header-pad-top: 32px; /* space from announcement bar to header icons */
-    --header-pad-top-mobile: 20px;
-    --header-row-min-height: 36px; /* keep burger and actions equal height */
-    --star-logo-size-mobile: clamp(44px, 9vw, 72px); /* responsive star size on mobile */
+    --announcement-height: 46px;
+    --header-pad-top: 22px;
+    --header-pad-top-mobile: 14px;
+    --header-row-min-height: 44px;
   }
   .site-header {
-    background-color: var(--color-background);
-    border-bottom: none;
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+    box-shadow: 0 18px 40px rgba(12, 12, 12, 0.08);
     padding: var(--header-pad-top) 0;
     position: fixed;
-    top: var(--announcement-height); /* fixed below announcement bar */
+    top: var(--announcement-height);
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 998; /* Keep below announcement bar (1000) and below modal overlays (>=1099) */
-    /* Fixed icon size across breakpoints */
+    z-index: 998;
     --header-icon-size: 22px;
   }
   .site-header-spacer {
     height: var(--site-header-height, 0px);
   }
 
-  /* Right-align header when there is no logo */
-  .header-content--no-logo {
-    justify-content: flex-end;
-    width: 100%;
-    padding-right: 0;
-  }
-
+  /* Grid layout keeps brand, navigation, and actions evenly spaced */
   .header-content {
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 0 40px;
-    display: flex;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-  }
-  .header-center {
-    display: none;
+    gap: clamp(1.5rem, 5vw, 4rem);
   }
 
-  /* No-logo: push group to the far right and remove right padding */
-  .header-content.header-content--no-logo {
-    justify-content: space-between; /* burger left, actions right */
-    padding-right: 0;
-    width: 100%;
-  }
   .header-left {
     display: flex;
     align-items: center;
-    flex: 0 0 auto;
+    justify-self: flex-start;
+    gap: clamp(0.75rem, 3vw, 2.25rem);
   }
+
+  .header-nav {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    justify-self: flex-end;
+  }
+
+  .header-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
   .header-left .header-brand {
     display: inline-flex;
     align-items: center;
+    gap: 12px;
     text-decoration: none;
-    color: inherit;
-    min-height: var(--header-row-min-height);
-    margin-right: 14px;
-  }
-  .header-left .brand-logo {
-    display: block;
-    height: 64px;
-    width: auto;
-  }
-  .header-left .sidebar-toggle--in-header {
-    display: none; /* hidden on desktop */
-    flex-direction: column;
-    align-items: center; /* center lines vertically in button */
-    justify-content: center; /* center lines vertically in button */
-    gap: 4px;
-    padding: 6px 8px;
-    min-height: var(--header-row-min-height);
-    background: transparent;
-    border: 0;
     color: var(--color-foreground);
-    line-height: 1;
-  }
-  .header-left .sidebar-toggle--in-header .hamburger-line {
-    width: 22px;
-    height: 2px;
-    background: currentColor;
-    transition: background-color 0.2s ease;
-  }
-  .header-left .sidebar-toggle--in-header:hover {
-    color: var(--color-primary);  
-    background-color: transparent;
+    min-height: var(--header-row-min-height);
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--color-border), transparent 35%);
+    box-shadow: 0 12px 25px rgba(10, 10, 10, 0.08);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-size: clamp(0.9rem, 0.8rem + 0.3vw, 1.05rem);
+    font-family: var(--font-heading-family, var(--font-primary-family));
   }
 
-  .header-content.header-content--no-logo .header-search {
-    flex: 0 0 auto;
-    max-width: 300px;
+  .header-brand__text {
+    white-space: nowrap;
   }
+
+  .header-left .brand-logo {
+    display: inline-block;
+    width: 60px;
+    height: auto;
+    opacity: 0.5;
+    filter: grayscale(1) contrast(1.2);
+  }
+
+  .header-tagline {
+    margin: 0;
+    font-size: 0.72rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--color-foreground), transparent 45%);
+  }
+
+  .header-center-badge::before {
+    content: '\2022';
+    font-size: 1.4rem;
+    line-height: 0;
+    opacity: 0.8;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+  }
+
+  .header-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+  }
+
+  .header-menu-item {
+    margin: 0;
+  }
+
+  .header-menu-link {
+    color: var(--color-foreground);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .header-menu-link:hover {
+    color: var(--color-primary);
+  }
+
 
   .header-logo {
     flex-shrink: 0;
@@ -299,258 +374,152 @@
   }
 
   .header-search {
-    flex: 1;
-    max-width: clamp(220px, 38vw, 420px);
-    position: relative;
-    margin-right: 6px;
-  }
-
-  .search-form {
-    width: 100%;
-  }
-
-  .search-input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
   }
 
-  .search-input {
-    width: 100%;
-    padding: 12px 50px 12px 15px;
-    background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-foreground);
-    font-size: 14px;
-    border-radius: 0;
+  .header-search-toggle {
+    display: inline-flex;
   }
 
-  /* Style the native clear (X) button in search inputs */
-  .search-input::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-    height: 14px;
-    width: 14px;
-    background-color: var(--color-primary);
-    /* Use mask to color the SVG with background-color */
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 3l10 10M13 3L3 13' stroke='%23000' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    -webkit-mask-size: contain;
-    cursor: pointer;
-  }
-
-  .search-input::placeholder {
-    color: #666666;
-  }
-
-  .search-input:focus {
-    outline: none;
-    border-color: var(--color-primary);
-  }
-
-  /* Search trigger (mobile only) */
-  .search-trigger {
-    border: none !important;
-    background-color: transparent !important;
-    display: none;
-    background: transparent;
-    border: 0;
-    color: var(--color-foreground);
-    padding: 6px;
-    cursor: pointer;
-  }
-  .search-trigger:hover {
+  .header-search.is-open .header-search-toggle {
     color: var(--color-primary);
-    background-color: transparent;
-    border-color: transparent;
   }
 
-  .search-button {
+  .header-search-form {
     position: absolute;
-    right: 2px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none !important;
-    color: var(--color-foreground) !important;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-  }
-
-  .search-button:hover{
-    border-color: var(--color-primary);
-    padding: 12px 14px;
+    top: calc(100% + 0.75rem);
     right: 0;
-  }
-
-  /* Modal search */
-  .search-modal {
-    position: fixed;
-    top: calc(var(--announcement-height) + var(--site-header-height, 0px));
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: none;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 40px;
-    z-index: 1100;
-  }
-  .search-modal.open {
+    width: min(320px, 80vw);
+    padding: 0.4rem;
     display: flex;
-  }
-  .search-modal .search-modal-content {
-    width: min(92vw, 640px);
+    align-items: center;
+    gap: 0.4rem;
     background: var(--color-background);
-    border: 1px solid var(--color-border);
-    padding: 12px;
-    border-radius: 6px;
-  }
-  .search-overlay {
-    position: fixed;
-    top: calc(var(--announcement-height) + var(--site-header-height, 0px));
-    left: 0;
-    width: 100vw;
-    height: calc(100vh - (var(--announcement-height) + var(--site-header-height, 0px)));
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1099;
-    display: none;
-  }
-  .search-overlay.open {
-    display: block;
-  }
-  .search-summary::-webkit-details-marker {
-    display: none;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--color-border), transparent 15%);
+    box-shadow: 0 15px 35px rgba(8, 8, 8, 0.15);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.96);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 15;
   }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: clamp(10px, 2vw, 30px);
-    white-space: nowrap;
-    overflow: visible;
+  .header-search.is-open .header-search-form {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
   }
-  .header-right {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  /* Desktop: order FLAG (inside .header-actions) → SEARCHBAR → BURGER → CART → CHECKOUT */
-  .header-actions {
-    order: 1;
-  }
-  .header-actions .header-locale {
-    order: 1;
-  }
-  .header-actions .header-search {
-    order: 2;
-  }
-  .header-actions .header-cart {
-    order: 3;
-  }
-  .header-actions .checkout-link {
-    order: 4;
-  }
-  .header-actions a {
-    white-space: nowrap;
-  }
-  .header-actions a:hover,
-  .search-trigger:hover {
-    color: var(--color-primary);
+
+  .header-search-input {
+    flex: 1;
+    border: none;
     background: transparent;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    color: var(--color-foreground);
   }
 
-  .header-account,
-  .header-cart,
-  .checkout-link {
-    color: var(--color-foreground);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: color 0.3s ease;
+  .header-search-input::placeholder {
+    color: color-mix(in oklab, var(--color-foreground), transparent 35%);
   }
-  .header-actions a {
+
+  .header-search-input:focus {
+    outline: none;
+  }
+
+  .header-search-submit {
+    border: none;
+    background: var(--color-foreground);
+    color: var(--color-background);
+    border-radius: 999px;
+    width: 34px;
+    height: 34px;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    line-height: 1;
-    min-width: 0;
-    min-height: var(--header-row-min-height);
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
   }
-  .header-actions svg {
+
+  .header-search-submit:hover {
+    opacity: 0.85;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2.5rem);
+  }
+
+  .header-action {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-foreground);
+    text-decoration: none;
+    cursor: pointer;
+    min-height: var(--header-row-min-height);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  .header-action svg,
+  .header-search-toggle .search-icon {
     display: block;
     width: var(--header-icon-size);
     height: var(--header-icon-size);
   }
-  .header-actions .nav-icon,
-  .header-actions .search-icon,
-  .header-search .search-icon,
-  .search-trigger .search-icon {
-    width: var(--header-icon-size);
-    height: var(--header-icon-size);
-    min-width: var(--header-icon-size);
-    min-height: var(--header-icon-size);
-    flex: 0 0 var(--header-icon-size);
+
+  .header-action:hover {
+    color: var(--color-primary);
+    transform: translateY(-1px);
   }
-  .search-trigger {
-    line-height: 1;
+
+  .header-hamburger {
     display: none;
-    min-height: var(--header-row-min-height);
-    align-items: center;
-    justify-content: center;
-  }
-  .header-cart {
-    gap: 0;
-    align-items: center;
-  }
-  /* Cart: default both white; on hover both accent */
-  .header-cart .cart-count {
-    color: var(--color-foreground);
-  }
-  .header-cart:hover .cart-count {
-    color: var(--color-primary);
-  }
-  .header-cart:hover .nav-icon {
-    color: var(--color-primary);
-  }
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: flex-end;
-    margin-right: 40px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid color-mix(in oklab, var(--color-border), transparent 25%);
   }
 
-  /* Header-aligned burger */
-  /* header burger removed */
-
-  /* Icon/text behavior */
-  .nav-icon {
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .nav-text {
-    display: inline;
-  }
-
-  .header-account:hover,
-  .header-cart:hover,
-  .checkout-link:hover {
-    color: var(--color-primary);
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .cart-count {
-    font-size: 14px;
-    font-weight: 500;
-    margin-left: -4px; /* pull closer to icon */
+    position: absolute;
+    top: -0.4rem;
+    right: -0.55rem;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 999px;
+    background-color: var(--color-primary);
+    color: var(--color-background);
+    font-size: 0.7rem;
     line-height: 1;
-    letter-spacing: 0;
-    transform: translateY(-3px); /* nudge slightly upward */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.3rem;
+  }
+
+  .cart-count--visible {
+    display: inline-flex;
   }
 
   /* Cart Sidebar */
@@ -812,20 +781,11 @@
       padding: 0 20px;
       gap: 20px;
     }
-    .header-content.header-content--no-logo {
-      padding-right: 0;
+    .header-nav {
+      display: none;
     }
-    .header-content.header-content--no-logo .header-search {
-      max-width: 260px;
-    }
-    .header-content--no-logo {
-      padding-right: 0;
-    }
-    .header-search {
-      max-width: 300px;
-    }
-    .header-actions {
-      gap: 12px;
+    .header-hamburger {
+      display: inline-flex;
     }
     .cart-sidebar {
       width: 350px;
@@ -833,200 +793,57 @@
     }
   }
 
-  /* Mid desktop: keep everything on one line by hiding text labels and shrinking search a bit */
-  @media (max-width: 1100px) {
-    .header-actions .nav-text {
-      display: none;
-    }
-    .header-search {
-      max-width: clamp(180px, 34vw, 340px);
-    }
-  }
-
   @media (max-width: 768px) {
     .site-header {
       padding: var(--header-pad-top-mobile) 0;
-    } /* remains sticky with same padding on mobile */
+    }
     .header-content {
-      /* Use grid to keep center logo perfectly centered regardless of left/right widths */
-      display: grid;
       grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: clamp(16px, 6vw, 40px);
-      position: relative; /* anchor for absolute star centering */
-    }
-    .header-content.header-content--no-logo {
-      padding-right: 0;
-    }
-    .header-content--no-logo {
-      padding-right: 0;
+      gap: clamp(12px, 6vw, 24px);
+      padding: 0 16px;
     }
     .header-left {
-      display: flex;
-      align-items: center;
-      flex: 0 0 auto;
       justify-self: start;
       grid-column: 1;
     }
     .header-left .header-brand {
       display: none;
     }
-    .header-left .sidebar-toggle--in-header {
-      display: inline-flex;
-    }
-    /* Middle spacer keeps equal visual balance while star is absolutely centered */
-    .header-center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .header-nav {
       grid-column: 2;
       margin-top: 0;
-    }
-    .star-logo {
-      position: relative;
-      display: grid;
-      place-items: center;
+      justify-self: center;
     }
     .header-right {
-      flex: 1 1 auto;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 8px;
-      flex-wrap: nowrap;
-      justify-self: end;
       grid-column: 3;
-    }
-    .star-logo {
-      min-height: var(--header-row-min-height);
-    }
-    .star-logo__img,
-    .star-logo .star-fallback {
-      display: block;
-      width: var(--star-logo-size-mobile);
-      height: var(--star-logo-size-mobile);
-      transition: opacity 160ms ease;
-      grid-area: 1 / 1;
-    }
-    .star-logo__img--hover {
-      opacity: 0;
-      pointer-events: none;
-      filter: brightness(67%);
-    }
-    .star-logo:hover .star-logo__img--hover,
-    .star-logo:focus-visible .star-logo__img--hover {
-      opacity: 1;
-    }
-    .star-logo:hover .star-logo__img--default,
-    .star-logo:focus-visible .star-logo__img--default {
-      opacity: 0;
-    }
-
-    /* Icons to the right; show only trigger on mobile */
-    /* Inline search hidden on mobile; use icon instead */
-    .header-actions .header-search {
-      display: none;
-    }
-    /* Show the search trigger placed inside actions; hide the one in header-search */
-    .search-trigger--actions {
-      display: inline-flex;
-    }
-    .header-search > .search-trigger {
-      display: none;
-    }
-    .search-form {
-      display: none;
-    }
-    .search-input {
-      padding: 8px 40px 8px 12px;
-      font-size: 14px;
-    }
-    .search-button {
-      padding: 2px 12px;
-    }
-
-    .header-actions {
-      gap: 10px;
-      font-size: 12px;
-      align-items: center;
-      order: 3;
+      justify-self: flex-end;
     }
     .header-actions {
-      margin-left: auto;
-      order: 3;
-    }
-    .header-actions > * {
-      flex: 0 0 auto;
-    }
-    .header-actions .header-cart,
-    .header-actions .checkout-link,
-    .header-actions .search-trigger--actions,
-    .header-actions .sidebar-toggle--header,
-    .header-actions .header-locale {
-      flex-shrink: 0;
-    }
-    /* Mobile: order FLAG → SEARCH ICON → BURGER → CART → CHECKOUT */
-    .header-actions .header-locale {
-      order: 1;
-    }
-    .header-actions .search-trigger--actions {
-      order: 2;
-    }
-    .header-actions .header-cart {
-      order: 3;
-    }
-    .header-actions .checkout-link {
-      order: 4;
-    }
-    .header-cart {
-      display: inline-flex;
-      align-items: center;
-    }
-    .cart-count {
-      font-size: 14px;
+      justify-content: flex-end;
+      gap: 0.75rem;
     }
     .locale-switcher summary {
       padding: 4px;
     }
-
-    /* Show icons, hide text on small screens */
-    .nav-icon {
-      display: inline-block;
-    }
-    .nav-text {
-      display: none;
-    }
-    .header-cart .cart-count {
-      padding: 0px;
-      margin-top: -10px;
-      font-size: 14px;
-      transform: translateY(-3px);
-    }
-
-    /* Hide account icon on small screens, keep checkout visible */
-    .header-actions a.header-account {
-      display: none;
-    }
-
     .logo-placeholder {
       padding: 10px 15px;
       font-size: 12px;
     }
-
     .cart-sidebar {
       width: 300px;
       right: -300px;
     }
-
     .cart-item-image {
       width: 56px;
       height: 56px;
     }
-
     .cart-item-image img {
       width: 100%;
       height: 100%;
       object-fit: contain;
+    }
+    .header-search-form {
+      width: min(92vw, 360px);
     }
   }
 
@@ -1165,6 +982,7 @@
     const cartClose = document.getElementById('cart-close');
     const cartItems = document.getElementById('cart-items');
     const cartCount = document.getElementById('cart-count');
+    const mobileCartCount = document.getElementById('mobile-cart-count');
     const cartTotal = document.getElementById('cart-total');
     // Localized option labels mapping via themeStrings (set in layout)
     const translateOptionName = (name) => {
@@ -1203,6 +1021,15 @@
       openCart();
     });
 
+    const mobileCartToggle = document.getElementById('mobile-cart-toggle');
+    if (mobileCartToggle) {
+      mobileCartToggle.addEventListener('click', function (e) {
+        e.preventDefault();
+        closeMobileNav(); // Close mobile nav first
+        openCart();
+      });
+    }
+
     cartClose.addEventListener('click', closeCart);
     cartOverlay.addEventListener('click', closeCart);
 
@@ -1222,6 +1049,36 @@
           console.error('Error loading cart:', error);
         });
     }
+
+    // Mobile nav toggle
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    const mobileNavOverlay = document.getElementById('mobile-nav-overlay');
+    const mobileNavClose = document.getElementById('mobile-nav-close');
+    const headerLogoImg = document.querySelector('.header-logo');
+    const mobileLogoSrc = 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_black.svg?v=1764257555';
+    const originalLogoSrc = headerLogoImg ? headerLogoImg.getAttribute('src') : null;
+
+    function openMobileNav() {
+      if (!mobileNav || !mobileNavOverlay) return;
+      mobileNav.classList.add('open');
+      mobileNavOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      if (!mobileNav || !mobileNavOverlay) return;
+      mobileNav.classList.remove('open');
+      mobileNavOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (mobileNavToggle) mobileNavToggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      openMobileNav();
+    });
+    if (mobileNavClose) mobileNavClose.addEventListener('click', closeMobileNav);
+    if (mobileNavOverlay) mobileNavOverlay.addEventListener('click', closeMobileNav);
 
     // Render cart items
     function renderCartItems(cart) {
@@ -1401,7 +1258,16 @@
 
     // Update cart count in header
     function updateCartCount(count) {
-      cartCount.textContent = `(${count})`;
+      [cartCount, mobileCartCount].forEach(el => {
+        if (!el) return;
+        if (count > 0) {
+          el.textContent = count;
+          el.classList.add('cart-count--visible');
+        } else {
+          el.textContent = '';
+          el.classList.remove('cart-count--visible');
+        }
+      });
     }
 
     // Update cart total
@@ -1579,45 +1445,54 @@
       }
     });
 
-    // Search modal
-    const searchTriggers = document.querySelectorAll('.search-trigger');
-    const searchModal = document.getElementById('search-modal');
-    const searchOverlay = document.getElementById('search-overlay');
-    const searchModalInput = document.getElementById('search-modal-input');
-    const searchModalContent = document.querySelector('#search-modal .search-modal-content');
-    const searchModalForm = searchModal?.querySelector('form');
-    const openSearch = () => {
-      if (!searchModal || !searchOverlay) return;
-      searchModal.classList.add('open');
-      searchOverlay.classList.add('open');
-      setTimeout(() => searchModalInput?.focus(), 0);
+    // Header inline search dropdown
+    const inlineSearch = document.querySelector('[data-search]');
+    const inlineSearchToggle = inlineSearch?.querySelector('.header-search-toggle');
+    const inlineSearchInput = inlineSearch?.querySelector('.header-search-input');
+    const inlineSearchForm = inlineSearch?.querySelector('form');
+
+    const closeInlineSearch = () => {
+      if (!inlineSearch) return;
+      inlineSearch.classList.remove('is-open');
+      inlineSearchToggle?.setAttribute('aria-expanded', 'false');
     };
-    const closeSearch = () => {
-      if (!searchModal || !searchOverlay) return;
-      searchModal.classList.remove('open');
-      searchOverlay.classList.remove('open');
+
+    const openInlineSearch = () => {
+      if (!inlineSearch) return;
+      inlineSearch.classList.add('is-open');
+      inlineSearchToggle?.setAttribute('aria-expanded', 'true');
+      requestAnimationFrame(() => inlineSearchInput?.focus());
     };
-    if (searchTriggers && searchTriggers.length) {
-      for (const btn of searchTriggers) {
-        btn.addEventListener('click', openSearch);
+
+    inlineSearchToggle?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (inlineSearch?.classList.contains('is-open')) {
+        closeInlineSearch();
+      } else {
+        openInlineSearch();
       }
-    }
-    searchOverlay?.addEventListener('click', closeSearch);
-    // Close when clicking outside of the modal content
-    searchModal?.addEventListener('click', (e) => {
-      if (!searchModalContent) return;
-      if (!searchModalContent.contains(e.target)) closeSearch();
     });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeSearch();
+
+    inlineSearchForm?.addEventListener('click', (event) => {
+      event.stopPropagation();
     });
-    // Auto close search modal on submit
-    if (searchModalForm) {
-      searchModalForm.addEventListener('submit', () => {
-        // Let navigation proceed, but close the UI instantly for perceived responsiveness
-        closeSearch();
-      });
-    }
+
+    document.addEventListener('click', (event) => {
+      if (!inlineSearch) return;
+      if (!inlineSearch.contains(event.target)) {
+        closeInlineSearch();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        closeInlineSearch();
+      }
+    });
+
+    inlineSearchForm?.addEventListener('submit', () => {
+      closeInlineSearch();
+    });
   });
 {% endjavascript %}
 
@@ -1631,10 +1506,10 @@
       "label": "Logo Image"
     },
     {
-      "type": "image_picker",
-      "id": "star_image",
-      "label": "Mobile center star image",
-      "info": "Optional. If not set, a vector star icon will be used."
+      "type": "text",
+      "id": "tagline",
+      "label": "Tagline",
+      "default": "Lisbon / Worldwide shipping"
     }
   ]
 }

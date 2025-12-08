@@ -55,18 +55,19 @@
 
   .sidebar {
     position: fixed;
-    top: calc(var(--announcement-height, 40px) + var(--site-header-height, 0px)); /* Below announcement + header */
-    left: 0; /* Always visible on desktop */
-    width: 300px;
-    height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
+    top: calc(var(--announcement-height, 46px) + var(--site-header-height, 0px));
+    left: 0;
+    width: clamp(240px, 19vw, 320px);
+    height: calc(100vh - (var(--announcement-height, 46px) + var(--site-header-height, 0px)));
     background-color: var(--color-background);
-    border-right: none;
+    border-right: 1px solid var(--color-border);
     transition: left 0.3s ease;
     z-index: 1002;
     overflow-y: auto;
     overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
+    padding-top: 32px;
   }
 
   .sidebar.open {
@@ -76,12 +77,12 @@
   .sidebar-overlay {
     position: fixed;
     top: calc(
-      var(--announcement-height, 40px) + var(--site-header-height, 0px)
+      var(--announcement-height, 46px) + var(--site-header-height, 0px)
     ); /* Start below announcement + header */
     left: 0;
     width: 100%;
     height: calc(
-      100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px))
+      100vh - (var(--announcement-height, 46px) + var(--site-header-height, 0px))
     ); /* Respect announcement + header height */
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1001;
@@ -121,17 +122,17 @@
     scrollbar-color: var(--color-primary) color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
     display: flex;
     flex-direction: column;
-    /* Let content grow and scroll if needed */
     height: auto;
     max-height: 100%;
     padding: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    gap: 32px;
   }
 
   .sidebar-menu-section {
     flex: 1 1 auto;
-    padding: 20px 0;
+    padding: 0;
   }
 
   .sidebar-menu {
@@ -141,44 +142,47 @@
   }
 
   .sidebar-menu-item {
-    border-bottom: none;
+    border-bottom: 1px solid color-mix(in oklab, var(--color-border), transparent 30%);
   }
 
   .sidebar-menu-link {
     display: block;
-    padding: 20px;
+    padding: 20px 24px 20px 36px;
     color: var(--color-foreground);
     text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.28em;
     font-weight: 500;
-    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    transition: color 0.2s ease, padding 0.2s ease;
   }
 
   .sidebar-menu-link:hover {
-    background-color: transparent;
     color: var(--color-primary);
+    padding-left: 48px;
   }
 
   .sidebar-footer {
-    margin-top: 100px;
-    padding: 30px 20px;
-    border-top: none;
-    background-color: var(--color-background);
+    margin-top: auto;
+    padding: 32px;
+    border-top: 1px solid color-mix(in oklab, var(--color-border), transparent 35%);
+    background-color: color-mix(in oklab, var(--color-surface), #ffffff 40%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .sidebar-account {
     display: block;
-    padding: 15px 0;
+    padding: 4px 0;
     color: var(--color-foreground);
     text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.2em;
     font-weight: 500;
     transition: color 0.3s ease;
-    font-size: 12px;
+    font-size: 0.75rem;
     border-bottom: none;
-    margin-bottom: 20px;
   }
 
   .sidebar-account:hover {
@@ -186,18 +190,22 @@
   }
 
   .sidebar-links {
-    margin-top: 25px;
-    margin-bottom: 25px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: grid;
+    gap: 8px;
   }
 
   .sidebar-footer-link {
-    display: block;
-    padding: 10px 0;
-    color: var(--color-foreground);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    color: color-mix(in oklab, var(--color-foreground), transparent 25%);
     text-decoration: none;
-    font-size: 12px;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.25em;
     transition: color 0.3s ease;
   }
 
@@ -238,11 +246,11 @@
     .sidebar {
       width: 100%;
       left: -100%;
-      height: calc(100vh - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
+      height: calc(100vh - (var(--announcement-height, 46px) + var(--site-header-height, 0px)));
     }
 
     .sidebar.open {
-      height: calc(100% - (var(--announcement-height, 40px) + var(--site-header-height, 0px)));
+      height: calc(100% - (var(--announcement-height, 46px) + var(--site-header-height, 0px)));
       left: 0;
     }
 

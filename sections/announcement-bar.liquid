@@ -9,25 +9,9 @@
   %}
   {% capture announcement_block %}
     <span class="announcement-text">
-      <img
-        src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257555"
-        alt=""
-        class="announcement-icon"
-        width="20"
-        height="20"
-        loading="lazy"
-        aria-hidden="true"
-      >
+      <span class="announcement-dot" aria-hidden="true"></span>
       <span class="announcement-copy">{{ announcement_text }}</span>
-      <img
-        src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257555"
-        alt=""
-        class="announcement-icon"
-        width="20"
-        height="20"
-        loading="lazy"
-        aria-hidden="true"
-      >
+      <span class="announcement-dot" aria-hidden="true"></span>
     </span>
   {% endcapture %}
   <div class="announcement-content" aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}">
@@ -41,27 +25,30 @@
 
 {% stylesheet %}
   .announcement-bar {
-    background-color: black;
-    color: var(--color-announcement-fg);
-    height: 40px;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    height: 46px;
     overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
+    border-bottom: 1px solid var(--color-border);
     z-index: 1000;
   }
 
   .announcement-content {
     position: absolute;
     white-space: nowrap;
-    animation: scroll-left 25s linear infinite;
-    line-height: 40px;
+    animation: scroll-left 32s linear infinite;
+    line-height: 46px;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.35em;
     width: max-content;
+    text-rendering: geometricPrecision;
+    mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
   }
 
   .announcement-text {
@@ -70,16 +57,17 @@
     gap: 12px;
   }
 
-  .announcement-icon {
-    width: 20px;
-    height: 20px;
-    display: block;
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+  .announcement-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--color-primary);
+    display: inline-flex;
   }
 
   .announcement-spacer {
     display: inline-block;
-    width: 150px;
+    width: 220px;
   }
 
   @keyframes scroll-left {

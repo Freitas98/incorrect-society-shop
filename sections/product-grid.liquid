@@ -8,7 +8,23 @@
     {% liquid
       assign shown = 0
       assign limit = section.settings.products_to_show | default: 6
+      assign promo_blocks = section.blocks | where: 'type', 'promo_image'
+      assign banner_blocks = section.blocks | where: 'type', 'wide_banner'
     %}
+
+    {% comment %} Render any full-width banners at the top {% endcomment %}
+    {% for b in banner_blocks %}
+      <div class="product-card product-card--banner">
+        {% if b.settings.image != blank %}
+          {% assign banner_image = b.settings.image | image_url: width: 1600 %}
+          <a class="product-link" href="{{ b.settings.link | default: '#' }}" aria-label="{{ b.settings.alt | default: 'Banner' }}">
+            <div class="product-image product-image--banner">
+              <img src="{{ banner_image }}" alt="{{ b.settings.alt | escape }}" loading="lazy" width="1600" height="600">
+            </div>
+          </a>
+        {% endif %}
+      </div>
+    {% endfor %}
 
     {% for product in collections.all.products %}
       {% liquid
@@ -50,6 +66,30 @@
       </div>
       {% liquid
         assign shown = shown | plus: 1
+        comment
+          After rendering each product, check if there are promo images configured
+          that should be inserted after a certain number of products.
+        endcomment
+        for pb in promo_blocks
+          if pb.settings.insert_after == shown and pb.settings.image != blank
+            echo '<div class="product-card product-card--promo">'
+            echo '<a class="product-link" href="'
+            echo pb.settings.link | default: '#'
+            echo '" aria-label="'
+            echo pb.settings.alt | default: 'Promo image'
+            echo '">'
+            echo '<div class="product-image product-image--promo">'
+            assign promo_src = pb.settings.image | image_url: width: 800
+            echo '<img src="'
+            echo promo_src
+            echo '" alt="'
+            echo pb.settings.alt | escape
+            echo '" loading="lazy" width="800" height="800">'
+            echo '</div>'
+            echo '</a>'
+            echo '</div>'
+          endif
+        endfor
         if shown >= limit
           break
         endif
@@ -88,11 +128,35 @@
     min-width: 300px;
   }
 
+  .product-card--promo {
+    width: calc(33.333% - 27px);
+  }
+
+  .product-image--promo img {
+    object-fit: cover;
+    transform: scale(1);
+  }
+
+  .product-card--banner {
+    width: 100%;
+  }
+
+  .product-image--banner {
+    aspect-ratio: 16/6;
+    background-color: transparent;
+  }
+
   /* When fewer than 3 items, they'll be centered automatically */
   @media (max-width: 1024px) {
     .product-card {
       width: calc(50% - 20px); /* 2 columns on tablet */
       min-width: 280px;
+    }
+    .product-card--promo {
+      width: calc(50% - 20px);
+    }
+    .product-card--banner .product-image--banner {
+      aspect-ratio: 16/8;
     }
   }
 
@@ -191,6 +255,9 @@
       width: calc(50% - 12px);
       min-width: 0;
     }
+    .product-card--promo {
+      width: calc(50% - 12px);
+    }
     .product-grid-section {
       padding: 30px 15px;
     }
@@ -201,6 +268,9 @@
       gap: 18px;
     }
     .product-card {
+      width: 100%;
+    }
+    .product-card--promo {
       width: 100%;
     }
     .product-title {
@@ -229,6 +299,37 @@
       "max": 12,
       "step": 3,
       "default": 6
+    }
+  ],
+  "blocks": [
+    {
+      "type": "promo_image",
+      "name": "Photoshoot Image",
+      "limit": 12,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "alt", "label": "Alt text" },
+        { "type": "url", "id": "link", "label": "Optional link" },
+        {
+          "type": "range",
+          "id": "insert_after",
+          "label": "Insert after N products",
+          "min": 0,
+          "max": 24,
+          "step": 1,
+          "default": 2
+        }
+      ]
+    },
+    {
+      "type": "wide_banner",
+      "name": "Wide Banner",
+      "limit": 3,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Banner image" },
+        { "type": "text", "id": "alt", "label": "Alt text" },
+        { "type": "url", "id": "link", "label": "Optional link" }
+      ]
     }
   ],
   "presets": [

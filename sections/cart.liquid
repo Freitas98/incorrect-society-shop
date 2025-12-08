@@ -1270,7 +1270,13 @@
 
       if (cartSubtotal) cartSubtotal.textContent = formatMoneyEuro(cart.total_price);
       if (cartCount) {
-        cartCount.textContent = `(${cart.item_count})`;
+        if (cart.item_count > 0) {
+          cartCount.textContent = cart.item_count;
+          cartCount.classList.add('cart-count--visible');
+        } else {
+          cartCount.textContent = '';
+          cartCount.classList.remove('cart-count--visible');
+        }
       }
 
       // If cart is empty, reload page to show empty state
@@ -1384,7 +1390,13 @@
 
         if (cartSubtotal) cartSubtotal.textContent = formatMoneyEuro(cart.total_price);
         if (cartCount) {
-          cartCount.textContent = `(${cart.item_count})`;
+          if (cart.item_count > 0) {
+            cartCount.textContent = cart.item_count;
+            cartCount.classList.add('cart-count--visible');
+          } else {
+            cartCount.textContent = '';
+            cartCount.classList.remove('cart-count--visible');
+          }
         }
 
         // Remove items that are no longer in cart
