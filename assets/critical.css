@@ -351,6 +351,7 @@ button {
   gap: 1rem;
   justify-content: center;
 }
+
 button:not(.btn):not(.header-action):hover {
   color: var(--color-primary);
 }

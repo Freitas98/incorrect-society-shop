@@ -1,8 +1,16 @@
 <footer class="clean-footer">
+  <div class="footer__copyright">
+    &copy; {{ 'now' | date: '%Y' }}
+    {{ shop.name | upcase }}
+  </div>
   <div class="footer-content">
-    <div class="footer__copyright">
-      &copy; {{ 'now' | date: '%Y' }}
-      {{ shop.name | upcase }}
+    <div class="footer-newsletter">
+      <p>Sign up for our newsletter and get 10% discount!</p>
+      <form action="/contact" method="post" class="newsletter-form">
+        <input type="email" name="contact[email]" placeholder="Enter your email" required>
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <button type="submit">Sign Up</button>
+      </form>
     </div>
     <div class="footer-links">
       <a href="{{ pages['newsletter'].url }}">Newsletter</a>
@@ -25,13 +33,17 @@
     padding: 40px 0;
     border-top: 1px solid var(--color-border);
     background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
   .footer-content {
     max-width: var(--page-width);
-    margin: 0 auto;
     padding: 0 var(--page-margin);
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;;
   }
 
   .footer__copyright {
@@ -39,6 +51,7 @@
     font-size: 14px;
     letter-spacing: 1px;
     margin-bottom: 20px;
+    text-align: center;
   }
 
   .footer-links {
@@ -76,6 +89,52 @@
 
   .clean-footer a:hover {
     color: var(--color-primary);
+  }
+
+  .footer-newsletter {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .footer-newsletter p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--color-foreground);
+  }
+
+  .newsletter-form {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .newsletter-form input[type="email"] {
+    flex: 1;
+    min-width: 200px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--style-border-radius-inputs);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 14px;
+  }
+
+  .newsletter-form button {
+    padding: 8px 16px !important;
+    border: 1px solid var(--color-primary) !important;
+    border-radius: var(--style-border-radius-buttons) !important;
+    background-color: transparent !important;
+    color: var(--color-primary) !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .newsletter-form button:hover {
+    background-color: var(--color-primary) !important;
+    color: var(--color-background) !important;
   }
 {% endstylesheet %}
 
