@@ -21,10 +21,16 @@
     <nav class="header-nav">
       <ul class="header-menu">
         <li class="header-menu-item">
-          <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">OUTSIDER</a>
+          <a href="{{ routes.collections_url }}/all" class="header-menu-link">Shop</a>
         </li>
         <li class="header-menu-item">
-          <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">GIFT CARDS</a>
+          <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">Collection</a>
+        </li>
+        <li class="header-menu-item">
+          <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">Gift Card</a>
+        </li>
+        <li class="header-menu-item">
+          <a href="{{ routes.collections_url }}/accessories" class="header-menu-link">Accessories</a>
         </li>
       </ul>
     </nav>
@@ -146,28 +152,11 @@
         >
       </a>
     </div>
-    <div class="mobile-nav-search" data-search>
-      <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form" aria-label="{{ 'search.title' | t }}">
-        <label for="mobile-search-input" class="visually-hidden">{{ 'search.title' | t }}</label>
-        <input
-          id="mobile-search-input"
-          class="header-search-input"
-          type="search"
-          name="q"
-          placeholder="{{ 'search.placeholder' | t }}"
-          value="{{ search.terms | escape }}"
-          autocomplete="off"
-        >
-        <button type="submit" class="header-search-submit" aria-label="{{ 'search.submit' | t }}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-      </form>
-    </div>
     <ul class="mobile-nav-menu">
-      <li><a href="{{ routes.collections_url }}/outsider">OUTSIDER</a></li>
-      <li><a href="{{ routes.collections_url }}/gift-cards">GIFT CARDS</a></li>
+      <li><a href="{{ routes.collections_url }}/all">Shop</a></li>
+      <li><a href="{{ routes.collections_url }}/outsider">Collection</a></li>
+      <li><a href="{{ routes.collections_url }}/gift-cards">Gift Card</a></li>
+      <li><a href="{{ routes.collections_url }}/accessories">Accessories</a></li>
     </ul>
     <div class="mobile-nav-actions">
       {% if shop.customer_accounts_enabled %}

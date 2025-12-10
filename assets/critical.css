@@ -270,13 +270,18 @@ button {
 .mobile-nav-inner {
   padding: 2rem 1.25rem;
   width: 100%;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
 }
 
 .mobile-nav-close {
   background: none;
   border: none;
   font-size: 1.25rem;
-  margin-bottom: 1rem;
+  margin-bottom: 15px;
+  height: 50%;
+  width: 25%;
 }
 
 .mobile-nav-menu {
@@ -293,10 +298,17 @@ button {
   color: var(--color-foreground);
   font-weight: 600;
   padding: 0.5rem 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.mobile-nav-menu a:hover {
+  color: var(--color-primary);
 }
 
 .mobile-nav-logo {
   margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
 }
 
 .mobile-nav-logo .header-logo {
@@ -314,6 +326,7 @@ button {
   border: 1px solid var(--color-border);
   border-radius: var(--style-border-radius-inputs);
   padding: 0.5rem;
+  background-color: var(--color-background);
 }
 
 .mobile-nav-search .header-search-input {
@@ -322,6 +335,7 @@ button {
   outline: none;
   background: transparent;
   font-size: 1rem;
+  color: var(--color-foreground);
 }
 
 .mobile-nav-search .header-search-submit {
