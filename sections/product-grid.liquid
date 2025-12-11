@@ -41,9 +41,9 @@
         </button>
         <ul class="dropdown-menu filter-menu" role="listbox" aria-labelledby="filter-type" data-type-menu>
           <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="" tabindex="0">All</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="clothing" tabindex="0">Clothes</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="clothes" tabindex="0">Clothes</li>
           <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="accessories" tabindex="0">Accessories</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="gift card" tabindex="0">Gift Cards</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="gift cards" tabindex="0">Gift Cards</li>
         </ul>
       </div>
       <div class="sorting dropdown">
@@ -78,7 +78,7 @@
   </div>
   <div class="product-grid">
     {% for product in collections.all.products %}
-      <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}" data-availability="{% if product.available %}available{% else %}sold_out{% endif %}" data-product-type="{{ product.product_type | downcase }}">
+      <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}" data-availability="{% if product.available %}available{% else %}sold_out{% endif %}" data-product-type="{{ product.metafields.custom.type | downcase }}">
         <a href="{{ product.url }}" class="product-link">
           <div class="product-image">
             {% if product.featured_media %}
@@ -558,7 +558,14 @@ document.addEventListener('DOMContentLoaded', function() {
       const avail = card.dataset.availability;
       const type = card.dataset.productType;
       const showAvail = !currentAvailability || (currentAvailability === 'available' ? avail === 'available' : avail === 'sold_out');
-      const showType = !currentType || type === currentType;
+      let showType;
+      if (currentType === 'other') {
+        showType = type === '';
+      } else if (currentType) {
+        showType = type === currentType;
+      } else {
+        showType = true;
+      }
       card.style.display = showAvail && showType ? '' : 'none';
     });
   };
