@@ -3,6 +3,36 @@
 {% endcomment %}
 
 <div class="product-grid-section">
+  <div class="collection-header">
+    <div class="collection-title">
+      <h1 class="shop-name">{{ shop.name }}</h1>
+      <p class="product-count">{{ collections.all.products_count }} products</p>
+    </div>
+    <div class="collection-controls">
+      <div class="filters">
+        <label for="filter-type">Filter by type:</label>
+        <select id="filter-type" name="filter_type">
+          <option value="">All</option>
+          {% for product_type in shop.product_types %}
+            <option value="{{ product_type }}">{{ product_type }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="sorting">
+        <label for="sort-by">Sort by:</label>
+        <select id="sort-by" name="sort_by">
+          <option value="manual">Featured</option>
+          <option value="best-selling">Best Selling</option>
+          <option value="title-ascending">Alphabetical (A-Z)</option>
+          <option value="title-descending">Alphabetical (Z-A)</option>
+          <option value="price-ascending">Price (Low to High)</option>
+          <option value="price-descending">Price (High to Low)</option>
+          <option value="created-ascending">Oldest</option>
+          <option value="created-descending">Newest</option>
+        </select>
+      </div>
+    </div>
+  </div>
   <h2 class="product-grid-title">{{ 'homepage.our_products' | t | default: 'OUR PRODUCTS' }}</h2>
   <div class="product-grid">
     {% for product in collections.all.products %}
@@ -17,7 +47,7 @@
         {% endif %}
       {% endfor %}
       {% if in_excluded or product.gift_card? or product.type == 'Gift Card' %}{% continue %}{% endif %}
-      <div class="product-card">
+      <div class="product-card" data-type="{{ product.type }}">
         <a href="{{ product.url }}" class="product-link">
           <div class="product-image">
             {% if product.featured_media %}
@@ -229,7 +259,121 @@
       font-size: 13px;
     }
   }
+
+  /* Collection Header */
+  .collection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .collection-title h1 {
+    font-size: 32px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--color-foreground);
+    margin: 0 0 10px 0;
+  }
+
+  .product-count {
+    font-size: 16px;
+    color: var(--color-foreground);
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  .collection-controls {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .filters, .sorting {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .filters label, .sorting label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .filters select, .sorting select {
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--style-border-radius-inputs);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .filters select:focus, .sorting select:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* Mobile */
+  @media (max-width: 768px) {
+    .collection-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .collection-controls {
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .filters, .sorting {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
 {% endstylesheet %}
+
+{% javascript %}
+document.addEventListener('DOMContentLoaded', function() {
+  // Sorting functionality
+  const sortSelect = document.getElementById('sort-by');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', function() {
+      const sortValue = this.value;
+      const url = new URL(window.location);
+      url.searchParams.set('sort_by', sortValue);
+      window.location.href = url.toString();
+    });
+  }
+
+  // Filtering functionality
+  const filterSelect = document.getElementById('filter-type');
+  if (filterSelect) {
+    filterSelect.addEventListener('change', function() {
+      const filterValue = this.value;
+      const productCards = document.querySelectorAll('.product-card');
+
+      productCards.forEach(card => {
+        const productType = card.getAttribute('data-type');
+        if (filterValue === '' || productType === filterValue) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  }
+});
+{% endjavascript %}
 
 {% schema %}
 {
