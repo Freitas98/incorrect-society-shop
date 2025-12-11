@@ -22,7 +22,7 @@
     {{ 'newsletter.subscribe_prompt' | t }}
   </p>
 
-  {% form 'customer', id: 'NewsletterForm', class: 'contact-form newsletter-form' %}
+  {% form 'contact', id: 'NewsletterForm', class: 'contact-form newsletter-form' %}
     {% if form.posted_successfully? %}
       <p class="newsletter-success newsletter-feedback">
         {{ 'newsletter.success' | t }}
@@ -36,29 +36,18 @@
     <div class="newsletter-message newsletter-feedback" aria-live="polite" hidden></div>
 
     <input
-      type="text"
-      name="contact[first_name]"
-      id="NewsletterForm-name"
-      placeholder="{{ 'newsletter.name_placeholder' | t }}"
-      autocomplete="given-name"
-      class="contact-field"
-    >
-
-    <input
       type="email"
       name="contact[email]"
       id="NewsletterForm-email"
       placeholder="{{ 'newsletter.email_placeholder' | t }}"
       autocomplete="email"
       required
-      class="contact-field"
     >
 
-    <input type="hidden" name="contact[tags]" id="NewsletterContentTags" value="">
+    <input type="hidden" name="contact[tags]" id="NewsletterContentTags" value="newsletter">
 
     <button
       type="submit"
-      class="btn btn--primary btn--block u-mt-xs"
     >
       {{ 'newsletter.subscribe_cta' | t }}
     </button>
