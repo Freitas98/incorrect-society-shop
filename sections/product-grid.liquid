@@ -2,27 +2,21 @@
   Product Grid Section - 3 items per row
 {% endcomment %}
 
+
 <div class="product-grid-section">
   <div class="collection-header">
-    <div class="collection-title">
-      <h1 class="shop-name">{{ shop.name }}</h1>
-      <p class="product-count">{{ collections.all.products_count }} products</p>
-    </div>
     <div class="collection-controls">
       <div class="filters">
-        <label for="filter-type">Filter by type:</label>
-        <select id="filter-type" name="filter_type">
-          <option value="">All</option>
-          {% for product_type in shop.product_types %}
-            <option value="{{ product_type }}">{{ product_type }}</option>
-          {% endfor %}
+        <label for="filter-availability">Filter by availability:</label>
+        <select id="filter-availability" name="filter_availability">
+          <option value="" {% if filter_availability == '' %}selected{% endif %}>All</option>
+          <option value="available" {% if filter_availability == 'available' %}selected{% endif %}>Available</option>
+          <option value="sold_out" {% if filter_availability == 'sold_out' %}selected{% endif %}>Sold Out</option>
         </select>
       </div>
       <div class="sorting">
         <label for="sort-by">Sort by:</label>
         <select id="sort-by" name="sort_by">
-          <option value="manual">Featured</option>
-          <option value="best-selling">Best Selling</option>
           <option value="title-ascending">Alphabetical (A-Z)</option>
           <option value="title-descending">Alphabetical (Z-A)</option>
           <option value="price-ascending">Price (Low to High)</option>
@@ -33,7 +27,10 @@
       </div>
     </div>
   </div>
-  <h2 class="product-grid-title">{{ 'homepage.our_products' | t | default: 'OUR PRODUCTS' }}</h2>
+  <div class="product-grid-title">
+    <h2 class="shop-name">{{ shop.name }}</h2>
+    <p class="product-count">{{ collections.all.products_count }} products</p>
+  </div>
   <div class="product-grid">
     {% for product in collections.all.products %}
       {% liquid
@@ -47,7 +44,9 @@
         {% endif %}
       {% endfor %}
       {% if in_excluded or product.gift_card? or product.type == 'Gift Card' %}{% continue %}{% endif %}
-      <div class="product-card" data-type="{{ product.type }}">
+      {% if filter_availability == 'available' and product.available == false %}{% continue %}{% endif %}
+      {% if filter_availability == 'sold_out' and product.available == true %}{% continue %}{% endif %}
+      <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}">
         <a href="{{ product.url }}" class="product-link">
           <div class="product-image">
             {% if product.featured_media %}
@@ -84,12 +83,19 @@
   }
 
   .product-grid-title {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
     margin: 0 0 40px;
     font-size: 28px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--color-foreground);
+  }
+
+  .product-title {
+    display: flex;
+    justify-content: center;
   }
 
   .product-grid {
@@ -344,32 +350,47 @@
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
-  // Sorting functionality
+  // Sorting functionality - client-side
   const sortSelect = document.getElementById('sort-by');
-  if (sortSelect) {
+  const productGrid = document.querySelector('.product-grid');
+  const productCards = Array.from(document.querySelectorAll('.product-card'));
+
+  if (sortSelect && productGrid) {
     sortSelect.addEventListener('change', function() {
       const sortValue = this.value;
-      const url = new URL(window.location);
-      url.searchParams.set('sort_by', sortValue);
-      window.location.href = url.toString();
+      const sortedCards = productCards.sort((a, b) => {
+        switch (sortValue) {
+          case 'title-ascending':
+            return a.dataset.title.localeCompare(b.dataset.title);
+          case 'title-descending':
+            return b.dataset.title.localeCompare(a.dataset.title);
+          case 'price-ascending':
+            return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+          case 'price-descending':
+            return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+          case 'created-ascending':
+            return parseInt(a.dataset.created) - parseInt(b.dataset.created);
+          case 'created-descending':
+            return parseInt(b.dataset.created) - parseInt(a.dataset.created);
+          default:
+            return 0; // Keep original order
+        }
+      });
+
+      // Clear and re-append sorted cards
+      productGrid.innerHTML = '';
+      sortedCards.forEach(card => productGrid.appendChild(card));
     });
   }
 
-  // Filtering functionality
-  const filterSelect = document.getElementById('filter-type');
+  // Filtering functionality - server-side
+  const filterSelect = document.getElementById('filter-availability');
   if (filterSelect) {
     filterSelect.addEventListener('change', function() {
       const filterValue = this.value;
-      const productCards = document.querySelectorAll('.product-card');
-
-      productCards.forEach(card => {
-        const productType = card.getAttribute('data-type');
-        if (filterValue === '' || productType === filterValue) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      const url = new URL(window.location);
+      url.searchParams.set('filter_availability', filterValue);
+      window.location.href = url.toString();
     });
   }
 });
