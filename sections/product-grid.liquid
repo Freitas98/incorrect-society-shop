@@ -2,28 +2,73 @@
   Product Grid Section - 3 items per row
 {% endcomment %}
 
-
 <div class="product-grid-section">
   <div class="collection-header">
     <div class="collection-controls">
-      <div class="filters">
-        <label for="filter-availability">Filter by availability:</label>
-        <select id="filter-availability" name="filter_availability">
-          <option value="" {% if filter_availability == '' %}selected{% endif %}>All</option>
-          <option value="available" {% if filter_availability == 'available' %}selected{% endif %}>Available</option>
-          <option value="sold_out" {% if filter_availability == 'sold_out' %}selected{% endif %}>Sold Out</option>
-        </select>
+      <div class="filters dropdown">
+        <button
+          type="button"
+          class="dropdown-toggle filter-toggle"
+          id="filter-availability"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-labelledby="filter-availability filter-availability-label"
+          data-filter-toggle
+        >
+          <span class="filter-toggle__label">Filter</span>
+          <span class="filter-toggle__value" data-selected-text>All</span>
+          <span class="dropdown-toggle__chevron" aria-hidden="true"></span>
+        </button>
+        <ul class="dropdown-menu filter-menu" role="listbox" aria-labelledby="filter-availability" data-filter-menu>
+          <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="" tabindex="0">All</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="available" tabindex="0">Available</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="sold_out" tabindex="0">Sold Out</li>
+        </ul>
       </div>
-      <div class="sorting">
-        <label for="sort-by">Sort by:</label>
-        <select id="sort-by" name="sort_by">
-          <option value="title-ascending">Alphabetical (A-Z)</option>
-          <option value="title-descending">Alphabetical (Z-A)</option>
-          <option value="price-ascending">Price (Low to High)</option>
-          <option value="price-descending">Price (High to Low)</option>
-          <option value="created-ascending">Oldest</option>
-          <option value="created-descending">Newest</option>
-        </select>
+      <div class="filters dropdown">
+        <button
+          type="button"
+          class="dropdown-toggle filter-toggle"
+          id="filter-type"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-labelledby="filter-type filter-type-label"
+          data-type-toggle
+        >
+          <span class="filter-toggle__label">Type</span>
+          <span class="filter-toggle__value" data-selected-text>All</span>
+          <span class="dropdown-toggle__chevron" aria-hidden="true"></span>
+        </button>
+        <ul class="dropdown-menu filter-menu" role="listbox" aria-labelledby="filter-type" data-type-menu>
+          <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="" tabindex="0">All</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="clothing" tabindex="0">Clothes</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="accessories" tabindex="0">Accessories</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="gift card" tabindex="0">Gift Cards</li>
+        </ul>
+      </div>
+      <div class="sorting dropdown">
+        <label class="sr-only" id="sort-by-label">Sort products</label>
+        <button
+          type="button"
+          class="dropdown-toggle sort-toggle"
+          id="sort-by"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-labelledby="sort-by sort-by-label"
+          data-sort-toggle
+          data-selected-sort="created-descending"
+        >
+          <span class="sort-toggle__label">Date, new to old</span>
+          <span class="dropdown-toggle__chevron" aria-hidden="true"></span>
+        </button>
+        <ul class="dropdown-menu sort-menu" role="listbox" aria-labelledby="sort-by" data-sort-menu>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="title-ascending" tabindex="0">Alphabetically, A-Z</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="title-descending" tabindex="0">Alphabetically, Z-A</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="price-ascending" tabindex="0">Price, low to high</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="price-descending" tabindex="0">Price, high to low</li>
+          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="created-ascending" tabindex="0">Date, old to new</li>
+          <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="created-descending" tabindex="0">Date, new to old</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -33,20 +78,7 @@
   </div>
   <div class="product-grid">
     {% for product in collections.all.products %}
-      {% liquid
-        assign exclude_handle = 'gift-cards'
-        assign in_excluded = false
-      %}
-      {% for c in product.collections %}
-        {% if c.handle == exclude_handle %}
-          {% assign in_excluded = true %}
-          {% break %}
-        {% endif %}
-      {% endfor %}
-      {% if in_excluded or product.gift_card? or product.type == 'Gift Card' %}{% continue %}{% endif %}
-      {% if filter_availability == 'available' and product.available == false %}{% continue %}{% endif %}
-      {% if filter_availability == 'sold_out' and product.available == true %}{% continue %}{% endif %}
-      <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}">
+      <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}" data-availability="{% if product.available %}available{% else %}sold_out{% endif %}" data-product-type="{{ product.product_type | downcase }}">
         <a href="{{ product.url }}" class="product-link">
           <div class="product-image">
             {% if product.featured_media %}
@@ -294,37 +326,147 @@
 
   .collection-controls {
     display: flex;
-    gap: 30px;
+    gap: 16px;
     align-items: center;
+    flex-wrap: wrap;
   }
 
-  .filters, .sorting {
-    display: flex;
+  .filters,
+  .sorting {
+    position: relative;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .dropdown-toggle {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
-  }
-
-  .filters label, .sorting label {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-foreground);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .filters select, .sorting select {
-    padding: 8px 12px;
+    gap: 12px;
+    padding: 10px 18px;
+    border-radius: 14px;
     border: 1px solid var(--color-border);
-    border-radius: var(--style-border-radius-inputs);
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-size: 14px;
+    letter-spacing: 0.2px;
+    line-height: 1.3;
+    min-height: 53px;
     cursor: pointer;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   }
 
-  .filters select:focus, .sorting select:focus {
+  .dropdown-toggle:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.16);
+    transform: translateY(-1px);
+  }
+
+  .dropdown-toggle:focus-visible {
     outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
+    outline-offset: 3px;
+  }
+
+  .dropdown-toggle__chevron {
+    width: 10px;
+    height: 10px;
+    margin-bottom: 5px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.2s ease;
+  }
+
+  .dropdown-toggle[aria-expanded='true'] .dropdown-toggle__chevron {
+    transform: rotate(-135deg);
+    margin-top: 10px;
+  }
+
+  .filter-toggle__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: rgba(15, 23, 42, 0.04);
+    color: var(--color-foreground);
+  }
+
+  .filter-toggle__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.7;
+  }
+
+  .filter-toggle__value {
+    font-weight: 600;
+  }
+
+  .sort-toggle__label {
+    font-weight: 600;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    min-width: 210px;
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.24);
+    padding: 8px;
+    z-index: 40;
+  }
+
+  .dropdown-menu.is-open {
+    display: block;
+  }
+
+  .dropdown-menu__item {
+    list-style: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .dropdown-menu__item + .dropdown-menu__item {
+    margin-top: 4px;
+  }
+
+  .dropdown-menu__item:hover,
+  .dropdown-menu__item:focus {
+    background-color: rgba(15, 23, 42, 0.08);
+  }
+
+  .dropdown-menu__item.is-active {
+    background-color: rgba(15, 23, 42, 0.12);
+    color: var(--color-primary);
+  }
+
+  .filter-menu {
+    min-width: 190px;
+  }
+
+  .sort-menu {
+    left: auto;
+    right: 0;
   }
 
   /* Mobile */
@@ -337,11 +479,16 @@
 
     .collection-controls {
       flex-direction: column;
-      gap: 15px;
+      align-items: stretch;
       width: 100%;
     }
 
-    .filters, .sorting {
+    .filters,
+    .sorting {
+      width: 100%;
+    }
+
+    .dropdown-toggle {
       width: 100%;
       justify-content: space-between;
     }
@@ -350,48 +497,249 @@
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
-  // Sorting functionality - client-side
-  const sortSelect = document.getElementById('sort-by');
   const productGrid = document.querySelector('.product-grid');
   const productCards = Array.from(document.querySelectorAll('.product-card'));
+  const originalOrder = productCards.slice();
+  let currentAvailability = '';
+  let currentType = '';
+  let currentSort = 'created-descending';
 
-  if (sortSelect && productGrid) {
-    sortSelect.addEventListener('change', function() {
-      const sortValue = this.value;
-      const sortedCards = productCards.sort((a, b) => {
-        switch (sortValue) {
-          case 'title-ascending':
-            return a.dataset.title.localeCompare(b.dataset.title);
-          case 'title-descending':
-            return b.dataset.title.localeCompare(a.dataset.title);
-          case 'price-ascending':
-            return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-          case 'price-descending':
-            return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-          case 'created-ascending':
-            return parseInt(a.dataset.created) - parseInt(b.dataset.created);
-          case 'created-descending':
-            return parseInt(b.dataset.created) - parseInt(a.dataset.created);
-          default:
-            return 0; // Keep original order
+  const dropdownRegistry = [];
+
+  const registerDropdown = (toggle, menu) => {
+    dropdownRegistry.push({ toggle, menu });
+  };
+
+  const closeDropdown = (toggle, menu) => {
+    toggle.setAttribute('aria-expanded', 'false');
+    menu.classList.remove('is-open');
+  };
+
+  const openDropdown = (toggle, menu) => {
+    toggle.setAttribute('aria-expanded', 'true');
+    menu.classList.add('is-open');
+  };
+
+  const closeAllDropdowns = (exceptionToggle = null) => {
+    dropdownRegistry.forEach(({ toggle, menu }) => {
+      if (exceptionToggle && toggle === exceptionToggle) {
+        return;
+      }
+      if (menu.classList.contains('is-open')) {
+        closeDropdown(toggle, menu);
+      }
+    });
+  };
+
+  const toggleDropdown = (toggle, menu) => {
+    const isOpen = menu.classList.contains('is-open');
+    if (isOpen) {
+      closeDropdown(toggle, menu);
+    } else {
+      closeAllDropdowns(toggle);
+      openDropdown(toggle, menu);
+    }
+  };
+
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.dropdown')) {
+      closeAllDropdowns();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeAllDropdowns();
+    }
+  });
+
+  let applyFilters = () => {
+    productCards.forEach((card) => {
+      const avail = card.dataset.availability;
+      const type = card.dataset.productType;
+      const showAvail = !currentAvailability || (currentAvailability === 'available' ? avail === 'available' : avail === 'sold_out');
+      const showType = !currentType || type === currentType;
+      card.style.display = showAvail && showType ? '' : 'none';
+    });
+  };
+
+  let applyAvailabilityFilter = () => {};
+
+  const filterToggle = document.querySelector('[data-filter-toggle]');
+  const filterMenu = document.querySelector('[data-filter-menu]');
+
+  if (filterToggle && filterMenu) {
+    registerDropdown(filterToggle, filterMenu);
+    const filterOptions = Array.from(filterMenu.querySelectorAll('[data-value]'));
+    const selectedTextEl = filterToggle.querySelector('[data-selected-text]');
+
+    applyAvailabilityFilter = (filterValue) => {
+      currentAvailability = filterValue;
+      applyFilters();
+    };
+
+    filterToggle.addEventListener('click', () => {
+      toggleDropdown(filterToggle, filterMenu);
+    });
+
+    filterOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        if (option.classList.contains('is-active')) {
+          closeAllDropdowns();
+          return;
         }
+
+        filterOptions.forEach((item) => {
+          item.classList.toggle('is-active', item === option);
+          item.setAttribute('aria-selected', item === option ? 'true' : 'false');
+        });
+
+        selectedTextEl.textContent = option.textContent;
+        applyAvailabilityFilter(option.dataset.value);
+        closeAllDropdowns();
       });
 
-      // Clear and re-append sorted cards
-      productGrid.innerHTML = '';
-      sortedCards.forEach(card => productGrid.appendChild(card));
+      option.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          option.click();
+        }
+      });
     });
+
+    applyAvailabilityFilter('');
   }
 
-  // Filtering functionality - server-side
-  const filterSelect = document.getElementById('filter-availability');
-  if (filterSelect) {
-    filterSelect.addEventListener('change', function() {
-      const filterValue = this.value;
-      const url = new URL(window.location);
-      url.searchParams.set('filter_availability', filterValue);
-      window.location.href = url.toString();
+  let applyTypeFilter = () => {};
+
+  const typeToggle = document.querySelector('[data-type-toggle]');
+  const typeMenu = document.querySelector('[data-type-menu]');
+
+  if (typeToggle && typeMenu) {
+    registerDropdown(typeToggle, typeMenu);
+    const typeOptions = Array.from(typeMenu.querySelectorAll('[data-value]'));
+    const selectedTextEl = typeToggle.querySelector('[data-selected-text]');
+
+    applyTypeFilter = (filterValue) => {
+      currentType = filterValue;
+      applyFilters();
+    };
+
+    typeToggle.addEventListener('click', () => {
+      toggleDropdown(typeToggle, typeMenu);
     });
+
+    typeOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        if (option.classList.contains('is-active')) {
+          closeAllDropdowns();
+          return;
+        }
+
+        typeOptions.forEach((item) => {
+          item.classList.toggle('is-active', item === option);
+          item.setAttribute('aria-selected', item === option ? 'true' : 'false');
+        });
+
+        selectedTextEl.textContent = option.textContent;
+        applyTypeFilter(option.dataset.value);
+        closeAllDropdowns();
+      });
+
+      option.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          option.click();
+        }
+      });
+    });
+
+    applyTypeFilter('');
+  }
+
+  const sortToggle = document.querySelector('[data-sort-toggle]');
+  const sortMenu = document.querySelector('[data-sort-menu]');
+
+  if (sortToggle && sortMenu && productGrid) {
+    registerDropdown(sortToggle, sortMenu);
+    const sortOptions = Array.from(sortMenu.querySelectorAll('[data-value]'));
+    const sortLabelEl = sortToggle.querySelector('.sort-toggle__label');
+
+    const updateSortSelection = (activeOption) => {
+      sortOptions.forEach((item) => {
+        const isActive = item === activeOption;
+        item.classList.toggle('is-active', isActive);
+        item.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+    };
+
+    const applySort = (sortValue) => {
+      currentSort = sortValue;
+      let sortedCards;
+
+      switch (sortValue) {
+        case 'title-ascending':
+          sortedCards = productCards.slice().sort((a, b) => a.dataset.title.localeCompare(b.dataset.title));
+          break;
+        case 'title-descending':
+          sortedCards = productCards.slice().sort((a, b) => b.dataset.title.localeCompare(a.dataset.title));
+          break;
+        case 'price-ascending':
+          sortedCards = productCards.slice().sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+          break;
+        case 'price-descending':
+          sortedCards = productCards.slice().sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+          break;
+        case 'created-ascending':
+          sortedCards = productCards.slice().sort((a, b) => parseInt(a.dataset.created, 10) - parseInt(b.dataset.created, 10));
+          break;
+        case 'created-descending':
+        default:
+          sortedCards = productCards.slice().sort((a, b) => parseInt(b.dataset.created, 10) - parseInt(a.dataset.created, 10));
+          break;
+      }
+
+      productGrid.innerHTML = '';
+      sortedCards.forEach((card) => productGrid.appendChild(card));
+
+      productCards.length = 0;
+      productCards.push(...sortedCards);
+
+      applyFilters();
+    };
+
+    sortToggle.addEventListener('click', () => {
+      toggleDropdown(sortToggle, sortMenu);
+    });
+
+    sortOptions.forEach((option) => {
+      option.addEventListener('click', () => {
+        if (option.classList.contains('is-active')) {
+          closeAllDropdowns();
+          return;
+        }
+
+        updateSortSelection(option);
+        sortLabelEl.textContent = option.textContent;
+        applySort(option.dataset.value);
+        closeAllDropdowns();
+      });
+
+      option.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          option.click();
+        }
+      });
+    });
+
+    const initialSort = sortToggle.dataset.selectedSort || currentSort;
+    const initialOption = sortOptions.find((item) => item.dataset.value === initialSort) || sortOptions[0];
+    if (initialOption) {
+      updateSortSelection(initialOption);
+      sortLabelEl.textContent = initialOption.textContent;
+      applySort(initialOption.dataset.value);
+    }
   }
 });
 {% endjavascript %}
