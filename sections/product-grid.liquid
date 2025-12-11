@@ -5,27 +5,6 @@
 <div class="product-grid-section">
   <h2 class="product-grid-title">{{ 'homepage.our_products' | t | default: 'OUR PRODUCTS' }}</h2>
   <div class="product-grid">
-    {% liquid
-      assign shown = 0
-      assign limit = section.settings.products_to_show | default: 6
-      assign promo_blocks = section.blocks | where: 'type', 'promo_image'
-      assign banner_blocks = section.blocks | where: 'type', 'wide_banner'
-    %}
-
-    {% comment %} Render any full-width banners at the top {% endcomment %}
-    {% for b in banner_blocks %}
-      <div class="product-card product-card--banner">
-        {% if b.settings.image != blank %}
-          {% assign banner_image = b.settings.image | image_url: width: 1600 %}
-          <a class="product-link" href="{{ b.settings.link | default: '#' }}" aria-label="{{ b.settings.alt | default: 'Banner' }}">
-            <div class="product-image product-image--banner">
-              <img src="{{ banner_image }}" alt="{{ b.settings.alt | escape }}" loading="lazy" width="1600" height="600">
-            </div>
-          </a>
-        {% endif %}
-      </div>
-    {% endfor %}
-
     {% for product in collections.all.products %}
       {% liquid
         assign exclude_handle = 'gift-cards'
@@ -64,36 +43,6 @@
           </div>
         </a>
       </div>
-      {% liquid
-        assign shown = shown | plus: 1
-        comment
-          After rendering each product, check if there are promo images configured
-          that should be inserted after a certain number of products.
-        endcomment
-        for pb in promo_blocks
-          if pb.settings.insert_after == shown and pb.settings.image != blank
-            echo '<div class="product-card product-card--promo">'
-            echo '<a class="product-link" href="'
-            echo pb.settings.link | default: '#'
-            echo '" aria-label="'
-            echo pb.settings.alt | default: 'Promo image'
-            echo '">'
-            echo '<div class="product-image product-image--promo">'
-            assign promo_src = pb.settings.image | image_url: width: 800
-            echo '<img src="'
-            echo promo_src
-            echo '" alt="'
-            echo pb.settings.alt | escape
-            echo '" loading="lazy" width="800" height="800">'
-            echo '</div>'
-            echo '</a>'
-            echo '</div>'
-          endif
-        endfor
-        if shown >= limit
-          break
-        endif
-      %}
     {% endfor %}
   </div>
 </div>
