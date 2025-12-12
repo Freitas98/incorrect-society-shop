@@ -22,7 +22,7 @@ body {
   font-family: var(--font-primary-family);
   font-size: clamp(1rem, 0.94rem + 0.2vw, 1.07rem);
   line-height: 1.5;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--font-body-letter-spacing);
   background-color: var(--color-background);
   color: var(--color-foreground);
   -webkit-font-smoothing: antialiased;
@@ -201,7 +201,7 @@ textarea,
 select {
   background-color: var(--color-surface);
   color: var(--color-foreground);
-  border: 1px solid var(--color-border);
+  border: var(--border-base);
   padding: 0.85rem 1rem;
   border-radius: var(--style-border-radius-inputs);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -217,10 +217,10 @@ select:focus {
 
 button {
   padding: 8px 16px;
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--color-button-border);
   border-radius: var(--style-border-radius-buttons);
-  background-color: transparent;
-  color: var(--color-primary);
+  background-color: var(--color-button-bg);
+  color: var(--color-button-text);
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -228,8 +228,9 @@ button {
 }
 
 button:hover {
-  background-color: var(--color-primary);
-  color: var(--color-background);
+  background-color: var(--color-button-hover-bg);
+  color: var(--color-button-hover-text);
+  border-color: var(--color-button-hover-border);
 }
 
 /* Hamburger and mobile nav styles */
@@ -280,12 +281,17 @@ button:hover {
 }
 
 .mobile-nav-close {
-  background: none;
+  color: var(--color-foreground);
   border: none;
   font-size: 1.25rem;
   margin-bottom: 15px;
   height: 50%;
   width: 25%;
+}
+
+.mobile-nav-close:hover {
+  color: var(--color-primary);
+  background-color: transparent;
 }
 
 .mobile-nav-menu {
@@ -303,6 +309,7 @@ button:hover {
   font-weight: 600;
   padding: 0.5rem 0.25rem;
   transition: color 0.2s ease;
+  text-transform: uppercase;
 }
 
 .mobile-nav-menu a:hover {
@@ -533,8 +540,8 @@ header {
 .header-menu-link {
   color: var(--color-foreground);
   text-decoration: none;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-weight: var(--font-heading-weight);
+  letter-spacing: var(--font-heading-letter-spacing);
   transition: color 0.2s ease;
 }
 
@@ -973,9 +980,9 @@ form[action*="/challenge"] {
 .feature-heading {
   font-family: var(--font-heading-family, var(--font-primary-family));
   text-transform: none;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--font-heading-letter-spacing);
   font-size: clamp(2.4rem, 4vw, 3.4rem);
-  font-weight: 500;
+  font-weight: var(--font-heading-weight);
 }
 
 .feature-subheading {

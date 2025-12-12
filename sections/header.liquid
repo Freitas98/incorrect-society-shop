@@ -475,7 +475,11 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    border: 1px solid color-mix(in oklab, var(--color-border), transparent 25%);
+  }
+
+  .header-hamburger:hover {
+    color: var(--color-primary);
+    background-color: transparent;
   }
 
   .visually-hidden {
@@ -676,7 +680,7 @@
     width: 32px;
     height: 32px;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: var(--font-heading-weight);
     letter-spacing: 0.4px;
   }
 
@@ -847,7 +851,7 @@
     --modal-fg: #fff;
     background: var(--modal-bg);
     color: var(--modal-fg);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: var(--font-heading-family);
     border: 2px solid var(--modal-fg);
     z-index: 1001;
     width: 380px;

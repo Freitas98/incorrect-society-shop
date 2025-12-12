@@ -227,8 +227,8 @@
   .cart-count {
     font-size: 18px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
+    letter-spacing: var(--font-heading-letter-spacing);
+    font-weight: var(--font-heading-weight);
     border-radius: 20px;
   }
 
@@ -294,10 +294,10 @@
   .item-title {
     color: #ffffff;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: var(--font-heading-weight);
     margin: 0 0 15px 0;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: var(--font-heading-letter-spacing);
     line-height: 1.3;
     word-break: break-word;
     hyphens: auto;
@@ -329,7 +329,7 @@
     justify-content: center;
     gap: 6px;
     font-size: 16px;
-    font-weight: 500;
+    font-weight: var(--font-heading-weight);
     flex: 1;
   }
 
@@ -347,9 +347,9 @@
     border: 1px solid var(--color-foreground);
     border-radius: 0;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: var(--font-heading-weight);
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: var(--font-heading-letter-spacing);
     text-align: center;
   }
 
@@ -375,8 +375,8 @@
   .unit-price {
     color: var(--color-foreground);
     font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: var(--font-heading-weight);
+    letter-spacing: var(--font-heading-letter-spacing);
   }
 
   .original-price {
@@ -402,10 +402,10 @@
     color: #cccccc;
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: var(--font-heading-letter-spacing);
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: var(--font-heading-weight);
   }
 
   .quantity-controls {
@@ -427,7 +427,7 @@
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: var(--font-heading-weight);
   }
 
   .quantity-btn:hover:not(:disabled) {
@@ -450,7 +450,7 @@
     align-items: center;
     justify-content: center;
     min-width: 48px;
-    font-weight: 700;
+    font-weight: var(--font-heading-weight);
     font-size: 15px;
     border-left: 1px solid var(--color-border);
     border-right: 1px solid var(--color-border);
@@ -460,8 +460,8 @@
     color: var(--color-foreground);
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
+    letter-spacing: var(--font-body-letter-spacing);
+    font-weight: var(--font-heading-weight);
   }
 
   .line-total {
@@ -472,17 +472,17 @@
     color: #cccccc;
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: var(--font-heading-letter-spacing);
     display: block;
     margin-bottom: 5px;
-    font-weight: 500;
+    font-weight: var(--font-heading-weight);
   }
 
   .total-price {
     color: #ffffff;
     font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: var(--font-heading-weight);
+    letter-spacing: var(--font-heading-letter-spacing);
   }
 
   .remove-item-btn {
@@ -498,8 +498,8 @@
     gap: 8px;
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
+    letter-spacing: var(--font-heading-letter-spacing);
+    font-weight: var(--font-heading-weight);
   }
 
   .remove-item-btn:hover {
@@ -509,7 +509,7 @@
 
   .remove-icon {
     font-size: 16px;
-    font-weight: 700;
+    font-weight: var(--font-heading-weight);
   }
 
   /* Cart Summary */
@@ -539,26 +539,26 @@
   .subtotal-label {
     color: var(--color-foreground);
     font-size: 18px;
-    font-weight: 600;
+    font-weight: var(--font-heading-weight);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: var(--font-heading-letter-spacing);
   }
 
   .subtotal-amount {
     color: var(--color-foreground);
     font-size: 24px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-weight: var(--font-heading-weight);
+    letter-spacing: var(--font-heading-letter-spacing);
   }
 
   .discount-label {
     font-size: 16px;
-    font-weight: 500;
+    font-weight: var(--font-heading-weight);
   }
 
   .discount-amount {
     font-size: 18px;
-    font-weight: 600;
+    font-weight: var(--font-heading-weight);
   }
 
   .tax-info {
@@ -638,7 +638,7 @@
     --modal-fg: #fff;
     background: var(--modal-bg);
     color: var(--modal-fg);
-    font-family: 'Times New Roman', Times, serif;
+    font-family: var(--font-heading-family);
     border: 2px solid var(--modal-fg);
     padding: 24px;
     z-index: 1001;
@@ -665,8 +665,8 @@
     font-size: 22px;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 700;
+    letter-spacing: var(--font-heading-letter-spacing);
+    font-weight: var(--font-heading-weight);
   }
 
   .modal-content p {

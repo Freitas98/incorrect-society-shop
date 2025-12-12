@@ -10,11 +10,14 @@
 
   assign design_spacing_base = 18
   assign design_radius_base = 6
-  assign design_letter_spacing_heading = 0.04
-  assign design_heading_weight = 500
+  assign design_letter_spacing_body = 0.09
+  assign design_letter_spacing_heading = 0.05
+  assign design_font_weight_body = 400
+  assign design_font_weight_heading = 500
+  assign design_border_width = 1
 
-  assign sans_stack = '"Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif'
-  assign serif_stack = '"Playfair Display", "Times New Roman", Times, serif'
+  assign sans_stack = '"Tenor Sans", sans-serif'
+  assign serif_stack = '"Libre Baskerville", serif'
 
   assign layout_page_width = settings.max_page_width | default: '1280px'
   assign layout_page_margin = settings.min_page_margin | default: 24
@@ -25,11 +28,12 @@
     /** Typography */
     --font-primary-family: {{ sans_stack }};
     --font-primary-style: normal;
-    --font-primary-weight: 400;
+    --font-primary-weight: {{ design_font_weight_body }};
     --font-heading-family: {{ serif_stack }};
-    --font-heading-weight: {{ design_heading_weight }};
+    --font-heading-weight: {{ design_font_weight_heading }};
     --font-heading-transform: none;
     --font-heading-letter-spacing: {{ design_letter_spacing_heading }}em;
+    --font-body-letter-spacing: {{ design_letter_spacing_body }}em;
 
     /** Layout */
     --page-width: {{ layout_page_width }};
@@ -38,6 +42,7 @@
     --radius-pill: calc({{ design_radius_base }}px * 9999);
 
     /** Spacing scale */
+    --spacing-base: {{ design_spacing_base }}px;
     --space-2xs: calc({{ design_spacing_base }}px * 0.25);
     --space-xs: calc({{ design_spacing_base }}px * 0.5);
     --space-sm: calc({{ design_spacing_base }}px * 0.75);
@@ -45,8 +50,8 @@
     --space-lg: calc({{ design_spacing_base }}px * 1.5);
     --space-xl: calc({{ design_spacing_base }}px * 2);
     --space-2xl: calc({{ design_spacing_base }}px * 3);
-  --space-3xl: calc({{ design_spacing_base }}px * 3.75);
-  --space-4xl: calc({{ design_spacing_base }}px * 5);
+    --space-3xl: calc({{ design_spacing_base }}px * 3.75);
+    --space-4xl: calc({{ design_spacing_base }}px * 5);
 
     /** Color palette */
     --color-background: {{ design_color_background }};
@@ -60,6 +65,19 @@
     --color-warning: {{ design_color_warning }};
     --color-error: {{ design_color_error }};
 
+    /** Buttons */
+    --color-button-bg: transparent;
+    --color-button-text: {{ design_color_primary }};
+    --color-button-border: {{ design_color_primary }};
+    --color-button-hover-bg: {{ design_color_primary }};
+    --color-button-hover-text: {{ design_color_background }};
+    --color-button-hover-border: {{ design_color_primary }};
+
+    /** Borders */
+    --border-width: {{ design_border_width }}px;
+    --border-style: solid;
+    --border-base: var(--border-width) var(--border-style) var(--color-border);
+
     /** Announcement specific */
     --color-announcement-bg: {{ design_color_background }};
     --color-announcement-fg: {{ design_color_foreground }};
@@ -70,5 +88,6 @@
 
     /** Legacy compatibility */
     --style-border-radius-inputs: {{ design_radius_base }}px;
+    --style-border-radius-buttons: {{ design_radius_base }}px;
   }
 {% endstyle %}
