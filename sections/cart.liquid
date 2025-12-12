@@ -118,7 +118,7 @@
             <!-- Remove Button -->
             <button
               type="button"
-              class="btn btn--outline remove-item-btn"
+              class="btn btn--tertiary remove-item-btn"
               data-key="{{ item.key }}"
               data-title="{{ item.product.title }}"
             >
@@ -149,7 +149,7 @@
         <!-- Action Buttons -->
         <div class="cart-actions">
           <button type="button" id="clear-cart-btn-main" class="btn btn--secondary btn--block">{{ 'cart.clear' | t }}</button>
-          <a href="{{ routes.root_url }}" class="btn btn--secondary btn--block">{{ 'cart.continue_shopping' | t }}</a>
+          <a href="{{ routes.root_url }}" class="btn btn--primary btn--block">{{ 'cart.continue_shopping' | t }}</a>
           <a href="/checkout" class="btn btn--primary btn--block">{{ 'cart.checkout' | t }}</a>
         </div>
       </div>
@@ -486,13 +486,9 @@
   }
 
   .remove-item-btn {
-    background: transparent;
-    border: 1px solid var(--color-foreground);
-    color: var(--color-foreground);
     padding: 8px 14px;
-    border-radius: 0;
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: color 0.15s ease;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -503,8 +499,7 @@
   }
 
   .remove-item-btn:hover {
-    background: var(--color-foreground);
-    color: var(--color-background);
+    color: var(--color-primary);
   }
 
   .remove-icon {

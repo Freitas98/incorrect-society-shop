@@ -215,22 +215,120 @@ select:focus {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 35%, transparent);
 }
 
+/* Standardized Buttons */
 button {
-  padding: 8px 16px;
-  border: 1px solid var(--color-button-border);
-  border-radius: var(--style-border-radius-buttons);
-  background-color: var(--color-button-bg);
-  color: var(--color-button-text);
-  font-size: 14px;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
   cursor: pointer;
-  transition: all 0.3s ease;
-  align-self: center;
 }
 
-button:hover {
-  background-color: var(--color-button-hover-bg);
-  color: var(--color-button-hover-text);
-  border-color: var(--color-button-hover-border);
+.btn,
+.shopify-payment-button__button--unbranded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--btn-padding);
+  font-family: var(--font-primary-family);
+  font-weight: var(--btn-font-weight);
+  font-size: 14px;
+  letter-spacing: var(--btn-letter-spacing);
+  text-transform: var(--btn-text-transform);
+  text-decoration: none;
+  border-radius: var(--btn-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  /* Default to Primary */
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-border);
+}
+
+.btn:hover,
+.shopify-payment-button__button--unbranded:hover {
+  background-color: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-hover-text);
+  border-color: var(--btn-primary-hover-border);
+}
+
+
+.btn--primary:hover {
+  background-color: var(--btn-primary-hover-bg);
+  color: var(--btn-primary-hover-text);
+  border-color: var(--btn-primary-hover-border);
+}
+
+.btn--secondary:hover {
+  background-color: var(--btn-secondary-hover-bg);
+  color: var(--btn-secondary-hover-text);
+  border-color: var(--btn-secondary-hover-border);
+}
+
+/* Outline Button */
+.btn--outline {
+  background-color: transparent;
+  color: var(--color-foreground);
+  border-color: var(--color-border);
+}
+
+.btn--outline:hover {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* Tertiary Button */
+.btn--tertiary {
+  background-color: var(--btn-tertiary-bg);
+  color: var(--btn-tertiary-text);
+  border-color: var(--btn-tertiary-border);
+  padding-left: 12px;
+  padding-right: 12px;
+  text-decoration: none;
+}
+
+.btn--tertiary:hover {
+  background-color: transparent;
+  color: var(--btn-tertiary-hover-text);
+  border-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Button Sizes */
+.btn--sm {
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.btn--lg {
+  padding: 16px 32px;
+  font-size: 16px;
+}
+
+.btn--full,
+.btn--block {
+  width: 100%;
+  display: flex;
+}
+
+.btn--icon {
+  padding: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:disabled,
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Hamburger and mobile nav styles */
@@ -854,7 +952,7 @@ form[action*="/challenge"] {
   color: var(--btn-color);
   font-weight: 600;
   letter-spacing: var(--btn-letter-spacing);
-  text-transform: none;
+  text-transform: uppercase;
   font-size: 0.95rem;
   text-decoration: none;
   box-shadow: var(--btn-shadow);

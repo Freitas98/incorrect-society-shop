@@ -66,12 +66,33 @@
     --color-error: {{ design_color_error }};
 
     /** Buttons */
-    --color-button-bg: transparent;
-    --color-button-text: {{ design_color_primary }};
-    --color-button-border: {{ design_color_primary }};
-    --color-button-hover-bg: {{ design_color_primary }};
-    --color-button-hover-text: {{ design_color_background }};
-    --color-button-hover-border: {{ design_color_primary }};
+    --btn-letter-spacing: 0.1em;
+    --btn-font-weight: 600;
+    --btn-text-transform: uppercase;
+    --btn-padding: 12px 24px;
+    --btn-radius: {{ design_radius_base }}px;
+
+    /* Primary Button */
+    --btn-primary-bg: {{ design_color_primary }};
+    --btn-primary-text: {{ design_color_background }};
+    --btn-primary-border: {{ design_color_primary }};
+    --btn-primary-hover-bg: {{ design_color_foreground }};
+    --btn-primary-hover-text: {{ design_color_background }};
+    --btn-primary-hover-border: {{ design_color_foreground }};
+
+    /* Secondary Button (Soft/Elegant) */
+    --btn-secondary-bg: {{ design_color_surface }};
+    --btn-secondary-text: {{ design_color_foreground }};
+    --btn-secondary-border: {{ design_color_border }};
+    --btn-secondary-hover-bg: color-mix(in srgb, {{ design_color_surface }} 90%, {{ design_color_foreground }} 10%);
+    --btn-secondary-hover-text: {{ design_color_foreground }};
+    --btn-secondary-hover-border: {{ design_color_foreground }};
+
+    /* Tertiary Button (Minimal) */
+    --btn-tertiary-bg: transparent;
+    --btn-tertiary-text: {{ design_color_foreground }};
+    --btn-tertiary-border: transparent;
+    --btn-tertiary-hover-text: {{ design_color_primary }};
 
     /** Borders */
     --border-width: {{ design_border_width }}px;
