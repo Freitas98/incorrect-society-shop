@@ -177,12 +177,6 @@ h6 {
   background-color: var(--color-background);
 }
 
-@media (max-width: 1024px) {
-  .main-content {
-    margin-left: clamp(220px, 36vw, 260px);
-  }
-}
-
 @media (max-width: 768px) {
   .main-content {
     margin-left: 0;

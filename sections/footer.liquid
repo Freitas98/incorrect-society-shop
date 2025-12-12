@@ -38,12 +38,18 @@
     gap: 20px;
   }
 
+  .footer-newsletter-form {
+    display: flex;
+    gap: 20px;
+  }
+
   .footer-content {
     max-width: var(--page-width);
     padding: 0 var(--page-margin);
     display: flex;
     justify-content: space-between;
     align-items: center;;
+    gap: 25px;
   }
 
   .footer__copyright {
@@ -94,52 +100,33 @@
   .footer-newsletter {
     margin-bottom: 20px;
     text-align: left;
+    gap: 18px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
   }
 
   .footer-newsletter p {
     font-size: 14px;
-    margin-bottom: 10px;
-    color: var(--color-foreground);
   }
 
-  .newsletter-form {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+  @media (max-width: 768px) {
+    .footer-content {
+      text-align: center;
+      justify-content: center;
+      gap: 20px;
+      display: flex;
+    }
 
-  .footer-newsletter-form {
-    justify-content: flex-start;
-  }
+    .footer-newsletter {
+      text-align: center;
+    }
 
-  .newsletter-form input[type="email"] {
-    flex: 1;
-    min-width: 200px;
-    padding: 8px 12px;
-    border: 1px solid var(--color-border);
-    border-radius: var(--style-border-radius-inputs);
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-size: 14px;
-  }
-
-  .newsletter-form button {
-    padding: 8px 16px !important;
-    border: 1px solid var(--color-primary) !important;
-    border-radius: var(--style-border-radius-buttons) !important;
-    background-color: transparent !important;
-    color: var(--color-primary) !important;
-    font-size: 14px !important;
-    cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    align-self: center !important;
-  }
-
-  .newsletter-form button:hover {
-    background-color: var(--color-primary) !important;
-    color: var(--color-background) !important;
+    .footer-newsletter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
   }
 {% endstylesheet %}
 
