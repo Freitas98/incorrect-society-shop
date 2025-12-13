@@ -264,7 +264,7 @@ button {
 
 .btn--secondary:hover {
   --btn-hover-bg: var(--btn-secondary-hover-bg);
-  --btn-hover-color: var(--btn-secondary-hover-text)
+  --btn-hover-color: var(--btn-secondary-hover-text);
   --btn-hover-border: var(--btn-secondary-hover-border);
 }
 

@@ -2,13 +2,14 @@
 <div class="cart-container">
   <!-- Cart Header -->
   <div class="cart-header">
-    <h1 class="cart-title">{{ 'cart.title' | t }}</h1>
+  <h1 class="cart-title">{{ 'cart.title' | t | upcase }}</h1>
   </div>
 
   {% if cart.item_count > 0 %}
-    <!-- Cart Items Grid -->
-    <div class="cart-items-grid">
-      {% for item in cart.items %}
+    <div class="cart-layout">
+      <!-- Cart Items Grid -->
+      <div class="cart-items-grid">
+        {% for item in cart.items %}
         <div class="cart-item-card" data-key="{{ item.key }}" data-line="{{ forloop.index }}">
           <!-- Product Image -->
           <div class="item-image">
@@ -78,7 +79,7 @@
               <div class="quantity-controls">
                 <button
                   type="button"
-                  class="btn btn--secondary btn--icon"
+                  class="quantity-btn quantity-decrease"
                   data-key="{{ item.key }}"
                   {% if item.quantity <= 1 %}
                     disabled
@@ -89,7 +90,7 @@
                 <span class="qty-display" data-key="{{ item.key }}">{{ item.quantity }}</span>
                 <button
                   type="button"
-                  class="btn btn--secondary btn--icon"
+                  class="quantity-btn quantity-increase"
                   data-key="{{ item.key }}"
                   {% if item.variant.inventory_management == 'shopify'
                     and item.variant.inventory_policy == 'deny'
@@ -118,7 +119,7 @@
             <!-- Remove Button -->
             <button
               type="button"
-              class="btn btn--tertiary"
+              class="remove-item-btn"
               data-key="{{ item.key }}"
               data-title="{{ item.product.title }}"
             >
@@ -128,11 +129,11 @@
           </div>
         </div>
       {% endfor %}
-    </div>
+      </div>
 
-    <!-- Cart Summary -->
-    <div class="cart-summary">
-      <div class="summary-content">
+      <!-- Cart Summary -->
+      <div class="cart-summary">
+        <div class="summary-content">
         <div class="subtotal-row">
           <span class="subtotal-label">{{ 'cart.subtotal' | t }}</span>
           <span class="subtotal-amount" id="cart-subtotal">{{ cart.total_price | money }}</span>
@@ -154,6 +155,7 @@
         </div>
       </div>
     </div>
+  </div>
 
   {% else %}
     <!-- Empty Cart -->
@@ -203,68 +205,67 @@
   .cart-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 60px 20px;
   }
 
   .cart-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 40px;
+    align-items: baseline;
+    margin-bottom: 60px;
     padding-bottom: 20px;
-    border-bottom: 1px dashed var(--color-border);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .cart-title {
-    color: #ffffff;
-    font-size: 36px;
-    text-transform: uppercase;
-    letter-spacing: 3px;
+    font-family: var(--font-heading-family);
+    font-size: 42px;
+    text-transform: none;
+    letter-spacing: -0.02em;
     margin: 0;
-    font-weight: 300;
+    font-weight: 400;
+    color: var(--color-foreground);
   }
 
   .cart-count {
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    font-weight: var(--font-heading-weight);
-    border-radius: 20px;
+    font-family: var(--font-primary-family);
+    font-size: 16px;
+    color: var(--color-foreground-muted);
+  }
+
+  /* Cart Layout (Desktop) */
+  .cart-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 60px;
+    align-items: start;
   }
 
   /* Cart Items Grid */
   .cart-items-grid {
-    display: grid;
-    gap: 30px;
-    margin-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 0;
   }
 
   .cart-item-card {
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 0;
-    padding: 24px;
     display: grid;
-    grid-template-columns: 200px 1fr auto;
-    gap: 24px;
-    align-items: center;
-  }
-
-  /* Product Image */
-  .item-image {
-    position: relative;
+    grid-template-columns: 120px 1fr auto;
+    gap: 40px;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--color-border);
+    align-items: start;
+    background: transparent;
     border-radius: 0;
-    overflow: hidden;
-    background-color: transparent;
+  }
+  
+  .cart-item-card:first-child {
+    padding-top: 0;
   }
 
   .item-image img {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
-    border-radius: 0;
-    transition: transform 0.3s ease;
-    background-color: transparent;
+    transition: transform 0.5s ease;
   }
 
   .cart-item-card:hover .item-image img {
@@ -272,331 +273,241 @@
   }
 
   .no-image {
-    width: 200px;
-    height: 200px;
-    background-color: var(--color-background);
-    border: 1px dashed var(--color-border);
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-foreground);
+    background-color: var(--color-surface);
+    color: var(--color-foreground-muted);
     font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border-radius: 0;
   }
 
   /* Product Info */
   .item-info {
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .item-title {
-    color: #ffffff;
-    font-size: 22px;
-    font-weight: var(--font-heading-weight);
-    margin: 0 0 15px 0;
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    line-height: 1.3;
-    word-break: break-word;
-    hyphens: auto;
-    text-align: center;
-  }
-
-  .item-variant-price-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    min-height: 32px;
+    font-family: var(--font-heading-family);
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-foreground);
+    text-decoration: none;
+    letter-spacing: 0;
+    text-transform: none;
   }
 
   .item-variant {
+    font-size: 14px;
+    color: var(--color-foreground-muted);
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
+    gap: 12px;
+  }
+
+  .item-variant span {
+    display: inline-block;
   }
 
   .variant-price {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    margin-top: 4px;
     font-size: 16px;
-    font-weight: var(--font-heading-weight);
-    flex: 1;
+    color: var(--color-foreground);
   }
 
   .price-label {
-    color: #999999;
-    font-size: 14px;
+    font-size: 12px;
+    color: var(--color-foreground-muted);
     margin-left: 4px;
   }
 
-  .size-badge,
-  .variant-option {
-    background: transparent;
-    color: var(--color-foreground);
-    padding: 4px 8px;
-    border: 1px solid var(--color-foreground);
-    border-radius: 0;
-    font-size: 12px;
-    font-weight: var(--font-heading-weight);
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    text-align: center;
-  }
-
-  .item-properties {
-    margin-bottom: 12px;
-  }
-
-  .property {
-    color: #999999;
-    font-size: 14px;
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  .item-pricing {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .unit-price {
-    color: var(--color-foreground);
-    font-size: 18px;
-    font-weight: var(--font-heading-weight);
-    letter-spacing: var(--font-heading-letter-spacing);
-  }
-
-  .original-price {
-    color: #666666;
-    font-size: 16px;
-    text-decoration: line-through;
-  }
-
-  /* Item Actions */
+  /* Actions Column (Qty, Total, Remove) */
   .item-actions {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 20px;
-    min-width: 200px;
+    gap: 24px;
   }
 
+  .line-total {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .total-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
+    margin-bottom: 4px;
+  }
+
+  .total-price {
+    font-family: var(--font-heading-family);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  /* Quantity Control - Minimal */
   .quantity-section {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
   }
 
   .quantity-label {
-    color: #cccccc;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    display: block;
-    margin-bottom: 8px;
-    font-weight: var(--font-heading-weight);
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
   }
 
   .quantity-controls {
     display: flex;
     align-items: center;
-    border: none;
-    margin-bottom: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
+    padding: 2px;
+    background: var(--color-background);
   }
 
   .quantity-btn {
-    background: transparent;
-    border: 1px solid var(--color-foreground);
-    color: var(--color-foreground);
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-foreground);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: color 0.2s;
     font-size: 16px;
-    font-weight: var(--font-heading-weight);
+    padding: 0;
   }
-
+  
   .quantity-btn:hover:not(:disabled) {
-    background: var(--color-foreground);
-    color: var(--color-background);
+    color: var(--color-primary);
+    background: transparent;
   }
 
   .quantity-btn:disabled {
     opacity: 0.3;
     cursor: not-allowed;
-    pointer-events: none;
   }
 
   .qty-display {
-    color: var(--color-foreground);
+    width: 32px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
     background: transparent;
-    padding: 0 14px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .stock-info {
-    color: var(--color-foreground);
+    font-size: 11px;
+    color: var(--color-warning);
+  }
+
+  /* Remove Button */
+  .remove-item-btn {
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: var(--font-body-letter-spacing);
-    font-weight: var(--font-heading-weight);
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
   }
 
-  .line-total {
-    text-align: right;
-  }
-
-  .total-label {
-    color: #cccccc;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    display: block;
-    margin-bottom: 5px;
-    font-weight: var(--font-heading-weight);
-  }
-
-  .total-price {
-    color: #ffffff;
-    font-size: 24px;
-    font-weight: var(--font-heading-weight);
-    letter-spacing: var(--font-heading-letter-spacing);
+  .remove-item-btn:hover {
+    color: var(--color-error);
+    background: transparent;
   }
 
   .remove-icon {
-    font-size: 16px;
-    font-weight: var(--font-heading-weight);
+    font-size: 14px;
   }
 
   /* Cart Summary */
   .cart-summary {
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 0;
-    padding: 28px;
+    background: var(--color-surface);
+    border-radius: var(--radius-base);
+    padding: 40px;
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid transparent;
     position: sticky;
-    top: 20px;
-  }
-
-  .summary-content {
-    max-width: 400px;
-    margin: 0 auto;
+    top: 40px;
   }
 
   .subtotal-row {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #333333;
+    align-items: baseline;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
   }
 
   .subtotal-label {
-    color: var(--color-foreground);
+    font-family: var(--font-heading-family);
     font-size: 18px;
-    font-weight: var(--font-heading-weight);
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
+    color: var(--color-foreground);
   }
 
   .subtotal-amount {
-    color: var(--color-foreground);
+    font-family: var(--font-heading-family);
     font-size: 24px;
-    font-weight: var(--font-heading-weight);
-    letter-spacing: var(--font-heading-letter-spacing);
-  }
-
-  .discount-label {
-    font-size: 16px;
-    font-weight: var(--font-heading-weight);
-  }
-
-  .discount-amount {
-    font-size: 18px;
-    font-weight: var(--font-heading-weight);
+    font-weight: 500;
+    color: var(--color-foreground);
   }
 
   .tax-info {
-    text-align: center;
+    font-size: 13px;
+    color: var(--color-foreground-muted);
     margin-bottom: 30px;
-  }
-
-  .tax-info p {
-    color: #999999;
-    font-size: 14px;
-    margin: 0;
-    font-style: italic;
+    text-align: right;
   }
 
   .cart-actions {
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-  }
-
-  .checkout-form {
-    margin: 0;
+    gap: 16px;
   }
 
   /* Empty Cart */
   .empty-cart {
     text-align: center;
-    padding: 60px 20px;
-    max-width: 600px;
-    margin: 0 auto;
+    padding: 100px 20px;
   }
 
   .empty-cart-content {
-    background: transparent;
-    border: 1px dashed var(--color-border);
-    border-radius: 0;
-    padding: 40px 24px;
+    max-width: 400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
   }
 
   .empty-icon {
-    font-size: 64px;
-    margin-bottom: 20px;
+    font-size: 48px;
+    margin-bottom: 10px;
     opacity: 0.5;
-  }
-
-  .empty-cart h2 {
-    color: #ffffff;
-    font-size: 32px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 0 0 20px 0;
-    font-weight: 300;
-  }
-
-  .empty-cart p {
-    color: #cccccc;
-    font-size: 18px;
-    line-height: 1.6;
-    margin: 0 0 40px 0;
-  }
-
-  .continue-shopping-btn {
-    display: inline-flex;
-    justify-content: center;
   }
 
   /* Modals */
@@ -607,21 +518,21 @@
     left: 50%;
     transform: translate(-50%, -50%) scale(0.98);
     /* enforce black/white palette for modals */
-    --modal-bg: #000;
-    --modal-fg: #fff;
+    --modal-bg: var(--color-surface);
+    --modal-fg: var(--color-foreground);
     background: var(--modal-bg);
     color: var(--modal-fg);
     font-family: var(--font-heading-family);
-    border: 2px solid var(--modal-fg);
-    padding: 24px;
+    border: 1px solid var(--color-border);
+    padding: 40px;
     z-index: 1001;
-    width: 380px;
+    width: 400px;
     max-width: 92vw;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: var(--radius-base);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   }
 
   .remove-item-modal.open,
@@ -634,44 +545,29 @@
 
   .modal-content h3 {
     color: var(--modal-fg);
-    margin: 0 0 12px 0;
-    font-size: 22px;
+    margin: 0 0 16px 0;
+    font-size: 24px;
     text-align: center;
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    font-weight: var(--font-heading-weight);
+    font-weight: 400;
   }
 
   .modal-content p {
     color: var(--modal-fg);
-    margin: 0 0 16px 0;
+    margin: 0 0 24px 0;
     text-align: center;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.6;
+    opacity: 0.8;
   }
 
   .modal-actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    gap: 12px;
     justify-content: center;
   }
 
   .modal-actions .btn {
     flex: 1;
-    min-width: 140px;
-    text-align: center;
-  }
-
-  .modal-btn.modal-cancel {
-    --btn-color: var(--modal-fg);
-    --btn-border: color-mix(in oklab, var(--modal-fg), transparent 55%);
-    --btn-hover-bg: color-mix(in oklab, var(--modal-fg), transparent 88%);
-    --btn-hover-border: color-mix(in oklab, var(--modal-fg), transparent 35%);
-  }
-
-  .modal-btn.modal-confirm {
-    --btn-color: var(--modal-bg);
   }
 
   .modal-overlay {
@@ -685,6 +581,7 @@
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
+    backdrop-filter: blur(4px);
   }
 
   .modal-overlay.open {
@@ -692,160 +589,45 @@
     visibility: visible;
   }
 
-  /* Mobile Responsive */
-  @media screen and (max-width: 1024px) {
-    .cart-item-card {
-      grid-template-columns: 150px 1fr;
-      gap: 18px;
-      padding: 20px;
-    }
-    .item-image img {
-      height: 150px;
-    }
-    /* When actions drop below content, center them and span full width */
-    .item-actions {
-      align-items: center;
-      min-width: 0;
-      grid-column: 1 / -1;
-      justify-self: center;
-      text-align: center;
-    }
-    .quantity-section,
-    .line-total {
-      text-align: center;
-    }
-    .total-price {
-      font-size: 22px;
-    }
-    .cart-items-grid {
-      gap: 20px;
-    }
-  }
-  @media screen and (max-width: 768px) {
-    .cart-container {
-      padding: 20px 15px;
-    }
-
-    .cart-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-
-    .cart-title {
-      font-size: 28px;
-      letter-spacing: 2px;
-    }
-
-    .cart-count {
-      font-size: 14px;
-      padding: 6px 12px;
-    }
-
-    .cart-item-card {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto;
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .item-image {
-      justify-self: center;
-    }
-
-    .item-image img {
-      width: 150px;
-      height: 150px;
-    }
-
-    /* Center info when it stacks under the image */
-    .item-info {
-      text-align: center;
-    }
-    .item-title {
-      text-align: center;
-    }
-    .item-variant {
-      justify-content: center;
-    }
-    .item-pricing {
-      justify-content: center;
-    }
-    .item-properties {
-      text-align: center;
-    }
-
-    .item-actions {
-      align-items: center;
-      gap: 15px;
-      text-align: center;
-    }
-
-    .quantity-section,
-    .line-total {
-      text-align: center;
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .cart-layout {
+      display: block;
     }
 
     .cart-summary {
-      padding: 25px;
+      margin-top: 40px;
       position: static;
-      top: auto;
     }
 
-    .subtotal-label {
-      font-size: 18px;
-    }
-
-    .subtotal-amount {
-      font-size: 24px;
-    }
-
-    .empty-cart-content {
-      padding: 40px 25px;
-    }
-
-    .empty-cart h2 {
-      font-size: 24px;
-    }
-
-    .modal-actions {
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .modal-actions .btn {
-      width: 100%;
+    .cart-item-card {
+      gap: 30px;
     }
   }
 
-  @media screen and (max-width: 480px) {
-    .cart-title {
-      font-size: 24px;
-      letter-spacing: 1px;
+  @media (max-width: 768px) {
+    .cart-item-card {
+      grid-template-columns: 125px 1fr;
+      gap: 20px;
+      padding: 30px 0;
+    }
+    
+    .item-actions {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px dashed var(--color-border);
+      width: 100%;
     }
 
-    .item-title {
-      font-size: 18px;
-      letter-spacing: 1px;
+    .quantity-section {
+      align-items: flex-start;
     }
 
-    .item-image img {
-      width: 120px;
-      height: 120px;
-    }
-
-    .unit-price {
-      font-size: 16px;
-    }
-
-    .total-price {
-      font-size: 20px;
-    }
-
-    .remove-item-btn {
-      padding: 8px 16px;
-      font-size: 11px;
+    .line-total {
+      align-items: flex-end;
     }
   }
 {% endstylesheet %}

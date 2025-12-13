@@ -146,6 +146,7 @@
       <div class="product-actions">
         <button
           type="submit"
+          id="add-to-cart-btn"
           class="btn btn--primary btn--full"
           {% unless current_variant.available %}
             disabled
@@ -242,13 +243,12 @@
     background-color: var(--color-background);
   }
 
-  .accordion-toggle.active,
-  .accordion-toggle:focus {
+  .accordion-toggle.active{
     color: var(--color-primary);
   }
 
   .accordion-toggle:hover{
-    color: var(--color-background);
+    color: var(--color-primary);
   }
 
   .accordion-toggle::after {
@@ -1192,7 +1192,7 @@
         console.log('🛒 Adding product to cart via AJAX...');
 
         const formData = new FormData(productForm);
-        const addButton = productForm.querySelector('.add-to-cart-btn');
+        const addButton = productForm.querySelector('#add-to-cart-btn');
         const btnText = addButton.querySelector('.btn-text');
         const originalText = btnText.textContent;
 
