@@ -12,6 +12,15 @@
     "main": {
       "type": "news-magazine",
       "blocks": {
+        "social_BLpiGG": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/tiktokPost1_9203e904-82c0-4703-a4b0-65eb7066d69a.png",
+            "link": "",
+            "platform": "tiktok",
+            "caption": "We call it community service. #fy #f #streetfashion #clothingbrand"
+          }
+        },
         "social_LxC9La": {
           "type": "social",
           "settings": {
@@ -66,6 +75,7 @@
         }
       },
       "block_order": [
+        "social_BLpiGG",
         "social_LxC9La",
         "social_HbawqK",
         "social_iaPyby",
