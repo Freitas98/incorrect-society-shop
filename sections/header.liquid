@@ -1535,7 +1535,7 @@
     }
 
     // Show error notification
-    function showError(message) {
+    window.showError = function(message) {
       // Create a simple error notification
       const errorDiv = document.createElement('div');
       errorDiv.className = 'notification-toast notification-toast-error';

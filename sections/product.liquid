@@ -68,6 +68,9 @@
     <div class="product-info">
       <h1 class="product-title">{{ product.title }}</h1>
       <div class="product-price">{% render 'price', amount: current_variant.price, product: product %}</div>
+      <div class="product-inventory">
+        <!-- Inventory status will be injected here -->
+      </div>
     </div>
 
     {% form 'product', product %}
@@ -123,6 +126,9 @@
                 "id": {{ variant.id | json }},
                 "title": {{ variant.title | json }},
                 "available": {{ variant.available | json }},
+                "inventory_quantity": {{ variant.inventory_quantity | json }},
+                "inventory_policy": {{ variant.inventory_policy | json }},
+                "inventory_management": {{ variant.inventory_management | json }},
                 "price": {{ variant.price | json }},
                 "priceHtml": {{ price_html | json }},
                 "option1": {{ variant.option1 | json }},
@@ -948,6 +954,21 @@
     showImage(0);
     startAutoSlide();
 
+    // Store cart data
+    let currentCart = null;
+    fetch('/cart.js')
+      .then(r => r.json())
+      .then(cart => {
+        currentCart = cart;
+      });
+
+    // Listen for cart updates
+    window.addEventListener('cartUpdated', (e) => {
+      if (e.detail && e.detail.cart) {
+        currentCart = e.detail.cart;
+      }
+    });
+
     // Variant Selection - Simple and Reliable
     function initVariantSelection() {
       console.log('🚀 Starting variant selection...');
@@ -1157,8 +1178,24 @@
               priceElement.innerHTML = matchingVariant.priceHtml;
             }
 
+            // Update inventory display
+            const inventoryElement = document.querySelector('.product-inventory');
+            if (inventoryElement) {
+              if (matchingVariant.available) {
+                if (matchingVariant.inventory_management === 'shopify' && matchingVariant.inventory_quantity > 0) {
+                  inventoryElement.textContent = `${matchingVariant.inventory_quantity} in stock`;
+                } else if (matchingVariant.inventory_policy === 'continue') {
+                  inventoryElement.textContent = 'In stock';
+                } else {
+                   inventoryElement.textContent = 'In stock';
+                }
+              } else {
+                inventoryElement.textContent = 'Out of stock';
+              }
+            }
+
             // Update button
-            const addToCartBtn = document.querySelector('.add-to-cart-btn');
+            const addToCartBtn = document.querySelector('#add-to-cart-btn');
             if (addToCartBtn) {
               addToCartBtn.disabled = !matchingVariant.available;
               const btnText = addToCartBtn.querySelector('.btn-text');
@@ -1196,6 +1233,34 @@
       console.log('✅ Setting up AJAX add to cart for all products');
       productForm.addEventListener('submit', function (e) {
         e.preventDefault();
+
+        // Validate inventory
+        const variantIdInput = productForm.querySelector('select[name="id"]');
+        const variantId = variantIdInput ? parseInt(variantIdInput.value) : null;
+        
+        if (variantId && currentCart) {
+          // Find variant data
+          const variantDataScript = document.getElementById('variant-data');
+          if (variantDataScript) {
+            const variantData = JSON.parse(variantDataScript.textContent);
+            const variant = variantData.variants.find(v => v.id === variantId);
+            
+            if (variant && variant.inventory_management === 'shopify' && variant.inventory_policy === 'deny') {
+              const cartItem = currentCart.items.find(item => item.variant_id === variantId);
+              const currentQtyInCart = cartItem ? cartItem.quantity : 0;
+              const available = variant.inventory_quantity;
+              
+              if (currentQtyInCart + 1 > available) {
+                if (window.showError) {
+                  window.showError(`Cannot add more than available. You already have ${currentQtyInCart} in cart and only ${available} are available.`);
+                } else {
+                  alert(`Cannot add more than available. You already have ${currentQtyInCart} in cart and only ${available} are available.`);
+                }
+                return;
+              }
+            }
+          }
+        }
 
         console.log('🛒 Adding product to cart via AJAX...');
 
