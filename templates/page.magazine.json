@@ -12,6 +12,15 @@
     "main": {
       "type": "news-magazine",
       "blocks": {
+        "archive_mEJi9J": {
+          "type": "archive",
+          "settings": {
+            "image": "shopify://shop_images/archivePost1_eddaeade-38aa-45ec-86ec-f8c08110b7b4.png",
+            "title": "u’re welcomed - hoodie",
+            "link": "",
+            "date": "28/8/2025"
+          }
+        },
         "social_BLpiGG": {
           "type": "social",
           "settings": {
@@ -75,6 +84,7 @@
         }
       },
       "block_order": [
+        "archive_mEJi9J",
         "social_BLpiGG",
         "social_LxC9La",
         "social_HbawqK",
