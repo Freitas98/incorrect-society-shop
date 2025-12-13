@@ -1057,21 +1057,8 @@
     }
 
     function showError(message) {
-      // Create a simple error notification
       const errorDiv = document.createElement('div');
-      errorDiv.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-  background-color: var(--color-primary);
-  color: var(--color-foreground);
-      padding: 15px 20px;
-      border-radius: 8px;
-      z-index: 10000;
-      font-size: 14px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      animation: slideIn 0.3s ease;
-    `;
+      errorDiv.className = 'notification-toast notification-toast-error';
       errorDiv.textContent = message;
 
       document.body.appendChild(errorDiv);
@@ -1084,19 +1071,6 @@
       }, 3000);
     }
 
-    // Add CSS for error animations
-    const style = document.createElement('style');
-    style.textContent = `
-    @keyframes slideIn {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
-  `;
-    document.head.appendChild(style);
 
     // Listen for cart updates from sidebar
     window.addEventListener('cartUpdated', function (event) {

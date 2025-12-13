@@ -1464,3 +1464,34 @@ form[action*="/challenge"] {
     letter-spacing: 0.12em;
   }
 }
+
+.notification-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--color-surface);
+  color: var(--color-foreground);
+  padding: 15px 20px;
+  border-radius: 8px;
+  z-index: 1000000;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  animation: slideIn 0.3s ease;
+}
+
+.notification-toast-error{
+  color: var(--color-error) !important;
+}
+
+.notification-toast-success{
+  color: var(--color-success) !important;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes slideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
