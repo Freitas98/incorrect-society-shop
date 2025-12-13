@@ -93,7 +93,7 @@
                   >
                   <label
                     for="option-{{ option.position }}-{{ value | handleize }}"
-                    class="option-value"
+                    class="option-value btn btn--tertiary btn--small"
                   >
                     {{ value }}
                   </label>
@@ -527,50 +527,58 @@
   }
 
   .option-value {
-    display: inline-block;
-    padding: 14px 22px;
-    border: 2px solid var(--color-border);
-    background-color: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
     color: var(--color-foreground);
     text-transform: uppercase;
-    font-size: 15px;
-    font-weight: var(--font-heading-weight);
-    letter-spacing: var(--font-heading-letter-spacing);
+    font-family: var(--font-primary-family);
+    font-size: 14px;
+    font-weight: var(--btn-font-weight);
+    letter-spacing: var(--btn-letter-spacing);
     cursor: pointer;
-    transition: all 0.3s ease;
-    min-width: 55px;
+    transition: all 0.2s ease;
+    min-width: 48px;
     text-align: center;
     user-select: none;
     position: relative;
     text-decoration: none;
+    border-radius: var(--btn-radius);
+    line-height: 1;
   }
 
   .option-value:hover {
     border-color: var(--color-primary);
     color: var(--color-primary);
+    background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-background));
   }
 
   .option-values input[type='radio']:checked + .option-value {
     background-color: var(--color-primary);
     border-color: var(--color-primary);
     color: var(--color-background);
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--color-primary) 30%, transparent);
   }
 
   .option-values input[type='radio']:disabled + .option-value,
   .option-value.option-unavailable {
-    background-color: #1a1a1a !important;
+    background-color: var(--color-surface) !important;
     border-color: var(--color-border) !important;
-    color: #666666 !important;
+    color: var(--color-foreground-muted) !important;
     cursor: not-allowed !important;
-    opacity: 0.3 !important;
+    opacity: 0.6 !important;
     pointer-events: none !important;
+    text-decoration: line-through;
   }
 
   .option-value.option-unavailable:hover,
   .option-values input[type='radio']:disabled + .option-value:hover {
-    background-color: #1a1a1a !important;
-    border-color: #444444 !important;
-    color: #666666 !important;
+    background-color: var(--color-surface) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-foreground-muted) !important;
   }
 
   /* Add to Cart Button */
