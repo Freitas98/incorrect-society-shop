@@ -125,9 +125,9 @@
         <span id="cart-total">{% render 'price', amount: cart.total_price %}</span>
       </div>
       <div class="cart-actions">
-        <button class="btn btn--secondary btn--block" id="clear-cart-btn">{{ 'cart.clear' | t }}</button>
-        <a href="{{ routes.cart_url }}" class="btn btn--primary btn--block">{{ 'cart.goToCartBtn' | t }}</a>
-        <a href="/checkout" class="btn btn--primary btn--block">{{ 'cart.checkout' | t }}</a>
+        <button class="btn btn--secondary" id="clear-cart-btn">{{ 'cart.clear' | t }}</button>
+        <a href="{{ routes.cart_url }}" class="btn btn--primary">{{ 'cart.goToCartBtn' | t }}</a>
+        <a href="/checkout" class="btn btn--primary">{{ 'cart.checkout' | t }}</a>
       </div>
     </div>
   </div>
@@ -564,6 +564,10 @@
     cursor: pointer;
     padding: 5px;
     transition: color 0.3s ease;
+  }
+
+  .cart-close:hover {
+    color: var(--color-primary);
   }
 
   .cart-items {
@@ -1111,11 +1115,11 @@
           <div class="cart-item-row">
             <div class="cart-item-price">${formatMoneyEuro(item.line_price)}</div>
             <div class="cart-item-quantity">
-              <button class="btn btn--outline btn--icon quantity-btn quantity-decrease" data-key="${item.key}" ${
+              <button class="btn btn--secondary btn--icon" data-key="${item.key}" ${
             item.quantity <= 1 ? 'disabled' : ''
           }>−</button>
               <span class="quantity-display">${item.quantity}</span>
-              <button class="btn btn--outline btn--icon quantity-btn quantity-increase" data-key="${item.key}" 
+              <button class="btn btn--secondary btn--icon" data-key="${item.key}" 
                 ${
                   item.variant &&
                   item.variant.inventory_management === 'shopify' &&

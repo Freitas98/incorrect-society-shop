@@ -227,7 +227,7 @@
             <div class="gc-code" id="gc-code">{{ gift_card.code | format_code }}</div>
             <div class="gc-actions">
               <button
-                class="btn btn--outline gc-btn"
+                class="btn btn--secondary gc-btn"
                 type="button"
                 id="gc-copy"
                 data-copy="{{ 'gift_card.copy' | t | escape }}"
@@ -235,7 +235,7 @@
               >
                 {{ 'gift_card.copy' | t | default: 'Copy code' }}
               </button>
-              <button class="btn btn--outline gc-btn" type="button" id="gc-print">{{ 'gift_card.print' | t | default: 'Print' }}</button>
+              <button class="btn btn--secondary gc-btn" type="button" id="gc-print">{{ 'gift_card.print' | t | default: 'Print' }}</button>
             </div>
             {% if gc_product %}
               <div class="gc-actions gc-actions--secondary">

@@ -78,7 +78,7 @@
               <div class="quantity-controls">
                 <button
                   type="button"
-                  class="btn btn--outline btn--icon quantity-btn quantity-decrease"
+                  class="btn btn--secondary btn--icon"
                   data-key="{{ item.key }}"
                   {% if item.quantity <= 1 %}
                     disabled
@@ -89,7 +89,7 @@
                 <span class="qty-display" data-key="{{ item.key }}">{{ item.quantity }}</span>
                 <button
                   type="button"
-                  class="btn btn--outline btn--icon quantity-btn quantity-increase"
+                  class="btn btn--secondary btn--icon"
                   data-key="{{ item.key }}"
                   {% if item.variant.inventory_management == 'shopify'
                     and item.variant.inventory_policy == 'deny'
@@ -118,7 +118,7 @@
             <!-- Remove Button -->
             <button
               type="button"
-              class="btn btn--tertiary remove-item-btn"
+              class="btn btn--tertiary"
               data-key="{{ item.key }}"
               data-title="{{ item.product.title }}"
             >
@@ -449,11 +449,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 48px;
-    font-weight: var(--font-heading-weight);
-    font-size: 15px;
-    border-left: 1px solid var(--color-border);
-    border-right: 1px solid var(--color-border);
   }
 
   .stock-info {
@@ -483,23 +478,6 @@
     font-size: 24px;
     font-weight: var(--font-heading-weight);
     letter-spacing: var(--font-heading-letter-spacing);
-  }
-
-  .remove-item-btn {
-    padding: 8px 14px;
-    cursor: pointer;
-    transition: color 0.15s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    font-weight: var(--font-heading-weight);
-  }
-
-  .remove-item-btn:hover {
-    color: var(--color-primary);
   }
 
   .remove-icon {

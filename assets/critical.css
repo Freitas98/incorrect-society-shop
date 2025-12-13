@@ -256,49 +256,30 @@ button {
 
 
 .btn--primary:hover {
-  background-color: var(--btn-primary-hover-bg);
-  color: var(--btn-primary-hover-text);
-  border-color: var(--btn-primary-hover-border);
+  --btn-hover-bg: var(--btn-primary-hover-bg);
+  --btn-hover-color: var(--btn-primary-hover-text);
+  --btn-hover-border: var(--btn-primary-hover-border);
+  --btn-hover-shadow: none;
 }
 
 .btn--secondary:hover {
-  background-color: var(--btn-secondary-hover-bg);
-  color: var(--btn-secondary-hover-text);
-  border-color: var(--btn-secondary-hover-border);
+  --btn-hover-bg: var(--btn-secondary-hover-bg);
+  --btn-hover-color: var(--btn-secondary-hover-text)
+  --btn-hover-border: var(--btn-secondary-hover-border);
 }
 
-/* Outline Button */
-.btn--outline {
-  background-color: transparent;
-  color: var(--color-foreground);
-  border-color: var(--color-border);
+.btn--tertiary:hover {
+  --btn-hover-bg: var(--btn-tertiary-hover-bg);
+  --btn-hover-color: var(--btn-tertiary-hover-text);
+  --btn-hover-border: var(--btn-tertiary-hover-border);
 }
 
-.btn--outline:hover {
-  background-color: transparent;
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-/* Tertiary Button */
 .btn--tertiary {
   background-color: var(--btn-tertiary-bg);
   color: var(--btn-tertiary-text);
   border-color: var(--btn-tertiary-border);
-  padding-left: 12px;
-  padding-right: 12px;
-  text-decoration: none;
 }
 
-.btn--tertiary:hover {
-  background-color: transparent;
-  color: var(--btn-tertiary-hover-text);
-  border-color: transparent;
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-/* Button Sizes */
 .btn--sm {
   padding: 8px 16px;
   font-size: 12px;
@@ -313,15 +294,6 @@ button {
 .btn--block {
   width: 100%;
   display: flex;
-}
-
-.btn--icon {
-  padding: 0;
-  width: 44px;
-  height: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn:disabled,
@@ -989,26 +961,13 @@ form[action*="/challenge"] {
   --btn-bg: transparent;
   --btn-border: var(--color-primary);
   --btn-color: var(--color-primary);
-  --btn-hover-bg: var(--color-primary);
-  --btn-hover-color: var(--color-background);
   --btn-shadow: none;
-  --btn-hover-shadow: none;
 }
 
 .btn--secondary {
   --btn-bg: var(--color-surface);
   --btn-border: color-mix(in oklab, var(--color-border), transparent 10%);
   --btn-color: var(--color-foreground);
-  --btn-hover-bg: color-mix(in oklab, var(--color-surface), var(--color-primary) 12%);
-  --btn-hover-border: color-mix(in oklab, var(--color-primary), transparent 40%);
-}
-
-.btn--outline {
-  --btn-bg: transparent;
-  --btn-border: color-mix(in oklab, var(--color-foreground), transparent 70%);
-  --btn-color: var(--color-foreground);
-  --btn-hover-bg: color-mix(in oklab, var(--color-foreground), transparent 88%);
-  --btn-hover-border: color-mix(in oklab, var(--color-primary), transparent 20%);
 }
 
 .btn--block {
@@ -1025,9 +984,12 @@ form[action*="/challenge"] {
 .btn--icon {
   --btn-padding-y: 0.4rem;
   --btn-padding-x: 0.4rem;
-  min-height: 40px;
-  min-width: 40px;
   border-radius: var(--btn-radius, 6px);
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 0px !important;
+  min-height: 0px !important;
+  display: inline-block;
 }
 
 .btn--elevated {
