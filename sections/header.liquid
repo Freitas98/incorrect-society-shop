@@ -952,6 +952,178 @@
       opacity: 0;
     }
   }
+
+  /* Side Cart Item Styles (Matching Main Cart) */
+  .cart-sidebar .cart-item-card {
+    display: grid;
+    grid-template-columns: 80px 1fr 100px;
+    gap: 15px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-border);
+    align-items: start;
+    background: transparent;
+  }
+  
+  .cart-sidebar .cart-item-card:last-child {
+    border-bottom: none;
+  }
+
+  .cart-sidebar .item-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .cart-sidebar .item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .cart-sidebar .cart-item-card:hover .item-image img {
+    transform: scale(1.05);
+  }
+
+  .cart-sidebar .item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cart-sidebar .item-title {
+    font-family: var(--font-heading-family);
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    color: var(--color-foreground);
+    text-decoration: none;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  .cart-sidebar .item-variant-price-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .cart-sidebar .item-variant {
+    font-size: 13px;
+    color: var(--color-foreground-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cart-sidebar .variant-price {
+    font-size: 14px;
+    color: var(--color-foreground);
+    font-weight: 400;
+  }
+  
+  .cart-sidebar .price-label {
+    font-size: 12px;
+    color: var(--color-foreground-muted);
+    margin-left: 4px;
+  }
+
+  .cart-sidebar .item-actions-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .cart-sidebar .quantity-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .cart-sidebar .quantity-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
+  }
+
+  .cart-sidebar .quantity-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
+    padding: 0;
+    background: var(--color-background);
+    height: 28px;
+  }
+
+  .cart-sidebar .quantity-btn {
+    width: 24px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-foreground);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+  }
+
+  .cart-sidebar .qty-display {
+    width: 24px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .cart-sidebar .stock-info {
+    font-size: 10px;
+    color: var(--color-warning);
+    text-align: right;
+  }
+
+  .cart-sidebar .total-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .cart-sidebar .total-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
+  }
+
+  .cart-sidebar .item-total-price {
+    font-family: var(--font-heading-family);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-foreground);
+  }
+
+  .cart-sidebar .remove-item-btn {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-foreground-muted);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 0.2s;
+    margin-top: 4px;
+  }
+
+  .cart-sidebar .remove-item-btn:hover {
+    color: var(--color-error);
+  }
 {% endstylesheet %}
 
 {% javascript %}
@@ -992,6 +1164,7 @@
 
     // Store current cart data for stock validation
     let currentCartData = null;
+    let currentInventoryData = {};
 
     // Open cart sidebar
     function openCart() {
@@ -1032,19 +1205,37 @@
 
     // Load cart items via AJAX
     function loadCartItems() {
-      fetch('/cart.js')
-        .then((response) => response.json())
-        .then((cart) => {
-          // Store cart data for stock validation
-          currentCartData = cart;
+      // Fetch both cart data and inventory data
+      Promise.all([
+        fetch('/cart.js').then(res => res.json()),
+        fetch('/?section_id=cart-inventory').then(res => res.text())
+      ])
+      .then(([cart, inventoryHtml]) => {
+        // Parse inventory data from the section HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(inventoryHtml, 'text/html');
+        const inventoryJson = doc.getElementById('inventory-data')?.textContent;
+        
+        if (inventoryJson) {
+          try {
+            const data = JSON.parse(inventoryJson);
+            currentInventoryData = data.items || {};
+          } catch (e) {
+            console.error('Error parsing inventory data', e);
+            currentInventoryData = {};
+          }
+        }
 
-          renderCartItems(cart);
-          updateCartCount(cart.item_count);
-          updateCartTotal(cart.total_price);
-        })
-        .catch((error) => {
-          console.error('Error loading cart:', error);
-        });
+        // Store cart data for stock validation
+        currentCartData = cart;
+
+        renderCartItems(cart);
+        updateCartCount(cart.item_count);
+        updateCartTotal(cart.total_price);
+      })
+      .catch((error) => {
+        console.error('Error loading cart:', error);
+      });
     }
 
     // Mobile nav toggle
@@ -1097,47 +1288,90 @@
           let variantHtml = '';
           const opts = Array.isArray(item.options_with_values) ? item.options_with_values : [];
           const nonDefault = !(opts.length === 1 && String(opts[0]?.name || '').toLowerCase() === 'title');
+          
           if (opts.length && nonDefault) {
-            const parts = opts.map((ov) => `${translateOptionName(ov.name)}: ${ov.value}`);
-            variantHtml = `<div class="cart-item-variant">${parts.join(' / ')}</div>`;
+            const parts = opts.map((ov) => {
+              let optClass = 'variant-option';
+              const optNameDown = ov.name.toLowerCase();
+              if (optNameDown.includes('size') || optNameDown.includes('tamanho')) {
+                optClass = 'size-badge';
+              }
+              return `<span class="${optClass}">${translateOptionName(ov.name)}: ${ov.value}</span>`;
+            });
+            variantHtml = `<div class="item-variant">${parts.join('')}</div>`;
           }
 
+          // Get inventory data for this item
+          const inventoryItem = currentInventoryData[item.key];
+          
+          const hasInventoryLimit = 
+            inventoryItem &&
+            inventoryItem.inventory_management === 'shopify' &&
+            inventoryItem.inventory_policy === 'deny' &&
+            inventoryItem.inventory_quantity !== null;
+            
+          const availableStock = hasInventoryLimit ? inventoryItem.inventory_quantity : null;
+          const isMaxQuantity = hasInventoryLimit && item.quantity >= availableStock;
+
           return `
-      <div class="cart-item" data-key="${item.key}">
-        <div class="cart-item-image">
-          <img src="${item.featured_image ? item.featured_image.url + '?width=160' : ''}" alt="${
-            item.product_title
-          }" loading="lazy" width="80" height="80">
+      <div class="cart-item-card" data-key="${item.key}">
+        <div class="item-image">
+          ${item.featured_image 
+            ? `<img src="${item.featured_image.url}?width=160" alt="${item.product_title}" loading="lazy" width="80" height="80">` 
+            : '<div class="no-image">No Image</div>'}
         </div>
-        <div class="cart-item-details">
-          <div class="cart-item-title">${item.product_title}</div>
-          ${variantHtml}
-          <div class="cart-item-row">
-            <div class="cart-item-price">${formatMoneyEuro(item.line_price)}</div>
-            <div class="cart-item-quantity">
-              <button class="btn btn--secondary btn--icon" data-key="${item.key}" ${
-            item.quantity <= 1 ? 'disabled' : ''
-          }>−</button>
-              <span class="quantity-display">${item.quantity}</span>
-              <button class="btn btn--secondary btn--icon" data-key="${item.key}" 
-                ${
-                  item.variant &&
-                  item.variant.inventory_management === 'shopify' &&
-                  item.variant.inventory_policy === 'deny' &&
-                  item.variant.inventory_quantity !== null &&
-                  item.variant.inventory_quantity <= item.quantity
-                    ? 'disabled'
-                    : ''
-                }>+</button>
-            </div>
+
+        <div class="item-info">
+          <h3 class="item-title">${item.product_title}</h3>
+          
+          <div class="item-variant-price-wrapper">
+            ${variantHtml}
+            <span class="variant-price">
+              ${item.original_line_price !== item.line_price 
+                ? `<span class="original-price">${formatMoneyEuro(item.original_price)}</span>
+                   <span class="discounted-price">${formatMoneyEuro(item.price)}</span>`
+                : `<span class="unit-price">${formatMoneyEuro(item.price)}</span>`
+              }
+              <span class="price-label">each</span>
+            </span>
           </div>
-          ${
-            item.variant && item.variant.inventory_management === 'shopify' && item.variant.inventory_quantity !== null
-              ? `<div class="cart-item-stock">${item.variant.inventory_quantity} ${
-                  window.themeStrings?.stock_available_suffix || 'available'
-                }</div>`
-              : ''
-          }
+        </div>
+
+        <div class="item-actions-column">
+          <div class="quantity-wrapper">
+            <label class="quantity-label">QUANTITY</label>
+            <div class="quantity-controls">
+              <button
+                type="button"
+                class="quantity-btn quantity-decrease"
+                data-key="${item.key}"
+                ${item.quantity <= 1 ? 'disabled' : ''}
+              >
+                −
+              </button>
+              <span class="qty-display" data-key="${item.key}">${item.quantity}</span>
+              <button
+                type="button"
+                class="quantity-btn quantity-increase"
+                data-key="${item.key}"
+                ${isMaxQuantity ? 'disabled' : ''}
+              >
+                +
+              </button>
+            </div>
+            ${hasInventoryLimit 
+              ? `<div class="stock-info">${availableStock} ${window.themeStrings?.stock_available_suffix || 'available'}</div>` 
+              : ''}
+          </div>
+          
+          <div class="total-wrapper">
+            <label class="total-label">TOTAL</label>
+            <div class="item-total-price">${formatMoneyEuro(item.line_price)}</div>
+          </div>
+
+          <button class="remove-item-btn" data-key="${item.key}">
+            × REMOVE
+          </button>
         </div>
       </div>
       `;
@@ -1150,17 +1384,17 @@
 
     // Add quantity change listeners
     function addQuantityListeners() {
-      const decreaseButtons = document.querySelectorAll('.quantity-decrease');
-      const increaseButtons = document.querySelectorAll('.quantity-increase');
+      const decreaseButtons = document.querySelectorAll('.cart-sidebar .quantity-decrease');
+      const increaseButtons = document.querySelectorAll('.cart-sidebar .quantity-increase');
+      const removeButtons = document.querySelectorAll('.cart-sidebar .remove-item-btn');
 
       decreaseButtons.forEach((btn) => {
         btn.addEventListener('click', function () {
           const key = this.dataset.key;
-          const currentQty = parseInt(this.nextElementSibling.textContent);
+          const qtyDisplay = this.parentElement.querySelector('.qty-display');
+          const currentQty = parseInt(qtyDisplay.textContent);
           if (currentQty > 1) {
             updateCartItem(key, currentQty - 1);
-          } else {
-            removeCartItem(key);
           }
         });
       });
@@ -1168,7 +1402,8 @@
       increaseButtons.forEach((btn) => {
         btn.addEventListener('click', function () {
           const key = this.dataset.key;
-          const currentQty = parseInt(this.previousElementSibling.textContent);
+          const qtyDisplay = this.parentElement.querySelector('.qty-display');
+          const currentQty = parseInt(qtyDisplay.textContent);
           const newQty = currentQty + 1;
 
           // Check if we can increase using the same logic as main cart
@@ -1177,12 +1412,38 @@
           }
         });
       });
+      
+      removeButtons.forEach((btn) => {
+        btn.addEventListener('click', function() {
+          const key = this.dataset.key;
+          removeCartItem(key);
+        });
+      });
     }
 
     // Helper function to check if quantity can be increased (same as main cart)
     function canIncreaseQuantity(key, newQuantity) {
-      // First try to get stock info from DOM
-      const stockInfo = document.querySelector(`.cart-item[data-key="${key}"] .cart-item-stock`);
+      // Check inventory data first
+      const inventoryItem = currentInventoryData[key];
+      
+      if (inventoryItem && 
+          inventoryItem.inventory_management === 'shopify' && 
+          inventoryItem.inventory_policy === 'deny' && 
+          inventoryItem.inventory_quantity !== null) {
+          
+        const availableStock = inventoryItem.inventory_quantity;
+        
+        if (newQuantity > availableStock) {
+          const msgTpl = window.themeStrings?.only_x_available || 'Only ___COUNT___ items available in stock.';
+          showError(msgTpl.replace('___COUNT___', availableStock));
+          return false;
+        }
+        return true;
+      }
+
+      // Fallback to DOM check
+      const itemCard = document.querySelector(`.cart-sidebar .cart-item-card[data-key="${key}"]`);
+      const stockInfo = itemCard ? itemCard.querySelector('.stock-info') : null;
 
       if (stockInfo) {
         // Extract available stock from text, language-agnostic: just take the first number
@@ -1193,25 +1454,6 @@
           const msgTpl = window.themeStrings?.only_x_available || 'Only ___COUNT___ items available in stock.';
           showError(msgTpl.replace('___COUNT___', availableStock));
           return false;
-        }
-      } else if (currentCartData && currentCartData.items) {
-        // Fallback to cart data if DOM stock info not available
-        const item = currentCartData.items.find((item) => item.key === key);
-
-        if (
-          item &&
-          item.variant &&
-          item.variant.inventory_management === 'shopify' &&
-          item.variant.inventory_policy === 'deny' &&
-          item.variant.inventory_quantity !== null
-        ) {
-          const availableStock = item.variant.inventory_quantity;
-
-          if (newQuantity > availableStock) {
-            const msgTpl = window.themeStrings?.only_x_available || 'Only ___COUNT___ items available in stock.';
-            showError(msgTpl.replace('___COUNT___', availableStock));
-            return false;
-          }
         }
       }
 
@@ -1231,10 +1473,25 @@
         .then((cart) => {
           // Update stored cart data first
           currentCartData = cart;
-
-          renderCartItems(cart);
-          updateCartCount(cart.item_count);
-          updateCartTotal(cart.total_price);
+          
+          // Re-fetch inventory data to ensure it's up to date (optional but safer)
+          fetch('/?section_id=cart-inventory')
+            .then(res => res.text())
+            .then(inventoryHtml => {
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(inventoryHtml, 'text/html');
+              const inventoryJson = doc.getElementById('inventory-data')?.textContent;
+              if (inventoryJson) {
+                try {
+                  const data = JSON.parse(inventoryJson);
+                  currentInventoryData = data.items || {};
+                } catch (e) { console.error(e); }
+              }
+              
+              renderCartItems(cart);
+              updateCartCount(cart.item_count);
+              updateCartTotal(cart.total_price);
+            });
 
           // Broadcast cart update event for main cart page
           window.dispatchEvent(

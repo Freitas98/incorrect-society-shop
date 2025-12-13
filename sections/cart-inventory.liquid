@@ -1,0 +1,20 @@
+<div id="inventory-data">
+  {
+    "items": {
+      {% for item in cart.items %}
+        "{{ item.key }}": {
+          "id": {{ item.variant_id }},
+          "inventory_quantity": {{ item.variant.inventory_quantity | default: 0 }},
+          "inventory_policy": "{{ item.variant.inventory_policy }}",
+          "inventory_management": "{{ item.variant.inventory_management }}"
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    }
+  }
+</div>
+{% schema %}
+  {
+    "name": "Cart Inventory",
+    "settings": []
+  }
+{% endschema %}
