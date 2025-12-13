@@ -53,6 +53,7 @@
                 <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
+            <div class="predictive-search-results" id="predictive-search-results"></div>
           </form>
           <button
             type="button"
@@ -378,41 +379,42 @@
 
   .header-search-form {
     position: absolute;
-    top: calc(100% + 0.75rem);
+    top: calc(100% + 12px);
     right: 0;
-    width: min(320px, 80vw);
-    padding: 0.4rem;
+    width: 320px;
+    padding: 6px;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 8px;
     background: var(--color-background);
-    border-radius: 999px;
-    border: 1px solid color-mix(in oklab, var(--color-border), transparent 15%);
-    box-shadow: 0 15px 35px rgba(8, 8, 8, 0.15);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
     opacity: 0;
     pointer-events: none;
-    transform: translateY(-8px) scale(0.96);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    z-index: 15;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 100;
   }
 
   .header-search.is-open .header-search-form {
     opacity: 1;
     pointer-events: auto;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 
   .header-search-input {
     flex: 1;
     border: none;
     background: transparent;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.95rem;
+    padding: 8px 12px;
+    font-size: 14px;
     color: var(--color-foreground);
+    font-family: var(--font-primary-family);
   }
 
   .header-search-input::placeholder {
-    color: color-mix(in oklab, var(--color-foreground), transparent 35%);
+    color: var(--color-foreground-muted);
   }
 
   .header-search-input:focus {
@@ -421,20 +423,86 @@
 
   .header-search-submit {
     border: none;
-    background: var(--color-foreground);
+    background: var(--color-primary);
     color: var(--color-background);
-    border-radius: 999px;
-    width: 34px;
-    height: 34px;
+    border-radius: var(--radius-base);
+    width: 36px;
+    height: 36px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: opacity 0.2s ease;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
   }
 
   .header-search-submit:hover {
-    opacity: 0.85;
+    background-color: var(--color-primary-hover);
+    opacity: 1;
+  }
+
+  .predictive-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-base) var(--radius-base);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 101;
+    display: none;
+  }
+
+  .predictive-search-results.has-results {
+    display: block;
+  }
+
+  .predictive-search-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    color: var(--color-foreground);
+    transition: background-color 0.2s;
+  }
+
+  .predictive-search-item:last-child {
+    border-bottom: none;
+  }
+
+  .predictive-search-item:hover {
+    background-color: var(--color-surface);
+  }
+
+  .predictive-search-image {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+  }
+
+  .predictive-search-info {
+    flex: 1;
+  }
+
+  .predictive-search-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .predictive-search-price {
+    font-size: 12px;
+    color: var(--color-foreground-muted);
+    margin-top: 2px;
   }
 
   .header-actions {
@@ -840,7 +908,15 @@
       object-fit: contain;
     }
     .header-search-form {
-      width: min(92vw, 360px);
+      position: fixed;
+      top: calc(var(--announcement-height, 46px) + var(--site-header-height, 80px) + 10px);
+      left: 20px;
+      right: 20px;
+      width: auto;
+      transform: translateY(-10px);
+    }
+    .header-search.is-open .header-search-form {
+      transform: translateY(0);
     }
   }
 
@@ -1119,6 +1195,14 @@
   .cart-sidebar .remove-item-btn:hover {
     color: var(--color-error);
   }
+
+  .sold-out-badge {
+    color: var(--color-error);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
 {% endstylesheet %}
 
 {% javascript %}
@@ -1160,6 +1244,60 @@
     // Store current cart data for stock validation
     let currentCartData = null;
     let currentInventoryData = {};
+
+    // Predictive Search
+    const searchInput = document.getElementById('header-search-input');
+    const searchResults = document.getElementById('predictive-search-results');
+    let searchTimeout;
+
+    if (searchInput && searchResults) {
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim();
+
+        if (query.length === 0) {
+          searchResults.innerHTML = '';
+          searchResults.classList.remove('has-results');
+          return;
+        }
+
+        searchTimeout = setTimeout(() => {
+          fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=5`)
+            .then(response => response.json())
+            .then(data => {
+              const products = data.resources.results.products;
+              
+              if (products.length > 0) {
+                searchResults.innerHTML = products.map(product => `
+                  <a href="${product.url}" class="predictive-search-item">
+                    <img src="${product.image}" alt="${product.title}" class="predictive-search-image" width="40" height="40">
+                    <div class="predictive-search-info">
+                      <h4 class="predictive-search-title">${product.title}</h4>
+                      <div class="predictive-search-price">
+                        ${product.available ? product.price + ' €' : '<span class="sold-out-badge">Sold Out</span>'}
+                      </div>
+                    </div>
+                  </a>
+                `).join('');
+                searchResults.classList.add('has-results');
+              } else {
+                searchResults.innerHTML = '<div class="predictive-search-item">No results found</div>';
+                searchResults.classList.add('has-results');
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching search suggestions:', error);
+            });
+        }, 300); // Debounce for 300ms
+      });
+
+      // Close search results when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+          searchResults.classList.remove('has-results');
+        }
+      });
+    }
 
     // Open cart sidebar
     function openCart() {

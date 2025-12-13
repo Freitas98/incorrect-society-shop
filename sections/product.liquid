@@ -860,11 +860,7 @@
       });
     });
   });
-  console.log('🎯 PRODUCT.LIQUID JAVASCRIPT STARTED!');
-
   document.addEventListener('DOMContentLoaded', function () {
-    console.log('📄 DOM LOADED - Starting product page initialization...');
-    // Image Gallery Functionality
     const images = document.querySelectorAll('.main-image');
     const indicators = document.querySelectorAll('.indicator');
     const prevBtn = document.querySelector('.gallery-prev');
@@ -971,24 +967,19 @@
 
     // Variant Selection - Simple and Reliable
     function initVariantSelection() {
-      console.log('🚀 Starting variant selection...');
 
       // Get variant data from the script tag
       const variantDataScript = document.getElementById('variant-data');
       if (!variantDataScript) {
-        console.log('❌ No variant data found');
         return;
       }
 
       const variantData = JSON.parse(variantDataScript.textContent);
-      console.log('📋 Variant data loaded:', variantData);
 
       // Check if this is a product with variants or a simple product
       const hasVariantOptions = variantData.options && variantData.options.length > 0;
 
       if (hasVariantOptions) {
-        console.log('📋 Product with variants detected');
-
         // Build maps of available options for each position
         const availableOptionsByPosition = {};
         
@@ -1011,8 +1002,6 @@
           }
         });
 
-        console.log('Available options by position:', availableOptionsByPosition);
-
         // Get all option inputs grouped by position
         const optionGroups = {};
         document.querySelectorAll('input[name^="option-"]').forEach((input) => {
@@ -1024,20 +1013,14 @@
         });
 
         // For each option input, check if its value is available at that position
-        console.log('Checking option inputs:');
         document.querySelectorAll('input[name^="option-"]').forEach((input) => {
           const optionPosition = parseInt(input.name.match(/option-(\d+)/)[1]) - 1; // 0-based index
           const optionValue = input.value.trim().toLowerCase();
           const label = document.querySelector(`label[for="${input.id}"]`);
 
-          console.log(`Input: name=${input.name}, value=${input.value}, position=${optionPosition}`);
-
           // Check if this option value is available at this position
           const positionOptions = availableOptionsByPosition[optionPosition];
           const isAvailable = positionOptions && positionOptions.has(optionValue);
-
-          console.log(`Position ${optionPosition} options:`, positionOptions ? Array.from(positionOptions) : 'none');
-          console.log(`Is ${optionValue} available at position ${optionPosition}?`, isAvailable);
 
           if (!isAvailable) {
             // Option is not available - disable it
@@ -1046,7 +1029,6 @@
               label.classList.add('option-unavailable');
               label.style.pointerEvents = 'none';
             }
-            console.log('❌ Disabled unavailable option:', input.value, 'at position', optionPosition);
           } else {
             // Option is available - enable it
             input.disabled = false;
@@ -1054,7 +1036,6 @@
               label.classList.remove('option-unavailable');
               label.style.pointerEvents = 'auto';
             }
-            console.log('✅ Enabled available option:', input.value, 'at position', optionPosition);
           }
         });
 
@@ -1132,8 +1113,6 @@
 
         // Initial option availability update
         updateOptionAvailability();
-      } else {
-        console.log('🎁 Simple product (no variants) detected');
       }
 
       // Simple variant update function (works for both types)
@@ -1205,19 +1184,13 @@
                   : window.themeStrings?.add_to_cart || 'Add to cart';
               }
             }
-
-            console.log('Updated to variant:', matchingVariant.title, 'with options:', selectedOptions);
-          } else {
-            console.log('No matching variant found for options:', selectedOptions);
-          }
+          } 
         }
         // For simple products, variant selector is already set correctly
       }
 
       // Initial update
       updateVariant();
-
-      console.log('✅ Variant selection initialized');
     }
 
     // Initialize variant selection
@@ -1227,10 +1200,7 @@
     const productForm = document.querySelector('form[action*="/cart/add"]');
     const cartMessage = document.querySelector('.cart-message');
 
-    console.log('🛒 Add to cart form found:', !!productForm);
-
     if (productForm) {
-      console.log('✅ Setting up AJAX add to cart for all products');
       productForm.addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -1261,8 +1231,6 @@
             }
           }
         }
-
-        console.log('🛒 Adding product to cart via AJAX...');
 
         const formData = new FormData(productForm);
         const addButton = productForm.querySelector('#add-to-cart-btn');
@@ -1319,8 +1287,6 @@
           });
       });
     }
-
-    console.log('🏁 ALL PRODUCT PAGE SCRIPTS LOADED SUCCESSFULLY!');
   });
 {% endjavascript %}
 
