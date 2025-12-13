@@ -1,10 +1,34 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "news-magazine",
+      "blocks": {
+        "youtube_PYkqig": {
+          "type": "youtube",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=2i2ZrFuOhkM",
+            "title": "\"INCORRECT\" - Introduction",
+            "description": "Presentation of the brand INCORRECT SOCIETY."
+          }
+        }
+      },
+      "block_order": [
+        "youtube_PYkqig"
+      ],
       "settings": {
         "heading": "MAGAZINE",
-        "subheading": "The latest from Incorrect Society"
+        "subheading": "The latest from Incorrect Society",
+        "background_color": "#ffffff",
+        "text_color": "#000000"
       }
     }
   },
