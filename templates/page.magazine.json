@@ -12,12 +12,22 @@
     "main": {
       "type": "news-magazine",
       "blocks": {
-        "archive_d8xyMH": {
-          "type": "archive",
+        "social_iaPyby": {
+          "type": "social",
           "settings": {
-            "title": "teste",
-            "link": "",
-            "date": ""
+            "image": "shopify://shop_images/intagramPost2.png",
+            "link": "https://www.instagram.com/p/DN1O9Fn2KqS/?img_index=1",
+            "platform": "instagram",
+            "caption": "OUTSIDER - TOMORROW 6PM ❌"
+          }
+        },
+        "social_CTzTrd": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/intagramPost1.png",
+            "link": "https://www.instagram.com/p/DJhqiOnsTkc/",
+            "platform": "instagram",
+            "caption": "Always make sure u dressing well when they pouring your wine. ❌🖤\n\nin lack of wine, poncha."
           }
         },
         "youtube_iUqrzF": {
@@ -38,7 +48,8 @@
         }
       },
       "block_order": [
-        "archive_d8xyMH",
+        "social_iaPyby",
+        "social_CTzTrd",
         "youtube_iUqrzF",
         "youtube_PYkqig"
       ],
