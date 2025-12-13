@@ -12,6 +12,14 @@
     "main": {
       "type": "news-magazine",
       "blocks": {
+        "youtube_iUqrzF": {
+          "type": "youtube",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=MeQTufgD8IA",
+            "title": "INCORRECT Vlog tapes #1 - the incorrect way to make content",
+            "description": "Welcome to our BTS series, join us in the content creation process."
+          }
+        },
         "youtube_PYkqig": {
           "type": "youtube",
           "settings": {
@@ -22,6 +30,7 @@
         }
       },
       "block_order": [
+        "youtube_iUqrzF",
         "youtube_PYkqig"
       ],
       "settings": {
