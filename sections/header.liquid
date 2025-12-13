@@ -1311,13 +1311,17 @@
           return `
       <div class="cart-item-card" data-key="${item.key}">
         <div class="item-image">
-          ${item.featured_image 
-            ? `<img src="${item.featured_image.url}?width=160" alt="${item.product_title}" loading="lazy" width="80" height="80">` 
-            : '<div class="no-image">No Image</div>'}
+          <a href="${item.url}" style="display: block; width: 100%; height: 100%;">
+            ${item.featured_image 
+              ? `<img src="${item.featured_image.url}?width=160" alt="${item.product_title}" loading="lazy" width="80" height="80">` 
+              : '<div class="no-image">No Image</div>'}
+          </a>
         </div>
 
         <div class="item-info">
-          <h3 class="item-title">${item.product_title}</h3>
+          <a href="${item.url}" style="text-decoration: none; color: inherit;">
+            <h3 class="item-title">${item.product_title}</h3>
+          </a>
           
           <div class="item-variant-price-wrapper">
             ${variantHtml}
