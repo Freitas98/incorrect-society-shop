@@ -32,6 +32,9 @@
         <li class="header-menu-item">
           <a href="{{ routes.collections_url }}/accessories" class="header-menu-link">Accessories</a>
         </li>
+        <li class="header-menu-item">
+          <a href="{{ pages['news'].url }}" class="header-menu-link">News</a>
+        </li>
       </ul>
     </nav>
     <div class="header-right">
@@ -158,6 +161,7 @@
       <li><a href="{{ routes.collections_url }}/outsider">Collection</a></li>
       <li><a href="{{ routes.collections_url }}/gift-cards">Gift Card</a></li>
       <li><a href="{{ routes.collections_url }}/accessories">Accessories</a></li>
+      <li><a href="{{ pages['news'].url }}">News</a></li>
     </ul>
     <div class="mobile-nav-actions">
       {% if shop.customer_accounts_enabled %}
@@ -230,7 +234,7 @@
   .header-content {
     width: 100%;
     margin: 0;
-    padding: 0;
+    padding: 0 40px;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
@@ -540,8 +544,6 @@
 
   .header-hamburger {
     display: none;
-    width: 44px;
-    height: 44px;
     border-radius: 50%;
   }
 
@@ -841,7 +843,7 @@
     margin: 0;
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1250px) {
     .header-content {
       padding: 0 20px;
       gap: 20px;

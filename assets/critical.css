@@ -538,8 +538,7 @@ header {
 }
 /* Constrain header content and add side padding to match design */
 .site-header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
+  margin: 10px auto;
   padding: 0 1rem; /* small side gutters */
   width: 100%;
 }
@@ -605,6 +604,7 @@ header {
 
 .header-menu-item {
   margin: 0;
+  text-wrap: nowrap;
 }
 
 .header-menu-link {
