@@ -12,6 +12,14 @@
     "main": {
       "type": "news-magazine",
       "blocks": {
+        "archive_d8xyMH": {
+          "type": "archive",
+          "settings": {
+            "title": "teste",
+            "link": "",
+            "date": ""
+          }
+        },
         "youtube_iUqrzF": {
           "type": "youtube",
           "settings": {
@@ -30,6 +38,7 @@
         }
       },
       "block_order": [
+        "archive_d8xyMH",
         "youtube_iUqrzF",
         "youtube_PYkqig"
       ],
