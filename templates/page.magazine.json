@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "news-magazine",
+      "settings": {
+        "heading": "MAGAZINE",
+        "subheading": "The latest from Incorrect Society"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

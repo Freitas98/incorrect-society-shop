@@ -1,0 +1,500 @@
+{% comment %}
+  News/Magazine Section
+  Aggregates content from YouTube, Socials, Archive, and Spotify.
+{% endcomment %}
+
+<div class="news-magazine-section" style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};">
+  <div class="page-width">
+    {% if section.settings.heading != blank %}
+      <div class="section-header text-center">
+        <h2 class="section-title">{{ section.settings.heading | escape }}</h2>
+        {% if section.settings.subheading != blank %}
+          <div class="section-subheading">{{ section.settings.subheading | escape }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="news-filter">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="youtube">YouTube</button>
+      <button class="filter-btn" data-filter="social">Socials</button>
+      <button class="filter-btn" data-filter="archive">Archive</button>
+      <button class="filter-btn" data-filter="spotify">Spotify</button>
+    </div>
+
+    <div class="news-grid">
+      {% for block in section.blocks %}
+        <div class="news-card news-card--{{ block.type }}" data-type="{{ block.type }}" {{ block.shopify_attributes }}>
+          
+          {% case block.type %}
+            
+            {% when 'youtube' %}
+              <div class="news-media-wrapper video-wrapper">
+                {% if block.settings.video_url.id %}
+                  <iframe
+                    src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?enablejsapi=1"
+                    class="js-youtube"
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen
+                    title="{{ block.settings.title | escape }}"
+                  ></iframe>
+                {% else %}
+                  <div class="placeholder-media">
+                    {{ 'video' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="news-content">
+                <div class="news-tag youtube-tag">YouTube</div>
+                {% if block.settings.title != blank %}
+                  <h3 class="news-title">{{ block.settings.title }}</h3>
+                {% endif %}
+                {% if block.settings.description != blank %}
+                  <div class="news-excerpt">{{ block.settings.description }}</div>
+                {% endif %}
+              </div>
+
+            {% when 'social' %}
+              <a href="{{ block.settings.link }}" class="news-link" target="_blank">
+                <div class="news-media-wrapper">
+                  {% if block.settings.image != blank %}
+                    {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'news-image' }}
+                  {% else %}
+                    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {% endif %}
+                  <div class="social-icon-overlay">
+                    {% if block.settings.platform == 'instagram' %}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    {% elsif block.settings.platform == 'tiktok' %}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93v6.16c0 2.52-1.12 4.84-2.9 6.24-1.72 1.36-3.92 1.87-6.08 1.41-2.06-.44-3.87-1.82-4.98-3.66-1.1-1.84-1.23-4.17-.37-6.1 1.09-2.46 3.58-4.17 6.26-4.21v4.21c-.44-.05-.9.11-1.22.44-.32.33-.48.79-.43 1.25.05.46.29.88.65 1.16.36.28.82.41 1.28.36.92-.1 1.66-.85 1.71-1.77.06-2.96 0-5.92 0-8.88z"/></svg>
+                    {% else %}
+                      <span class="platform-text">{{ block.settings.platform }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="news-content">
+                  <div class="news-tag social-tag">{{ block.settings.platform }}</div>
+                  {% if block.settings.caption != blank %}
+                    <div class="news-excerpt">{{ block.settings.caption | truncate: 100 }}</div>
+                  {% endif %}
+                </div>
+              </a>
+
+            {% when 'archive' %}
+              <a href="{{ block.settings.link }}" class="news-link">
+                <div class="news-media-wrapper">
+                  {% if block.settings.image != blank %}
+                    {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'news-image' }}
+                  {% else %}
+                    {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  {% endif %}
+                </div>
+                <div class="news-content">
+                  <div class="news-tag archive-tag">Archive</div>
+                  {% if block.settings.title != blank %}
+                    <h3 class="news-title">{{ block.settings.title }}</h3>
+                  {% endif %}
+                  {% if block.settings.date != blank %}
+                    <div class="news-date">{{ block.settings.date }}</div>
+                  {% endif %}
+                </div>
+              </a>
+
+            {% when 'spotify' %}
+              <div class="news-media-wrapper spotify-wrapper">
+                {% if block.settings.embed_code != blank %}
+                  {{ block.settings.embed_code }}
+                {% else %}
+                  <div class="placeholder-media spotify-placeholder">
+                    <span>Spotify Embed</span>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="news-content">
+                <div class="news-tag spotify-tag">Spotify</div>
+                {% if block.settings.title != blank %}
+                  <h3 class="news-title">{{ block.settings.title }}</h3>
+                {% endif %}
+              </div>
+
+          {% endcase %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% style %}
+  .news-magazine-section {
+    padding: 60px 0;
+  }
+  
+  .section-header {
+    margin-bottom: 40px;
+  }
+  
+  .section-title {
+    font-size: 32px;
+    font-weight: var(--font-heading-weight);
+    text-transform: uppercase;
+    letter-spacing: var(--font-heading-letter-spacing);
+    margin-bottom: 10px;
+  }
+  
+  .section-subheading {
+    font-size: 16px;
+    opacity: 0.8;
+  }
+
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 20px;
+  }
+
+  .news-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-base);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .news-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .news-media-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 Aspect Ratio */
+    background: #000;
+    overflow: hidden;
+  }
+
+  .news-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .news-card:hover .news-image {
+    transform: scale(1.05);
+  }
+
+  .video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .spotify-wrapper {
+    padding-top: 0;
+    height: 152px; /* Standard Spotify compact embed height */
+    background: transparent;
+  }
+  
+  .spotify-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+  }
+
+  .news-content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .news-tag {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: fit-content;
+  }
+
+  .youtube-tag { background: #FF0000; color: #fff; }
+  .social-tag { background: var(--color-foreground); color: var(--color-background); }
+  .archive-tag { background: var(--color-border); color: var(--color-foreground); }
+  .spotify-tag { background: #1DB954; color: #fff; }
+
+  .news-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .news-excerpt {
+    font-size: 14px;
+    opacity: 0.8;
+    line-height: 1.5;
+  }
+
+  .news-date {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: auto;
+  }
+
+  .social-icon-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .placeholder-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    fill: var(--color-border);
+    background: var(--color-surface);
+  }
+
+  @media (max-width: 768px) {
+    .news-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .news-filter {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    color: var(--color-foreground);
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--color-foreground);
+    color: var(--color-background);
+    border-color: var(--color-foreground);
+  }
+
+  .news-card.hidden {
+    display: none;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+{% endstyle %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const newsCards = document.querySelectorAll('.news-card');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterBtns.forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        btn.classList.add('active');
+
+        const filterValue = btn.getAttribute('data-filter');
+
+        newsCards.forEach(card => {
+          if (filterValue === 'all' || card.getAttribute('data-type') === filterValue) {
+            card.classList.remove('hidden');
+            // Trigger a small animation or layout update if needed
+            card.style.animation = 'fadeIn 0.5s ease';
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "News Magazine",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest News"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Stay updated with our latest content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text Color",
+      "default": "#000000"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "youtube",
+      "name": "YouTube Video",
+      "settings": [
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Video URL",
+          "accept": ["youtube", "vimeo"]
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social Post",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "select",
+          "id": "platform",
+          "label": "Platform",
+          "options": [
+            { "value": "instagram", "label": "Instagram" },
+            { "value": "tiktok", "label": "TikTok" },
+            { "value": "twitter", "label": "Twitter" },
+            { "value": "other", "label": "Other" }
+          ],
+          "default": "instagram"
+        },
+        {
+          "type": "textarea",
+          "id": "caption",
+          "label": "Caption"
+        }
+      ]
+    },
+    {
+      "type": "archive",
+      "name": "Archive Item",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "Date"
+        }
+      ]
+    },
+    {
+      "type": "spotify",
+      "name": "Spotify Embed",
+      "settings": [
+        {
+          "type": "html",
+          "id": "embed_code",
+          "label": "Spotify Embed Code",
+          "info": "Paste the iframe code from Spotify here"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "News Magazine",
+      "blocks": [
+        { "type": "youtube" },
+        { "type": "social" },
+        { "type": "archive" }
+      ]
+    }
+  ]
+}
+{% endschema %}
