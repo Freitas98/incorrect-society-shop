@@ -1,10 +1,111 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "news-magazine",
+      "blocks": {
+        "spotify_HfeedD": {
+          "type": "spotify",
+          "settings": {
+            "embed_code": "<iframe data-testid=\"embed-iframe\" style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/playlist/4mtoSf0Fh48ecJHF9MJiG1?utm_source=generator&amp;theme=0\" width=\"100%\" height=\"500\" frameborder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
+            "title": "THE INCORRECT PLAYLIST"
+          }
+        },
+        "archive_mEJi9J": {
+          "type": "archive",
+          "settings": {
+            "image": "shopify://shop_images/archivePost1_eddaeade-38aa-45ec-86ec-f8c08110b7b4.png",
+            "title": "u’re welcomed - hoodie",
+            "link": "",
+            "date": "28/8/2025"
+          }
+        },
+        "social_BLpiGG": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/tiktokPost1_9203e904-82c0-4703-a4b0-65eb7066d69a.png",
+            "link": "",
+            "platform": "tiktok",
+            "caption": "We call it community service. #fy #f #streetfashion #clothingbrand"
+          }
+        },
+        "social_LxC9La": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/CAR01650-2.jpg",
+            "link": "",
+            "platform": "instagram",
+            "caption": "Don’t let it sink, grab yours.\n\nOnly once a year up to 50% Discount. Opens at 6 PM, sign up the e-mail list for 1 hour early access."
+          }
+        },
+        "social_HbawqK": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/intagramPost3.png",
+            "link": "",
+            "platform": "instagram",
+            "caption": "Emergency Hospitality ❌"
+          }
+        },
+        "social_iaPyby": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/intagramPost2.png",
+            "link": "https://www.instagram.com/p/DN1O9Fn2KqS/?img_index=1",
+            "platform": "instagram",
+            "caption": "OUTSIDER - TOMORROW 6PM ❌"
+          }
+        },
+        "social_CTzTrd": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/intagramPost1.png",
+            "link": "https://www.instagram.com/p/DJhqiOnsTkc/",
+            "platform": "instagram",
+            "caption": "Always make sure u dressing well when they pouring your wine. ❌🖤\n\nin lack of wine, poncha."
+          }
+        },
+        "youtube_iUqrzF": {
+          "type": "youtube",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=MeQTufgD8IA",
+            "title": "INCORRECT Vlog tapes #1 - the incorrect way to make content",
+            "description": "Welcome to our BTS series, join us in the content creation process."
+          }
+        },
+        "youtube_PYkqig": {
+          "type": "youtube",
+          "settings": {
+            "video_url": "https://www.youtube.com/watch?v=2i2ZrFuOhkM",
+            "title": "\"INCORRECT\" - Introduction",
+            "description": "Presentation of the brand INCORRECT SOCIETY."
+          }
+        }
+      },
+      "block_order": [
+        "spotify_HfeedD",
+        "archive_mEJi9J",
+        "social_BLpiGG",
+        "social_LxC9La",
+        "social_HbawqK",
+        "social_iaPyby",
+        "social_CTzTrd",
+        "youtube_iUqrzF",
+        "youtube_PYkqig"
+      ],
       "settings": {
         "heading": "MAGAZINE",
-        "subheading": "The latest from Incorrect Society"
+        "subheading": "The latest from Incorrect Society",
+        "background_color": "#ffffff",
+        "text_color": "#000000"
       }
     }
   },
