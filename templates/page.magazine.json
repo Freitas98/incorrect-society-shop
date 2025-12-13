@@ -12,6 +12,24 @@
     "main": {
       "type": "news-magazine",
       "blocks": {
+        "social_LxC9La": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/CAR01650-2.jpg",
+            "link": "",
+            "platform": "instagram",
+            "caption": "Don’t let it sink, grab yours.\n\nOnly once a year up to 50% Discount. Opens at 6 PM, sign up the e-mail list for 1 hour early access."
+          }
+        },
+        "social_HbawqK": {
+          "type": "social",
+          "settings": {
+            "image": "shopify://shop_images/intagramPost3.png",
+            "link": "",
+            "platform": "instagram",
+            "caption": "Emergency Hospitality ❌"
+          }
+        },
         "social_iaPyby": {
           "type": "social",
           "settings": {
@@ -48,6 +66,8 @@
         }
       },
       "block_order": [
+        "social_LxC9La",
+        "social_HbawqK",
         "social_iaPyby",
         "social_CTzTrd",
         "youtube_iUqrzF",
