@@ -9,9 +9,9 @@
   %}
   {% capture announcement_block %}
     <span class="announcement-text">
-      <span class="announcement-dot" aria-hidden="true"></span>
+      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_red.svg?v=1764257556" class="announcement-icon" alt="" width="20" height="20">
       <span class="announcement-copy">{{ announcement_text }}</span>
-      <span class="announcement-dot" aria-hidden="true"></span>
+      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_red.svg?v=1764257556" class="announcement-icon" alt="" width="20" height="20">
     </span>
   {% endcapture %}
   <div class="announcement-content" aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}">
@@ -48,7 +48,6 @@
     letter-spacing: var(--font-heading-letter-spacing);
     width: max-content;
     text-rendering: geometricPrecision;
-    mask-image: linear-gradient(90deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
   }
 
   .announcement-text {
@@ -57,12 +56,11 @@
     gap: 12px;
   }
 
-  .announcement-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--color-primary);
-    display: inline-flex;
+  .announcement-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: inline-block;
   }
 
   .announcement-spacer {
