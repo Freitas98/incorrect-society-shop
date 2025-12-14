@@ -7,10 +7,13 @@
 
 <div class="collection-section">
   <div class="collection-header">
-    <h1 class="collection-title">{{ collection.title }}</h1>
-    {% if collection.description != blank %}
-      <div class="collection-description">{{ collection.description }}</div>
-    {% endif %}
+    <div class="collection-header-inner">
+      <h1 class="collection-title">{{ collection.title }}</h1>
+      {% if collection.description != blank %}
+        <div class="collection-description">{{ collection.description }}</div>
+      {% endif %}
+    </div>
+    <div class="collection-separator"></div>
   </div>
 
   <div class="collection-products">
@@ -65,15 +68,35 @@
   }
 
   .collection-header {
-    text-align: center;
     margin-bottom: 40px;
+    width: 100%;
+  }
+
+  .collection-header-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .collection-separator {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    height: 1px;
+    background-color: var(--color-foreground);
+    opacity: 0.2;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .collection-description {
-    margin-top: 12px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0;
+    max-width: 600px;
     color: var(--color-foreground);
     opacity: 0.9;
     line-height: 1.6;
@@ -89,16 +112,18 @@
   }
 
   .collection-products {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
     width: 100%;
-    margin: 0;
+    margin: 0 auto;
+    max-width: 1400px;
   }
 
   .product-card {
     background-color: transparent;
-    width: 100%;
+    width: calc(25% - 15px);
     min-width: 0;
   }
 
@@ -207,10 +232,26 @@
     color: var(--color-primary);
   }
 
+  /* Desktop Header Layout */
+  @media (min-width: 1025px) {
+    .collection-header-inner {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 95px;
+      justify-content: center;
+      text-align: left;
+    }
+    
+    .collection-description {
+      text-align: left;
+      max-width: 600px;
+    }
+  }
+
   /* Responsive Design */
   @media (max-width: 1200px) {
-    .collection-products {
-      grid-template-columns: repeat(3, 1fr);
+    .product-card {
+      width: calc(33.333% - 14px);
     }
   }
 
@@ -229,9 +270,8 @@
   }
 
   @media (max-width: 768px) {
-    .collection-products {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+    .product-card {
+      width: calc(50% - 10px);
     }
 
     .collection-title {
@@ -241,8 +281,8 @@
   }
 
   @media (max-width: 480px) {
-    .collection-products {
-      grid-template-columns: 1fr;
+    .product-card {
+      width: 100%;
     }
 
     .collection-section {
