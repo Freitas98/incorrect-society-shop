@@ -6,21 +6,21 @@
 <div class="news-magazine-section" style="background-color: {{ section.settings.background_color }}; color: {{ section.settings.text_color }};">
   <div class="page-width">
     {% if section.settings.heading != blank %}
-      <div class="section-header text-center">
-        <h2 class="section-title">{{ section.settings.heading | escape }}</h2>
+      <div class="collection-header">
+        <h2 class="collection-title">{{ section.settings.heading | escape }}</h2>
         {% if section.settings.subheading != blank %}
-          <div class="section-subheading">{{ section.settings.subheading | escape }}</div>
+          <div class="collection-description">{{ section.settings.subheading | escape }}</div>
         {% endif %}
       </div>
     {% endif %}
 
     <div class="news-filter">
-      <button class="filter-btn active" data-filter="all">All</button>
-      <button class="filter-btn" data-filter="youtube">YouTube</button>
-      <button class="filter-btn" data-filter="social">Socials</button>
-      <button class="filter-btn" data-filter="archive">Archive</button>
-      <button class="filter-btn" data-filter="spotify">Spotify</button>
-      <button class="filter-btn" data-filter="text">Articles</button>
+      <button id="filter-btn" class="btn btn--secondary active" data-filter="all">All</button>
+      <button id="filter-btn" class="btn btn--secondary" data-filter="youtube">YouTube</button>
+      <button id="filter-btn" class="btn btn--secondary" data-filter="social">Socials</button>
+      <button id="filter-btn" class="btn btn--secondary" data-filter="archive">Archive</button>
+      <button id="filter-btn" class="btn btn--secondary" data-filter="spotify">Spotify</button>
+      <button id="filter-btn" class="btn btn--secondary" data-filter="text">Articles</button>
     </div>
 
     <div class="news-grid">
@@ -149,6 +149,11 @@
   
   .section-header {
     margin-bottom: 40px;
+    display: flex;
+    margin-bottom: 40px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
   
   .section-title {
@@ -333,24 +338,10 @@
     flex-wrap: wrap;
   }
 
-  .filter-btn {
-    background: transparent;
-    border: 1px solid var(--color-border);
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.3s ease;
-    color: var(--color-foreground);
-  }
-
-  .filter-btn:hover,
-  .filter-btn.active {
-    background: var(--color-foreground);
+  .btn.btn--secondary.active {
+    background: var(--color-primary);
     color: var(--color-background);
-    border-color: var(--color-foreground);
+    border-color: var(--color-primary);
   }
 
   .news-card.hidden {
@@ -365,7 +356,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterBtns = document.querySelectorAll('#filter-btn');
     const newsCards = document.querySelectorAll('.news-card');
 
     filterBtns.forEach(btn => {
