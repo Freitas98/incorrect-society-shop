@@ -96,21 +96,12 @@
                   type="button"
                   class="quantity-btn quantity-increase"
                   data-key="{{ item.key }}"
-                  {% if item.variant.inventory_management == 'shopify'
-                    and item.variant.inventory_policy == 'deny'
-                    and item.variant.inventory_quantity != null
-                    and item.variant.inventory_quantity <= item.quantity
-                  %}
-                    disabled
-                  {% endif %}
                 >
                   +
                 </button>
               </div>
               {% if item.variant.inventory_management == 'shopify' and item.variant.inventory_quantity != null %}
-                <span class="stock-info">
-                  {{- 'cart.stock_available_html' | t: count: item.variant.inventory_quantity -}}
-                </span>
+                <!-- Stock info removed -->
               {% endif %}
             </div>
 

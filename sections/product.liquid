@@ -68,9 +68,6 @@
     <div class="product-info">
       <h1 class="product-title">{{ product.title }}</h1>
       <div class="product-price">{% render 'price', amount: current_variant.price, product: product %}</div>
-      <div class="product-inventory">
-        <!-- Inventory status will be injected here -->
-      </div>
     </div>
 
     {% form 'product', product %}
@@ -1157,22 +1154,6 @@
               priceElement.innerHTML = matchingVariant.priceHtml;
             }
 
-            // Update inventory display
-            const inventoryElement = document.querySelector('.product-inventory');
-            if (inventoryElement) {
-              if (matchingVariant.available) {
-                if (matchingVariant.inventory_management === 'shopify' && matchingVariant.inventory_quantity > 0) {
-                  inventoryElement.textContent = `${matchingVariant.inventory_quantity} in stock`;
-                } else if (matchingVariant.inventory_policy === 'continue') {
-                  inventoryElement.textContent = 'In stock';
-                } else {
-                   inventoryElement.textContent = 'In stock';
-                }
-              } else {
-                inventoryElement.textContent = 'Out of stock';
-              }
-            }
-
             // Update button
             const addToCartBtn = document.querySelector('#add-to-cart-btn');
             if (addToCartBtn) {
@@ -1215,20 +1196,7 @@
             const variantData = JSON.parse(variantDataScript.textContent);
             const variant = variantData.variants.find(v => v.id === variantId);
             
-            if (variant && variant.inventory_management === 'shopify' && variant.inventory_policy === 'deny') {
-              const cartItem = currentCart.items.find(item => item.variant_id === variantId);
-              const currentQtyInCart = cartItem ? cartItem.quantity : 0;
-              const available = variant.inventory_quantity;
-              
-              if (currentQtyInCart + 1 > available) {
-                if (window.showError) {
-                  window.showError(`Cannot add more than available. You already have ${currentQtyInCart} in cart and only ${available} are available.`);
-                } else {
-                  alert(`Cannot add more than available. You already have ${currentQtyInCart} in cart and only ${available} are available.`);
-                }
-                return;
-              }
-            }
+            // Inventory check removed to allow unlimited additions
           }
         }
 

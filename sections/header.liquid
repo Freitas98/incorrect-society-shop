@@ -1493,13 +1493,12 @@
                 type="button"
                 class="quantity-btn quantity-increase"
                 data-key="${item.key}"
-                ${isMaxQuantity ? 'disabled' : ''}
               >
                 +
               </button>
             </div>
             ${hasInventoryLimit 
-              ? `<div class="stock-info">${availableStock} ${window.themeStrings?.stock_available_suffix || 'available'}</div>` 
+              ? `` 
               : ''}
           </div>
           
@@ -1546,9 +1545,9 @@
           const newQty = currentQty + 1;
 
           // Check if we can increase using the same logic as main cart
-          if (canIncreaseQuantity(key, newQty)) {
+          // if (canIncreaseQuantity(key, newQty)) {
             updateCartItem(key, newQty);
-          }
+          // }
         });
       });
       
