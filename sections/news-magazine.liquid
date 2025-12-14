@@ -123,6 +123,11 @@
 
             {% when 'text' %}
               <a href="{{ block.settings.link }}" class="news-link">
+                {% if block.settings.image != blank %}
+                  <div class="news-media-wrapper">
+                    {{ block.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', class: 'news-image' }}
+                  </div>
+                {% endif %}
                 <div class="news-content text-content">
                   <div class="news-tag text-tag">Article</div>
                   {% if block.settings.title != blank %}
@@ -516,6 +521,11 @@
       "type": "text",
       "name": "Text Post",
       "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
         {
           "type": "text",
           "id": "title",
