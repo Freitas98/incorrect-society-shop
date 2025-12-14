@@ -9,35 +9,34 @@
  */
 {
   "sections": {
-    "product_grid": {
-      "type": "product-grid",
+    "hero_logo": {
+      "type": "hero-logo",
+      "settings": {
+        "max_width": 90
+      }
+    },
+    "full_width_images": {
+      "type": "full-width-images",
       "blocks": {
-        "wide_banner_PFnNhN": {
-          "type": "wide_banner",
+        "image_1": {
+          "type": "image",
           "settings": {
-            "alt": "",
-            "link": ""
           }
         },
-        "wide_banner_qLVtG6": {
-          "type": "wide_banner",
+        "image_2": {
+          "type": "image",
           "settings": {
-            "alt": "",
-            "link": ""
           }
         }
       },
       "block_order": [
-        "wide_banner_PFnNhN",
-        "wide_banner_qLVtG6"
-      ],
-      "settings": {
-        "collection": "",
-        "products_to_show": 12
-      }
+        "image_1",
+        "image_2"
+      ]
     }
   },
   "order": [
-    "product_grid"
+    "hero_logo",
+    "full_width_images"
   ]
 }

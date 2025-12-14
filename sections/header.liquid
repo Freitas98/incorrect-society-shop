@@ -6,12 +6,21 @@
       <div class="header-identity">
         <a href="{{ routes.root_url }}" class="header-logo-link" aria-label="{{ 'general.home' | t }}">
           <img
-            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logo_standard_black.svg?v=1764257556"
+            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_horizontal_black.svg?v=1764257555"
             alt="{{ shop.name }}"
             class="header-logo"
             loading="eager"
             width="220"
             height="60"
+          >
+          <img
+            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/sloganSvg.svg?v=1765734359"
+            alt="Not in accordance with any standard or rule"
+            class="header-slogan"
+            loading="eager"
+            width="300"
+            height="60"
+            style="display: none; height: 43px;"
           >
         </a>
         <!-- tagline removed for compact header -->
@@ -21,7 +30,7 @@
     <nav class="header-nav">
       <ul class="header-menu">
         <li class="header-menu-item">
-          <a href="{{ routes.root_url }}" class="header-menu-link">Shop</a>
+          <a href="{{ pages['all-products'].url }}" class="header-menu-link">Shop</a>
         </li>
         <li class="header-menu-item">
           <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">Outsider</a>

@@ -1,0 +1,268 @@
+{% schema %}
+{
+  "name": "Hero Logo Animation",
+  "settings": [
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Max Logo Width",
+      "default": 80
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Logo Animation"
+    }
+  ]
+}
+{% endschema %}
+
+<div class="hero-logo-container">
+  <div class="hero-logo-wrapper">
+    <div class="hero-logo-composite">
+      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_horizontal_black.svg?v=1764257555" width="100%" height="100%" class="hero-text" alt="Icon">
+    </div>
+  </div>
+</div>
+
+<style>
+  .hero-logo-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1; /* Visible at top (Scroll 0) */
+    padding-bottom: 30vh; /* Move logo up visually */
+  }
+
+  .hero-logo-wrapper {
+    width: {{ section.settings.max_width }}%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+    will-change: transform, width;
+  }
+
+  .hero-logo-composite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .hero-icon {
+    height: auto;
+    width: 15%; /* Adjust proportion */
+    max-width: 100px;
+  }
+
+  .hero-text {
+    height: auto;
+    width: 85%;
+  }
+
+  /* Header States */
+  /* Initial State (Top): Logo Hidden, Slogan Visible */
+  body.template-index .site-header .header-logo {
+    display: none;
+    opacity: 0;
+  }
+  
+  body.template-index .site-header .header-slogan {
+    display: block;
+    opacity: 1;
+    transition: opacity 0.2s ease;
+  }
+
+  /* Scrolled State: Logo Visible, Slogan Hidden */
+  body.template-index .site-header.is-scrolled .header-logo {
+    display: block;
+    opacity: 1;
+  }
+  
+  body.template-index .site-header.is-scrolled .header-slogan {
+    display: none;
+    opacity: 0;
+  }
+  
+  body.template-index .site-header {
+    background-color: transparent;
+    border-bottom: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  body.template-index .site-header.is-scrolled {
+    background-color: var(--color-background);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.hero-logo-container');
+    const wrapper = document.querySelector('.hero-logo-wrapper');
+    const headerLogo = document.querySelector('.site-header .header-logo');
+    const headerSlogan = document.querySelector('.site-header .header-slogan');
+    const header = document.querySelector('.site-header');
+    
+    if (!container || !wrapper) return;
+
+    let bigWidth; // Width in Hero State (Start)
+    let bigHeight;
+    let bigTop;
+    let bigLeft;
+    let aspectRatio;
+
+    function initDimensions() {
+      // Reset styles to get natural CSS-defined dimensions (Hero State)
+      wrapper.style.width = '';
+      wrapper.style.transform = '';
+      
+      const rect = wrapper.getBoundingClientRect();
+      bigWidth = rect.width;
+      bigHeight = rect.height;
+      bigTop = rect.top;
+      bigLeft = rect.left;
+      aspectRatio = rect.width / rect.height;
+      
+      handleScroll();
+    }
+
+    function handleScroll() {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const scrollThreshold = windowHeight * 0.6; 
+      
+      // Target Dimensions (Header Logo Position)
+      // We want the Hero Logo to shrink to where the Header Logo IS (or will be)
+      let targetTop = 20;
+      let targetLeft = 20;
+      let targetWidth = 220;
+      
+      // We need to find where the header logo WOULD be.
+      // Since it's display:none, we can't measure it directly unless we temporarily show it,
+      // or measure the slogan and assume same position?
+      // Or measure the container.
+      
+      if (headerLogo) {
+          // Temporarily show to measure?
+          // Or use slogan position if available
+          if (headerSlogan && headerSlogan.offsetParent) {
+             const rect = headerSlogan.getBoundingClientRect();
+             targetTop = rect.top;
+             targetLeft = rect.left;
+             // Slogan might be wider, so we might want to align left
+          } else {
+             // Fallback
+             const identity = document.querySelector('.header-identity');
+             if (identity) {
+                const rect = identity.getBoundingClientRect();
+                targetTop = rect.top;
+                targetLeft = rect.left;
+             }
+          }
+          // Hardcode width or estimate?
+          // The header logo is usually fixed width in CSS or HTML attributes
+          targetWidth = 220; // From HTML width attribute
+      }
+
+      let progress = Math.min(scrollY / scrollThreshold, 1);
+      
+      if (progress < 1) {
+        // Animation Phase
+        container.style.opacity = '1';
+        header.classList.remove('is-scrolled'); 
+        
+        // Slogan Fading
+        // Fade out slogan as we scroll down to make room for the logo landing
+        if (headerSlogan) {
+            headerSlogan.style.display = 'block';
+            // Fade out in the last 50% of the scroll
+            let fadeOutStart = 0.5;
+            if (progress > fadeOutStart) {
+                let opacity = 1 - ((progress - fadeOutStart) / (1 - fadeOutStart));
+                headerSlogan.style.opacity = Math.max(0, opacity).toString();
+            } else {
+                headerSlogan.style.opacity = '1';
+            }
+        }
+        
+        // Ensure Header Logo is hidden
+        if (headerLogo) {
+            headerLogo.style.display = 'none';
+        }
+
+        // Interpolate Width
+        // From bigWidth (Hero) to targetWidth (Navbar)
+        const currentWidth = bigWidth - ((bigWidth - targetWidth) * progress);
+        const currentHeight = currentWidth / aspectRatio;
+        
+        // Interpolate Position (Top-Left)
+        // From bigTop/Left to targetTop/Left
+        const desiredX = bigLeft + (targetLeft - bigLeft) * progress;
+        const desiredY = bigTop + (targetTop - bigTop) * progress;
+        
+        // Calculate Transform
+        // Natural position is centered (Big State)
+        // We need to calculate the offset from the Big State (Natural) to the Desired State
+        
+        // Natural Center (Big State)
+        const naturalCenterX = bigLeft + bigWidth / 2;
+        const naturalCenterY = bigTop + bigHeight / 2;
+        
+        // Current Natural Center (if we just shrank it in place)
+        // It stays centered in the flex container
+        const currentNaturalLeft = naturalCenterX - currentWidth / 2;
+        const currentNaturalTop = naturalCenterY - currentHeight / 2;
+        
+        const translateX = desiredX - currentNaturalLeft;
+        const translateY = desiredY - currentNaturalTop;
+        
+        wrapper.style.width = `${currentWidth}px`;
+        wrapper.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        
+      } else {
+        // Animation Complete (Scrolled Down)
+        // Hide Hero Logo
+        container.style.opacity = '0';
+        
+        // Show Header Logo
+        header.classList.add('is-scrolled');
+        
+        if (headerLogo) {
+            headerLogo.style.display = 'block';
+            headerLogo.style.opacity = '1';
+        }
+        if (headerSlogan) {
+            headerSlogan.style.display = 'none';
+        }
+      }
+    }
+    
+    // Initialize
+    const img = wrapper.querySelector('img');
+    if (img.complete) {
+        initDimensions();
+    } else {
+        img.onload = initDimensions;
+    }
+
+    window.addEventListener('scroll', () => {
+      requestAnimationFrame(handleScroll);
+    });
+    
+    window.addEventListener('resize', () => {
+        initDimensions();
+    });
+  });
+</script>
