@@ -3,6 +3,7 @@
   Replaces the previous newsletter modal.
 {% endcomment %}
 
+{% unless request.path contains '/challenge' %}
 <div id="NewsletterModal" class="newsletter-modal-overlay" aria-hidden="true">
   <div class="newsletter-modal-container" role="dialog" aria-modal="true">
     <button class="newsletter-modal-close" aria-label="Close">
@@ -20,19 +21,16 @@
         <h2 class="newsletter-heading">Join the Movement</h2>
         <p class="newsletter-subheading">Get 10% off your first order</p>
         
-        {% form 'customer', class: 'newsletter-form', id: 'NewsletterModalForm' %}
+        {% form 'customer', class: 'newsletter-form', id: 'NewsletterModalForm', onsubmit: 'window.loadingScreen.show();' %}
           {% if form.posted_successfully? %}
-            <div class="newsletter-success-message">
+            <div class="newsletter-success-message" style="text-align: center; width: 100%;">
               <h3>Welcome to the club!</h3>
               <p>Check your email for your discount code.</p>
             </div>
             <script>
-              try {
-                localStorage.setItem('newsletter_modal_status', 'subscribed');
-              } catch(e){}
-              setTimeout(() => {
-                document.getElementById('NewsletterModal').classList.remove('is-visible');
-              }, 3000);
+              if (window.history.replaceState) {
+                window.history.replaceState(null, null, window.location.pathname);
+              }
             </script>
           {% else %}
             <input type="hidden" name="contact[tags]" value="newsletter">
@@ -63,7 +61,7 @@
             
             <div class="newsletter-consent">
               <label class="checkbox-container">
-                <input type="checkbox" required>
+                <input type="checkbox" name="contact[note][consent]" value="I agree to receive emails">
                 <span class="checkmark"></span>
                 <span class="consent-text">I agree to receive emails with all the news from Incorrect Society and accept the Privacy Policy</span>
               </label>
@@ -317,12 +315,27 @@
       return true;
     }
     
-    // Only show if not subscribed and not closed in this session
-    if (shouldShow()) {
-      // Show modal after 3 seconds
+    // Check if we are showing success message
+    const successMessage = modal.querySelector('.newsletter-success-message');
+    if (successMessage) {
+      // Show immediately if success message is present (e.g. after captcha redirect)
+      modal.classList.add('is-visible');
+      try {
+        localStorage.setItem(storageKey, 'subscribed');
+      } catch (_) {}
+      
+      // Hide after 3 seconds
       setTimeout(() => {
-        modal.classList.add('is-visible');
+        modal.classList.remove('is-visible');
       }, 3000);
+    } else {
+      // Only show if not subscribed and not closed in this session
+      if (shouldShow()) {
+        // Show modal after 3 seconds
+        setTimeout(() => {
+          modal.classList.add('is-visible');
+        }, 3000);
+      }
     }
     
     function closeModal() {
@@ -346,3 +359,4 @@
     });
   });
 </script>
+{% endunless %}

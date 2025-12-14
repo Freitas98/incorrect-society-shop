@@ -6,11 +6,30 @@
   <div class="footer-content">
     <div class="footer-newsletter">
       <p>Sign up for our newsletter and get 10% discount!</p>
-      <form action="/contact" method="post" class="newsletter-form footer-newsletter-form">
-        <input type="email" name="contact[email]" placeholder="Enter your email" required>
+      {% form 'customer', class: 'newsletter-form footer-newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
         <input type="hidden" name="contact[tags]" value="newsletter">
+        <input type="email" name="contact[email]" placeholder="Enter your email" required>
         <button type="submit" class="btn btn--secondary">Sign Up</button>
-      </form>
+        
+        {%- if form.errors -%}
+          <small class="newsletter-form__message form__message" id="Newsletter-error--{{ section.id }}">
+            {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
+          </small>
+        {%- endif -%}
+        {%- if form.posted_successfully? -%}
+          <p class="newsletter-form__message newsletter-form__message--success form__message" id="Newsletter-success--{{ section.id }}" tabindex="-1" autofocus style="text-align: center; width: 100%;">
+            Thanks for subscribing!
+          </p>
+          <script>
+            if (window.history.replaceState) {
+              window.history.replaceState(null, null, window.location.pathname);
+            }
+            try {
+              localStorage.setItem('newsletter_modal_status', 'subscribed');
+            } catch(e){}
+          </script>
+        {%- endif -%}
+      {% endform %}
     </div>
     <div class="footer-links">
       <a href="{{ pages['newsletter'].url }}">Newsletter</a>

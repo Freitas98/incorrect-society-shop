@@ -12,9 +12,15 @@
     >.<br>
     A nossa equipa responde normalmente em 1-2 dias úteis.
   </p>
-  <form method="post" action="/contact#contact_form" id="contact_form" accept-charset="UTF-8" class="contact-form" onsubmit="if(window.loadingScreen) window.loadingScreen.show()">
-    <input type="hidden" name="form_type" value="contact">
-    <input type="hidden" name="utf8" value="✓">
+  {% form 'contact', id: 'contact_form', class: 'contact-form', onsubmit: 'if(window.loadingScreen) window.loadingScreen.show()' %}
+    {% if form.posted_successfully? %}
+      <p class="form-success">
+        Obrigado por nos contactares. Responderemos o mais breve possível.
+      </p>
+    {% endif %}
+    
+    {{ form.errors | default_errors }}
+
     <label for="ContactFormName">Nome</label>
     <input
       type="text"
@@ -23,6 +29,7 @@
       required
       class="contact-field"
       placeholder="O teu nome"
+      value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
     >
     <label for="ContactFormEmail">Email</label>
     <input
@@ -32,6 +39,7 @@
       required
       class="contact-field"
       placeholder="O teu email"
+      value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
     >
     <label for="ContactFormMessage">Mensagem</label>
     <textarea
@@ -41,11 +49,11 @@
       required
       class="contact-field"
       placeholder="Como podemos ajudar?"
-    ></textarea>
+    >{% if form.body %}{{ form.body }}{% endif %}</textarea>
     <button type="submit" class="btn btn--primary btn--block contact-submit">
       Enviar mensagem
     </button>
-  </form>
+  {% endform %}
   <div class="contact-social-links">
     <strong>Redes sociais:</strong><br>
     <a href="https://www.instagram.com/incorrect.society/" target="_blank"

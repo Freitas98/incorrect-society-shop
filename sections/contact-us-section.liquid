@@ -7,16 +7,14 @@
     <h2 class="feature-card-title">{{ 'contact.contact_now' | t | default: 'Contact us now' }}</h2>
     <div class="feature-card-copy">{{ 'contact.contact_prompt_html' | t }}</div>
 
-    <form
-      method="post"
-      action="/contact#contact_form"
-      id="contact_form"
-      accept-charset="UTF-8"
-      class="feature-form"
-      onsubmit="if(window.loadingScreen) window.loadingScreen.show()"
-    >
-      <input type="hidden" name="form_type" value="contact">
-      <input type="hidden" name="utf8" value="✓">
+    {% form 'contact', id: 'contact_form', class: 'feature-form', onsubmit: 'if(window.loadingScreen) window.loadingScreen.show()' %}
+      {% if form.posted_successfully? %}
+        <p class="form-success">
+          Thanks for contacting us. We will get back to you as soon as possible.
+        </p>
+      {% endif %}
+      
+      {{ form.errors | default_errors }}
 
       <input
         type="text"
@@ -25,6 +23,7 @@
         required
         placeholder="{{ 'contact.comment_form_name' | t | default: 'Your name' }}"
         class="feature-input"
+        value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
       >
 
       <input
@@ -34,6 +33,7 @@
         required
         placeholder="{{ 'contact.comment_form_email' | t | default: 'Your email' }}"
         class="feature-input"
+        value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
       >
 
       <textarea
@@ -43,12 +43,12 @@
         required
         placeholder="{{ 'contact.message' | t | default: 'How can we help?' }}"
         class="feature-input feature-input--textarea"
-      ></textarea>
+      >{% if form.body %}{{ form.body }}{% endif %}</textarea>
 
       <button type="submit" class="btn btn--primary btn--block">
         {{ 'contact.send_message' | t | default: 'Send message' }}
       </button>
-    </form>
+    {% endform %}
 
     <p class="feature-footnote">
       {{ 'contact.contact_note' | t | default: 'Your message will be sent directly to the Incorrect Society team.' }}

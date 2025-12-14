@@ -22,11 +22,19 @@
     {{ 'newsletter.subscribe_prompt' | t }}
   </p>
 
-  {% form 'contact', id: 'NewsletterForm', class: 'contact-form newsletter-form' %}
+  {% form 'customer', id: 'NewsletterForm', class: 'contact-form newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
     {% if form.posted_successfully? %}
-      <p class="newsletter-success newsletter-feedback">
+      <p class="newsletter-success newsletter-feedback" style="text-align: center; width: 100%;">
         {{ 'newsletter.success' | t }}
       </p>
+      <script>
+        if (window.history.replaceState) {
+          window.history.replaceState(null, null, window.location.pathname);
+        }
+        try {
+          localStorage.setItem('newsletter_modal_status', 'subscribed');
+        } catch(e){}
+      </script>
     {% endif %}
     {% if form.errors %}
       <div class="newsletter-errors newsletter-feedback">
@@ -44,7 +52,7 @@
       required
     >
 
-    <input type="hidden" name="contact[tags]" id="NewsletterContentTags" value="newsletter">
+    <input type="hidden" name="contact[tags]" value="newsletter">
 
     <button
       type="submit"
@@ -54,94 +62,6 @@
     </button>
   {% endform %}
 </div>
-
-{% javascript %}
-  const form = document.getElementById('NewsletterForm');
-  const container = document.getElementById('NewsletterContainer');
-  const tagsInput = document.getElementById('NewsletterContentTags');
-  // Generate a strong, uppercase, mostly-unique code
-  const generateRandomCode = (len = 16) => {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const out = [];
-    const arr =
-      window.crypto && window.crypto.getRandomValues
-        ? window.crypto.getRandomValues(new Uint32Array(len))
-        : Array.from({ length: len }, () => Math.floor(Math.random() * 0xffffffff));
-    for (let i = 0; i < len; i++) {
-      out.push(alphabet[arr[i] % alphabet.length]);
-    }
-    return out.join('');
-  };
-  if (form && container && tagsInput) {
-    const message = form.querySelector('.newsletter-message');
-    const submitButton = form.querySelector('button[type="submit"]');
-    const setMessage = (state, text) => {
-      if (!message) {
-        return;
-      }
-      message.textContent = text;
-      if (state) {
-        message.dataset.state = state;
-      } else {
-        delete message.dataset.state;
-      }
-      message.hidden = !text;
-    };
-
-    const handleNewsletterSubmit = async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
-      // Set unique code in tags before submit
-      tagsInput.value = generateRandomCode(16);
-      if (!message || !submitButton) return;
-
-      const tAdding = container.dataset.adding || 'Adding...';
-      const tSuccess = container.dataset.success || 'Thanks for subscribing!';
-      const tError = container.dataset.error || 'Something went wrong. Please try again.';
-      const tVerifying = container.dataset.verifying || 'Verifying...';
-      const tCaptcha = container.dataset.captcha || 'Please complete the verification to finish your subscription.';
-
-      setMessage('', '');
-      submitButton.disabled = true;
-      const originalText = submitButton.textContent;
-      submitButton.textContent = tAdding;
-      
-      if (window.loadingScreen) window.loadingScreen.show();
-
-      try {
-        const action = form.getAttribute('action') || '/contact';
-        const formData = new FormData(form);
-        const response = await fetch(action, {
-          method: 'POST',
-          body: formData,
-          credentials: 'same-origin',
-        });
-        if (response.ok) {
-          setMessage('success', tSuccess);
-          form.reset();
-          if (window.loadingScreen) window.loadingScreen.hide();
-        } else {
-          // Fallback to normal submit for captcha/challenge or throttling or redirect-only responses
-          const fallbackText = response.status === 429 ? tCaptcha : tVerifying;
-          setMessage(response.status === 429 ? 'error' : 'info', fallbackText);
-          form.removeEventListener('submit', handleNewsletterSubmit);
-          // Don't hide loader here as we are submitting the form which will reload page
-          form.submit();
-          return;
-        }
-      } catch (e) {
-        if (window.loadingScreen) window.loadingScreen.hide();
-        setMessage('error', tError);
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = originalText;
-      }
-    };
-
-    form.addEventListener('submit', handleNewsletterSubmit);
-  }
-{% endjavascript %}
 
 <p>
   <em class="text-soft text-small">{{ 'newsletter.unsubscribe_note' | t }}</em>
