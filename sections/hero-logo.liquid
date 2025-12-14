@@ -37,7 +37,7 @@
     width: 100%;
     height: 100vh;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 950;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,13 +96,20 @@
     opacity: 0;
   }
   
-  body.template-index .site-header {
+  body.template-index .site-header-backdrop {
     background-color: transparent;
     border-bottom: none;
-    transition: background-color 0.3s ease;
   }
   
-  body.template-index .site-header.is-scrolled {
+  body.template-index .site-header.is-scrolled ~ .site-header-backdrop,
+  body.template-index .site-header.is-scrolled + .site-header-backdrop {
+    /* This selector is tricky because backdrop is a sibling BEFORE header */
+    /* We need to target backdrop based on header class, but CSS can't select previous sibling */
+    /* So we need to toggle class on backdrop via JS or use a different structure */
+  }
+  
+  /* Correct way: target backdrop directly via class added by JS */
+  body.template-index .site-header-backdrop.is-scrolled {
     background-color: var(--color-background);
   }
 </style>
@@ -114,6 +121,7 @@
     const headerLogo = document.querySelector('.site-header .header-logo');
     const headerSlogan = document.querySelector('.site-header .header-slogan');
     const header = document.querySelector('.site-header');
+    const headerBackdrop = document.querySelector('.site-header-backdrop');
     
     if (!container || !wrapper) return;
 
@@ -205,6 +213,7 @@
         // Animation Phase
         container.style.opacity = '1';
         header.classList.remove('is-scrolled'); 
+        if (headerBackdrop) headerBackdrop.classList.remove('is-scrolled');
         
         // Slogan Fading
         if (headerSlogan) {
@@ -262,6 +271,7 @@
         
         // Show Header Logo
         header.classList.add('is-scrolled');
+        if (headerBackdrop) headerBackdrop.classList.add('is-scrolled');
         
         if (headerLogo) {
             headerLogo.style.display = 'block';

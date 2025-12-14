@@ -1,3 +1,4 @@
+<div class="site-header-backdrop"></div>
 <header class="site-header" role="banner">
   
   <div class="site-header-inner">
@@ -223,18 +224,29 @@
     --header-row-min-height: 44px;
   }
   .site-header {
-    background-color: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
-    box-shadow: 0 18px 40px rgba(12, 12, 12, 0.08);
+    background-color: transparent;
     padding: var(--header-pad-top) 0;
     position: fixed;
     top: var(--announcement-height);
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 998;
+    z-index: 1000;
     --header-icon-size: 22px;
+  }
+
+  .site-header-backdrop {
+    background-color: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+    box-shadow: 0 18px 40px rgba(12, 12, 12, 0.08);
+    position: fixed;
+    top: var(--announcement-height);
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 900;
+    transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
   }
   .site-header-spacer {
     height: var(--site-header-height, 0px);
@@ -1230,6 +1242,7 @@
     // Keep content from jumping under fixed header by syncing spacer height
     const headerEl = document.querySelector('.site-header');
     const headerSpacer = document.getElementById('site-header-spacer');
+    const headerBackdrop = document.querySelector('.site-header-backdrop');
     const setHeaderSpacer = () => {
       if (!headerEl || !headerSpacer) return;
       const rect = headerEl.getBoundingClientRect();
@@ -1239,6 +1252,7 @@
       const height = rect.height; // already includes paddings
       headerSpacer.style.setProperty('height', `${height}px`);
       document.documentElement.style.setProperty('--site-header-height', `${height}px`);
+      if (headerBackdrop) headerBackdrop.style.height = `${height}px`;
     };
     setHeaderSpacer();
     window.addEventListener('resize', () => {
@@ -1859,12 +1873,14 @@
     const closeInlineSearch = () => {
       if (!inlineSearch) return;
       inlineSearch.classList.remove('is-open');
+      document.body.classList.remove('search-open');
       inlineSearchToggle?.setAttribute('aria-expanded', 'false');
     };
 
     const openInlineSearch = () => {
       if (!inlineSearch) return;
       inlineSearch.classList.add('is-open');
+      document.body.classList.add('search-open');
       inlineSearchToggle?.setAttribute('aria-expanded', 'true');
       requestAnimationFrame(() => inlineSearchInput?.focus());
     };
