@@ -28,6 +28,16 @@
             "date": "28/8/2025"
           }
         },
+        "text_w3WJC7": {
+          "type": "text",
+          "settings": {
+            "image": "shopify://shop_images/imagem_2025-12-14_203531070.png",
+            "title": "Incorrect Society: a nova marca madeirense com peças “para quem não pertence”",
+            "content": "Pedro e Valério inspiram-se no streetwear para criar uma comunidade de outsiders. Defendem que “desviar da normalidade pode ser benéfico”.",
+            "link": "https://www.nit.pt/compras/lojas-e-marcas/incorrect-society-nova-marca-madeirense-com-pecas-para-quem-nao-pertence",
+            "date": "11/09/2025"
+          }
+        },
         "social_BLpiGG": {
           "type": "social",
           "settings": {
@@ -93,6 +103,7 @@
       "block_order": [
         "spotify_HfeedD",
         "archive_mEJi9J",
+        "text_w3WJC7",
         "social_BLpiGG",
         "social_LxC9La",
         "social_HbawqK",
