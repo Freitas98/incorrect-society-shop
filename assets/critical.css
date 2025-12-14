@@ -1394,15 +1394,19 @@ form[action*="/challenge"] {
 
 .collection-card__badge {
   position: absolute;
-  left: 18px;
-  bottom: 18px;
-  padding: 6px 14px;
-  border: 1px solid color-mix(in oklab, var(--color-foreground), transparent 40%);
-  background: rgba(0, 0, 0, 0.45);
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.72rem;
+  top: 15px;
+  right: 15px;
+  left: auto;
+  bottom: auto;
+  padding: 6px 12px;
+  background-color: var(--color-background);
   color: var(--color-foreground);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--color-border);
+  z-index: 2;
 }
 
 .collection-card__body {
