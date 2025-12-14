@@ -1716,6 +1716,7 @@
 
     // Global function to add item and update cart (called from product page)
     window.addToCartAndUpdate = function (formData) {
+      if (window.loadingScreen) window.loadingScreen.show();
       return fetch('/cart/add.js', {
         method: 'POST',
         body: formData,
@@ -1738,8 +1739,14 @@
               detail: { cart: cart, source: 'sidebar' },
             })
           );
-
+          
+          if (window.loadingScreen) window.loadingScreen.hide();
           return cart;
+        })
+        .catch((error) => {
+          console.error('Error adding to cart:', error);
+          if (window.loadingScreen) window.loadingScreen.hide();
+          throw error;
         });
     };
 

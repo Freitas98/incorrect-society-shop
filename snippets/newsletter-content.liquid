@@ -106,6 +106,8 @@
       submitButton.disabled = true;
       const originalText = submitButton.textContent;
       submitButton.textContent = tAdding;
+      
+      if (window.loadingScreen) window.loadingScreen.show();
 
       try {
         const action = form.getAttribute('action') || '/contact';
@@ -118,15 +120,18 @@
         if (response.ok) {
           setMessage('success', tSuccess);
           form.reset();
+          if (window.loadingScreen) window.loadingScreen.hide();
         } else {
           // Fallback to normal submit for captcha/challenge or throttling or redirect-only responses
           const fallbackText = response.status === 429 ? tCaptcha : tVerifying;
           setMessage(response.status === 429 ? 'error' : 'info', fallbackText);
           form.removeEventListener('submit', handleNewsletterSubmit);
+          // Don't hide loader here as we are submitting the form which will reload page
           form.submit();
           return;
         }
       } catch (e) {
+        if (window.loadingScreen) window.loadingScreen.hide();
         setMessage('error', tError);
       } finally {
         submitButton.disabled = false;
