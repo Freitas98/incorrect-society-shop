@@ -138,6 +138,49 @@
       handleScroll();
     }
 
+    function easeOutCubic(x) {
+      return 1 - Math.pow(1 - x, 3);
+    }
+
+    // Helper to measure the hidden header logo accurately
+    function getTargetRect() {
+        if (!headerLogo) return { top: 20, left: 20, width: 220 };
+
+        // Save current state
+        const prevLogoDisplay = headerLogo.style.display;
+        const prevSloganDisplay = headerSlogan ? headerSlogan.style.display : '';
+        const prevHeaderClass = header.className;
+        const prevHeaderTransition = header.style.transition;
+
+        // Disable transitions to get final state immediately
+        header.style.transition = 'none';
+        headerLogo.style.transition = 'none';
+
+        // Force "Scrolled" state where logo is visible and slogan is hidden
+        header.classList.add('is-scrolled');
+        headerLogo.style.display = 'block';
+        headerLogo.style.opacity = '0'; // Keep invisible but layout-active
+        if (headerSlogan) headerSlogan.style.display = 'none';
+
+        // Force reflow
+        void headerLogo.offsetWidth;
+
+        // Measure
+        const rect = headerLogo.getBoundingClientRect();
+
+        // Restore state
+        header.className = prevHeaderClass;
+        headerLogo.style.display = prevLogoDisplay;
+        headerLogo.style.opacity = ''; // Clear opacity override
+        if (headerSlogan) headerSlogan.style.display = prevSloganDisplay;
+        
+        // Restore transitions
+        header.style.transition = prevHeaderTransition;
+        headerLogo.style.transition = '';
+
+        return rect;
+    }
+
     function handleScroll() {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
@@ -149,48 +192,27 @@
       let targetLeft = 20;
       let targetWidth = 220;
       
-      // We need to find where the header logo WOULD be.
-      // Since it's display:none, we can't measure it directly unless we temporarily show it,
-      // or measure the slogan and assume same position?
-      // Or measure the container.
-      
-      if (headerLogo) {
-          // Temporarily show to measure?
-          // Or use slogan position if available
-          if (headerSlogan && headerSlogan.offsetParent) {
-             const rect = headerSlogan.getBoundingClientRect();
-             targetTop = rect.top;
-             targetLeft = rect.left;
-             // Slogan might be wider, so we might want to align left
-          } else {
-             // Fallback
-             const identity = document.querySelector('.header-identity');
-             if (identity) {
-                const rect = identity.getBoundingClientRect();
-                targetTop = rect.top;
-                targetLeft = rect.left;
-             }
-          }
-          // Hardcode width or estimate?
-          // The header logo is usually fixed width in CSS or HTML attributes
-          targetWidth = 220; // From HTML width attribute
-      }
+      // Measure accurately
+      const targetRect = getTargetRect();
+      targetTop = targetRect.top;
+      targetLeft = targetRect.left;
+      targetWidth = targetRect.width;
 
-      let progress = Math.min(scrollY / scrollThreshold, 1);
+      let rawProgress = Math.min(scrollY / scrollThreshold, 1);
+      let progress = easeOutCubic(rawProgress);
       
-      if (progress < 1) {
+      if (rawProgress < 1) {
         // Animation Phase
         container.style.opacity = '1';
         header.classList.remove('is-scrolled'); 
         
         // Slogan Fading
-        // Fade out slogan as we scroll down to make room for the logo landing
         if (headerSlogan) {
-            headerSlogan.style.display = 'block';
+            headerSlogan.style.display = 'inline-block';
             // Fade out in the last 50% of the scroll
             let fadeOutStart = 0.5;
-            if (progress > fadeOutStart) {
-                let opacity = 1 - ((progress - fadeOutStart) / (1 - fadeOutStart));
+            if (rawProgress > fadeOutStart) {
+                let opacity = 1 - ((rawProgress - fadeOutStart) / (1 - fadeOutStart));
                 headerSlogan.style.opacity = Math.max(0, opacity).toString();
             } else {
                 headerSlogan.style.opacity = '1';
@@ -202,10 +224,9 @@
             headerLogo.style.display = 'none';
         }
 
-        // Interpolate Width
-        // From bigWidth (Hero) to targetWidth (Navbar)
-        const currentWidth = bigWidth - ((bigWidth - targetWidth) * progress);
-        const currentHeight = currentWidth / aspectRatio;
+        // Use Scale for smoother animation
+        // Calculate Scale Factor
+        const scale = 1 - ((1 - (targetWidth / bigWidth)) * progress);
         
         // Interpolate Position (Top-Left)
         // From bigTop/Left to targetTop/Left
@@ -213,23 +234,26 @@
         const desiredY = bigTop + (targetTop - bigTop) * progress;
         
         // Calculate Transform
-        // Natural position is centered (Big State)
-        // We need to calculate the offset from the Big State (Natural) to the Desired State
+        // When scaling, the element shrinks towards its center.
+        // We need to translate it so its top-left corner ends up at desiredX, desiredY.
         
-        // Natural Center (Big State)
+        // Current Center (if just scaled in place)
         const naturalCenterX = bigLeft + bigWidth / 2;
         const naturalCenterY = bigTop + bigHeight / 2;
         
-        // Current Natural Center (if we just shrank it in place)
-        // It stays centered in the flex container
-        const currentNaturalLeft = naturalCenterX - currentWidth / 2;
-        const currentNaturalTop = naturalCenterY - currentHeight / 2;
+        // Target Center (where we want the center to be)
+        // Target Center = Desired TopLeft + (Current Width / 2)
+        const currentWidth = bigWidth * scale;
+        const currentHeight = bigHeight * scale;
         
-        const translateX = desiredX - currentNaturalLeft;
-        const translateY = desiredY - currentNaturalTop;
+        const targetCenterX = desiredX + currentWidth / 2;
+        const targetCenterY = desiredY + currentHeight / 2;
         
-        wrapper.style.width = `${currentWidth}px`;
-        wrapper.style.transform = `translate(${translateX}px, ${translateY}px)`;
+        const translateX = targetCenterX - naturalCenterX;
+        const translateY = targetCenterY - naturalCenterY;
+        
+        wrapper.style.width = `${bigWidth}px`; // Keep original width, use scale
+        wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
         
       } else {
         // Animation Complete (Scrolled Down)
