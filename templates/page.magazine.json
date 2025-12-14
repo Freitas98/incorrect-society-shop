@@ -15,7 +15,7 @@
         "spotify_HfeedD": {
           "type": "spotify",
           "settings": {
-            "embed_code": "<iframe data-testid=\"embed-iframe\" style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/playlist/4mtoSf0Fh48ecJHF9MJiG1?utm_source=generator&amp;theme=0\" width=\"100%\" height=\"352\" frameborder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
+            "embed_code": "<iframe data-testid=\"embed-iframe\" style=\"border-radius:12px\" src=\"https://open.spotify.com/embed/playlist/4mtoSf0Fh48ecJHF9MJiG1?utm_source=generator&amp;theme=0\" width=\"100%\" height=\"10\" frameborder=\"0\" allowfullscreen=\"\" allow=\"autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture\" loading=\"lazy\"></iframe>",
             "title": "THE INCORRECT PLAYLIST"
           }
         },
