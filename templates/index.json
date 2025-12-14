@@ -21,18 +21,23 @@
         "image_1": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/IMG_3780.jpg",
+            "link": ""
           }
         },
         "image_2": {
           "type": "image",
           "settings": {
+            "image": "shopify://shop_images/d1.jpg",
+            "link": ""
           }
         }
       },
       "block_order": [
         "image_1",
         "image_2"
-      ]
+      ],
+      "settings": {}
     }
   },
   "order": [
