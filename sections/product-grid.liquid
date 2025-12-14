@@ -4,108 +4,140 @@
 
 <div class="product-grid-section">
   <div class="collection-header">
-    <div class="collection-controls">
-      <div class="filters dropdown">
-        <button
-          type="button"
-          class="dropdown-toggle filter-toggle"
-          id="filter-availability"
-          aria-haspopup="listbox"
-          aria-expanded="false"
-          aria-labelledby="filter-availability filter-availability-label"
-          data-filter-toggle
-        >
-          <span class="filter-toggle__label">Filter</span>
-          <span class="filter-toggle__value" data-selected-text>All</span>
-          <span class="dropdown-toggle__chevron" aria-hidden="true"></span>
+    <div class="header-left">
+      <button type="button" class="filter-toggle-btn" id="main-filter-toggle">
+        <span class="filter-icon">
+          <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 6H15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M0.75 1H17.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.25 11H12.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        Filter
+        <span class="chevron-icon">
+          <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <div class="product-grid-title">
+      <h2 class="shop-name">{{ shop.name }}</h2>
+      <p class="product-count">{{ collections.all.products_count }} products</p>
+    </div>
+
+    <div class="header-right">
+      <div class="custom-sort-dropdown">
+        <button type="button" class="sort-trigger" id="sort-trigger">
+          <span class="current-sort-label">Date, new to old</span>
+          <span class="chevron-icon">
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
         </button>
-        <ul class="dropdown-menu filter-menu" role="listbox" aria-labelledby="filter-availability" data-filter-menu>
-          <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="" tabindex="0">All</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="available" tabindex="0">Available</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="sold_out" tabindex="0">Sold Out</li>
-        </ul>
-      </div>
-      <div class="filters dropdown">
-        <button
-          type="button"
-          class="dropdown-toggle filter-toggle"
-          id="filter-type"
-          aria-haspopup="listbox"
-          aria-expanded="false"
-          aria-labelledby="filter-type filter-type-label"
-          data-type-toggle
-        >
-          <span class="filter-toggle__label">Type</span>
-          <span class="filter-toggle__value" data-selected-text>All</span>
-          <span class="dropdown-toggle__chevron" aria-hidden="true"></span>
-        </button>
-        <ul class="dropdown-menu filter-menu" role="listbox" aria-labelledby="filter-type" data-type-menu>
-          <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="" tabindex="0">All</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="t-shirt" tabindex="0">T-Shirts</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="hoodie" tabindex="0">Hoodies</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="accessories" tabindex="0">Accessories</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="gift cards" tabindex="0">Gift Cards</li>
-        </ul>
-      </div>
-      <div class="sorting dropdown">
-        <button
-          type="button"
-          class="dropdown-toggle sort-toggle"
-          id="sort-by"
-          aria-haspopup="listbox"
-          aria-expanded="false"
-          aria-labelledby="sort-by sort-by-label"
-          data-sort-toggle
-          data-selected-sort="created-descending"
-        >
-          <span class="filter-toggle__label">Sort</span>
-          <span class="sort-toggle__label">Date, new to old</span>
-          <span class="dropdown-toggle__chevron" aria-hidden="true"></span>
-        </button>
-        <ul class="dropdown-menu sort-menu" role="listbox" aria-labelledby="sort-by" data-sort-menu>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="title-ascending" tabindex="0">Alphabetically, A-Z</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="title-descending" tabindex="0">Alphabetically, Z-A</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="price-ascending" tabindex="0">Price, low to high</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="price-descending" tabindex="0">Price, high to low</li>
-          <li role="option" aria-selected="false" class="dropdown-menu__item" data-value="created-ascending" tabindex="0">Date, old to new</li>
-          <li role="option" aria-selected="true" class="dropdown-menu__item is-active" data-value="created-descending" tabindex="0">Date, new to old</li>
-        </ul>
+        <div class="sort-options-list" id="sort-options-list">
+          <div class="sort-option" data-value="created-descending">Date, new to old</div>
+          <div class="sort-option" data-value="created-ascending">Date, old to new</div>
+          <div class="sort-option" data-value="price-ascending">Price, low to high</div>
+          <div class="sort-option" data-value="price-descending">Price, high to low</div>
+          <div class="sort-option" data-value="title-ascending">Alphabetically, A-Z</div>
+          <div class="sort-option" data-value="title-descending">Alphabetically, Z-A</div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="product-grid-title">
-    <h2 class="shop-name">{{ shop.name }}</h2>
-    <p class="product-count">{{ collections.all.products_count }} products</p>
-  </div>
-  <div class="product-grid">
-    {% for product in collections.all.products %}
-      <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}" data-availability="{% if product.available %}available{% else %}sold_out{% endif %}" data-product-type="{{ product.metafields.custom.type | downcase }}">
-        <a href="{{ product.url }}" class="product-link">
-          <div class="product-image">
-            {% if product.featured_media %}
-              <img
-                src="{{ product.featured_media | image_url: width: 400 }}"
-                alt="{{ product.featured_media.alt | escape }}"
-                width="400"
-                height="400"
-                loading="lazy"
-              >
-            {% else %}
-              <div class="product-image-placeholder">No Image</div>
-            {% endif %}
-          </div>
-
-          <div class="product-info">
-            <h3 class="product-title">{{ product.title }}</h3>
-            {% if product.available %}
-              <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
-            {% else %}
-              <p class="product-price product-out-of-stock">{{ 'products.product.sold_out' | t }}</p>
-            {% endif %}
-          </div>
-        </a>
+  
+  <div class="collection-content-wrapper">
+    <aside class="collection-sidebar" id="collection-sidebar">
+      <div class="sidebar-filter-group">
+        <button class="sidebar-accordion-btn" aria-expanded="true">
+          Availability
+          <span class="accordion-icon">
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5L5 1L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="sidebar-accordion-content">
+          <label class="checkbox-container">
+            <input type="checkbox" value="available" data-filter-type="availability">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">Available</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" value="sold_out" data-filter-type="availability">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">Sold Out</span>
+          </label>
+        </div>
       </div>
-    {% endfor %}
+
+      <div class="sidebar-filter-group">
+        <button class="sidebar-accordion-btn" aria-expanded="true">
+          Product Type
+          <span class="accordion-icon">
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 5L5 1L9 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="sidebar-accordion-content">
+          <label class="checkbox-container">
+            <input type="checkbox" value="t-shirt" data-filter-type="type">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">T-Shirts</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" value="hoodie" data-filter-type="type">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">Hoodies</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" value="accessories" data-filter-type="type">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">Accessories</span>
+          </label>
+          <label class="checkbox-container">
+            <input type="checkbox" value="gift cards" data-filter-type="type">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">Gift Cards</span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <div class="product-grid">
+      {% for product in collections.all.products %}
+        <div class="product-card" data-title="{{ product.title | downcase }}" data-price="{{ product.price | times: 1 }}" data-created="{{ product.created_at | date: '%s' }}" data-availability="{% if product.available %}available{% else %}sold_out{% endif %}" data-product-type="{{ product.metafields.custom.type | downcase }}">
+          <a href="{{ product.url }}" class="product-link">
+            <div class="product-image">
+              {% if product.featured_media %}
+                <img
+                  src="{{ product.featured_media | image_url: width: 400 }}"
+                  alt="{{ product.featured_media.alt | escape }}"
+                  width="400"
+                  height="400"
+                  loading="lazy"
+                >
+              {% else %}
+                <div class="product-image-placeholder">No Image</div>
+              {% endif %}
+            </div>
+
+            <div class="product-info">
+              <h3 class="product-title">{{ product.title }}</h3>
+              {% if product.available %}
+                <p class="product-price">{% render 'price', amount: product.price, product: product %}</p>
+              {% else %}
+                <p class="product-price product-out-of-stock">{{ 'products.product.sold_out' | t }}</p>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
@@ -302,173 +334,254 @@
   /* Collection Header */
   .collection-header {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px;
-    padding: 20px 0;
-    gap: 140px;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .collection-title h1 {
-    font-size: 32px;
-    font-weight: var(--font-heading-weight);
-    text-transform: uppercase;
-    letter-spacing: var(--font-heading-letter-spacing);
-    color: var(--color-foreground);
-    margin: 0 0 10px 0;
-  }
-
-  .product-count {
-    font-size: 16px;
-    color: var(--color-foreground);
-    margin: 0;
-    opacity: 0.8;
-  }
-
-  .collection-controls {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .filters,
-  .sorting {
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 40px;
     position: relative;
   }
 
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  .header-left, .header-right {
+    flex: 1;
+    display: flex;
   }
 
-  .dropdown-toggle {
-    display: inline-flex;
+  .header-right {
+    justify-content: flex-end;
+  }
+
+  .product-grid-title {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 10px 18px;
-    border-radius: 14px;
-    border: 1px solid var(--color-border);
-    background-color: var(--color-background);
-    color: var(--color-foreground);
-    font-size: 14px;
-    letter-spacing: 0.2px;
-    line-height: 1.3;
-    min-height: 53px;
-    cursor: pointer;
-    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    gap: 5px;
+    text-align: center;
   }
 
-  .dropdown-toggle:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 18px 38px rgba(15, 23, 42, 0.16);
-    transform: translateY(-1px);
-  }
-
-  .dropdown-toggle:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 3px;
-  }
-
-  .dropdown-toggle__chevron {
-    width: 10px;
-    height: 10px;
-    margin-bottom: 5px;
-    border-right: 2px solid currentColor;
-    border-bottom: 2px solid currentColor;
-    transform: rotate(45deg);
-    transition: transform 0.2s ease;
-  }
-
-  .dropdown-toggle[aria-expanded='true'] .dropdown-toggle__chevron {
-    transform: rotate(-135deg);
-    margin-top: 10px;
-  }
-
-  .filter-toggle__icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--color-border);
-    background-color: rgba(15, 23, 42, 0.04);
-    color: var(--color-foreground);
-  }
-
-  .filter-toggle__label {
-    font-size: 12px;
+  .shop-name {
+    font-size: 24px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+
+  .product-count {
+    font-size: 14px;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    margin: 0;
+  }
+
+  /* Filter Toggle Button */
+  .filter-toggle-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-primary-family);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-foreground);
+    transition: opacity 0.2s ease;
+  }
+
+  .filter-toggle-btn:hover {
     opacity: 0.7;
   }
 
-  .filter-toggle__value {
-    font-weight: var(--font-heading-weight);
+  .filter-icon, .chevron-icon {
+    display: flex;
+    align-items: center;
   }
 
-  .sort-toggle__label {
-    font-weight: var(--font-heading-weight);
+  /* Sort Dropdown */
+  .custom-sort-dropdown {
+    position: relative;
+    min-width: 160px;
   }
 
-  .dropdown-menu {
-    display: none;
+  .sort-trigger {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--font-primary-family);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    color: var(--color-foreground);
+    width: 100%;
+  }
+
+  .sort-options-list {
     position: absolute;
-    top: calc(100% + 12px);
-    left: 0;
-    min-width: 210px;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 14px;
-    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.24);
-    padding: 8px;
-    z-index: 40;
+    border-radius: 4px;
+    padding: 8px 0;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 100;
   }
 
-  .dropdown-menu.is-open {
+  .sort-options-list.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .sort-option {
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+  }
+
+  .sort-option:hover {
+    background-color: rgba(0,0,0,0.05);
+  }
+
+  .sort-option.selected {
+    font-weight: 600;
+    background-color: rgba(0,0,0,0.03);
+  }
+
+  /* Main Content Layout */
+  .collection-content-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    transition: gap 0.3s ease;
+  }
+
+  /* Sidebar */
+  .collection-sidebar {
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .collection-sidebar.is-visible {
+    width: 250px;
+    opacity: 1;
+    visibility: visible;
+    margin-right: 40px;
+  }
+
+  .sidebar-filter-group {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 15px;
+  }
+
+  .sidebar-accordion-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-family: var(--font-primary-family);
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-foreground);
+  }
+
+  .sidebar-accordion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 10px;
+    max-height: 500px; /* Arbitrary large height for transition */
+    transition: max-height 0.3s ease;
+    overflow: hidden;
+  }
+
+  .sidebar-accordion-content.is-collapsed {
+    max-height: 0;
+    padding-top: 0;
+    opacity: 0;
+  }
+
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--color-foreground);
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+
+  .checkbox-container:hover {
+    opacity: 1;
+  }
+
+  .checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  .checkbox-custom {
+    height: 16px;
+    width: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 2px;
+    margin-right: 10px;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .checkbox-container input:checked ~ .checkbox-custom {
+    background-color: var(--color-foreground);
+    border-color: var(--color-foreground);
+  }
+
+  .checkbox-custom:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid var(--color-background);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .checkbox-container input:checked ~ .checkbox-custom:after {
     display: block;
   }
 
-  .dropdown-menu__item {
-    list-style: none;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-  }
-
-  .dropdown-menu__item + .dropdown-menu__item {
-    margin-top: 4px;
-  }
-
-  .dropdown-menu__item:hover,
-  .dropdown-menu__item:focus {
-    background-color: rgba(15, 23, 42, 0.08);
-  }
-
-  .dropdown-menu__item.is-active {
-    background-color: rgba(15, 23, 42, 0.12);
-    color: var(--color-primary);
-  }
-
-  .filter-menu {
-    min-width: 190px;
-  }
-
-  .sort-menu {
-    left: auto;
-    right: 0;
+  .product-grid {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
   }
 
   /* Mobile */
@@ -476,24 +589,22 @@
     .collection-header {
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       gap: 20px;
     }
-
-    .collection-controls {
+    
+    .header-left, .header-right {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .collection-sidebar.is-visible {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 30px;
+    }
+    
+    .collection-content-wrapper {
       flex-direction: column;
-      align-items: stretch;
-      width: 100%;
-    }
-
-    .filters,
-    .sorting {
-      width: 100%;
-    }
-
-    .dropdown-toggle {
-      width: 100%;
-      justify-content: space-between;
     }
   }
 {% endstylesheet %}
@@ -502,77 +613,101 @@
 document.addEventListener('DOMContentLoaded', function() {
   const productGrid = document.querySelector('.product-grid');
   const productCards = Array.from(document.querySelectorAll('.product-card'));
-  const originalOrder = productCards.slice();
   const productCountEl = document.querySelector('.product-count');
-  let currentAvailability = '';
-  let currentType = '';
-  let currentSort = 'created-descending';
+  
+  // Main Filter Toggle (Sidebar)
+  const mainFilterToggle = document.getElementById('main-filter-toggle');
+  const collectionSidebar = document.getElementById('collection-sidebar');
+  
+  if (mainFilterToggle && collectionSidebar) {
+    mainFilterToggle.addEventListener('click', () => {
+      collectionSidebar.classList.toggle('is-visible');
+      // Optional: Toggle icon state if needed
+    });
+  }
 
-  const dropdownRegistry = [];
-
-  const registerDropdown = (toggle, menu) => {
-    dropdownRegistry.push({ toggle, menu });
-  };
-
-  const closeDropdown = (toggle, menu) => {
-    toggle.setAttribute('aria-expanded', 'false');
-    menu.classList.remove('is-open');
-  };
-
-  const openDropdown = (toggle, menu) => {
-    toggle.setAttribute('aria-expanded', 'true');
-    menu.classList.add('is-open');
-  };
-
-  const closeAllDropdowns = (exceptionToggle = null) => {
-    dropdownRegistry.forEach(({ toggle, menu }) => {
-      if (exceptionToggle && toggle === exceptionToggle) {
-        return;
-      }
-      if (menu.classList.contains('is-open')) {
-        closeDropdown(toggle, menu);
+  // Sidebar Accordions
+  const accordionBtns = document.querySelectorAll('.sidebar-accordion-btn');
+  
+  accordionBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const content = btn.nextElementSibling;
+      const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+      
+      btn.setAttribute('aria-expanded', !isExpanded);
+      content.classList.toggle('is-collapsed');
+      
+      // Rotate icon
+      const icon = btn.querySelector('.accordion-icon svg');
+      if (icon) {
+        icon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+        icon.style.transition = 'transform 0.3s ease';
       }
     });
-  };
-
-  const toggleDropdown = (toggle, menu) => {
-    const isOpen = menu.classList.contains('is-open');
-    if (isOpen) {
-      closeDropdown(toggle, menu);
-    } else {
-      closeAllDropdowns(toggle);
-      openDropdown(toggle, menu);
-    }
-  };
-
-  document.addEventListener('click', (event) => {
-    if (!event.target.closest('.dropdown')) {
-      closeAllDropdowns();
-    }
   });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      closeAllDropdowns();
-    }
-  });
+  // Sort Dropdown
+  const sortTrigger = document.getElementById('sort-trigger');
+  const sortOptionsList = document.getElementById('sort-options-list');
+  const sortOptions = document.querySelectorAll('.sort-option');
+  const currentSortLabel = document.querySelector('.current-sort-label');
 
-  let applyFilters = () => {
+  if (sortTrigger && sortOptionsList) {
+    sortTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sortOptionsList.classList.toggle('is-visible');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!sortTrigger.contains(e.target) && !sortOptionsList.contains(e.target)) {
+        sortOptionsList.classList.remove('is-visible');
+      }
+    });
+
+    sortOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const label = option.textContent;
+        
+        // Update UI
+        currentSortLabel.textContent = label;
+        sortOptionsList.classList.remove('is-visible');
+        
+        // Update selected state
+        sortOptions.forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        
+        applySort(value);
+      });
+    });
+  }
+
+  // Filter state
+  const selectedAvailability = new Set();
+  const selectedTypes = new Set();
+  let currentSort = 'created-descending';
+
+  const applyFilters = () => {
+    let visibleCount = 0;
+
     productCards.forEach((card) => {
       const avail = card.dataset.availability;
       const type = card.dataset.productType;
-      const showAvail = !currentAvailability || (currentAvailability === 'available' ? avail === 'available' : avail === 'sold_out');
-      let showType;
-      if (currentType === 'other') {
-        showType = type === '';
-      } else if (currentType) {
-        showType = type === currentType;
+      
+      // Availability Logic
+      const showAvail = selectedAvailability.size === 0 || selectedAvailability.has(avail);
+      
+      // Type Logic
+      const showType = selectedTypes.size === 0 || selectedTypes.has(type);
+
+      if (showAvail && showType) {
+        card.style.display = '';
+        visibleCount++;
       } else {
-        showType = true;
+        card.style.display = 'none';
       }
-      card.style.display = showAvail && showType ? '' : 'none';
     });
-    const visibleCount = productCards.filter(card => card.style.display !== 'none').length;
+
     if(visibleCount === 1) {
       productCountEl.textContent = `${visibleCount} product`;
     } else {
@@ -580,184 +715,62 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
 
-  let applyAvailabilityFilter = () => {};
-
-  const filterToggle = document.querySelector('[data-filter-toggle]');
-  const filterMenu = document.querySelector('[data-filter-menu]');
-
-  if (filterToggle && filterMenu) {
-    registerDropdown(filterToggle, filterMenu);
-    const filterOptions = Array.from(filterMenu.querySelectorAll('[data-value]'));
-    const selectedTextEl = filterToggle.querySelector('[data-selected-text]');
-
-    applyAvailabilityFilter = (filterValue) => {
-      currentAvailability = filterValue;
-      applyFilters();
-    };
-
-    filterToggle.addEventListener('click', () => {
-      toggleDropdown(filterToggle, filterMenu);
-    });
-
-    filterOptions.forEach((option) => {
-      option.addEventListener('click', () => {
-        if (option.classList.contains('is-active')) {
-          closeAllDropdowns();
-          return;
-        }
-
-        filterOptions.forEach((item) => {
-          item.classList.toggle('is-active', item === option);
-          item.setAttribute('aria-selected', item === option ? 'true' : 'false');
-        });
-
-        selectedTextEl.textContent = option.textContent;
-        applyAvailabilityFilter(option.dataset.value);
-        closeAllDropdowns();
-      });
-
-      option.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          option.click();
-        }
-      });
-    });
-
-    applyAvailabilityFilter('');
-  }
-
-  let applyTypeFilter = () => {};
-
-  const typeToggle = document.querySelector('[data-type-toggle]');
-  const typeMenu = document.querySelector('[data-type-menu]');
-
-  if (typeToggle && typeMenu) {
-    registerDropdown(typeToggle, typeMenu);
-    const typeOptions = Array.from(typeMenu.querySelectorAll('[data-value]'));
-    const selectedTextEl = typeToggle.querySelector('[data-selected-text]');
-
-    applyTypeFilter = (filterValue) => {
-      currentType = filterValue;
-      applyFilters();
-    };
-
-    typeToggle.addEventListener('click', () => {
-      toggleDropdown(typeToggle, typeMenu);
-    });
-
-    typeOptions.forEach((option) => {
-      option.addEventListener('click', () => {
-        if (option.classList.contains('is-active')) {
-          closeAllDropdowns();
-          return;
-        }
-
-        typeOptions.forEach((item) => {
-          item.classList.toggle('is-active', item === option);
-          item.setAttribute('aria-selected', item === option ? 'true' : 'false');
-        });
-
-        selectedTextEl.textContent = option.textContent;
-        applyTypeFilter(option.dataset.value);
-        closeAllDropdowns();
-      });
-
-      option.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          option.click();
-        }
-      });
-    });
-
-    applyTypeFilter('');
-  }
-
-  const sortToggle = document.querySelector('[data-sort-toggle]');
-  const sortMenu = document.querySelector('[data-sort-menu]');
-
-  if (sortToggle && sortMenu && productGrid) {
-    registerDropdown(sortToggle, sortMenu);
-    const sortOptions = Array.from(sortMenu.querySelectorAll('[data-value]'));
-    const sortLabelEl = sortToggle.querySelector('.sort-toggle__label');
-
-    const updateSortSelection = (activeOption) => {
-      sortOptions.forEach((item) => {
-        const isActive = item === activeOption;
-        item.classList.toggle('is-active', isActive);
-        item.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      });
-    };
-
-    const applySort = (sortValue) => {
-      currentSort = sortValue;
-      let sortedCards;
-
-      switch (sortValue) {
-        case 'title-ascending':
-          sortedCards = productCards.slice().sort((a, b) => a.dataset.title.localeCompare(b.dataset.title));
-          break;
-        case 'title-descending':
-          sortedCards = productCards.slice().sort((a, b) => b.dataset.title.localeCompare(a.dataset.title));
-          break;
-        case 'price-ascending':
-          sortedCards = productCards.slice().sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
-          break;
-        case 'price-descending':
-          sortedCards = productCards.slice().sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
-          break;
-        case 'created-ascending':
-          sortedCards = productCards.slice().sort((a, b) => parseInt(a.dataset.created, 10) - parseInt(b.dataset.created, 10));
-          break;
-        case 'created-descending':
-        default:
-          sortedCards = productCards.slice().sort((a, b) => parseInt(b.dataset.created, 10) - parseInt(a.dataset.created, 10));
-          break;
-      }
-
-      productGrid.innerHTML = '';
-      sortedCards.forEach((card) => productGrid.appendChild(card));
-
-      productCards.length = 0;
-      productCards.push(...sortedCards);
-
-      applyFilters();
-    };
-
-    sortToggle.addEventListener('click', () => {
-      toggleDropdown(sortToggle, sortMenu);
-    });
-
-    sortOptions.forEach((option) => {
-      option.addEventListener('click', () => {
-        if (option.classList.contains('is-active')) {
-          closeAllDropdowns();
-          return;
-        }
-
-        updateSortSelection(option);
-        sortLabelEl.textContent = option.textContent;
-        applySort(option.dataset.value);
-        closeAllDropdowns();
-      });
-
-      option.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          option.click();
-        }
-      });
-    });
-
-    const initialSort = sortToggle.dataset.selectedSort || currentSort;
-    const initialOption = sortOptions.find((item) => item.dataset.value === initialSort) || sortOptions[0];
-    if (initialOption) {
-      updateSortSelection(initialOption);
-      sortLabelEl.textContent = initialOption.textContent;
-      applySort(initialOption.dataset.value);
+  const updateFilterState = (checkbox) => {
+    const type = checkbox.dataset.filterType;
+    const value = checkbox.value;
+    const isChecked = checkbox.checked;
+    
+    const targetSet = type === 'availability' ? selectedAvailability : selectedTypes;
+    
+    if (isChecked) {
+      targetSet.add(value);
+    } else {
+      targetSet.delete(value);
     }
-  }
+    
+    applyFilters();
+  };
+
+  // Add listeners to checkboxes
+  document.querySelectorAll('input[type="checkbox"][data-filter-type]').forEach(checkbox => {
+    checkbox.addEventListener('change', (e) => updateFilterState(e.target));
+  });
+
+  const applySort = (sortValue) => {
+    currentSort = sortValue;
+    let sortedCards;
+
+    switch (sortValue) {
+      case 'title-ascending':
+        sortedCards = productCards.slice().sort((a, b) => a.dataset.title.localeCompare(b.dataset.title));
+        break;
+      case 'title-descending':
+        sortedCards = productCards.slice().sort((a, b) => b.dataset.title.localeCompare(a.dataset.title));
+        break;
+      case 'price-ascending':
+        sortedCards = productCards.slice().sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+        break;
+      case 'price-descending':
+        sortedCards = productCards.slice().sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+        break;
+      case 'created-ascending':
+        sortedCards = productCards.slice().sort((a, b) => parseInt(a.dataset.created, 10) - parseInt(b.dataset.created, 10));
+        break;
+      case 'created-descending':
+      default:
+        sortedCards = productCards.slice().sort((a, b) => parseInt(b.dataset.created, 10) - parseInt(a.dataset.created, 10));
+        break;
+    }
+
+    productGrid.innerHTML = '';
+    sortedCards.forEach((card) => productGrid.appendChild(card));
+
+    // Update the reference array to match the new order
+    productCards.length = 0;
+    productCards.push(...sortedCards);
+
+    applyFilters();
+  };
 });
 {% endjavascript %}
 
