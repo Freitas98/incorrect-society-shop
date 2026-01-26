@@ -9,9 +9,9 @@
   %}
   {% capture announcement_block %}
     <span class="announcement-text">
-      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_red.svg?v=1764257556" class="announcement-icon" alt="" width="20" height="20">
+      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" class="announcement-icon" alt="" width="60" height="60">
       <span class="announcement-copy">{{ announcement_text }}</span>
-      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_red.svg?v=1764257556" class="announcement-icon" alt="" width="20" height="20">
+      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" class="announcement-icon" alt="" width="60" height="60">
     </span>
   {% endcapture %}
   <div class="announcement-content" aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}">
@@ -25,7 +25,7 @@
 
 {% stylesheet %}
   .announcement-bar {
-    background-color: var(--color-background);
+    background-color: var(--color-primary);
     color: var(--color-foreground);
     height: 46px;
     overflow: hidden;
@@ -33,7 +33,6 @@
     top: 0;
     left: 0;
     width: 100vw;
-    border-bottom: 1px solid var(--color-border);
     z-index: 1000;
   }
 
@@ -54,11 +53,12 @@
     display: inline-flex;
     align-items: center;
     gap: 12px;
+    color: white;
   }
 
   .announcement-icon {
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     object-fit: contain;
     display: inline-block;
   }

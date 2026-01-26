@@ -73,27 +73,15 @@
   }
 
   /* Header States */
-  /* Initial State (Top): Logo Hidden, Slogan Visible */
+  /* Keep header logo always visible and hide slogan */
   body.template-index .site-header .header-logo {
-    display: none;
-    opacity: 0;
-  }
-  
-  body.template-index .site-header .header-slogan {
-    display: block;
-    opacity: 1;
-    transition: opacity 0.2s ease;
+    display: block !important;
+    opacity: 1 !important;
   }
 
-  /* Scrolled State: Logo Visible, Slogan Hidden */
-  body.template-index .site-header.is-scrolled .header-logo {
-    display: block;
-    opacity: 1;
-  }
-  
-  body.template-index .site-header.is-scrolled .header-slogan {
-    display: none;
-    opacity: 0;
+  body.template-index .site-header .header-slogan {
+    display: none !important;
+    opacity: 0 !important;
   }
   
   body.template-index .site-header-backdrop {
@@ -228,10 +216,7 @@
             }
         }
         
-        // Ensure Header Logo is hidden
-        if (headerLogo) {
-            headerLogo.style.display = 'none';
-        }
+        // Do not hide header logo during animation — keep it visible
 
         // Use Scale for smoother animation
         // Calculate Scale Factor

@@ -4,50 +4,45 @@
   <div class="site-header-inner">
     <div class="header-content">
     <div class="header-left">
+      <button type="button" class="header-action header-hamburger" id="mobile-nav-toggle" aria-label="Open menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <nav class="header-nav">
+        <ul class="header-menu">
+          <li class="header-menu-item">
+            <a href="{{ pages['all-products'].url }}" class="header-menu-link">Shop</a>
+          </li>
+          <li class="header-menu-item">
+            <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">Outsider</a>
+          </li>
+          <li class="header-menu-item">
+            <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">Gift Card</a>
+          </li>
+          <li class="header-menu-item">
+            <a href="{{ routes.collections_url }}/accessories" class="header-menu-link">Accessories</a>
+          </li>
+          <li class="header-menu-item">
+            <a href="{{ pages['news'].url }}" class="header-menu-link">News</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <div class="header-center">
       <div class="header-identity">
         <a href="{{ routes.root_url }}" class="header-logo-link" aria-label="{{ 'general.home' | t }}">
           <img
-            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_horizontal_black.svg?v=1764257555"
+            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_black.svg?v=1764257555"
             alt="{{ shop.name }}"
             class="header-logo"
             loading="eager"
-            width="220"
-            height="auto"
-            style="height: auto; width: 220px;"
-          >
-          <img
-            src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/logoWithSlogan.svg?v=1765739135"
-            alt="Not in accordance with any standard or rule"
-            class="header-slogan"
-            loading="eager"
-            width="300"
-            height="60"
-            style="display: none; height: 36px; width: 220px;"
+            width="10px"
+            height="60px"
           >
         </a>
-        <!-- tagline removed for compact header -->
       </div>
     </div>
-    <!-- Center navigation menu -->
-    <nav class="header-nav">
-      <ul class="header-menu">
-        <li class="header-menu-item">
-          <a href="{{ pages['all-products'].url }}" class="header-menu-link">Shop</a>
-        </li>
-        <li class="header-menu-item">
-          <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">Outsider</a>
-        </li>
-        <li class="header-menu-item">
-          <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">Gift Card</a>
-        </li>
-        <li class="header-menu-item">
-          <a href="{{ routes.collections_url }}/accessories" class="header-menu-link">Accessories</a>
-        </li>
-        <li class="header-menu-item">
-          <a href="{{ pages['news'].url }}" class="header-menu-link">News</a>
-        </li>
-      </ul>
-    </nav>
     <div class="header-right">
       <div class="header-actions">
         <div class="header-search" data-search>
@@ -81,14 +76,6 @@
             </svg>
           </button>
         </div>
-        {% if shop.customer_accounts_enabled %}
-          <a href="{{ routes.account_url }}" class="header-action header-account" aria-label="{{ 'customers.login.title' | t }}">
-            <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5Zm0 2c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5Z" fill="currentColor"/>
-            </svg>
-            <span class="visually-hidden">{{ 'customers.login.title' | t }}</span>
-          </a>
-        {% endif %}
         <a href="{{ routes.cart_url }}" class="header-action header-cart" id="cart-toggle" aria-label="{{ 'cart.title' | t }}">
           <svg class="nav-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path d="M6 6h14l-2 8H8L6 6Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
@@ -105,12 +92,6 @@
             {% if cart.item_count > 0 %}{{ cart.item_count }}{% endif %}
           </span>
         </a>
-        <!-- Hamburger for mobile nav -->
-        <button type="button" class="header-action header-hamburger" id="mobile-nav-toggle" aria-label="Open menu">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </button>
       </div>
     </div>
 </div>
@@ -219,10 +200,11 @@
 {% stylesheet %}
   :root {
     --announcement-height: 46px;
-    --header-pad-top: 22px;
-    --header-pad-top-mobile: 14px;
-    --header-row-min-height: 44px;
+    --header-pad-top: 12px;
+    --header-pad-top-mobile: 8px;
+    --header-row-min-height: 36px;
   }
+
   .site-header {
     background-color: transparent;
     padding: var(--header-pad-top) 0;
@@ -236,10 +218,6 @@
   }
 
   .site-header-backdrop {
-    background-color: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
-    box-shadow: 0 18px 40px rgba(12, 12, 12, 0.08);
     position: fixed;
     top: var(--announcement-height);
     left: 0;
@@ -271,6 +249,12 @@
   }
 
   .header-nav {
+    justify-self: flex-start;
+    display: flex;
+    align-items: center;
+  }
+
+  .header-center {
     justify-self: center;
     display: flex;
     align-items: center;
@@ -365,17 +349,22 @@
 
 
   .header-logo {
+    display: block;
     flex-shrink: 0;
+    height: 36px;
+    width: auto;
+    max-width: 200px;
+    object-fit: contain;
+    filter: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    border: none !important;
+    background: transparent !important;
   }
 
-  .header-logo a {
+  .header-logo-link {
     display: block;
     text-decoration: none;
-  }
-
-  .logo-img {
-    height: 40px;
-    width: auto;
   }
 
   .logo-placeholder {
@@ -900,9 +889,8 @@
       display: none;
     }
     .header-nav {
-      grid-column: 2;
       margin-top: 0;
-      justify-self: center;
+      justify-self: flex-start;
     }
     .header-right {
       grid-column: 3;
