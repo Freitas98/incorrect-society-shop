@@ -1,7 +1,18 @@
 {% schema %}
 {
   "name": "Full Width Images",
-  "settings": [],
+  "settings": [
+    {
+      "type": "select",
+      "id": "display_type",
+      "label": "Display type",
+      "options": [
+        { "value": "stack", "label": "Stack (default)" },
+        { "value": "fullscreen_gallery", "label": "Fullscreen gallery (snap)" }
+      ],
+      "default": "stack"
+    }
+  ],
   "blocks": [
     {
       "type": "image",
@@ -34,8 +45,14 @@
 {% endschema %}
 
 <div class="full-width-images-section">
+  {% if section.settings.display_type == 'fullscreen_gallery' %}
+    {% assign gallery_mode = true %}
+  {% else %}
+    {% assign gallery_mode = false %}
+  {% endif %}
+  <div class="full-width-images-wrapper {% if gallery_mode %}fullscreen-gallery{% endif %}">
   {% for block in section.blocks %}
-    <div class="full-width-image-container" {{ block.shopify_attributes }}>
+    <div class="full-width-image-container {% if gallery_mode %}fullscreen-slide{% endif %}" {{ block.shopify_attributes }}>
       {% if block.settings.link %}
         <a href="{{ block.settings.link }}" class="full-width-image-link">
       {% endif %}
@@ -65,6 +82,7 @@
       {% endif %}
     </div>
   {% endfor %}
+  </div>
 </div>
 
 <style>
@@ -112,7 +130,26 @@
   
   /* First image should be full height for hero effect */
   .full-width-image-container:first-child .full-width-image {
-    height: 100vh;
+    height: 100svh;
+    object-fit: cover;
+  }
+
+  /* Fullscreen gallery styles (section-level scroll snapping) */
+  .full-width-images-wrapper.fullscreen-gallery {
+    height: 100svh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .full-width-images-wrapper.fullscreen-gallery .fullscreen-slide {
+    height: 100svh;
+    scroll-snap-align: start;
+  }
+
+  .full-width-images-wrapper.fullscreen-gallery .fullscreen-slide .full-width-image {
+    height: 100%;
+    width: 100%;
     object-fit: cover;
   }
 </style>

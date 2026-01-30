@@ -99,7 +99,6 @@
 </header>
 <div id="site-header-spacer" class="site-header-spacer" aria-hidden="true"></div>
 
-<!-- Cart Sidebar -->
 <div class="cart-sidebar" id="cart-sidebar">
   <div class="cart-sidebar-content">
     <div class="cart-header">
@@ -112,7 +111,6 @@
     </div>
 
     <div class="cart-items" id="cart-items">
-      <!-- Cart items will be loaded here -->
     </div>
 
     <div class="cart-footer">
@@ -131,7 +129,6 @@
 
 <div class="cart-overlay" id="cart-overlay"></div>
 
-<!-- Mobile nav overlay/drawer -->
 <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
 <nav class="mobile-nav" id="mobile-nav" aria-hidden="true">
   <div class="mobile-nav-inner">
@@ -184,7 +181,6 @@
   </div>
 </nav>
 
-<!-- Clear Cart Confirmation Modal -->
 <div class="clear-cart-modal" id="clear-cart-modal">
   <div class="modal-content">
     <h3>{{ 'cart.clear_confirm_title' | t }}</h3>
@@ -199,9 +195,9 @@
 
 {% stylesheet %}
   :root {
-    --announcement-height: 46px;
-    --header-pad-top: 12px;
-    --header-pad-top-mobile: 8px;
+    --announcement-height: 30px;
+    --header-pad-top: 8px;
+    --header-pad-top-mobile: 6px;
     --header-row-min-height: 36px;
   }
 
@@ -230,7 +226,6 @@
     height: var(--site-header-height, 0px);
   }
 
-  /* Grid layout keeps brand, navigation, and actions evenly spaced */
   .header-content {
     width: 100%;
     margin: 0;
@@ -1246,6 +1241,58 @@
     window.addEventListener('resize', () => {
       setHeaderSpacer();
     });
+    // Toggle header contrast (and swap logo) depending on whether the
+    // hero image is visible under the header. This makes icons/text white
+    // when over the hero and return to default after scrolling past it.
+    const headerLogo = headerEl?.querySelector('.header-logo');
+    const whiteLogoSrc = 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556';
+    if (headerLogo && !headerLogo.dataset.origSrc) headerLogo.dataset.origSrc = headerLogo.src;
+
+    // Determine whether the header is sitting above an image or other media
+    // by sampling a point just below the header (so we inspect the element
+    // underneath the header rather than the header itself).
+    const isOverMedia = () => {
+      const announcementHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--announcement-height')) || 46;
+      const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || (headerEl ? headerEl.getBoundingClientRect().height : 0);
+      const x = Math.round(window.innerWidth / 2);
+      // sample just below the header bottom (1px below)
+      const y = Math.round(announcementHeight + headerHeight + 2);
+      // If the sample point is outside the viewport, bail out
+      if (y > window.innerHeight) return false;
+      const el = document.elementFromPoint(x, y);
+      if (!el) return false;
+      // Walk up ancestors to find if this element or parent is an image or has background-image
+      let node = el;
+      while (node && node !== document.documentElement) {
+        if (node.tagName === 'IMG') return true;
+        const bg = getComputedStyle(node).backgroundImage || '';
+        if (bg && bg !== 'none' && bg.indexOf('gradient') === -1) return true;
+        if (node.classList && (node.classList.contains('full-width-image') || node.classList.contains('fullscreen-slide') || node.classList.contains('full-width-image-container'))) return true;
+        node = node.parentElement;
+      }
+      return false;
+    };
+
+    const updateHeaderContrast = () => {
+      if (isOverMedia()) {
+        headerEl.classList.add('site-header--light');
+        if (headerLogo) headerLogo.src = whiteLogoSrc;
+      } else {
+        headerEl.classList.remove('site-header--light');
+        if (headerLogo && headerLogo.dataset.origSrc) headerLogo.src = headerLogo.dataset.origSrc;
+      }
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => { updateHeaderContrast(); ticking = false; });
+        ticking = true;
+      }
+    }, { passive: true });
+    window.addEventListener('resize', updateHeaderContrast);
+    // run initially after spacer calculated
+    updateHeaderContrast();
     const cartToggle = document.getElementById('cart-toggle');
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartOverlay = document.getElementById('cart-overlay');

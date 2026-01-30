@@ -9,27 +9,44 @@
  */
 {
   "sections": {
-    "hero_logo": {
-      "type": "hero-logo",
-      "settings": {
-        "max_width": 90
-      }
+    "hero_images": {
+      "type": "full-width-images",
+      "blocks": {
+        "hero_image_1": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/IMG_3780.jpg",
+            "mobile_image": "",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "hero_image_1"
+      ],
+      "settings": {}
     },
-    "full_width_images": {
+    "product_grid": {
+      "type": "product-grid",
+      "settings": {}
+    },
+    "below_images": {
       "type": "full-width-images",
       "blocks": {
         "image_1": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/IMG_3780.jpg",
+            "image": "shopify://shop_images/d1.jpg",
+            "mobile_image": "",
             "link": ""
           }
         },
         "image_2": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/d1.jpg",
-            "link": ""
+            "image": "shopify://shop_images/IMG_3780.jpg",
+            "mobile_image": "",
+              "link": ""
           }
         }
       },
@@ -37,11 +54,14 @@
         "image_1",
         "image_2"
       ],
-      "settings": {}
+      "settings": {
+        "display_type": "fullscreen_gallery"
+      }
     }
   },
   "order": [
-    "hero_logo",
-    "full_width_images"
+    "hero_images",
+    "product_grid",
+    "below_images"
   ]
 }

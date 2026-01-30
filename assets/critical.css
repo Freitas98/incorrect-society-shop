@@ -4,6 +4,7 @@
 
 /* Reset styles inspired by https://www.joshwcomeau.com/css/custom-css-reset/ */
 html {
+  --site-header-height: 100px !important;
   scrollbar-width: thin;
   scrollbar-color: var(--color-primary)
     color-mix(in oklab, var(--color-surface), var(--color-background) 60%);
@@ -612,7 +613,8 @@ header {
   color: var(--color-foreground);
   text-decoration: none;
   font-weight: var(--font-heading-weight);
-  letter-spacing: var(--font-heading-letter-spacing);
+    transition: background-color 0.3s ease, border-bottom-color 0.3s ease;
+    background-color: transparent !important;
   transition: color 0.2s ease;
 }
 
@@ -1506,3 +1508,96 @@ form[action*="/challenge"] {
   from { transform: translateX(0); opacity: 1; }
   to { transform: translateX(100%); opacity: 0; }
 }
+
+/* Hero and fullscreen gallery styles for index */
+/* The hero uses the existing `full-width-images` section (first image) and
+   will occupy the visible viewport while the navbar stays fixed above it. */
+
+/* Ensure the page background below the hero is the normal site background (white). */
+body[data-template="index"] {
+  background-color: var(--color-background);
+}
+
+/* Remove the main-content offset on the homepage so the hero sits behind header/announcement */
+/* Keep normal spacer for main content so layout flow remains correct. */
+
+/* Keep header above hero */
+.site-header {
+  position: fixed;
+  z-index: 1000;
+  background-color: transparent;
+}
+
+/* Ensure announcement bar stays above header */
+.announcement-bar {
+  z-index: 1100;
+}
+
+/* When a full-width-images section is used as hero (first image), make sure
+   the first image fills the viewport so it appears like a hero under the
+   transparent navbar. */
+.full-width-images-section .full-width-image-container:first-child .full-width-image {
+  height: 100svh;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Break out from constrained content grid so images go edge-to-edge */
+.full-width-images-section .full-width-image-container {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+/* Pull the first hero up so it sits behind the announcement bar and header
+   (header spacer keeps flow below header for other content). Uses CSS
+   variables set by the header script: --announcement-height and --site-header-height. */
+.full-width-images-section .full-width-image-container:first-child {
+  /* Pull the hero up so it sits behind the announcement bar and header
+     but preserve document flow with the header spacer. */
+  margin-top: calc(-1 * (var(--announcement-height, 46px) + var(--site-header-height, 0px)));
+  z-index: 0; /* keep it below header/announcement which have higher z-index */
+}
+
+/* Header variant when placed over the hero: light text/icons */
+.site-header.site-header--light {
+  color: #ffffff;
+}
+.site-header.site-header--light .header-menu-link,
+.site-header.site-header--light .header-action,
+.site-header.site-header--light .header-search-toggle {
+  color: #ffffff !important;
+}
+.site-header.site-header--light .header-logo {
+  filter: none !important;
+}
+
+/* Ensure header nav collapses reliably on small screens */
+@media (max-width: 768px) {
+  .header-nav { display: none !important; }
+  .header-hamburger { display: inline-flex !important; }
+  .header-content { padding: 0 16px !important; gap: 12px !important; }
+}
+
+/* Fullscreen gallery mode (applies when section setting `display_type` is set)
+   This creates an internal scroll container that snaps between full-viewport
+   slides. */
+.full-width-images-section.fullscreen-gallery {
+  height: 100svh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.full-width-images-section.fullscreen-gallery .fullscreen-slide {
+  height: 100svh;
+  scroll-snap-align: start;
+  position: relative;
+}
+
+.full-width-images-section.fullscreen-gallery .fullscreen-slide .full-width-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
