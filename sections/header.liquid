@@ -335,11 +335,34 @@
     letter-spacing: 0.08em;
     font-size: 0.95rem;
     font-weight: 500;
-    transition: color 0.2s ease;
+    transition: color 0.3s ease, filter 0.3s ease;
   }
 
   .header-menu-link:hover {
     color: var(--color-primary);
+  }
+
+  /* Dynamic contrast for header elements over media/images */
+  .header-menu-link.is-over-media {
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  .header-menu-link.is-over-media:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .header-action.is-over-media {
+    color: #ffffff;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+  }
+
+  .header-action.is-over-media:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .header-hamburger.is-over-media {
+    color: #ffffff;
   }
 
 
@@ -350,11 +373,17 @@
     width: auto;
     max-width: 200px;
     object-fit: contain;
-    filter: none !important;
+    filter: none;
     box-shadow: none !important;
     opacity: 1 !important;
     border: none !important;
     background: transparent !important;
+    transition: filter 0.3s ease;
+  }
+
+  /* Invert logo to white when over dark images/media */
+  .header-logo.is-over-media {
+    filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
   }
 
   .header-logo-link {
@@ -1241,58 +1270,116 @@
     window.addEventListener('resize', () => {
       setHeaderSpacer();
     });
-    // Toggle header contrast (and swap logo) depending on whether the
-    // hero image is visible under the header. This makes icons/text white
-    // when over the hero and return to default after scrolling past it.
-    const headerLogo = headerEl?.querySelector('.header-logo');
-    const whiteLogoSrc = 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556';
-    if (headerLogo && !headerLogo.dataset.origSrc) headerLogo.dataset.origSrc = headerLogo.src;
+    // Toggle per-element contrast depending on media underneath the header.
+    // We'll use CSS `filter` on the logo instead of swapping `src` to avoid
+    // loading/switching image assets.
 
-    // Determine whether the header is sitting above an image or other media
-    // by sampling a point just below the header (so we inspect the element
-    // underneath the header rather than the header itself).
-    const isOverMedia = () => {
-      const announcementHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--announcement-height')) || 46;
-      const headerHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || (headerEl ? headerEl.getBoundingClientRect().height : 0);
-      const x = Math.round(window.innerWidth / 2);
-      // sample just below the header bottom (1px below)
-      const y = Math.round(announcementHeight + headerHeight + 2);
-      // If the sample point is outside the viewport, bail out
-      if (y > window.innerHeight) return false;
+    // Per-element detection: sample the point just below the header at the
+    // horizontal center of each interactive element and toggle a class on
+    // that element only when the area below it contains an image or
+    // background-image. This allows switching only the logo, or only a
+    // specific link, rather than the whole header.
+    const announcementHeight = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--announcement-height')) || 46;
+    const headerHeight = () => parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--site-header-height')) || (headerEl ? headerEl.getBoundingClientRect().height : 0);
+
+    // More conservative media detection:
+    // - For IMG nodes require either an ancestor with theme full-width classes
+    //   or that the image height is a significant portion of the viewport.
+    // - For background-image require a non-gradient background and prefer
+    //   nodes with theme full-width classes.
+    const isLightColor = (colorStr) => {
+      // colorStr e.g. 'rgb(255, 255, 255)' or 'rgba(...)' or 'transparent'
+      if (!colorStr || colorStr === 'transparent') return false;
+      const m = colorStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+      if (!m) return false;
+      const r = parseInt(m[1], 10), g = parseInt(m[2], 10), b = parseInt(m[3], 10);
+      // Relative luminance (simple) — normalize to 0..1
+      const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+      return lum > 0.9; // too light -> treat as not a media background
+    };
+
+    const detectMediaAt = (x, y) => {
+      if (y > window.innerHeight || x < 0 || x > window.innerWidth) return false;
       const el = document.elementFromPoint(x, y);
       if (!el) return false;
-      // Walk up ancestors to find if this element or parent is an image or has background-image
+
+      // If the element itself is a theme full-width image container, accept
+      const candidate = el.closest('.full-width-image-container, .full-width-image, .fullscreen-slide, .full-width-images-section');
+      if (candidate) return true;
+
+      // Walk ancestors for IMG/background checks
       let node = el;
       while (node && node !== document.documentElement) {
-        if (node.tagName === 'IMG') return true;
+        if (node.tagName === 'IMG') {
+          const imgRect = node.getBoundingClientRect();
+          // Require image to cover a decent chunk of the viewport height
+          if (imgRect.height >= (window.innerHeight * 0.3)) return true;
+          // Also accept if image is explicitly inside a full-width container
+          if (node.closest('.full-width-image-container, .fullscreen-slide')) return true;
+        }
+
         const bg = getComputedStyle(node).backgroundImage || '';
-        if (bg && bg !== 'none' && bg.indexOf('gradient') === -1) return true;
-        if (node.classList && (node.classList.contains('full-width-image') || node.classList.contains('fullscreen-slide') || node.classList.contains('full-width-image-container'))) return true;
+        const bgColor = getComputedStyle(node).backgroundColor || '';
+        if (bg && bg !== 'none' && bg.indexOf('gradient') === -1) {
+          if (!isLightColor(bgColor)) return true;
+          // If background is light color, don't treat as media
+        }
+
         node = node.parentElement;
       }
       return false;
     };
 
-    const updateHeaderContrast = () => {
-      if (isOverMedia()) {
-        headerEl.classList.add('site-header--light');
-        if (headerLogo) headerLogo.src = whiteLogoSrc;
-      } else {
-        headerEl.classList.remove('site-header--light');
-        if (headerLogo && headerLogo.dataset.origSrc) headerLogo.src = headerLogo.dataset.origSrc;
+    const logoEl = headerEl.querySelector('.header-logo');
+    const menuLinks = Array.from(headerEl.querySelectorAll('.header-menu-link'));
+    // Include search toggle and cart so each action can invert individually
+    const actions = Array.from(headerEl.querySelectorAll('.header-action'));
+
+    const samplePointsForElement = (el) => {
+      const rect = el.getBoundingClientRect();
+      const y = Math.round(announcementHeight() + headerHeight() + 2);
+      // sample 3 horizontal positions: left third, center, right third
+      const p1 = { x: Math.round(rect.left + rect.width * 0.25), y };
+      const p2 = { x: Math.round(rect.left + rect.width * 0.5), y };
+      const p3 = { x: Math.round(rect.left + rect.width * 0.75), y };
+      return [p1, p2, p3];
+    };
+
+    const majorityTrue = (arr) => arr.filter(Boolean).length >= 2;
+
+    const updatePerElementContrast = () => {
+      // Logo: apply by default
+      if (logoEl) {
+        const points = samplePointsForElement(logoEl);
+        const results = points.map(p => detectMediaAt(p.x, p.y));
+        logoEl.classList.toggle('is-over-media', majorityTrue(results));
       }
+
+      // Menu links: toggle class individually using majority sampling
+      menuLinks.forEach((link) => {
+        const points = samplePointsForElement(link);
+        const results = points.map(p => detectMediaAt(p.x, p.y));
+        link.classList.toggle('is-over-media', majorityTrue(results));
+      });
+
+      // Actions (icons/buttons)
+      actions.forEach((act) => {
+        const points = samplePointsForElement(act);
+        const results = points.map(p => detectMediaAt(p.x, p.y));
+        act.classList.toggle('is-over-media', majorityTrue(results));
+      });
     };
 
     let ticking = false;
     window.addEventListener('scroll', () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => { updateHeaderContrast(); ticking = false; });
+        window.requestAnimationFrame(() => { updatePerElementContrast(); ticking = false; });
         ticking = true;
       }
     }, { passive: true });
-    window.addEventListener('resize', updateHeaderContrast);
+    window.addEventListener('resize', updatePerElementContrast);
     // run initially after spacer calculated
-    updateHeaderContrast();
+    updatePerElementContrast();
     const cartToggle = document.getElementById('cart-toggle');
     const cartSidebar = document.getElementById('cart-sidebar');
     const cartOverlay = document.getElementById('cart-overlay');

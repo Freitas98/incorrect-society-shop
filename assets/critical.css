@@ -1572,6 +1572,15 @@ body[data-template="index"] {
   filter: none !important;
 }
 
+/* Per-element over-media styles */
+.header-logo.is-over-media {
+  /* Logo inversion is disabled by default. Add `allow-logo-invert` on `.site-header`
+     to enable this if you want the logo to change when over media. */
+}
+.header-menu-link.is-over-media { color: #ffffff !important; }
+.header-action.is-over-media { color: #ffffff !important; }
+.header-action.is-over-media svg { stroke: #ffffff !important; fill: #ffffff !important; }
+
 /* Ensure header nav collapses reliably on small screens */
 @media (max-width: 768px) {
   .header-nav { display: none !important; }

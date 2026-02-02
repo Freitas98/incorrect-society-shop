@@ -1,0 +1,562 @@
+{% comment %}
+  Hero Slider Gallery Section
+  Features: Full-screen slides with text overlays, snap scrolling, navigation dots
+{% endcomment %}
+
+<section class="hero-slider-section" id="hero-slider-{{ section.id }}">
+  <div class="hero-slider-container">
+    {% for block in section.blocks %}
+      <div class="hero-slide" {{ block.shopify_attributes }} data-slide-index="{{ forloop.index0 }}">
+        <!-- Background Image -->
+        {% if block.settings.image %}
+          <picture class="hero-slide-bg">
+            {% if block.settings.mobile_image %}
+              <source media="(max-width: 768px)" srcset="{{ block.settings.mobile_image | image_url: width: 1000 }}">
+            {% endif %}
+            <img 
+              src="{{ block.settings.image | image_url: width: 2000 }}" 
+              alt="{{ block.settings.image.alt | escape | default: block.settings.title }}"
+              class="hero-slide-image"
+              width="600px"
+              height="400px"
+              loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+            >
+          </picture>
+        {% else %}
+          <div class="hero-slide-placeholder">
+            {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+        {% endif %}
+        
+        <!-- Overlay -->
+        <div class="hero-slide-overlay" style="background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});"></div>
+        
+        <!-- Content -->
+        <div class="hero-slide-content">
+          <nav class="hero-text-links">
+            {% for i in (1..5) %}
+              {% liquid
+                assign link_text_key = 'link_text_' | append: i
+                assign link_url_key = 'link_url_' | append: i
+                assign link_badge_key = 'link_badge_' | append: i
+                assign link_text = block.settings[link_text_key]
+                assign link_url = block.settings[link_url_key]
+                assign link_badge = block.settings[link_badge_key]
+              %}
+              {% if link_text != blank %}
+                <a href="{{ link_url | default: '#' }}" class="hero-text-link{% if forloop.index == 1 %} hero-text-link--featured{% endif %}">
+                  {{ link_text }}
+                  {% if link_badge != blank %}
+                    <span class="hero-link-badge">{{ link_badge }}</span>
+                  {% endif %}
+                </a>
+              {% endif %}
+            {% endfor %}
+          </nav>
+          
+          {% if block.settings.cta_text != blank %}
+            <a href="{{ block.settings.cta_url | default: '#' }}" class="hero-cta-btn">
+              {{ block.settings.cta_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Navigation Dots -->
+  {% if section.blocks.size > 1 %}
+    <div class="hero-slider-nav">
+      {% for block in section.blocks %}
+        <button 
+          class="hero-nav-dot{% if forloop.first %} active{% endif %}" 
+          data-slide="{{ forloop.index0 }}"
+          aria-label="Go to slide {{ forloop.index }}"
+        >
+          <span class="hero-nav-dot-progress"></span>
+        </button>
+      {% endfor %}
+      <span class="hero-nav-counter">
+        <span class="hero-nav-current">1</span>
+      </span>
+    </div>
+  {% endif %}
+</section>
+
+<style>
+  .hero-slider-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .hero-slider-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hero-slider-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-slide {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-slide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .hero-slide-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-slide-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-slide-placeholder .placeholder-svg {
+    max-width: 300px;
+    opacity: 0.3;
+  }
+
+  .hero-slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .hero-slide-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 900px;
+  }
+
+  /* Text Links Navigation */
+  .hero-text-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 40px;
+  }
+
+  .hero-text-link {
+    font-family: var(--font-heading-family);
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: var(--font-heading-weight);
+    color: #ffffff;
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    line-height: 1.2;
+  }
+
+  .hero-text-link:hover {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+
+  .hero-text-link--featured {
+    opacity: 1;
+    font-size: clamp(38px, 7vw, 64px);
+  }
+
+  .hero-link-badge {
+    position: absolute;
+    top: 0;
+    right: -30px;
+    font-family: var(--font-primary-family);
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+  }
+
+  /* CTA Button */
+  .hero-cta-btn {
+    font-family: var(--font-primary-family);
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 14px 32px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .hero-cta-btn:hover {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+  }
+
+  /* Navigation Dots */
+  .hero-slider-nav {
+    position: absolute;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  .hero-nav-dot {
+    width: 2px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-nav-dot-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background-color: #ffffff;
+    transition: height 0.3s ease;
+  }
+
+  .hero-nav-dot.active .hero-nav-dot-progress {
+    height: 100%;
+  }
+
+  .hero-nav-dot.active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .hero-nav-counter {
+    font-family: var(--font-primary-family);
+    font-size: 12px;
+    color: #ffffff;
+    margin-top: 8px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero-slider-nav {
+      right: 20px;
+    }
+
+    .hero-text-link {
+      font-size: clamp(24px, 8vw, 40px);
+    }
+
+    .hero-text-link--featured {
+      font-size: clamp(28px, 9vw, 48px);
+    }
+
+    .hero-link-badge {
+      position: static;
+      display: block;
+      font-size: 10px;
+      margin-top: -4px;
+    }
+
+    .hero-cta-btn {
+      font-size: 11px;
+      padding: 12px 24px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-slider-nav {
+      right: 12px;
+      gap: 8px;
+    }
+
+    .hero-nav-dot {
+      height: 30px;
+    }
+  }
+</style>
+
+<script>
+  (function() {
+    const section = document.getElementById('hero-slider-{{ section.id }}');
+    if (!section) return;
+
+    const container = section.querySelector('.hero-slider-container');
+    const slides = section.querySelectorAll('.hero-slide');
+    const navDots = section.querySelectorAll('.hero-nav-dot');
+    const counter = section.querySelector('.hero-nav-current');
+
+    if (slides.length <= 1) return;
+
+    let currentIndex = 0;
+
+    // Update active state
+    const updateActiveSlide = (index) => {
+      currentIndex = index;
+      
+      navDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+
+      if (counter) {
+        counter.textContent = index + 1;
+      }
+    };
+
+    // Scroll to slide
+    const scrollToSlide = (index) => {
+      const slide = slides[index];
+      if (slide) {
+        slide.scrollIntoView({ behavior: 'smooth' });
+        updateActiveSlide(index);
+      }
+    };
+
+    // Nav dot click
+    navDots.forEach((dot, index) => {
+      dot.addEventListener('click', () => scrollToSlide(index));
+    });
+
+    // Intersection observer for scroll detection
+    const observerOptions = {
+      root: container,
+      threshold: 0.5
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const index = parseInt(entry.target.dataset.slideIndex);
+          updateActiveSlide(index);
+        }
+      });
+    }, observerOptions);
+
+    slides.forEach(slide => observer.observe(slide));
+
+    // Keyboard navigation
+    section.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const nextIndex = Math.min(currentIndex + 1, slides.length - 1);
+        scrollToSlide(nextIndex);
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        const prevIndex = Math.max(currentIndex - 1, 0);
+        scrollToSlide(prevIndex);
+      }
+    });
+
+    // Make section focusable for keyboard nav
+    section.setAttribute('tabindex', '0');
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Hero Slider Gallery",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Background Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "mobile_image",
+          "label": "Mobile Image (optional)"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "label": "Overlay Opacity",
+          "min": 0,
+          "max": 80,
+          "step": 5,
+          "default": 30,
+          "unit": "%"
+        },
+        {
+          "type": "header",
+          "content": "Link 1 (Featured)"
+        },
+        {
+          "type": "text",
+          "id": "link_text_1",
+          "label": "Text",
+          "default": "Best Sellers"
+        },
+        {
+          "type": "url",
+          "id": "link_url_1",
+          "label": "URL"
+        },
+        {
+          "type": "text",
+          "id": "link_badge_1",
+          "label": "Badge (optional)"
+        },
+        {
+          "type": "header",
+          "content": "Link 2"
+        },
+        {
+          "type": "text",
+          "id": "link_text_2",
+          "label": "Text",
+          "default": "Hoodies"
+        },
+        {
+          "type": "url",
+          "id": "link_url_2",
+          "label": "URL"
+        },
+        {
+          "type": "text",
+          "id": "link_badge_2",
+          "label": "Badge (optional)",
+          "default": "New"
+        },
+        {
+          "type": "header",
+          "content": "Link 3"
+        },
+        {
+          "type": "text",
+          "id": "link_text_3",
+          "label": "Text",
+          "default": "Sneakers"
+        },
+        {
+          "type": "url",
+          "id": "link_url_3",
+          "label": "URL"
+        },
+        {
+          "type": "text",
+          "id": "link_badge_3",
+          "label": "Badge (optional)"
+        },
+        {
+          "type": "header",
+          "content": "Link 4"
+        },
+        {
+          "type": "text",
+          "id": "link_text_4",
+          "label": "Text",
+          "default": "Accessories"
+        },
+        {
+          "type": "url",
+          "id": "link_url_4",
+          "label": "URL"
+        },
+        {
+          "type": "text",
+          "id": "link_badge_4",
+          "label": "Badge (optional)"
+        },
+        {
+          "type": "header",
+          "content": "Link 5"
+        },
+        {
+          "type": "text",
+          "id": "link_text_5",
+          "label": "Text",
+          "default": "New Arrivals"
+        },
+        {
+          "type": "url",
+          "id": "link_url_5",
+          "label": "URL"
+        },
+        {
+          "type": "text",
+          "id": "link_badge_5",
+          "label": "Badge (optional)",
+          "default": "70"
+        },
+        {
+          "type": "header",
+          "content": "Call to Action"
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "Button Text",
+          "default": "SHOP ALL"
+        },
+        {
+          "type": "url",
+          "id": "cta_url",
+          "label": "Button URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Slider Gallery",
+      "blocks": [
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

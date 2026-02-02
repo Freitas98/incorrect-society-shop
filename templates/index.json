@@ -26,42 +26,41 @@
       ],
       "settings": {}
     },
-    "product_grid": {
-      "type": "product-grid",
-      "settings": {}
+    "new_arrivals": {
+      "type": "new-arrivals-grid",
+      "settings": {
+        "title": "New Arrivals",
+        "products_count": 12
+      }
     },
-    "below_images": {
-      "type": "full-width-images",
+    "hero_gallery": {
+      "type": "hero-slider-gallery",
       "blocks": {
-        "image_1": {
-          "type": "image",
+        "slide_1": {
+          "type": "slide",
           "settings": {
             "image": "shopify://shop_images/d1.jpg",
-            "mobile_image": "",
-            "link": ""
-          }
-        },
-        "image_2": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/IMG_3780.jpg",
-            "mobile_image": "",
-              "link": ""
+            "overlay_opacity": 30,
+            "link_text_1": "Best Sellers",
+            "link_text_2": "Hoodies",
+            "link_badge_2": "New",
+            "link_text_3": "Sneakers",
+            "link_text_4": "Accessories",
+            "link_text_5": "New Arrivals",
+            "link_badge_5": "70",
+            "cta_text": "SHOP ALL"
           }
         }
       },
       "block_order": [
-        "image_1",
-        "image_2"
+        "slide_1"
       ],
-      "settings": {
-        "display_type": "fullscreen_gallery"
-      }
+      "settings": {}
     }
   },
   "order": [
     "hero_images",
-    "product_grid",
-    "below_images"
+    "new_arrivals",
+    "hero_gallery"
   ]
 }
