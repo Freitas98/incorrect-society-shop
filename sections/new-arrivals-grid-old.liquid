@@ -1,6 +1,6 @@
 {% comment %}
   New Arrivals Grid Section
-  Features: Category tabs, product badges, color swatches, quick add with variants
+  Features: Category tabs, product badges, color swatches, quick add
 {% endcomment %}
 
 {% liquid
@@ -40,25 +40,24 @@
     <div class="new-arrivals-grid">
       {% for product in products limit: products_to_show %}
         {% liquid
-          # Get badge from metafield or determine automatically
-          assign badge_text = product.metafields.custom.badge | default: ''
+          assign badge_text = ''
           assign badge_class = ''
           
           # Check if product is new (created within last 30 days)
-          if badge_text == blank
-            assign now_timestamp = 'now' | date: '%s' | plus: 0
-            assign product_timestamp = product.created_at | date: '%s' | plus: 0
-            assign days_old = now_timestamp | minus: product_timestamp | divided_by: 86400
-            
-            if days_old <= 30
-              assign badge_text = 'NEW IN'
-              assign badge_class = 'badge-new'
-            endif
-          else
+          assign now_timestamp = 'now' | date: '%s' | plus: 0
+          assign product_timestamp = product.created_at | date: '%s' | plus: 0
+          assign days_old = now_timestamp | minus: product_timestamp | divided_by: 86400
+          
+          if days_old <= 30
+            assign badge_text = 'NEW IN'
+            assign badge_class = 'badge-new'
+          endif
+          
+          # Check metafield for "back in stock" or similar
+          if product.metafields.custom.badge
+            assign badge_text = product.metafields.custom.badge
             if badge_text contains 'BACK'
               assign badge_class = 'badge-back'
-            else
-              assign badge_class = 'badge-new'
             endif
           endif
           
@@ -71,11 +70,13 @@
               break
             endif
           endfor
+          
+          # Get product tags for collection filtering
+          assign product_tags = product.tags | join: ',' | downcase
         %}
         
         <article class="product-card-enhanced" 
                  data-product-id="{{ product.id }}"
-                 data-product-handle="{{ product.handle }}"
                  data-collections="{% for col in product.collections %}{{ col.handle }},{% endfor %}"
                  data-available="{{ product.available }}">
           
@@ -93,7 +94,7 @@
                   class="product-image-main"
                   loading="lazy"
                   width="600"
-                  height="800"
+                  height="600"
                 >
                 {% if product.media[1] %}
                   <img 
@@ -102,7 +103,7 @@
                     class="product-image-hover"
                     loading="lazy"
                     width="600"
-                    height="800"
+                    height="600"
                   >
                 {% endif %}
               {% else %}
@@ -118,20 +119,19 @@
                         data-product-id="{{ product.id }}"
                         data-product-handle="{{ product.handle }}"
                         aria-label="Quick add {{ product.title }}">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                    <path d="M6 0V12M0 6H12" stroke="currentColor" stroke-width="1.5"/>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   </svg>
                 </button>
               {% endif %}
             </div>
           </a>
           
-          <!-- Product Info with separator line -->
+          <!-- Product Info -->
           <div class="product-info-enhanced">
-            <div class="product-info-separator"></div>
             <div class="product-info-row">
               <a href="{{ product.url }}" class="product-title-link">
-                <span class="product-title-enhanced">{{ product.title }}</span>
+                <h3 class="product-title-enhanced">{{ product.title }}</h3>
               </a>
               <span class="product-price-enhanced">
                 {% if product.available %}
@@ -148,6 +148,7 @@
                 {% for color_value in color_option.values limit: 6 %}
                   {% liquid
                     assign color_handle = color_value | handleize
+                    # Map common color names to hex
                     case color_handle
                       when 'black' or 'preto'
                         assign swatch_color = '#000000'
@@ -155,7 +156,7 @@
                         assign swatch_color = '#ffffff'
                       when 'grey' or 'gray' or 'cinzento'
                         assign swatch_color = '#808080'
-                      when 'light-grey' or 'light-gray' or 'melange'
+                      when 'light-grey' or 'light-gray'
                         assign swatch_color = '#d3d3d3'
                       when 'navy' or 'navy-blue' or 'azul-marinho'
                         assign swatch_color = '#1a1a3e'
@@ -190,21 +191,25 @@
                     data-color="{{ color_value }}"
                   ></span>
                 {% endfor %}
+                {% if color_option.values.size > 6 %}
+                  <span class="color-swatch-more">+{{ color_option.values.size | minus: 6 }}</span>
+                {% endif %}
               </div>
             {% endif %}
-          </div>
-          
-          <!-- Quick Add Variant Selector (inline, attached to card) -->
-          <div class="quick-add-variants" data-product-handle="{{ product.handle }}">
-            <button class="quick-add-close" aria-label="Close">&times;</button>
-            <div class="quick-add-variants-list">
-              <!-- Populated via JS -->
-            </div>
           </div>
         </article>
       {% endfor %}
     </div>
   </div>
+  
+  <!-- Quick Add Modal (Size Selector) -->
+  <div class="quick-add-modal" id="quick-add-modal" aria-hidden="true">
+    <button class="quick-add-modal-close" aria-label="Close">&times;</button>
+    <div class="quick-add-modal-sizes" id="quick-add-sizes">
+      <!-- Sizes will be populated via JS -->
+    </div>
+  </div>
+  <div class="quick-add-overlay" id="quick-add-overlay"></div>
 </section>
 
 <style>
@@ -239,7 +244,7 @@
 
   .category-tabs {
     display: flex;
-    gap: 28px;
+    gap: 32px;
     overflow-x: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -255,9 +260,9 @@
     border: none;
     padding: 0;
     font-family: var(--font-primary-family);
-    font-size: 14px;
+    font-size: 15px;
     color: var(--color-foreground);
-    opacity: 0.4;
+    opacity: 0.5;
     cursor: pointer;
     white-space: nowrap;
     transition: opacity 0.2s ease;
@@ -265,18 +270,19 @@
   }
 
   .category-tab:hover {
-    opacity: 0.7;
+    opacity: 0.8;
   }
 
   .category-tab.active {
     opacity: 1;
+    font-weight: 500;
   }
 
   .tab-count {
-    font-size: 10px;
-    margin-left: 1px;
+    font-size: 11px;
+    margin-left: 2px;
     vertical-align: super;
-    opacity: 0.6;
+    opacity: 0.7;
   }
 
   /* Product Grid */
@@ -310,7 +316,13 @@
     
     .new-arrivals-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 15px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .new-arrivals-grid {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -334,6 +346,7 @@
     aspect-ratio: 3/4;
     overflow: hidden;
     background-color: #f5f5f5;
+    margin-bottom: 12px;
   }
 
   .product-image-main,
@@ -344,7 +357,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
   }
 
   .product-image-hover {
@@ -374,23 +387,24 @@
     top: 12px;
     left: 12px;
     padding: 6px 10px;
-    font-size: 9px;
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     z-index: 2;
-    background-color: transparent;
-    color: var(--color-foreground);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
   }
 
   .product-badge.badge-new {
-    background-color: transparent;
-    color: var(--color-foreground);
+    background-color: var(--color-foreground);
+    color: var(--color-background);
   }
 
   .product-badge.badge-back {
     background-color: transparent;
     color: var(--color-foreground);
+    border: 1px solid var(--color-foreground);
   }
 
   /* Quick Add Button */
@@ -398,8 +412,8 @@
     position: absolute;
     bottom: 12px;
     right: 12px;
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background-color: var(--color-background);
     border: 1px solid var(--color-border);
@@ -408,8 +422,8 @@
     justify-content: center;
     cursor: pointer;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.2s ease;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
     z-index: 3;
   }
 
@@ -424,26 +438,21 @@
   }
 
   .quick-add-btn svg {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
   }
 
   /* Product Info */
   .product-info-enhanced {
-    padding: 0;
-  }
-
-  .product-info-separator {
-    height: 1px;
-    background-color: var(--color-border);
-    margin: 12px 0 10px 0;
+    padding: 0 4px;
   }
 
   .product-info-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
-    gap: 10px;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
   }
 
   .product-title-link {
@@ -455,141 +464,148 @@
 
   .product-title-enhanced {
     font-family: var(--font-primary-family);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     margin: 0;
     color: var(--color-foreground);
-    line-height: 1.3;
-    white-space: nowrap;
+    line-height: 1.4;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 
   .product-price-enhanced {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     color: var(--color-foreground);
     white-space: nowrap;
-    flex-shrink: 0;
   }
 
   .sold-out-text {
     color: var(--color-foreground);
-    opacity: 0.4;
+    opacity: 0.5;
     text-transform: uppercase;
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.5px;
   }
 
   /* Color Swatches */
   .color-swatches {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     align-items: center;
-    margin-top: 8px;
+    flex-wrap: wrap;
   }
 
   .color-swatch {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
   .color-swatch:hover {
-    transform: scale(1.3);
+    transform: scale(1.2);
   }
 
-  /* Quick Add Variants (inline popup) */
-  .quick-add-variants {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  .color-swatch.active {
+    box-shadow: 0 0 0 1px var(--color-foreground);
+  }
+
+  .color-swatch-more {
+    font-size: 10px;
+    color: var(--color-foreground);
+    opacity: 0.6;
+  }
+
+  /* Quick Add Modal */
+  .quick-add-modal {
+    position: fixed;
+    bottom: 100px;
+    right: 40px;
     background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     padding: 16px;
-    z-index: 10;
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.25s ease;
-    border-top: 1px solid var(--color-border);
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    min-width: 200px;
   }
 
-  .quick-add-variants.is-open {
+  .quick-add-modal.is-open {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
   }
 
-  .quick-add-close {
+  .quick-add-modal-close {
     position: absolute;
     top: 8px;
     right: 12px;
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 24px;
     cursor: pointer;
     color: var(--color-foreground);
     opacity: 0.5;
     transition: opacity 0.2s ease;
     line-height: 1;
-    padding: 0;
   }
 
-  .quick-add-close:hover {
+  .quick-add-modal-close:hover {
     opacity: 1;
   }
 
-  .quick-add-variants-list {
+  .quick-add-modal-sizes {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    justify-content: center;
-    padding-top: 4px;
+    padding-top: 8px;
   }
 
-  .quick-add-variant-btn {
+  .quick-add-size-btn {
     min-width: 40px;
-    height: 32px;
-    padding: 0 14px;
-    border: none;
-    background-color: transparent;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
     font-family: var(--font-primary-family);
     font-size: 13px;
-    font-weight: 400;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--color-foreground);
   }
 
-  .quick-add-variant-btn:hover:not(:disabled) {
+  .quick-add-size-btn:hover:not(:disabled) {
     background-color: var(--color-foreground);
     color: var(--color-background);
+    border-color: var(--color-foreground);
   }
 
-  .quick-add-variant-btn:disabled {
-    opacity: 0.25;
+  .quick-add-size-btn:disabled {
+    opacity: 0.3;
     cursor: not-allowed;
     text-decoration: line-through;
   }
 
-  @media (max-width: 768px) {
-    .product-title-enhanced {
-      font-size: 11px;
-    }
-    
-    .product-price-enhanced {
-      font-size: 11px;
-    }
-    
-    .quick-add-btn {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .quick-add-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+  }
+
+  .quick-add-overlay.is-open {
+    display: block;
   }
 </style>
 
@@ -606,6 +622,7 @@
       tab.addEventListener('click', function() {
         const filter = this.dataset.filter;
         
+        // Update active tab
         tabs.forEach(t => {
           t.classList.remove('active');
           t.setAttribute('aria-selected', 'false');
@@ -613,6 +630,7 @@
         this.classList.add('active');
         this.setAttribute('aria-selected', 'true');
 
+        // Filter products
         products.forEach(product => {
           const collections = product.dataset.collections || '';
           if (filter === 'all' || collections.includes(filter)) {
@@ -628,51 +646,46 @@
 
     // Quick Add functionality
     const quickAddBtns = section.querySelectorAll('.quick-add-btn');
-    let currentOpenVariants = null;
+    const quickAddModal = document.getElementById('quick-add-modal');
+    const quickAddSizes = document.getElementById('quick-add-sizes');
+    const quickAddOverlay = document.getElementById('quick-add-overlay');
+    const quickAddClose = section.querySelector('.quick-add-modal-close');
 
-    const closeAllVariants = () => {
-      section.querySelectorAll('.quick-add-variants.is-open').forEach(el => {
-        el.classList.remove('is-open');
-      });
-      currentOpenVariants = null;
+    let currentProductHandle = null;
+
+    const closeQuickAdd = () => {
+      quickAddModal.classList.remove('is-open');
+      quickAddOverlay.classList.remove('is-open');
+      currentProductHandle = null;
     };
-
-    // Close variants when clicking outside
-    document.addEventListener('click', (e) => {
-      if (currentOpenVariants && !e.target.closest('.quick-add-variants') && !e.target.closest('.quick-add-btn')) {
-        closeAllVariants();
-      }
-    });
 
     quickAddBtns.forEach(btn => {
       btn.addEventListener('click', async function(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        const card = this.closest('.product-card-enhanced');
         const productHandle = this.dataset.productHandle;
-        const variantsContainer = card.querySelector('.quick-add-variants');
-        const variantsList = variantsContainer.querySelector('.quick-add-variants-list');
+        currentProductHandle = productHandle;
 
-        // Close other open variants
-        closeAllVariants();
-
+        // Fetch product data
         try {
           const response = await fetch(`/products/${productHandle}.js`);
           const product = await response.json();
 
-          // Find size option
-          const sizeOptionIndex = product.options.findIndex(opt => 
+          // Check if product has size variants
+          const sizeOption = product.options.find(opt => 
             opt.toLowerCase().includes('size') || opt.toLowerCase().includes('tamanho')
           );
 
-          if (sizeOptionIndex !== -1 && product.variants.length > 1) {
-            // Build variant buttons
-            variantsList.innerHTML = product.variants.map(variant => {
-              const size = variant.options[sizeOptionIndex];
+          if (sizeOption && product.variants.length > 1) {
+            // Show size selector
+            const sizeIndex = product.options.indexOf(sizeOption);
+            
+            quickAddSizes.innerHTML = product.variants.map(variant => {
+              const size = variant.options[sizeIndex];
               return `
                 <button 
-                  class="quick-add-variant-btn" 
+                  class="quick-add-size-btn" 
                   data-variant-id="${variant.id}"
                   ${!variant.available ? 'disabled' : ''}
                 >
@@ -681,22 +694,27 @@
               `;
             }).join('');
 
-            variantsContainer.classList.add('is-open');
-            currentOpenVariants = variantsContainer;
+            // Position modal near the button
+            const btnRect = this.getBoundingClientRect();
+            quickAddModal.style.position = 'fixed';
+            quickAddModal.style.bottom = 'auto';
+            quickAddModal.style.right = 'auto';
+            quickAddModal.style.top = `${btnRect.bottom + 10}px`;
+            quickAddModal.style.left = `${Math.min(btnRect.left, window.innerWidth - 220)}px`;
 
-            // Add click handlers to variant buttons
-            variantsList.querySelectorAll('.quick-add-variant-btn').forEach(variantBtn => {
-              variantBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (!this.disabled) {
-                  const variantId = this.dataset.variantId;
-                  addToCart(variantId);
-                  closeAllVariants();
-                }
+            quickAddModal.classList.add('is-open');
+            quickAddOverlay.classList.add('is-open');
+
+            // Add click handlers to size buttons
+            quickAddSizes.querySelectorAll('.quick-add-size-btn').forEach(sizeBtn => {
+              sizeBtn.addEventListener('click', function() {
+                const variantId = this.dataset.variantId;
+                addToCart(variantId);
+                closeQuickAdd();
               });
             });
           } else {
-            // No size variants, add directly
+            // No size options, add first available variant directly
             const availableVariant = product.variants.find(v => v.available) || product.variants[0];
             addToCart(availableVariant.id);
           }
@@ -706,13 +724,13 @@
       });
     });
 
-    // Close button handlers
-    section.querySelectorAll('.quick-add-close').forEach(closeBtn => {
-      closeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        closeAllVariants();
-      });
-    });
+    if (quickAddClose) {
+      quickAddClose.addEventListener('click', closeQuickAdd);
+    }
+
+    if (quickAddOverlay) {
+      quickAddOverlay.addEventListener('click', closeQuickAdd);
+    }
 
     // Add to cart function
     async function addToCart(variantId, quantity = 1) {
@@ -728,9 +746,11 @@
             method: 'POST',
             body: formData
           });
+          // Refresh cart count
           const cartResponse = await fetch('/cart.js');
           const cart = await cartResponse.json();
           
+          // Update cart count in header
           const cartCounts = document.querySelectorAll('.cart-count');
           cartCounts.forEach(el => {
             if (cart.item_count > 0) {

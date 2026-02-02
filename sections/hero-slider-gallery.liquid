@@ -3,7 +3,7 @@
   Features: Full-screen slides with text overlays, snap scrolling, navigation dots
 {% endcomment %}
 
-<section class="hero-slider-section" id="hero-slider-{{ section.id }}">
+<section class="hero-slider-section full-width" id="hero-slider-{{ section.id }}">
   <div class="hero-slider-container">
     {% for block in section.blocks %}
       <div class="hero-slide" {{ block.shopify_attributes }} data-slide-index="{{ forloop.index0 }}">
@@ -86,7 +86,25 @@
 <style>
   .hero-slider-section {
     position: relative;
-    width: 100%;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(-1 * var(--page-margin, 0px));
+    margin-right: calc(-1 * var(--page-margin, 0px));
+  }
+
+  /* Override any parent grid constraints */
+  .shopify-section:has(.hero-slider-section) {
+    display: block;
+    max-width: none;
+    padding: 0;
+    margin: 0;
+    grid-column: 1 / -1;
+  }
+
+  /* Remove gap above/below this section */
+  .shopify-section:has(.hero-slider-section) + .shopify-section,
+  .shopify-section + .shopify-section:has(.hero-slider-section) {
+    margin-top: 0;
   }
 
   .hero-slider-container {
