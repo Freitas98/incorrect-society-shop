@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "min_page_margin": 10,
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
