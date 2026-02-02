@@ -16,7 +16,6 @@
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/IMG_3780.jpg",
-            "mobile_image": "",
             "link": ""
           }
         }
@@ -24,35 +23,73 @@
       "block_order": [
         "hero_image_1"
       ],
-      "settings": {}
+      "settings": {
+        "display_type": "stack"
+      }
     },
     "new_arrivals": {
       "type": "new-arrivals-grid",
       "settings": {
         "title": "New Arrivals",
-        "products_count": 12
+        "collection": "",
+        "products_count": 12,
+        "featured_collections": []
       }
     },
     "hero_gallery": {
       "type": "hero-slider-gallery",
       "blocks": {
+        "slide_9CcafR": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/xx.jpg",
+            "overlay_opacity": 30,
+            "link_text_1": "Best Sellers",
+            "link_url_1": "",
+            "link_badge_1": "",
+            "link_text_2": "Hoodies",
+            "link_url_2": "",
+            "link_badge_2": "New",
+            "link_text_3": "Sneakers",
+            "link_url_3": "",
+            "link_badge_3": "",
+            "link_text_4": "Accessories",
+            "link_url_4": "",
+            "link_badge_4": "",
+            "link_text_5": "New Arrivals",
+            "link_url_5": "",
+            "link_badge_5": "70",
+            "cta_text": "SHOP ALL",
+            "cta_url": ""
+          }
+        },
         "slide_1": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/d1.jpg",
+            "image": "shopify://shop_images/x.jpg",
             "overlay_opacity": 30,
             "link_text_1": "Best Sellers",
+            "link_url_1": "",
+            "link_badge_1": "",
             "link_text_2": "Hoodies",
+            "link_url_2": "",
             "link_badge_2": "New",
             "link_text_3": "Sneakers",
+            "link_url_3": "",
+            "link_badge_3": "",
             "link_text_4": "Accessories",
+            "link_url_4": "",
+            "link_badge_4": "",
             "link_text_5": "New Arrivals",
+            "link_url_5": "",
             "link_badge_5": "70",
-            "cta_text": "SHOP ALL"
+            "cta_text": "SHOP ALL",
+            "cta_url": ""
           }
         }
       },
       "block_order": [
+        "slide_9CcafR",
         "slide_1"
       ],
       "settings": {}
