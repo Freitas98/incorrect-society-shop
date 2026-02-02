@@ -87,23 +87,11 @@
   .hero-slider-section {
     position: relative;
     width: 100%;
-    height: 100vh;
-    height: 100svh;
-    overflow: hidden;
   }
 
   .hero-slider-container {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow-y: auto;
-    scroll-snap-type: y mandatory;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-
-  .hero-slider-container::-webkit-scrollbar {
-    display: none;
   }
 
   .hero-slide {
@@ -111,11 +99,15 @@
     width: 100%;
     height: 100vh;
     height: 100svh;
-    flex-shrink: 0;
-    scroll-snap-align: start;
     display: flex;
     align-items: center;
     justify-content: center;
+    scroll-snap-align: start;
+  }
+
+  /* Enable page-level scroll snapping */
+  html:has(.hero-slider-section) {
+    scroll-snap-type: y proximity;
   }
 
   .hero-slide-bg {
@@ -237,7 +229,7 @@
 
   /* Navigation Dots */
   .hero-slider-nav {
-    position: absolute;
+    position: fixed;
     right: 40px;
     top: 50%;
     transform: translateY(-50%);
@@ -245,7 +237,15 @@
     flex-direction: column;
     align-items: center;
     gap: 12px;
-    z-index: 10;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .hero-slider-nav.is-visible {
+    opacity: 1;
+    visibility: visible;
   }
 
   .hero-nav-dot {
@@ -328,9 +328,9 @@
     const section = document.getElementById('hero-slider-{{ section.id }}');
     if (!section) return;
 
-    const container = section.querySelector('.hero-slider-container');
     const slides = section.querySelectorAll('.hero-slide');
     const navDots = section.querySelectorAll('.hero-nav-dot');
+    const navContainer = section.querySelector('.hero-slider-nav');
     const counter = section.querySelector('.hero-nav-current');
 
     if (slides.length <= 1) return;
@@ -350,7 +350,7 @@
       }
     };
 
-    // Scroll to slide
+    // Scroll to slide using window scroll
     const scrollToSlide = (index) => {
       const slide = slides[index];
       if (slide) {
@@ -364,38 +364,28 @@
       dot.addEventListener('click', () => scrollToSlide(index));
     });
 
-    // Intersection observer for scroll detection
-    const observerOptions = {
-      root: container,
-      threshold: 0.5
-    };
-
-    const observer = new IntersectionObserver((entries) => {
+    // Intersection observer for slide detection
+    const slideObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           const index = parseInt(entry.target.dataset.slideIndex);
           updateActiveSlide(index);
         }
       });
-    }, observerOptions);
+    }, { root: null, threshold: 0.5 });
 
-    slides.forEach(slide => observer.observe(slide));
+    slides.forEach(slide => slideObserver.observe(slide));
 
-    // Keyboard navigation
-    section.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-        e.preventDefault();
-        const nextIndex = Math.min(currentIndex + 1, slides.length - 1);
-        scrollToSlide(nextIndex);
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-        e.preventDefault();
-        const prevIndex = Math.max(currentIndex - 1, 0);
-        scrollToSlide(prevIndex);
-      }
-    });
+    // Intersection observer to show/hide nav when slider section is visible
+    if (navContainer) {
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          navContainer.classList.toggle('is-visible', entry.isIntersecting);
+        });
+      }, { root: null, threshold: 0.1 });
 
-    // Make section focusable for keyboard nav
-    section.setAttribute('tabindex', '0');
+      sectionObserver.observe(section);
+    }
   })();
 </script>
 
