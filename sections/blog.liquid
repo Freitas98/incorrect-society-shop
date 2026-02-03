@@ -5,27 +5,287 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/blog
 {% endcomment %}
 
-<h1>{{ blog.title }}</h1>
-
-{% paginate blog.articles by 5 %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        {{ article.image | image_url: width: 1000 | image_tag }}
+<div class="blog-section">
+  <div class="blog-header">
+    <div class="blog-header-inner">
+      <h1 class="blog-title">{{ blog.title }}</h1>
+      {% if blog.description != blank %}
+        <div class="blog-description">{{ blog.description }}</div>
       {% endif %}
-      <h2>
-        {{ article.title | link_to: article.url }}
-      </h2>
-      {% assign date = article.published_at | time_tag: format: 'date' %}
-      <p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-      <p>{{ article.excerpt }}</p>
     </div>
-  {% endfor %}
+    <div class="blog-separator"></div>
+  </div>
 
-  {%- if paginate.pages > 1 -%}
-    {{- paginate | default_pagination -}}
-  {%- endif -%}
-{% endpaginate %}
+  <div class="blog-grid">
+    {% paginate blog.articles by 9 %}
+      {% for article in blog.articles %}
+        <article class="article-card">
+          <a href="{{ article.url }}" class="article-link">
+            <div class="article-image-container">
+              {% if article.image %}
+                <img 
+                  src="{{ article.image | image_url: width: 600 }}" 
+                  alt="{{ article.image.alt | escape | default: article.title }}"
+                  class="article-image"
+                  width="600"
+                  height="400"
+                  loading="lazy"
+                >
+              {% else %}
+                <div class="article-image-placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </div>
+              {% endif %}
+            </div>
+            <div class="article-info">
+              <div class="article-info-separator"></div>
+              <div class="article-meta">
+                <span class="article-date">{{ article.published_at | date: '%B %d, %Y' }}</span>
+                {% if article.tags.size > 0 %}
+                  <span class="article-tag">{{ article.tags.first }}</span>
+                {% endif %}
+              </div>
+              <h2 class="article-title">{{ article.title }}</h2>
+              {% if article.excerpt != blank %}
+                <p class="article-excerpt">{{ article.excerpt | strip_html | truncate: 120 }}</p>
+              {% endif %}
+              <span class="article-read-more">Read More →</span>
+            </div>
+          </a>
+        </article>
+      {% endfor %}
+
+      {%- if paginate.pages > 1 -%}
+        <div class="blog-pagination">
+          {{- paginate | default_pagination -}}
+        </div>
+      {%- endif -%}
+    {% endpaginate %}
+  </div>
+</div>
+
+<style>
+  .blog-section {
+    padding: 40px 40px;
+    color: var(--color-foreground);
+    background-color: var(--color-background);
+  }
+
+  .blog-header {
+    margin-bottom: 50px;
+  }
+
+  .blog-header-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .blog-title {
+    font-size: 28px;
+    font-weight: var(--font-heading-weight);
+    text-transform: uppercase;
+    letter-spacing: var(--font-heading-letter-spacing);
+    color: var(--color-foreground);
+    margin: 0;
+  }
+
+  .blog-description {
+    margin: 0;
+    max-width: 600px;
+    color: var(--color-foreground);
+    opacity: 0.8;
+    line-height: 1.6;
+    font-size: 13px;
+  }
+
+  .blog-separator {
+    width: 100%;
+    height: 1px;
+    background-color: var(--color-foreground);
+    opacity: 0.2;
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .article-card {
+    position: relative;
+    background-color: transparent;
+  }
+
+  .article-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .article-image-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/2;
+    background-color: var(--color-surface, #f5f5f5);
+    overflow: hidden;
+  }
+
+  .article-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  .article-link:hover .article-image {
+    transform: scale(1.03);
+  }
+
+  .article-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+    color: var(--color-border);
+  }
+
+  .article-info {
+    padding: 0;
+  }
+
+  .article-info-separator {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 15px 0 12px 0;
+  }
+
+  .article-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .article-date {
+    font-size: 11px;
+    color: var(--color-foreground);
+    opacity: 0.5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .article-tag {
+    font-size: 10px;
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border: 1px solid var(--color-border);
+  }
+
+  .article-title {
+    font-family: var(--font-primary-family);
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 10px 0;
+    color: var(--color-foreground);
+    line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .article-excerpt {
+    font-size: 12px;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    line-height: 1.6;
+    margin: 0 0 12px 0;
+  }
+
+  .article-read-more {
+    font-size: 11px;
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+  }
+
+  .article-link:hover .article-read-more {
+    opacity: 1;
+  }
+
+  .blog-pagination {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    gap: 10px;
+  }
+
+  .blog-pagination .pagination a,
+  .blog-pagination .pagination span {
+    padding: 10px 15px;
+    color: var(--color-foreground);
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    font-size: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .blog-pagination .pagination a:hover {
+    border-color: var(--color-foreground);
+  }
+
+  .blog-pagination .pagination .current {
+    border-color: var(--color-foreground);
+  }
+
+  @media (max-width: 1100px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 35px 25px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .blog-section {
+      padding: 30px 20px;
+    }
+
+    .blog-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .blog-title {
+      font-size: 22px;
+    }
+
+    .article-title {
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .blog-section {
+      padding: 20px 15px;
+    }
+  }
+</style>
 
 {% schema %}
 {

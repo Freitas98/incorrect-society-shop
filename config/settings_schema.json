@@ -143,5 +143,16 @@
         "default": "https://www.youtube.com/@incorrectsociety"
       }
     ]
+  },
+  {
+    "name": "Newsletter Modal",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "newsletter_modal_image",
+        "label": "Newsletter Modal Image",
+        "info": "Recommended: 800x600px or larger"
+      }
+    ]
   }
 ]

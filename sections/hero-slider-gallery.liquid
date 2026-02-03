@@ -31,7 +31,7 @@
         <!-- Overlay -->
         <div class="hero-slide-overlay" style="background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});"></div>
         
-        <!-- Content -->
+        <!-- Content - Use section-level settings for all slides -->
         <div class="hero-slide-content">
           <nav class="hero-text-links">
             {% for i in (1..5) %}
@@ -39,9 +39,9 @@
                 assign link_text_key = 'link_text_' | append: i
                 assign link_url_key = 'link_url_' | append: i
                 assign link_badge_key = 'link_badge_' | append: i
-                assign link_text = block.settings[link_text_key]
-                assign link_url = block.settings[link_url_key]
-                assign link_badge = block.settings[link_badge_key]
+                assign link_text = section.settings[link_text_key]
+                assign link_url = section.settings[link_url_key]
+                assign link_badge = section.settings[link_badge_key]
               %}
               {% if link_text != blank %}
                 <a href="{{ link_url | default: '#' }}" class="hero-text-link{% if forloop.index == 1 %} hero-text-link--featured{% endif %}">
@@ -54,9 +54,9 @@
             {% endfor %}
           </nav>
           
-          {% if block.settings.cta_text != blank %}
-            <a href="{{ block.settings.cta_url | default: '#' }}" class="hero-cta-btn">
-              {{ block.settings.cta_text }}
+          {% if section.settings.cta_text != blank %}
+            <a href="{{ section.settings.cta_url | default: '#' }}" class="hero-cta-btn">
+              {{ section.settings.cta_text }}
             </a>
           {% endif %}
         </div>
@@ -357,6 +357,7 @@
 
     // Update active state
     const updateActiveSlide = (index) => {
+      if (currentIndex === index) return;
       currentIndex = index;
       
       navDots.forEach((dot, i) => {
@@ -382,17 +383,57 @@
       dot.addEventListener('click', () => scrollToSlide(index));
     });
 
-    // Intersection observer for slide detection
+    // Intersection observer for slide detection - using rootMargin for better detection
     const slideObserver = new IntersectionObserver((entries) => {
+      // Find the most visible slide
+      let mostVisibleEntry = null;
+      let highestRatio = 0;
+      
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const index = parseInt(entry.target.dataset.slideIndex);
-          updateActiveSlide(index);
+        if (entry.intersectionRatio > highestRatio) {
+          highestRatio = entry.intersectionRatio;
+          mostVisibleEntry = entry;
         }
       });
-    }, { root: null, threshold: 0.5 });
+      
+      if (mostVisibleEntry && mostVisibleEntry.isIntersecting) {
+        const index = parseInt(mostVisibleEntry.target.dataset.slideIndex);
+        updateActiveSlide(index);
+      }
+    }, { 
+      root: null, 
+      threshold: [0, 0.25, 0.5, 0.75, 1],
+      rootMargin: '-10% 0px -10% 0px'
+    });
 
     slides.forEach(slide => slideObserver.observe(slide));
+
+    // Also listen for scroll events as backup
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        // Find which slide is most centered in viewport
+        const viewportCenter = window.innerHeight / 2;
+        let closestSlide = null;
+        let closestDistance = Infinity;
+        
+        slides.forEach((slide, index) => {
+          const rect = slide.getBoundingClientRect();
+          const slideCenter = rect.top + rect.height / 2;
+          const distance = Math.abs(slideCenter - viewportCenter);
+          
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestSlide = index;
+          }
+        });
+        
+        if (closestSlide !== null) {
+          updateActiveSlide(closestSlide);
+        }
+      }, 50);
+    }, { passive: true });
 
     // Intersection observer to show/hide nav when slider section is visible
     if (navContainer) {
@@ -410,7 +451,125 @@
 {% schema %}
 {
   "name": "Hero Slider Gallery",
-  "settings": [],
+  "settings": [
+    {
+      "type": "header",
+      "content": "Link 1 (Featured)"
+    },
+    {
+      "type": "text",
+      "id": "link_text_1",
+      "label": "Text",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "url",
+      "id": "link_url_1",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_1",
+      "label": "Badge (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Link 2"
+    },
+    {
+      "type": "text",
+      "id": "link_text_2",
+      "label": "Text",
+      "default": "Hoodies"
+    },
+    {
+      "type": "url",
+      "id": "link_url_2",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_2",
+      "label": "Badge (optional)",
+      "default": "New"
+    },
+    {
+      "type": "header",
+      "content": "Link 3"
+    },
+    {
+      "type": "text",
+      "id": "link_text_3",
+      "label": "Text",
+      "default": "Sneakers"
+    },
+    {
+      "type": "url",
+      "id": "link_url_3",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_3",
+      "label": "Badge (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Link 4"
+    },
+    {
+      "type": "text",
+      "id": "link_text_4",
+      "label": "Text",
+      "default": "Accessories"
+    },
+    {
+      "type": "url",
+      "id": "link_url_4",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_4",
+      "label": "Badge (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Link 5"
+    },
+    {
+      "type": "text",
+      "id": "link_text_5",
+      "label": "Text",
+      "default": "New Arrivals"
+    },
+    {
+      "type": "url",
+      "id": "link_url_5",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_5",
+      "label": "Badge (optional)",
+      "default": "70"
+    },
+    {
+      "type": "header",
+      "content": "Call to Action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button Text",
+      "default": "SHOP ALL"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button URL"
+    }
+  ],
   "blocks": [
     {
       "type": "slide",
@@ -435,123 +594,6 @@
           "step": 5,
           "default": 30,
           "unit": "%"
-        },
-        {
-          "type": "header",
-          "content": "Link 1 (Featured)"
-        },
-        {
-          "type": "text",
-          "id": "link_text_1",
-          "label": "Text",
-          "default": "Best Sellers"
-        },
-        {
-          "type": "url",
-          "id": "link_url_1",
-          "label": "URL"
-        },
-        {
-          "type": "text",
-          "id": "link_badge_1",
-          "label": "Badge (optional)"
-        },
-        {
-          "type": "header",
-          "content": "Link 2"
-        },
-        {
-          "type": "text",
-          "id": "link_text_2",
-          "label": "Text",
-          "default": "Hoodies"
-        },
-        {
-          "type": "url",
-          "id": "link_url_2",
-          "label": "URL"
-        },
-        {
-          "type": "text",
-          "id": "link_badge_2",
-          "label": "Badge (optional)",
-          "default": "New"
-        },
-        {
-          "type": "header",
-          "content": "Link 3"
-        },
-        {
-          "type": "text",
-          "id": "link_text_3",
-          "label": "Text",
-          "default": "Sneakers"
-        },
-        {
-          "type": "url",
-          "id": "link_url_3",
-          "label": "URL"
-        },
-        {
-          "type": "text",
-          "id": "link_badge_3",
-          "label": "Badge (optional)"
-        },
-        {
-          "type": "header",
-          "content": "Link 4"
-        },
-        {
-          "type": "text",
-          "id": "link_text_4",
-          "label": "Text",
-          "default": "Accessories"
-        },
-        {
-          "type": "url",
-          "id": "link_url_4",
-          "label": "URL"
-        },
-        {
-          "type": "text",
-          "id": "link_badge_4",
-          "label": "Badge (optional)"
-        },
-        {
-          "type": "header",
-          "content": "Link 5"
-        },
-        {
-          "type": "text",
-          "id": "link_text_5",
-          "label": "Text",
-          "default": "New Arrivals"
-        },
-        {
-          "type": "url",
-          "id": "link_url_5",
-          "label": "URL"
-        },
-        {
-          "type": "text",
-          "id": "link_badge_5",
-          "label": "Badge (optional)",
-          "default": "70"
-        },
-        {
-          "type": "header",
-          "content": "Call to Action"
-        },
-        {
-          "type": "text",
-          "id": "cta_text",
-          "label": "Button Text",
-          "default": "SHOP ALL"
-        },
-        {
-          "type": "url",
-          "id": "cta_url",
-          "label": "Button URL"
         }
       ]
     }

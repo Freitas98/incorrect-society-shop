@@ -21,7 +21,7 @@ body {
   margin: 0;
   min-height: 100svh;
   font-family: var(--font-primary-family);
-  font-size: clamp(1rem, 0.94rem + 0.2vw, 1.07rem);
+  font-size: var(--font-size-base, 13px);
   line-height: 1.5;
   letter-spacing: var(--font-body-letter-spacing);
   background-color: var(--color-background);
@@ -106,6 +106,14 @@ h6 {
   letter-spacing: var(--font-heading-letter-spacing);
   line-height: 1.15;
 }
+
+/* Scaled down heading sizes */
+h1 { font-size: var(--font-size-4xl, 36px); }
+h2 { font-size: var(--font-size-3xl, 28px); }
+h3 { font-size: var(--font-size-2xl, 22px); }
+h4 { font-size: var(--font-size-xl, 18px); }
+h5 { font-size: var(--font-size-lg, 16px); }
+h6 { font-size: var(--font-size-md, 14px); }
 
 ::selection {
   background-color: color-mix(in srgb, var(--color-primary) 15%, var(--color-foreground));
