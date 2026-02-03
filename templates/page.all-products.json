@@ -39,6 +39,13 @@
     "hero_gallery": {
       "type": "hero-slider-gallery",
       "blocks": {
+        "slide_NXxANd": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Tezza-5713.jpg",
+            "overlay_opacity": 30
+          }
+        },
         "slide_1": {
           "type": "slide",
           "settings": {
@@ -47,6 +54,7 @@
         }
       },
       "block_order": [
+        "slide_NXxANd",
         "slide_1"
       ],
       "settings": {
