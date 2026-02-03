@@ -49,6 +49,7 @@
         "slide_1": {
           "type": "slide",
           "settings": {
+            "image": "shopify://shop_images/Tezza-1445.jpg",
             "overlay_opacity": 30
           }
         }
