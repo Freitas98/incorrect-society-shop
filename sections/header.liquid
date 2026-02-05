@@ -15,7 +15,7 @@
             <a href="{{ pages['all-products'].url }}" class="header-menu-link">Shop</a>
           </li>
           <li class="header-menu-item">
-            <a href="{{ routes.collections_url }}/outsider" class="header-menu-link">Outsider</a>
+            <a href="{{ routes.collections_url }}/female-society" class="header-menu-link">Female Society</a>
           </li>
           <li class="header-menu-item">
             <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">Gift Card</a>
@@ -231,35 +231,38 @@
     width: 100%;
     margin: 0;
     padding: 0 40px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: clamp(1.5rem, 5vw, 4rem);
+    position: relative;
   }
 
   .header-left {
     display: flex;
     align-items: center;
-    justify-self: flex-start;
     gap: clamp(0.75rem, 3vw, 2.25rem);
+    flex: 1;
   }
 
   .header-nav {
-    justify-self: flex-start;
     display: flex;
     align-items: center;
   }
 
   .header-center {
-    justify-self: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
+    z-index: 1;
   }
 
   .header-right {
     display: flex;
     align-items: center;
-    justify-self: flex-end;
+    flex: 1;
+    justify-content: flex-end;
   }
 
   .header-identity {
@@ -880,10 +883,10 @@
     margin: 0;
   }
 
-  @media (max-width: 1250px) {
+  @media (max-width: 1350px) {
     .header-content {
       padding: 0 20px;
-      gap: 20px;
+      gap: 15px;
     }
     .header-nav {
       display: none;

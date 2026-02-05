@@ -1,12 +1,13 @@
 {% comment %}
   Hero Slider Gallery Section
   Features: Full-screen slides with text overlays, snap scrolling, navigation dots
+  Each slide highlights a different navigation link
 {% endcomment %}
 
 <section class="hero-slider-section full-width" id="hero-slider-{{ section.id }}">
   <div class="hero-slider-container">
     {% for block in section.blocks %}
-      <div class="hero-slide" {{ block.shopify_attributes }} data-slide-index="{{ forloop.index0 }}">
+      <div class="hero-slide" {{ block.shopify_attributes }} data-slide-index="{{ forloop.index0 }}" data-highlight-link="{{ forloop.index }}">
         <!-- Background Image -->
         {% if block.settings.image %}
           <picture class="hero-slide-bg">
@@ -31,7 +32,7 @@
         <!-- Overlay -->
         <div class="hero-slide-overlay" style="background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});"></div>
         
-        <!-- Content - Use section-level settings for all slides -->
+        <!-- Content - Links with dynamic highlighting based on slide -->
         <div class="hero-slide-content">
           <nav class="hero-text-links">
             {% for i in (1..5) %}
@@ -42,9 +43,23 @@
                 assign link_text = section.settings[link_text_key]
                 assign link_url = section.settings[link_url_key]
                 assign link_badge = section.settings[link_badge_key]
+                
+                # Determine the correct URL for each link
+                assign final_url = link_url
+                if link_text == 'Female Society'
+                  assign final_url = routes.collections_url | append: '/female-society'
+                elsif link_text == 'Hoodies'
+                  assign final_url = routes.collections_url | append: '/all?filter.p.m.custom.type=Hoodie'
+                elsif link_text == 'T-Shirts'
+                  assign final_url = routes.collections_url | append: '/all?filter.p.m.custom.type=T-Shirt'
+                elsif link_text == 'Acessórios' or link_text == 'Accessories'
+                  assign final_url = routes.collections_url | append: '/accessories'
+                elsif link_text == 'Gift Card' or link_text == 'Gift Cards'
+                  assign final_url = routes.collections_url | append: '/gift-cards'
+                endif
               %}
               {% if link_text != blank %}
-                <a href="{{ link_url | default: '#' }}" class="hero-text-link{% if forloop.index == 1 %} hero-text-link--featured{% endif %}">
+                <a href="{{ final_url | default: '#' }}" class="hero-text-link" data-link-index="{{ i }}">
                   {{ link_text }}
                   {% if link_badge != blank %}
                     <span class="hero-link-badge">{{ link_badge }}</span>
@@ -355,7 +370,7 @@
 
     let currentIndex = 0;
 
-    // Update active state
+    // Update active state and highlighted link
     const updateActiveSlide = (index) => {
       if (currentIndex === index) return;
       currentIndex = index;
@@ -367,7 +382,34 @@
       if (counter) {
         counter.textContent = index + 1;
       }
+      
+      // Update highlighted link based on current slide
+      // Slide 0 (index 0) = Link 1, Slide 1 = Link 2, etc.
+      const highlightLinkIndex = index + 1; // Links are 1-indexed
+      
+      slides.forEach(slide => {
+        const links = slide.querySelectorAll('.hero-text-link');
+        links.forEach(link => {
+          const linkIndex = parseInt(link.dataset.linkIndex);
+          if (linkIndex === highlightLinkIndex) {
+            link.classList.add('hero-text-link--featured');
+          } else {
+            link.classList.remove('hero-text-link--featured');
+          }
+        });
+      });
     };
+    
+    // Initialize first slide highlight
+    slides.forEach(slide => {
+      const links = slide.querySelectorAll('.hero-text-link');
+      links.forEach(link => {
+        const linkIndex = parseInt(link.dataset.linkIndex);
+        if (linkIndex === 1) {
+          link.classList.add('hero-text-link--featured');
+        }
+      });
+    });
 
     // Scroll to slide using window scroll
     const scrollToSlide = (index) => {
@@ -460,7 +502,7 @@
       "type": "text",
       "id": "link_text_1",
       "label": "Text",
-      "default": "Best Sellers"
+      "default": "Female Society"
     },
     {
       "type": "url",
@@ -490,8 +532,7 @@
     {
       "type": "text",
       "id": "link_badge_2",
-      "label": "Badge (optional)",
-      "default": "New"
+      "label": "Badge (optional)"
     },
     {
       "type": "header",
@@ -501,7 +542,7 @@
       "type": "text",
       "id": "link_text_3",
       "label": "Text",
-      "default": "Sneakers"
+      "default": "T-Shirts"
     },
     {
       "type": "url",
@@ -521,7 +562,7 @@
       "type": "text",
       "id": "link_text_4",
       "label": "Text",
-      "default": "Accessories"
+      "default": "Acessórios"
     },
     {
       "type": "url",
@@ -541,7 +582,7 @@
       "type": "text",
       "id": "link_text_5",
       "label": "Text",
-      "default": "New Arrivals"
+      "default": "Gift Card"
     },
     {
       "type": "url",
@@ -551,8 +592,7 @@
     {
       "type": "text",
       "id": "link_badge_5",
-      "label": "Badge (optional)",
-      "default": "70"
+      "label": "Badge (optional)"
     },
     {
       "type": "header",

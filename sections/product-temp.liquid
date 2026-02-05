@@ -19,84 +19,67 @@
       <span>{{ product.title }}</span>
     </nav>
     
-    <div class="product-title-row">
-      <h1 class="product-title">{{ product.title }}</h1>
-      <span class="product-price">{% render 'price', amount: current_variant.price, product: product %}</span>
-    </div>
+    <h1 class="product-title">{{ product.title }}</h1>
+    <div class="product-price">{% render 'price', amount: current_variant.price, product: product %}</div>
     
-    <!-- Product Info Sections -->
+    <!-- Details Accordion -->
     <div class="product-info-sections">
-      {% if product.description != blank %}
-      <div class="info-section-static">
-        <h3 class="info-section-title">DESCRIPTION</h3>
-        <div class="info-section-body">
-          {{ product.description }}
+      <div class="info-section">
+        <button class="info-section-toggle" type="button" data-section="details">
+          <span>DETAILS</span>
+          <span class="toggle-icon">—</span>
+        </button>
+        <div class="info-section-content active" data-content="details">
+          {% if product.description != blank %}
+            {{ product.description }}
+          {% endif %}
+          {% if product.metafields.custom.details != blank %}
+            {{ product.metafields.custom.details | metafield_tag | newline_to_br }}
+          {% endif %}
         </div>
       </div>
-      {% endif %}
       
-      {% if product.metafields.custom.details != blank %}
-      <div class="info-section-static">
-        <h3 class="info-section-title">PRODUCT DETAILS</h3>
-        <div class="info-section-body">
-          {{ product.metafields.custom.details | metafield_tag | newline_to_br }}
+      <div class="info-section">
+        <button class="info-section-toggle" type="button" data-section="shipping">
+          <span>SHIPPING</span>
+          <span class="toggle-icon">+</span>
+        </button>
+        <div class="info-section-content" data-content="shipping">
+          <p>- Spain 24-48H (Spain & Portugal) - Correos</p>
+          <p>- European Shipping 3-5 working days - Maersk</p>
+          <p>- International Shipping 5-10 working days - UPS</p>
+          <p style="margin-top: 15px;">If you have any issues with your order email us at help@incorrectsociety.com and we will be there to help you.</p>
+          <p style="margin-top: 15px;">Orders placed after 1PM (CET) will be shipped the following business day.</p>
         </div>
-      </div>
-      {% endif %}
-      
-      <div class="info-section-static">
-        <a href="/policies/shipping-policy" class="info-link">Shipping Policy</a>
       </div>
       
       {% unless product.gift_card? or product.type == 'Gift Card' %}
-      <div class="info-section-static size-guide-section">
-        <span class="info-link size-guide-trigger">Size Guide</span>
-        <div class="size-guide-popup">
-          <div class="size-guide-header">
-            <span class="size-guide-popup-title">Size Guide</span>
-            <div class="unit-toggle">
-              <button type="button" class="unit-btn active" data-unit="cm">CM</button>
-              <button type="button" class="unit-btn" data-unit="inches">INCHES</button>
-            </div>
-          </div>
+      <div class="info-section">
+        <button class="info-section-toggle" type="button" data-section="sizeguide">
+          <span>SIZE GUIDE</span>
+          <span class="toggle-icon">+</span>
+        </button>
+        <div class="info-section-content" data-content="sizeguide">
           {% assign product_type_down = product.metafields.custom.type | downcase %}
           {% if product_type_down contains 'hoodie' %}
-            <div class="size-guide-table" data-unit="cm">
+            <div class="size-guide-table">
               <div class="size-row header">
                 <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
               </div>
-              <div class="size-row"><span>S</span><span>53</span><span>68</span><span>62</span></div>
-              <div class="size-row"><span>M</span><span>56</span><span>71</span><span>63</span></div>
-              <div class="size-row"><span>L</span><span>59</span><span>74</span><span>64</span></div>
-              <div class="size-row"><span>XL</span><span>62</span><span>77</span><span>65</span></div>
-            </div>
-            <div class="size-guide-table" data-unit="inches" style="display:none;">
-              <div class="size-row header">
-                <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
-              </div>
-              <div class="size-row"><span>S</span><span>20.9"</span><span>26.8"</span><span>24.4"</span></div>
-              <div class="size-row"><span>M</span><span>22.0"</span><span>28.0"</span><span>24.8"</span></div>
-              <div class="size-row"><span>L</span><span>23.2"</span><span>29.1"</span><span>25.2"</span></div>
-              <div class="size-row"><span>XL</span><span>24.4"</span><span>30.3"</span><span>25.6"</span></div>
+              <div class="size-row"><span>S</span><span>53cm</span><span>68cm</span><span>62cm</span></div>
+              <div class="size-row"><span>M</span><span>56cm</span><span>71cm</span><span>63cm</span></div>
+              <div class="size-row"><span>L</span><span>59cm</span><span>74cm</span><span>64cm</span></div>
+              <div class="size-row"><span>XL</span><span>62cm</span><span>77cm</span><span>65cm</span></div>
             </div>
           {% else %}
-            <div class="size-guide-table" data-unit="cm">
+            <div class="size-guide-table">
               <div class="size-row header">
                 <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
               </div>
-              <div class="size-row"><span>S</span><span>46</span><span>70</span><span>20</span></div>
-              <div class="size-row"><span>M</span><span>51</span><span>72</span><span>21</span></div>
-              <div class="size-row"><span>L</span><span>56</span><span>74</span><span>22</span></div>
-              <div class="size-row"><span>XL</span><span>61</span><span>76</span><span>23</span></div>
-            </div>
-            <div class="size-guide-table" data-unit="inches" style="display:none;">
-              <div class="size-row header">
-                <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
-              </div>
-              <div class="size-row"><span>S</span><span>18.1"</span><span>27.6"</span><span>7.9"</span></div>
-              <div class="size-row"><span>M</span><span>20.1"</span><span>28.3"</span><span>8.3"</span></div>
-              <div class="size-row"><span>L</span><span>22.0"</span><span>29.1"</span><span>8.7"</span></div>
-              <div class="size-row"><span>XL</span><span>24.0"</span><span>29.9"</span><span>9.1"</span></div>
+              <div class="size-row"><span>S</span><span>46cm</span><span>70cm</span><span>20cm</span></div>
+              <div class="size-row"><span>M</span><span>51cm</span><span>72cm</span><span>21cm</span></div>
+              <div class="size-row"><span>L</span><span>56cm</span><span>74cm</span><span>22cm</span></div>
+              <div class="size-row"><span>XL</span><span>61cm</span><span>76cm</span><span>23cm</span></div>
             </div>
           {% endif %}
         </div>
@@ -105,11 +88,34 @@
     </div>
   </div>
   
-  <!-- Center Column: Fullscreen Images -->
-  <div class="product-col-center" id="product-gallery">
-    <div class="product-images-fullscreen" id="product-images-fullscreen">
+  <!-- Center Column: Images -->
+  <div class="product-col-center">
+    {% if product.images.size > 1 %}
+    <div class="product-thumbnails">
       {% for image in product.images %}
-        <div class="fullscreen-image" data-image-index="{{ forloop.index0 }}">
+        <button 
+          class="thumbnail{% if forloop.first %} active{% endif %}" 
+          data-image-index="{{ forloop.index0 }}"
+          type="button"
+        >
+          <img
+            src="{{ image | image_url: width: 100 }}"
+            alt="{{ image.alt | escape }}"
+            width="70"
+            height="90"
+            loading="lazy"
+          >
+        </button>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="product-main-image" id="product-main-image">
+      {% for image in product.images %}
+        <div 
+          class="main-image{% if forloop.first %} active{% endif %}" 
+          data-image-index="{{ forloop.index0 }}"
+        >
           <img
             src="{{ image | image_url: width: 1600 }}"
             alt="{{ image.alt | escape }}"
@@ -118,7 +124,7 @@
             loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
             data-zoom-src="{{ image | image_url: width: 2400 }}"
           >
-          {% if product.metafields.custom.model_info != blank %}
+          {% if product.metafields.custom.model_info != blank and forloop.last %}
             <div class="model-info-overlay">
               {{ product.metafields.custom.model_info | metafield_tag }}
             </div>
@@ -131,26 +137,6 @@
         </div>
       {% endif %}
     </div>
-    
-    {% if product.images.size > 1 %}
-    <div class="product-thumbnails-corner">
-      {% for image in product.images %}
-        <button 
-          class="thumbnail{% if forloop.first %} active{% endif %}" 
-          data-image-index="{{ forloop.index0 }}"
-          type="button"
-        >
-          <img
-            src="{{ image | image_url: width: 100 }}"
-            alt="{{ image.alt | escape }}"
-            width="60"
-            height="75"
-            loading="lazy"
-          >
-        </button>
-      {% endfor %}
-    </div>
-    {% endif %}
   </div>
   
   <!-- Right Column: Options & Add to Cart -->
@@ -276,6 +262,12 @@
       </button>
       <div class="cart-message" style="display: none;"></div>
     {% endform %}
+    
+    <div class="product-benefits">
+      <p>Worldwide shipping available.</p>
+      <p>Hassle-free returns.</p>
+      <p>Premium quality products made to last.</p>
+    </div>
   </div>
 </div>
 
@@ -287,7 +279,7 @@
     </svg>
   </button>
   <div class="lightbox-content">
-    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" id="lightbox-image" width="1200" height="1600">
+    <img src="" alt="" id="lightbox-image">
   </div>
   <button class="lightbox-nav lightbox-prev" type="button" aria-label="Previous">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -305,28 +297,23 @@
   /* New Product Page Layout */
   .product-page-new {
     display: grid;
-    grid-template-columns: 300px 1fr 300px;
-    gap: 0;
-    min-height: 100vh;
-    max-width: 100%;
-    margin: 0;
-    margin-top: -150px; /* Go behind navbar */
-    padding-top: 0;
+    grid-template-columns: 280px 1fr 320px;
+    gap: 30px;
+    padding: 20px 40px;
+    min-height: calc(100vh - 150px);
+    max-width: 1600px;
+    margin: 0 auto;
   }
   
   /* Left Column */
   .product-col-left {
-    padding: 160px 35px 25px 45px; /* Extra top padding for navbar */
-    z-index: 1;
-    background: var(--color-background);
+    padding: 20px 0;
   }
   
   .product-breadcrumb {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--color-description, #666);
-    margin-bottom: 25px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    margin-bottom: 30px;
   }
   
   .product-breadcrumb a {
@@ -338,146 +325,64 @@
     color: var(--color-foreground);
   }
   
-  .product-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 15px;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--color-border);
-  }
-  
   .product-title {
-    font-size: 18px;
+    font-size: 24px;
     font-weight: var(--font-heading-weight);
     color: var(--color-title, #000);
-    margin: 0;
+    margin: 0 0 10px 0;
     line-height: 1.2;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
   }
   
   .product-price {
-    font-size: 14px;
+    font-size: 18px;
     color: var(--color-title, #000);
-    white-space: nowrap;
+    margin-bottom: 40px;
   }
   
-  /* Info Sections (Static - no accordion) */
+  /* Info Sections (Accordion) */
   .product-info-sections {
-    margin-top: 0;
+    border-top: 1px solid var(--color-border);
   }
   
-  .info-section-static {
-    margin-bottom: 0;
-    padding: 18px 0;
+  .info-section {
     border-bottom: 1px solid var(--color-border);
   }
   
-  .info-section-static:last-child {
-    border-bottom: none;
-  }
-  
-  .info-section-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--color-title, #000);
-    margin: 0 0 10px 0;
-    text-transform: uppercase;
-  }
-  
-  .info-section-body {
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--color-description, #555);
-  }
-  
-  .info-section-body p {
-    margin: 0 0 4px 0;
-  }
-  
-  /* Info Links (Shipping Policy, Size Guide) */
-  .info-link {
-    font-size: 13px;
-    color: var(--color-description, #666);
-    text-decoration: underline;
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  
-  .info-link:hover {
-    color: var(--color-foreground);
-  }
-  
-  /* Size Guide Popup on Hover */
-  .size-guide-section {
-    position: relative;
-  }
-  
-  .size-guide-trigger {
-    display: inline-block;
-  }
-  
-  .size-guide-popup {
-    position: absolute;
-    left: 0;
-    top: 100%;
-    margin-top: 10px;
-    background: #fff;
-    border: 1px solid var(--color-border);
-    padding: 20px;
-    min-width: 320px;
-    z-index: 100;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  }
-  
-  .size-guide-section:hover .size-guide-popup {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-  
-  .size-guide-header {
+  .info-section-toggle {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--color-border);
-  }
-  
-  .size-guide-popup-title {
+    width: 100%;
+    padding: 15px 0;
+    background: none;
+    border: none;
     font-size: 13px;
     font-weight: 600;
-    text-transform: uppercase;
     letter-spacing: 0.05em;
-  }
-  
-  .unit-toggle {
-    display: flex;
-    gap: 5px;
-  }
-  
-  .unit-btn {
-    padding: 5px 12px;
-    font-size: 11px;
-    font-weight: 600;
-    border: 1px solid var(--color-border);
-    background: transparent;
+    color: var(--color-title, #000);
     cursor: pointer;
-    transition: all 0.2s;
+    text-align: left;
   }
   
-  .unit-btn.active {
-    background: var(--color-foreground);
-    color: var(--color-background);
-    border-color: var(--color-foreground);
+  .toggle-icon {
+    font-size: 16px;
+    font-weight: 300;
+  }
+  
+  .info-section-content {
+    display: none;
+    padding: 0 0 20px 0;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--color-description, #666);
+  }
+  
+  .info-section-content.active {
+    display: block;
+  }
+  
+  .info-section-content p {
+    margin: 0 0 5px 0;
   }
   
   /* Size Guide Table */
@@ -503,100 +408,76 @@
     border-bottom: none;
   }
   
-  /* Center Column - Fullscreen Images */
+  /* Center Column - Images */
   .product-col-center {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .product-images-fullscreen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-    -webkit-overflow-scrolling: touch; /* Smooth iOS scrolling */
-  }
-  
-  .product-images-fullscreen::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-  
-  .fullscreen-image {
-    position: relative;
-    height: 100vh;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    cursor: zoom-in;
-    overflow: hidden;
-    transition: opacity 0.3s ease;
+    gap: 15px;
+    position: relative;
   }
   
-  .fullscreen-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-  
-  .model-info-overlay {
-    position: absolute;
-    bottom: 30px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 12px;
-    color: var(--color-description, #666);
-    padding: 8px;
-    z-index: 5;
-  }
-  
-  /* Thumbnails - Vertical Left Side, aligned to bottom */
-  .product-thumbnails-corner {
-    position: absolute;
-    bottom: 30px;
-    left: 15px;
+  .product-thumbnails {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    z-index: 10;
+    gap: 10px;
+    width: 70px;
+    flex-shrink: 0;
   }
   
   .thumbnail {
-    width: 50px;
-    height: 65px;
-    border: 1px solid transparent;
-    background: #fff;
+    width: 70px;
+    height: 90px;
+    border: 2px solid transparent;
+    background: var(--color-surface);
     padding: 0;
     cursor: pointer;
     overflow: hidden;
     transition: border-color 0.2s;
-    opacity: 0.7;
   }
   
   .thumbnail.active {
     border-color: var(--color-foreground);
-    opacity: 1;
-  }
-  
-  .thumbnail:hover {
-    opacity: 1;
   }
   
   .thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  
+  .product-main-image {
+    flex: 1;
+    position: relative;
+    background: var(--color-surface);
+    cursor: zoom-in;
+    overflow: hidden;
+  }
+  
+  .product-main-image .main-image {
+    display: none;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .product-main-image .main-image.active {
+    display: block;
+  }
+  
+  .product-main-image .main-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  
+  .model-info-overlay {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 12px;
+    color: var(--color-description, #666);
+    background: rgba(255,255,255,0.9);
+    padding: 8px;
   }
   
   .no-image-placeholder {
@@ -610,20 +491,18 @@
   
   /* Right Column */
   .product-col-right {
-    padding: 160px 45px 25px 35px; /* Extra top padding for navbar */
-    z-index: 1;
-    background: var(--color-background);
+    padding: 20px 0;
   }
   
   .product-option-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
   }
   
   .option-header-inline {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
   }
   
   .option-name {
@@ -694,15 +573,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 50px;
-    height: 46px;
-    padding: 0 18px;
+    min-width: 48px;
+    height: 48px;
+    padding: 0 15px;
     border: 1px solid var(--color-border);
-    border-radius: 0;
+    border-radius: 50%;
     font-size: 14px;
     font-weight: 500;
     transition: all 0.2s;
-    background: transparent;
   }
   
   .size-option input:checked + .size-btn {
@@ -774,6 +652,20 @@
     color: var(--color-error);
   }
   
+  /* Product Benefits */
+  .product-benefits {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+  
+  .product-benefits p {
+    font-size: 13px;
+    color: var(--color-description, #666);
+    margin: 0 0 8px 0;
+    line-height: 1.5;
+  }
+  
   /* Lightbox */
   .image-lightbox {
     position: fixed;
@@ -836,51 +728,31 @@
   /* Responsive */
   @media (max-width: 1200px) {
     .product-page-new {
-      margin-top: 0;
       grid-template-columns: 1fr 1fr;
-      gap: 0;
+      gap: 30px;
     }
     
     .product-col-left {
       grid-column: 1;
       grid-row: 2;
-      padding: 25px;
     }
     
     .product-col-center {
       grid-column: 1 / -1;
       grid-row: 1;
-      height: 70vh;
-    }
-    
-    .fullscreen-image {
-      height: 70vh;
+      max-height: 70vh;
     }
     
     .product-col-right {
       grid-column: 2;
       grid-row: 2;
-      padding: 25px;
-    }
-    
-    .product-title-row {
-      flex-direction: column;
-      gap: 5px;
-    }
-    
-    .product-thumbnails-corner {
-      bottom: 80px; /* Above model info */
-    }
-    
-    .model-info-overlay {
-      bottom: 20px;
     }
   }
   
   @media (max-width: 768px) {
     .product-page-new {
       grid-template-columns: 1fr;
-      margin-top: 0;
+      padding: 15px;
     }
     
     .product-col-left,
@@ -891,255 +763,74 @@
     
     .product-col-center {
       grid-row: 1;
-      height: 75vh;
-    }
-    
-    .fullscreen-image {
-      height: 75vh;
+      flex-direction: column-reverse;
+      max-height: none;
     }
     
     .product-col-left {
       grid-row: 2;
-      padding: 20px 20px;
     }
     
     .product-col-right {
       grid-row: 3;
-      padding: 20px 20px;
     }
     
-    .product-thumbnails-corner {
-      top: auto;
-      bottom: 90px; /* Above model info on mobile */
-      left: 15px;
-      transform: none;
+    .product-thumbnails {
       flex-direction: row;
-      gap: 5px;
-    }
-    
-    .model-info-overlay {
-      bottom: 15px;
-      font-size: 11px;
-      padding: 6px;
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 10px;
     }
     
     .thumbnail {
-      width: 38px;
-      height: 48px;
+      flex-shrink: 0;
     }
     
-    .size-guide-popup {
-      position: fixed;
-      left: 15px;
-      right: 15px;
-      top: auto;
-      bottom: 0;
-      min-width: auto;
-      transform: translateY(100%);
-    }
-    
-    .size-guide-section:hover .size-guide-popup {
-      transform: translateY(0);
-    }
-    
-    .product-title {
-      font-size: 16px;
-    }
-    
-    .product-price {
-      font-size: 13px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .product-col-center {
-      height: 65vh;
-    }
-    
-    .fullscreen-image {
-      height: 65vh;
-    }
-    
-    .product-col-left,
-    .product-col-right {
-      padding: 15px;
-    }
-    
-    .product-thumbnails-corner {
-      bottom: 75px;
-      left: 10px;
-      gap: 4px;
-    }
-    
-    .thumbnail {
-      width: 32px;
-      height: 42px;
-    }
-    
-    .model-info-overlay {
-      bottom: 10px;
-      font-size: 10px;
+    .product-main-image {
+      min-height: 400px;
     }
   }
 {% endstylesheet %}
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
-  // Fullscreen image gallery with smooth scroll capture
-  const gallery = document.getElementById('product-gallery');
-  const imagesContainer = document.getElementById('product-images-fullscreen');
-  const thumbnails = document.querySelectorAll('.thumbnail');
-  const fullscreenImages = document.querySelectorAll('.fullscreen-image');
-  let isGalleryScrolling = true;
-  let scrollTimeout = null;
-  
-  // Smooth scroll to image with easing
-  function smoothScrollToImage(targetImage) {
-    if (!targetImage || !imagesContainer) return;
-    
-    const targetTop = targetImage.offsetTop;
-    imagesContainer.scrollTo({
-      top: targetTop,
-      behavior: 'smooth'
-    });
-  }
-  
-  // Thumbnail click scrolls to image
-  thumbnails.forEach(thumb => {
-    thumb.addEventListener('click', function() {
-      const index = this.dataset.imageIndex;
-      const targetImage = document.querySelector(`.fullscreen-image[data-image-index="${index}"]`);
-      smoothScrollToImage(targetImage);
+  // Info Section Toggles
+  const toggles = document.querySelectorAll('.info-section-toggle');
+  toggles.forEach(toggle => {
+    toggle.addEventListener('click', function() {
+      const section = this.dataset.section;
+      const content = document.querySelector(`[data-content="${section}"]`);
+      const icon = this.querySelector('.toggle-icon');
+      
+      if (content.classList.contains('active')) {
+        content.classList.remove('active');
+        icon.textContent = '+';
+      } else {
+        content.classList.add('active');
+        icon.textContent = '—';
+      }
     });
   });
   
-  // Intersection Observer to update active thumbnail
-  if (imagesContainer && fullscreenImages.length > 0) {
-    const observerOptions = {
-      root: imagesContainer,
-      rootMargin: '0px',
-      threshold: 0.5
-    };
-    
-    const imageObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const index = entry.target.dataset.imageIndex;
-          thumbnails.forEach(t => t.classList.remove('active'));
-          const activeThumb = document.querySelector(`.thumbnail[data-image-index="${index}"]`);
-          if (activeThumb) activeThumb.classList.add('active');
-          
-          // Check if we're at the last image
-          const lastIndex = fullscreenImages.length - 1;
-          if (parseInt(index) === lastIndex) {
-            // Small delay to allow animation to complete
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-              const scrolledToBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 20;
-              if (scrolledToBottom) {
-                isGalleryScrolling = false;
-              }
-            }, 100);
-          }
-        }
-      });
-    }, observerOptions);
-    
-    fullscreenImages.forEach(img => imageObserver.observe(img));
-    
-    // Capture scroll on gallery until all images viewed - smoother wheel handling
-    if (gallery) {
-      let accumulatedDelta = 0;
-      let lastScrollTime = 0;
-      
-      gallery.addEventListener('wheel', function(e) {
-        const now = Date.now();
-        
-        if (isGalleryScrolling) {
-          // Check if at the end
-          const atBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 10;
-          const atTop = imagesContainer.scrollTop <= 10;
-          
-          if (e.deltaY > 0 && atBottom) {
-            isGalleryScrolling = false;
-            return; // Allow page scroll
-          }
-          if (e.deltaY < 0 && atTop) {
-            return; // Allow page scroll up
-          }
-          
-          e.preventDefault();
-          
-          // Accumulate delta for smoother scrolling
-          if (now - lastScrollTime > 50) {
-            accumulatedDelta = 0;
-          }
-          accumulatedDelta += e.deltaY;
-          lastScrollTime = now;
-          
-          // Apply scroll with momentum feel
-          imagesContainer.scrollBy({ 
-            top: e.deltaY * 1.2, 
-            behavior: 'auto' 
-          });
-        } else {
-          // Re-enable gallery scroll if scrolling back up into view
-          const rect = gallery.getBoundingClientRect();
-          if (rect.top >= -50 && e.deltaY < 0) {
-            isGalleryScrolling = true;
-            e.preventDefault();
-            imagesContainer.scrollTo({
-              top: imagesContainer.scrollHeight - imagesContainer.clientHeight,
-              behavior: 'auto'
-            });
-          }
-        }
-      }, { passive: false });
-      
-      // Touch support for mobile
-      let touchStartY = 0;
-      let touchStartScrollTop = 0;
-      
-      gallery.addEventListener('touchstart', function(e) {
-        touchStartY = e.touches[0].clientY;
-        touchStartScrollTop = imagesContainer.scrollTop;
-      }, { passive: true });
-      
-      gallery.addEventListener('touchmove', function(e) {
-        if (!isGalleryScrolling) return;
-        
-        const touchY = e.touches[0].clientY;
-        const deltaY = touchStartY - touchY;
-        
-        const atBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 10;
-        const atTop = imagesContainer.scrollTop <= 10;
-        
-        if (deltaY > 0 && atBottom) {
-          isGalleryScrolling = false;
-          return;
-        }
-        if (deltaY < 0 && atTop) {
-          return;
-        }
-      }, { passive: true });
-    }
-  }
+  // Thumbnail Gallery
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  const mainImages = document.querySelectorAll('.product-main-image .main-image');
   
-  // Size Guide Unit Toggle
-  const unitBtns = document.querySelectorAll('.unit-btn');
-  unitBtns.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const unit = this.dataset.unit;
-      unitBtns.forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
+  thumbnails.forEach(thumb => {
+    thumb.addEventListener('click', function() {
+      const index = this.dataset.imageIndex;
       
-      document.querySelectorAll('.size-guide-table').forEach(table => {
-        table.style.display = table.dataset.unit === unit ? 'block' : 'none';
-      });
+      thumbnails.forEach(t => t.classList.remove('active'));
+      mainImages.forEach(img => img.classList.remove('active'));
+      
+      this.classList.add('active');
+      const targetImage = document.querySelector(`.product-main-image .main-image[data-image-index="${index}"]`);
+      if (targetImage) targetImage.classList.add('active');
     });
   });
   
   // Lightbox
+  const mainImageContainer = document.getElementById('product-main-image');
   const lightbox = document.getElementById('image-lightbox');
   const lightboxImage = document.getElementById('lightbox-image');
   const lightboxClose = document.querySelector('.lightbox-close');
@@ -1147,13 +838,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const lightboxNext = document.querySelector('.lightbox-next');
   let currentLightboxIndex = 0;
   
-  if (imagesContainer && lightbox) {
-    imagesContainer.addEventListener('click', function(e) {
+  if (mainImageContainer && lightbox) {
+    mainImageContainer.addEventListener('click', function(e) {
       if (e.target.tagName === 'IMG') {
         const zoomSrc = e.target.dataset.zoomSrc || e.target.src;
         lightboxImage.src = zoomSrc;
         lightboxImage.alt = e.target.alt;
-        currentLightboxIndex = parseInt(e.target.closest('.fullscreen-image').dataset.imageIndex);
+        currentLightboxIndex = parseInt(e.target.closest('.main-image').dataset.imageIndex);
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
       }
@@ -1170,14 +861,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     lightboxPrev.addEventListener('click', function() {
-      const images = document.querySelectorAll('.fullscreen-image img');
+      const images = document.querySelectorAll('.product-main-image .main-image img');
       currentLightboxIndex = (currentLightboxIndex - 1 + images.length) % images.length;
       const img = images[currentLightboxIndex];
       lightboxImage.src = img.dataset.zoomSrc || img.src;
     });
     
     lightboxNext.addEventListener('click', function() {
-      const images = document.querySelectorAll('.fullscreen-image img');
+      const images = document.querySelectorAll('.product-main-image .main-image img');
       currentLightboxIndex = (currentLightboxIndex + 1) % images.length;
       const img = images[currentLightboxIndex];
       lightboxImage.src = img.dataset.zoomSrc || img.src;

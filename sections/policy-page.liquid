@@ -2,38 +2,38 @@
   .policy-page {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    padding: 60px 20px;
-    max-width: 800px;
+    padding: 80px 20px;
+    max-width: 700px;
     margin: 0 auto;
     min-height: 100vh;
-    line-height: 1.7;
+    line-height: 1.8;
   }
 
   .policy-title {
-    text-align: center;
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 50px;
-    color: var(--color-foreground);
-    letter-spacing: 2px;
+    text-align: left;
+    font-size: 2rem;
+    font-weight: var(--font-heading-weight);
+    margin-bottom: 40px;
+    color: var(--color-title, #000000);
+    letter-spacing: 1px;
     text-transform: uppercase;
   }
 
   .policy-content {
-    border-radius: 8px;
-    padding: 40px;
-    margin: 30px 0;
-    background-color: var(--color-surface);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    box-shadow: none;
   }
 
   .policy-content h2 {
-    color: var(--color-foreground);
-    font-size: 1.5rem;
-    margin-top: 30px;
+    color: var(--color-title, #000000);
+    font-size: 1.1rem;
+    font-weight: var(--font-heading-weight);
+    margin-top: 40px;
     margin-bottom: 15px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
   }
 
   .policy-content h2:first-child {
@@ -42,9 +42,8 @@
 
   .policy-content p {
     margin-bottom: 20px;
-    color: var(--color-foreground);
-    opacity: 0.85;
-    font-size: 1rem;
+    color: var(--color-description, #555555);
+    font-size: 0.95rem;
   }
 
   .policy-content ul {
@@ -54,44 +53,40 @@
 
   .policy-content li {
     margin-bottom: 10px;
-    color: var(--color-foreground);
-    opacity: 0.85;
+    color: var(--color-description, #555555);
   }
 
   .policy-content strong {
-    color: var(--color-foreground);
+    color: var(--color-title, #000000);
   }
 
   .policy-highlight {
     background-color: var(--color-surface);
     color: var(--color-foreground);
     padding: 20px;
-    border-radius: 5px;
+    border-radius: 4px;
     margin: 30px 0;
     font-weight: 500;
+    border-left: 3px solid var(--color-primary);
   }
 
   /* Utility for inline red highlights */
   .policy-accent {
-  color: var(--color-primary);
+    color: var(--color-primary);
   }
 
   @media (max-width: 768px) {
     .policy-page {
-      padding: 40px 15px;
+      padding: 40px 20px;
     }
 
     .policy-title {
-      font-size: 2rem;
+      font-size: 1.6rem;
       margin-bottom: 30px;
     }
 
-    .policy-content {
-      padding: 30px 20px;
-    }
-
     .policy-content h2 {
-      font-size: 1.3rem;
+      font-size: 1rem;
     }
   }
 {% endstylesheet %}
