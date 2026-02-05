@@ -61,6 +61,7 @@
           </div>
           {% assign product_type_down = product.metafields.custom.type | downcase %}
           {% if product_type_down contains 'hoodie' %}
+            <div>{{ product_type_down }}</div>
             <div class="size-guide-table" data-unit="cm">
               <div class="size-row header">
                 <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
@@ -302,21 +303,40 @@
 </div>
 
 {% stylesheet %}
-  /* New Product Page Layout */
-  .product-page-new {
-    display: grid;
-    grid-template-columns: 300px 1fr 300px;
-    gap: 0;
-    min-height: 100vh;
-    max-width: 100%;
-    margin: 0;
-    margin-top: -150px; /* Go behind navbar */
-    padding-top: 0;
+  /* Override parent shopify-section grid for product page */
+  .shopify-section:has(.product-page-new) {
+    --content-margin: 0;
+    --page-margin: 0;
+    grid-template-columns: 1fr !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
   }
   
+  /* Override main-content gap for product pages */
+  .main-content:has(.product-page-new) {
+    gap: 0;
+  }
+  
+  /* New Product Page Layout - Full Width */
+  .product-page-new {
+    grid-column: 1 / -1 !important; /* Override theme's constrained layout */
+    display: grid;
+    grid-template-columns: 27% 1fr 25%;
+    gap: 0;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    margin: 0;
+    margin-top: -150px; /* Go behind navbar */
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
   /* Left Column */
   .product-col-left {
-    padding: 160px 35px 25px 45px; /* Extra top padding for navbar */
+    padding: 240px 30px 25px 30px; /* Extra top padding for navbar */
     z-index: 1;
     background: var(--color-background);
   }
@@ -508,6 +528,7 @@
     position: relative;
     height: 100vh;
     overflow: hidden;
+    margin: 0px 30px;
   }
   
   .product-images-fullscreen {
@@ -544,21 +565,23 @@
   
   .fullscreen-image img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+
     transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
   
   .model-info-overlay {
+    background-color: rgba(88,88,88,0.22);
     position: absolute;
     bottom: 30px;
     left: 0;
     right: 0;
     text-align: center;
     font-size: 12px;
-    color: var(--color-description, #666);
+    color: #f8f8f8ff;
+    font-weight: 400;
     padding: 8px;
     z-index: 5;
+    mix-blend-mode: difference;
   }
   
   /* Thumbnails - Vertical Left Side, aligned to bottom */
@@ -610,7 +633,7 @@
   
   /* Right Column */
   .product-col-right {
-    padding: 160px 45px 25px 35px; /* Extra top padding for navbar */
+    padding: 240px 30px 25px 30px; /* Extra top padding for navbar */
     z-index: 1;
     background: var(--color-background);
   }
@@ -828,11 +851,6 @@
   .lightbox-prev { left: 20px; }
   .lightbox-next { right: 20px; }
   
-  /* Gift Card adjustments */
-  .product-page--gift-card .product-col-center {
-    background: var(--color-surface);
-  }
-  
   /* Responsive */
   @media (max-width: 1200px) {
     .product-page-new {
@@ -844,7 +862,7 @@
     .product-col-left {
       grid-column: 1;
       grid-row: 2;
-      padding: 25px;
+      padding: 25px 15px;
     }
     
     .product-col-center {
@@ -860,7 +878,7 @@
     .product-col-right {
       grid-column: 2;
       grid-row: 2;
-      padding: 25px;
+      padding: 25px 15px;
     }
     
     .product-title-row {

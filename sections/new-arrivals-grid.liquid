@@ -114,7 +114,8 @@
                  data-product-id="{{ product.id }}"
                  data-product-handle="{{ product.handle }}"
                  data-collections="{% for col in product.collections %}{{ col.handle }},{% endfor %}"
-                 data-available="{{ product.available }}">
+                 data-available="{{ product.available }}"
+                 data-product-type="{{ product.metafields.custom.type | downcase }}">
           
           <div class="product-image-container">
             <a href="{{ product.url }}" class="product-card-link">
@@ -776,8 +777,16 @@
     let activeFilters = {
       collection: 'all',
       size: 'all',
-      availability: 'all'
+      availability: 'all',
+      type: 'all'
     };
+
+    // Check URL for type filter parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    if (typeParam) {
+      activeFilters.type = typeParam.toLowerCase();
+    }
 
     // Filter Dropdown functionality
     const filterDropdowns = section.querySelectorAll('.filter-dropdown');
@@ -831,10 +840,18 @@
         let visible = true;
         const collections = product.dataset.collections || '';
         const isAvailable = product.dataset.available === 'true';
+        const productType = product.dataset.productType || '';
         
         // Collection filter
         if (activeFilters.collection !== 'all' && !collections.includes(activeFilters.collection)) {
           visible = false;
+        }
+        
+        // Type filter (hoodie, t-shirt, etc.)
+        if (activeFilters.type !== 'all') {
+          if (!productType.includes(activeFilters.type)) {
+            visible = false;
+          }
         }
         
         // Availability filter
@@ -874,10 +891,18 @@
       }
     }
 
+    // Apply filters on page load if type param exists
+    if (activeFilters.type !== 'all') {
+      applyFilters();
+    }
+
     tabs.forEach(tab => {
       tab.addEventListener('click', function() {
         const filter = this.dataset.filter;
         activeFilters.collection = filter;
+        
+        // Clear type filter when switching collection tabs
+        activeFilters.type = 'all';
         
         tabs.forEach(t => {
           t.classList.remove('active');
