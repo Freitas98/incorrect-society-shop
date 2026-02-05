@@ -261,7 +261,6 @@
       </script>
 
       {% if current_variant.available %}
-        <p class="stock-status in-stock">● Buy now orders shipped within 1-2 days.</p>
       {% else %}
         <p class="stock-status out-stock">● Currently out of stock</p>
       {% endif %}
@@ -1248,7 +1247,6 @@ document.addEventListener('DOMContentLoaded', function() {
       if (stockStatus) {
         if (matchingVariant.available) {
           stockStatus.className = 'stock-status in-stock';
-          stockStatus.textContent = '● Buy now orders shipped within 1-2 days.';
         } else {
           stockStatus.className = 'stock-status out-stock';
           stockStatus.textContent = '● Currently out of stock';

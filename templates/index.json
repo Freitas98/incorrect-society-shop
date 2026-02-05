@@ -30,8 +30,8 @@
     "new_arrivals": {
       "type": "new-arrivals-grid",
       "settings": {
-        "title": "New Arrivals",
-        "collection": "",
+        "title": "Female Society",
+        "collection": "female-society",
         "products_count": 12,
         "featured_collections": []
       }
