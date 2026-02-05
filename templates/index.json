@@ -42,121 +42,36 @@
         "slide_7mjEzn": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-6449.jpg",
-            "overlay_opacity": 30,
-            "link_text_1": "Best Sellers",
-            "link_url_1": "",
-            "link_badge_1": "",
-            "link_text_2": "Hoodies",
-            "link_url_2": "",
-            "link_badge_2": "New",
-            "link_text_3": "Sneakers",
-            "link_url_3": "",
-            "link_badge_3": "",
-            "link_text_4": "Accessories",
-            "link_url_4": "",
-            "link_badge_4": "",
-            "link_text_5": "New Arrivals",
-            "link_url_5": "",
-            "link_badge_5": "70",
-            "cta_text": "SHOP ALL",
-            "cta_url": ""
+            "image": "shopify://shop_images/Tezza-4875.jpg",
+            "overlay_opacity": 30
           }
         },
         "slide_rRYCnP": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-1702.jpg",
-            "overlay_opacity": 30,
-            "link_text_1": "Best Sellers",
-            "link_url_1": "",
-            "link_badge_1": "",
-            "link_text_2": "Hoodies",
-            "link_url_2": "",
-            "link_badge_2": "New",
-            "link_text_3": "Sneakers",
-            "link_url_3": "",
-            "link_badge_3": "",
-            "link_text_4": "Accessories",
-            "link_url_4": "",
-            "link_badge_4": "",
-            "link_text_5": "New Arrivals",
-            "link_url_5": "",
-            "link_badge_5": "70",
-            "cta_text": "SHOP ALL",
-            "cta_url": ""
+            "image": "shopify://shop_images/Tezza-4790.jpg",
+            "overlay_opacity": 30
           }
         },
         "slide_7jLVrm": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-4875.jpg",
-            "overlay_opacity": 30,
-            "link_text_1": "Best Sellers",
-            "link_url_1": "",
-            "link_badge_1": "",
-            "link_text_2": "Hoodies",
-            "link_url_2": "",
-            "link_badge_2": "New",
-            "link_text_3": "Sneakers",
-            "link_url_3": "",
-            "link_badge_3": "",
-            "link_text_4": "Accessories",
-            "link_url_4": "",
-            "link_badge_4": "",
-            "link_text_5": "New Arrivals",
-            "link_url_5": "",
-            "link_badge_5": "70",
-            "cta_text": "SHOP ALL",
-            "cta_url": ""
+            "image": "shopify://shop_images/Tezza-4183_31060e9a-400a-4963-b5fa-488d45b079ca.jpg",
+            "overlay_opacity": 30
           }
         },
         "slide_9CcafR": {
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/xx.jpg",
-            "overlay_opacity": 30,
-            "link_text_1": "Best Sellers",
-            "link_url_1": "",
-            "link_badge_1": "",
-            "link_text_2": "Hoodies",
-            "link_url_2": "",
-            "link_badge_2": "New",
-            "link_text_3": "Sneakers",
-            "link_url_3": "",
-            "link_badge_3": "",
-            "link_text_4": "Accessories",
-            "link_url_4": "",
-            "link_badge_4": "",
-            "link_text_5": "New Arrivals",
-            "link_url_5": "",
-            "link_badge_5": "70",
-            "cta_text": "SHOP ALL",
-            "cta_url": ""
+            "overlay_opacity": 30
           }
         },
         "slide_1": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/x.jpg",
-            "overlay_opacity": 30,
-            "link_text_1": "Best Sellers",
-            "link_url_1": "",
-            "link_badge_1": "",
-            "link_text_2": "Hoodies",
-            "link_url_2": "",
-            "link_badge_2": "New",
-            "link_text_3": "Sneakers",
-            "link_url_3": "",
-            "link_badge_3": "",
-            "link_text_4": "Accessories",
-            "link_url_4": "",
-            "link_badge_4": "",
-            "link_text_5": "New Arrivals",
-            "link_url_5": "",
-            "link_badge_5": "70",
-            "cta_text": "SHOP ALL",
-            "cta_url": ""
+            "image": "shopify://shop_images/Tezza-3774.jpg",
+            "overlay_opacity": 30
           }
         }
       },
@@ -167,7 +82,25 @@
         "slide_9CcafR",
         "slide_1"
       ],
-      "settings": {}
+      "settings": {
+        "link_text_1": "Female Society",
+        "link_url_1": "",
+        "link_badge_1": "",
+        "link_text_2": "Hoodies",
+        "link_url_2": "",
+        "link_badge_2": "",
+        "link_text_3": "T-Shirts",
+        "link_url_3": "",
+        "link_badge_3": "",
+        "link_text_4": "Acessórios",
+        "link_url_4": "",
+        "link_badge_4": "",
+        "link_text_5": "Gift Card",
+        "link_url_5": "",
+        "link_badge_5": "",
+        "cta_text": "SHOP ALL",
+        "cta_url": ""
+      }
     }
   },
   "order": [
