@@ -59,21 +59,21 @@
         "slide_1"
       ],
       "settings": {
-        "link_text_1": "Best Sellers",
+        "link_text_1": "Female Society",
         "link_url_1": "",
-        "link_badge_1": "",
+        "link_badge_1": "NEW",
         "link_text_2": "Hoodies",
         "link_url_2": "",
         "link_badge_2": "New",
-        "link_text_3": "Sneakers",
+        "link_text_3": "T-Shirts",
         "link_url_3": "",
         "link_badge_3": "",
         "link_text_4": "Accessories",
         "link_url_4": "",
         "link_badge_4": "",
-        "link_text_5": "New Arrivals",
+        "link_text_5": "Gift Card",
         "link_url_5": "",
-        "link_badge_5": "70",
+        "link_badge_5": "",
         "cta_text": "SHOP ALL",
         "cta_url": ""
       }
