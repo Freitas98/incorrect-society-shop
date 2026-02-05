@@ -39,10 +39,31 @@
     "hero_gallery": {
       "type": "hero-slider-gallery",
       "blocks": {
-        "slide_NXxANd": {
+        "slide_RMzDbY": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/xxx.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_x4race": {
           "type": "slide",
           "settings": {
             "image": "shopify://shop_images/Tezza-5713.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_YBGtaQ": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/x.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_NXxANd": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Tezza-5712.jpg",
             "overlay_opacity": 30
           }
         },
@@ -55,6 +76,9 @@
         }
       },
       "block_order": [
+        "slide_RMzDbY",
+        "slide_x4race",
+        "slide_YBGtaQ",
         "slide_NXxANd",
         "slide_1"
       ],
