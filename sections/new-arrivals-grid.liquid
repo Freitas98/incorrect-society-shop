@@ -423,6 +423,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 40px 30px;
     justify-content: center;
+    align-items: start;
     max-width: 1400px;
     margin: 0 auto;
   }
@@ -443,7 +444,13 @@
 
   @media (max-width: 768px) {
     .new-arrivals-container {
-      padding: 0 20px;
+      padding: 0 15px;
+    }
+    
+    .new-arrivals-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px 10px;
+      align-items: start;
     }
     
     .new-arrivals-header {
@@ -451,10 +458,12 @@
       gap: 20px;
     }
     
-    .new-arrivals-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 25px 15px;
-      gap: 12px;
+    .product-card-enhanced {
+      width: 100%;
+    }
+    
+    .product-image-wrapper {
+      aspect-ratio: 3/4;
     }
   }
 
