@@ -48,7 +48,7 @@
         <a href="/policies/shipping-policy" class="info-link">Shipping Policy</a>
       </div>
       
-      {% unless product.gift_card? or product.type == 'Gift Card' %}
+      {% unless product.gift_card? or product.type == 'Gift Card' or product.type == "Accessories" %}
       <div class="info-section-static size-guide-section">
         <div class="size-guide-row">
           <a href="/pages/size-guide" class="info-link size-guide-link-text">Size Guide</a>
