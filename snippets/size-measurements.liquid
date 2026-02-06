@@ -1,45 +1,88 @@
 {% comment %}
   Size measurements data
   All measurements are in CM - inches conversion is done automatically
+  
+  For all garments (matching SVG diagrams):
+  A = Length
+  B = Sleeve
+  C = Chest (Width)
 {% endcomment %}
 
 {% comment %}
-  T-Shirts measurements (CM)
+  Boxy T-Shirts measurements (CM) - Yellow Tee style
 {% endcomment %}
-{% assign tshirt_s_a = 58 %}
-{% assign tshirt_s_b = 67 %}
-{% assign tshirt_s_c = 21 %}
+{% assign tshirt_s_a = 60 %}
+{% assign tshirt_s_b = 62 %}
+{% assign tshirt_s_c = 23 %}
 
-{% assign tshirt_m_a = 60 %}
-{% assign tshirt_m_b = 69 %}
-{% assign tshirt_m_c = 22 %}
+{% assign tshirt_m_a = 62 %}
+{% assign tshirt_m_b = 64 %}
+{% assign tshirt_m_c = 24 %}
 
-{% assign tshirt_l_a = 62 %}
-{% assign tshirt_l_b = 71 %}
-{% assign tshirt_l_c = 23 %}
+{% assign tshirt_l_a = 64 %}
+{% assign tshirt_l_b = 66 %}
+{% assign tshirt_l_c = 25 %}
 
-{% assign tshirt_xl_a = 64 %}
-{% assign tshirt_xl_b = 73 %}
-{% assign tshirt_xl_c = 24 %}
+{% assign tshirt_xl_a = 66 %}
+{% assign tshirt_xl_b = 68 %}
+{% assign tshirt_xl_c = 26 %}
 
 {% comment %}
-  Hoodies measurements (CM)
+  Too Scared Longsleeve Boxy measurements (CM)
 {% endcomment %}
-{% assign hoodie_s_a = 62 %}
-{% assign hoodie_s_b = 65 %}
-{% assign hoodie_s_c = 49 %}
+{% assign longsleeve_s_a = 60 %}
+{% assign longsleeve_s_b = 66 %}
+{% assign longsleeve_s_c = 58 %}
 
-{% assign hoodie_m_a = 65 %}
-{% assign hoodie_m_b = 67 %}
-{% assign hoodie_m_c = 51 %}
+{% assign longsleeve_m_a = 62 %}
+{% assign longsleeve_m_b = 68 %}
+{% assign longsleeve_m_c = 60 %}
 
-{% assign hoodie_l_a = 68 %}
-{% assign hoodie_l_b = 69 %}
-{% assign hoodie_l_c = 53 %}
+{% assign longsleeve_l_a = 64 %}
+{% assign longsleeve_l_b = 70 %}
+{% assign longsleeve_l_c = 62 %}
 
-{% assign hoodie_xl_a = 71 %}
-{% assign hoodie_xl_b = 71 %}
-{% assign hoodie_xl_c = 55 %}
+{% assign longsleeve_xl_a = 66 %}
+{% assign longsleeve_xl_b = 72 %}
+{% assign longsleeve_xl_c = 64 %}
+
+{% comment %}
+  Baby T-Shirt measurements (CM)
+{% endcomment %}
+{% assign babytee_xs_a = 37 %}
+{% assign babytee_xs_b = 48 %}
+{% assign babytee_xs_c = 8.5 %}
+
+{% assign babytee_s_a = 39 %}
+{% assign babytee_s_b = 50 %}
+{% assign babytee_s_c = 9 %}
+
+{% assign babytee_m_a = 41 %}
+{% assign babytee_m_b = 52 %}
+{% assign babytee_m_c = 9.5 %}
+
+{% assign babytee_l_a = 43 %}
+{% assign babytee_l_b = 54 %}
+{% assign babytee_l_c = 10 %}
+
+{% comment %}
+  Black Zip Up Boxy / Hoodies measurements (CM)
+{% endcomment %}
+{% assign hoodie_s_a = 64 %}
+{% assign hoodie_s_b = 60 %}
+{% assign hoodie_s_c = 57 %}
+
+{% assign hoodie_m_a = 67 %}
+{% assign hoodie_m_b = 63 %}
+{% assign hoodie_m_c = 61 %}
+
+{% assign hoodie_l_a = 70 %}
+{% assign hoodie_l_b = 65 %}
+{% assign hoodie_l_c = 63 %}
+
+{% assign hoodie_xl_a = 73 %}
+{% assign hoodie_xl_b = 68 %}
+{% assign hoodie_xl_c = 65 %}
 
 {% comment %}
   Get measurement value
@@ -86,6 +129,57 @@
       {%- assign cm_value = tshirt_xl_b %}
     {% when 'tshirt_xl_c' -%}
       {%- assign cm_value = tshirt_xl_c %}
+    {% comment %} Too Scared Longsleeve {% endcomment %}
+    {% when 'longsleeve_s_a' -%}
+      {%- assign cm_value = longsleeve_s_a %}
+    {% when 'longsleeve_s_b' -%}
+      {%- assign cm_value = longsleeve_s_b %}
+    {% when 'longsleeve_s_c' -%}
+      {%- assign cm_value = longsleeve_s_c %}
+    {% when 'longsleeve_m_a' -%}
+      {%- assign cm_value = longsleeve_m_a %}
+    {% when 'longsleeve_m_b' -%}
+      {%- assign cm_value = longsleeve_m_b %}
+    {% when 'longsleeve_m_c' -%}
+      {%- assign cm_value = longsleeve_m_c %}
+    {% when 'longsleeve_l_a' -%}
+      {%- assign cm_value = longsleeve_l_a %}
+    {% when 'longsleeve_l_b' -%}
+      {%- assign cm_value = longsleeve_l_b %}
+    {% when 'longsleeve_l_c' -%}
+      {%- assign cm_value = longsleeve_l_c %}
+    {% when 'longsleeve_xl_a' -%}
+      {%- assign cm_value = longsleeve_xl_a %}
+    {% when 'longsleeve_xl_b' -%}
+      {%- assign cm_value = longsleeve_xl_b %}
+    {% when 'longsleeve_xl_c' -%}
+      {%- assign cm_value = longsleeve_xl_c %}
+    {% comment %} Baby Blue Tee {% endcomment %}
+    {% when 'babytee_xs_a' -%}
+      {%- assign cm_value = babytee_xs_a %}
+    {% when 'babytee_xs_b' -%}
+      {%- assign cm_value = babytee_xs_b %}
+    {% when 'babytee_xs_c' -%}
+      {%- assign cm_value = babytee_xs_c %}
+    {% when 'babytee_s_a' -%}
+      {%- assign cm_value = babytee_s_a %}
+    {% when 'babytee_s_b' -%}
+      {%- assign cm_value = babytee_s_b %}
+    {% when 'babytee_s_c' -%}
+      {%- assign cm_value = babytee_s_c %}
+    {% when 'babytee_m_a' -%}
+      {%- assign cm_value = babytee_m_a %}
+    {% when 'babytee_m_b' -%}
+      {%- assign cm_value = babytee_m_b %}
+    {% when 'babytee_m_c' -%}
+      {%- assign cm_value = babytee_m_c %}
+    {% when 'babytee_l_a' -%}
+      {%- assign cm_value = babytee_l_a %}
+    {% when 'babytee_l_b' -%}
+      {%- assign cm_value = babytee_l_b %}
+    {% when 'babytee_l_c' -%}
+      {%- assign cm_value = babytee_l_c %}
+    {% comment %} Hoodies/Black Zip Up {% endcomment %}
     {% when 'hoodie_s_a' -%}
       {%- assign cm_value = hoodie_s_a %}
     {% when 'hoodie_s_b' -%}

@@ -1,6 +1,6 @@
 <div class="announcement-bar">
   {% liquid
-    assign default_text = 'announcement.default' | t | default: 'WORLDWIDE SHIPPING | FEMALE SOCIETY OUT NOW | FREE SHIPPING 80€+'
+    assign default_text = 'announcement.default' | t | default: 'WORLDWIDE SHIPPING | FEMALE ANXIETY OUT NOW | FREE SHIPPING 80€+'
     assign setting_text = section.settings.announcement_text | strip
     assign announcement_text = default_text
     if section.settings.use_translated_default == false and setting_text != blank
@@ -97,7 +97,7 @@
       "type": "text",
       "id": "announcement_text",
       "label": "Custom text (overrides)",
-      "default": " WORLDWIDE SHIPPING | FEMALE SOCIETY OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL"
+      "default": " WORLDWIDE SHIPPING | FEMALE ANXIETY OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL"
     }
   ]
 }

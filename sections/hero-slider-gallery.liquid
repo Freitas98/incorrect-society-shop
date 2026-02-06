@@ -46,8 +46,8 @@
                 
                 # Determine the correct URL for each link
                 assign final_url = link_url
-                if link_text == 'Female Society'
-                  assign final_url = routes.collections_url | append: '/female-society'
+                if link_text == 'Female Anxiety'
+                  assign final_url = routes.collections_url | append: '/female-anxiety'
                 elsif link_text == 'Hoodies'
                   assign final_url = pages['all-products'].url | append: '?type=hoodie'
                 elsif link_text == 'T-Shirts'
@@ -502,7 +502,7 @@
       "type": "text",
       "id": "link_text_1",
       "label": "Text",
-      "default": "Female Society"
+      "default": "Female Anxiety"
     },
     {
       "type": "url",

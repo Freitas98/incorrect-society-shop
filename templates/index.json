@@ -30,8 +30,8 @@
     "new_arrivals": {
       "type": "new-arrivals-grid",
       "settings": {
-        "title": "Female Society",
-        "collection": "female-society",
+        "title": "Female Anxiety",
+        "collection": "female-anxiety",
         "products_count": 12,
         "featured_collections": []
       }
@@ -83,7 +83,7 @@
         "slide_1"
       ],
       "settings": {
-        "link_text_1": "Female Society",
+        "link_text_1": "Female Anxiety",
         "link_url_1": "",
         "link_badge_1": "",
         "link_text_2": "Hoodies",

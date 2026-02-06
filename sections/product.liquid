@@ -50,56 +50,110 @@
       
       {% unless product.gift_card? or product.type == 'Gift Card' %}
       <div class="info-section-static size-guide-section">
-        <span class="info-link size-guide-trigger">Size Guide</span>
+        <div class="size-guide-row">
+          <a href="/pages/size-guide" class="info-link size-guide-link-text">Size Guide</a>
+          <button type="button" class="size-guide-info-btn" aria-label="View size guide popup">
+            <svg width="14px" height="14px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_429_11160)">
+            <circle cx="12" cy="11.9999" r="9" stroke="#292929" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="12" y="8" width="0.01" height="0.01" stroke="#292929" stroke-width="3.75" stroke-linejoin="round"/>
+            <path d="M12 12V16" stroke="#292929" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_429_11160">
+            <rect width="24" height="24" fill="white"/>
+            </clipPath>
+            </defs>
+            </svg>
+          </button>
+        </div>
         <div class="size-guide-popup">
+          
+          <button type="button" class="size-guide-close" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
           <div class="size-guide-header">
             <span class="size-guide-popup-title">Size Guide</span>
             <div class="unit-toggle">
               <button type="button" class="unit-btn active" data-unit="cm">CM</button>
-              <button type="button" class="unit-btn" data-unit="inches">INCHES</button>
+              <button type="button" class="unit-btn" data-unit="inches">IN</button>
             </div>
           </div>
-          {% assign product_type_down = product.metafields.custom.type | downcase %}
-          {% if product_type_down contains 'hoodie' %}
-            <div>{{ product_type_down }}</div>
-            <div class="size-guide-table" data-unit="cm">
-              <div class="size-row header">
-                <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
-              </div>
-              <div class="size-row"><span>S</span><span>53</span><span>68</span><span>62</span></div>
-              <div class="size-row"><span>M</span><span>56</span><span>71</span><span>63</span></div>
-              <div class="size-row"><span>L</span><span>59</span><span>74</span><span>64</span></div>
-              <div class="size-row"><span>XL</span><span>62</span><span>77</span><span>65</span></div>
-            </div>
-            <div class="size-guide-table" data-unit="inches" style="display:none;">
-              <div class="size-row header">
-                <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
-              </div>
-              <div class="size-row"><span>S</span><span>20.9"</span><span>26.8"</span><span>24.4"</span></div>
-              <div class="size-row"><span>M</span><span>22.0"</span><span>28.0"</span><span>24.8"</span></div>
-              <div class="size-row"><span>L</span><span>23.2"</span><span>29.1"</span><span>25.2"</span></div>
-              <div class="size-row"><span>XL</span><span>24.4"</span><span>30.3"</span><span>25.6"</span></div>
-            </div>
-          {% else %}
-            <div class="size-guide-table" data-unit="cm">
-              <div class="size-row header">
-                <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
-              </div>
-              <div class="size-row"><span>S</span><span>46</span><span>70</span><span>20</span></div>
-              <div class="size-row"><span>M</span><span>51</span><span>72</span><span>21</span></div>
-              <div class="size-row"><span>L</span><span>56</span><span>74</span><span>22</span></div>
-              <div class="size-row"><span>XL</span><span>61</span><span>76</span><span>23</span></div>
-            </div>
-            <div class="size-guide-table" data-unit="inches" style="display:none;">
-              <div class="size-row header">
-                <span>Size</span><span>Width</span><span>Length</span><span>Sleeve</span>
-              </div>
-              <div class="size-row"><span>S</span><span>18.1"</span><span>27.6"</span><span>7.9"</span></div>
-              <div class="size-row"><span>M</span><span>20.1"</span><span>28.3"</span><span>8.3"</span></div>
-              <div class="size-row"><span>L</span><span>22.0"</span><span>29.1"</span><span>8.7"</span></div>
-              <div class="size-row"><span>XL</span><span>24.0"</span><span>29.9"</span><span>9.1"</span></div>
-            </div>
+          
+          {% assign product_type_down = product.type | downcase %}
+          {% assign product_title_down = product.title | downcase %}
+          
+          {% comment %} Determine garment type {% endcomment %}
+          {% assign garment_type = 'tshirt' %}
+          {% assign garment_name = 'Yellow Tee' %}
+          {% assign diagram_file = 'yellow tee.svg' %}
+          {% assign has_xs = false %}
+          
+          {% if product_type_down contains 'zip' or product_type_down contains 'hoodie' or product_title_down contains 'zip' %}
+            {% assign garment_type = 'hoodie' %}
+            {% assign garment_name = 'Black Zip Up' %}
+            {% assign diagram_file = 'zip-hoodie.svg' %}
+          {% elsif product_type_down contains 'longsleeve' or product_type_down contains 'long sleeve' or product_title_down contains 'longsleeve' or product_title_down contains 'long sleeve' %}
+            {% assign garment_type = 'longsleeve' %}
+            {% assign garment_name = 'Too Scared Longsleeve' %}
+            {% assign diagram_file = 'too scared long sleeve.svg' %}
+          {% elsif product_type_down contains 'baby' or product_title_down contains 'baby' %}
+            {% assign garment_type = 'babytee' %}
+            {% assign garment_name = 'Baby Blue Tee' %}
+            {% assign diagram_file = 'baby blue tee.svg' %}
+            {% assign has_xs = true %}
           {% endif %}
+          
+          <div class="size-guide-content">
+            <div class="size-guide-table-wrapper">
+              {% if has_xs %}
+                <div class="size-guide-table" data-unit="cm">
+                  <div class="size-row header">
+                    <span>Size</span><span>A (Length)</span><span>B (Sleeve)</span><span>C (Chest)</span>
+                  </div>
+                  <div class="size-row"><span>XS</span><span>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'c', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>S</span><span>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'c', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'cm' %}</span></div>
+                </div>
+                <div class="size-guide-table" data-unit="inches" style="display:none;">
+                  <div class="size-row header">
+                    <span>Size</span><span>A (Length)</span><span>B (Sleeve)</span><span>C (Chest)</span>
+                  </div>
+                  <div class="size-row"><span>XS</span><span>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'c', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>S</span><span>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'c', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'inches' %}</span></div>
+                </div>
+              {% else %}
+                <div class="size-guide-table" data-unit="cm">
+                  <div class="size-row header">
+                    <span>Size</span><span>A</span><span>B</span><span>C</span>
+                  </div>
+                  <div class="size-row"><span>S</span><span>{% render 'size-measurements', garment: garment_type, size: 's', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 's', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 's', point: 'c', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: garment_type, size: 'm', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'm', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'm', point: 'c', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: garment_type, size: 'l', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'l', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'l', point: 'c', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>XL</span><span>{% render 'size-measurements', garment: garment_type, size: 'xl', point: 'a', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'xl', point: 'b', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'xl', point: 'c', unit: 'cm' %}</span></div>
+                </div>
+                <div class="size-guide-table" data-unit="inches" style="display:none;">
+                  <div class="size-row header">
+                    <span>Size</span><span>A</span><span>B</span><span>C</span>
+                  </div>
+                  <div class="size-row"><span>S</span><span>{% render 'size-measurements', garment: garment_type, size: 's', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 's', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 's', point: 'c', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: garment_type, size: 'm', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'm', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'm', point: 'c', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: garment_type, size: 'l', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'l', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'l', point: 'c', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>XL</span><span>{% render 'size-measurements', garment: garment_type, size: 'xl', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'xl', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: garment_type, size: 'xl', point: 'c', unit: 'inches' %}</span></div>
+                </div>
+              {% endif %}
+            </div>
+            <div class="size-guide-diagram">
+              <img src="{{ diagram_file | asset_url }}" alt="{{ garment_name }} Measurement Diagram" width="180" height="180">
+            </div>
+          </div>
+          
+          <a href="/pages/size-guide" class="size-guide-link">View Full Size Guide →</a>
         </div>
       </div>
       {% endunless %}
@@ -328,7 +382,7 @@
     max-width: 100vw;
     margin: 0;
     margin-top: -150px; /* Go behind navbar */
-    padding: 0;
+    padding: 0px 25px;
     box-sizing: border-box;
     overflow-x: hidden;
   }
@@ -338,6 +392,11 @@
     padding: 240px 30px 25px 30px; /* Extra top padding for navbar */
     z-index: 1;
     background: var(--color-background);
+  }
+  
+  /* Elevate left column when size guide is hovered so popup appears above thumbnails */
+  .product-col-left:has(.size-guide-section:hover) {
+    z-index: 100;
   }
   
   .product-breadcrumb {
@@ -433,46 +492,104 @@
   /* Size Guide Popup on Hover */
   .size-guide-section {
     position: relative;
+    display: inline-block;
   }
   
-  .size-guide-trigger {
-    display: inline-block;
+  /* Size Guide Row with Icon */
+  .size-guide-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .size-guide-link-text {
+    font-size: 13px;
+    color: var(--color-description, #666);
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .size-guide-link-text:hover {
+    color: var(--color-foreground);
+  }
+  
+  .size-guide-info-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .size-guide-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-description, #666);
+    transition: color 0.2s;
+  }
+  
+  .size-guide-close:hover {
+    color: var(--color-foreground);
   }
   
   .size-guide-popup {
     position: absolute;
     left: 0;
-    top: 100%;
-    margin-top: 10px;
-    background: #fff;
+    bottom: 100%;
+    margin-bottom: 8px;
+    background: var(--color-background, #fff);
     border: 1px solid var(--color-border);
-    padding: 20px;
-    min-width: 320px;
-    z-index: 100;
+    padding: 15px;
+    min-width: 380px;
+    max-width: 420px;
+    z-index: 999999;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
+    transform: translateY(5px);
     transition: all 0.2s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   }
   
-  .size-guide-section:hover .size-guide-popup {
+  /* Show popup on hover over info button (desktop) */
+  .size-guide-info-btn:hover + .size-guide-popup,
+  .size-guide-popup:hover,
+  .size-guide-popup.active {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+  }
+  
+  .size-guide-section:hover {
+    position: relative;
+    z-index: 999999;
   }
   
   .size-guide-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
     border-bottom: 1px solid var(--color-border);
   }
   
   .size-guide-popup-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -480,12 +597,12 @@
   
   .unit-toggle {
     display: flex;
-    gap: 5px;
+    gap: 4px;
   }
   
   .unit-btn {
-    padding: 5px 12px;
-    font-size: 11px;
+    padding: 4px 10px;
+    font-size: 10px;
     font-weight: 600;
     border: 1px solid var(--color-border);
     background: transparent;
@@ -499,27 +616,74 @@
     border-color: var(--color-foreground);
   }
   
+  /* Size Guide Content with Diagram */
+  .size-guide-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .size-guide-table-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .size-guide-diagram {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .size-guide-diagram img {
+    max-width: 180px;
+    height: auto;
+    opacity: 0.9;
+  }
+  
+  .size-guide-link {
+    display: block;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border);
+    font-size: 11px;
+    text-decoration: none;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  
+  .size-guide-link:hover {
+    opacity: 1;
+  }
+  
   /* Size Guide Table */
   .size-guide-table {
-    margin-top: 10px;
+    margin-top: 0;
   }
   
   .size-guide-table .size-row {
     display: grid;
-    grid-template-columns: 50px repeat(3, 1fr);
-    gap: 10px;
-    padding: 8px 0;
-    font-size: 13px;
+    grid-template-columns: 35px repeat(3, 1fr);
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 11px;
     border-bottom: 1px solid var(--color-border);
   }
   
   .size-guide-table .size-row.header {
     font-weight: 600;
     color: var(--color-title, #000);
+    font-size: 10px;
+    text-transform: uppercase;
   }
   
   .size-guide-table .size-row:last-child {
     border-bottom: none;
+  }
+  
+  .size-guide-table .size-row span {
+    white-space: nowrap;
   }
   
   /* Center Column - Fullscreen Images */
@@ -598,7 +762,7 @@
     width: 50px;
     height: 65px;
     border: 1px solid transparent;
-    background: #fff;
+    background: rgba(230, 230, 230, 0.3);
     padding: 0;
     cursor: pointer;
     overflow: hidden;
@@ -607,7 +771,7 @@
   }
   
   .thumbnail.active {
-    border-color: var(--color-foreground);
+    border-color: var(--color-primary);
     opacity: 1;
   }
   
@@ -617,8 +781,6 @@
   
   .thumbnail img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
   
   .no-image-placeholder {
@@ -950,13 +1112,37 @@
       left: 15px;
       right: 15px;
       top: auto;
-      bottom: 0;
+      bottom: 80px;
       min-width: auto;
-      transform: translateY(100%);
+      max-width: none;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      z-index: 999999;
+      padding: 20px;
+      padding-top: 35px;
     }
     
-    .size-guide-section:hover .size-guide-popup {
+    .size-guide-popup.active {
+      opacity: 1;
+      visibility: visible;
       transform: translateY(0);
+    }
+    
+    .size-guide-close {
+      display: flex;
+    }
+    
+    /* Disable hover on mobile - use click only */
+    .size-guide-info-btn:hover + .size-guide-popup,
+    .size-guide-popup:hover {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .size-guide-popup.active {
+      opacity: 1;
+      visibility: visible;
     }
     
     .product-title {
@@ -1002,6 +1188,43 @@
 
 {% javascript %}
 document.addEventListener('DOMContentLoaded', function() {
+  // Size Guide Popup - Click to toggle on mobile/tablet, hover on desktop
+  const sizeGuideInfoBtn = document.querySelector('.size-guide-info-btn');
+  const sizeGuidePopup = document.querySelector('.size-guide-popup');
+  const sizeGuideClose = document.querySelector('.size-guide-close');
+  
+  if (sizeGuideInfoBtn && sizeGuidePopup) {
+    // Click handler for info button
+    sizeGuideInfoBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      sizeGuidePopup.classList.toggle('active');
+    });
+    
+    // Close button handler
+    if (sizeGuideClose) {
+      sizeGuideClose.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        sizeGuidePopup.classList.remove('active');
+      });
+    }
+    
+    // Close popup when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!sizeGuidePopup.contains(e.target) && !sizeGuideInfoBtn.contains(e.target)) {
+        sizeGuidePopup.classList.remove('active');
+      }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        sizeGuidePopup.classList.remove('active');
+      }
+    });
+  }
+
   // Fullscreen image gallery with smooth scroll capture
   const gallery = document.getElementById('product-gallery');
   const imagesContainer = document.getElementById('product-images-fullscreen');

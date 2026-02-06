@@ -154,5 +154,31 @@
         "info": "Recommended: 800x600px or larger"
       }
     ]
+  },
+  {
+    "name": "Password Page",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "password_timer_enabled",
+        "label": "Enable countdown timer",
+        "default": true,
+        "info": "Show a countdown timer on the password page"
+      },
+      {
+        "type": "text",
+        "id": "password_open_date",
+        "label": "Shop open date/time",
+        "default": "2026-02-08T18:00:00+00:00",
+        "info": "ISO 8601 format (e.g., 2026-02-08T18:00:00+00:00 for Feb 8, 2026 at 18:00 UTC)"
+      },
+      {
+        "type": "text",
+        "id": "password_auto_password",
+        "label": "Auto-fill password (when shop opens)",
+        "default": "FemaleAnxiety2026",
+        "info": "This password will be auto-filled when the timer reaches zero"
+      }
+    ]
   }
 ]

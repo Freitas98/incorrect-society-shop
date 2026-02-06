@@ -330,10 +330,10 @@
     </div>
   </div>
 
-  <!-- T-Shirts Section -->
+  <!-- Yellow Tee Section -->
   <div class="size-table-section">
     <div class="size-table-header">
-      <h2 class="table-title">{{ 'size_guide.t_shirts' | t }}</h2>
+      <h2 class="table-title">Yellow Tee</h2>
     </div>
 
     <div class="table-with-diagram">
@@ -510,20 +510,352 @@
 
       <div class="garment-diagram">
         <img
-          src="{{ 'tshirt-diagram.svg' | asset_url }}"
-          alt="T-Shirt Measurement Diagram"
+          src="{{ 'yellow tee.svg' | asset_url }}"
+          alt="Yellow Tee Measurement Diagram"
           class="diagram-image"
-          width="280"
-          height="326"
+          width="240"
+          height="240"
         >
       </div>
     </div>
   </div>
 
-  <!-- Hoodies Section -->
+  <!-- Too Scared Longsleeve Section -->
   <div class="size-table-section">
     <div class="size-table-header">
-      <h2 class="table-title">{{ 'size_guide.hoodies' | t }}</h2>
+      <h2 class="table-title">Too Scared Longsleeve</h2>
+    </div>
+
+    <div class="table-with-diagram">
+      <div class="table-container">
+        <table class="size-table" id="longsleeve-table">
+          <thead>
+            <tr>
+              <th>{{ 'size_guide.point_size' | t }}</th>
+              <th>{{ 'size_guide.size_s' | t }}</th>
+              <th>{{ 'size_guide.size_m' | t }}</th>
+              <th>{{ 'size_guide.size_l' | t }}</th>
+              <th>{{ 'size_guide.size_xl' | t }}</th>
+            </tr>
+          </thead>
+          <tbody id="longsleeve-cm" style="display: table-row-group;">
+            <tr>
+              <td class="measurement-point">A</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'a', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'a', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'a', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'a', unit: 'cm' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">B</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'b', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'b', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'b', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'b', unit: 'cm' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">C</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'c', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'c', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'c', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'c', unit: 'cm' %}</td>
+            </tr>
+          </tbody>
+          <tbody id="longsleeve-inches" style="display: none;">
+            <tr>
+              <td class="measurement-point">A</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'a', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'a', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'a', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'a', unit: 'inches' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">B</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'b', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'b', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'b', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'b', unit: 'inches' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">C</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'c', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'c', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'c', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'c', unit: 'inches' %}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Mobile stacked list (Too Scared Longsleeve) -->
+      <div class="mobile-size-list">
+        <div id="longsleeve-list-cm" class="size-list-grid" style="display: flex;">
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XL</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+        </div>
+        <div id="longsleeve-list-inches" class="size-list-grid" style="display: none;">
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 's', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'm', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'l', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XL</span> Too Scared Longsleeve
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'longsleeve', size: 'xl', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="garment-diagram">
+        <img
+          src="{{ 'too scared long sleeve.svg' | asset_url }}"
+          alt="Too Scared Longsleeve Measurement Diagram"
+          class="diagram-image"
+          width="240"
+          height="240"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Baby Blue Tee Section -->
+  <div class="size-table-section">
+    <div class="size-table-header">
+      <h2 class="table-title">Baby Blue Tee</h2>
+    </div>
+
+    <div class="table-with-diagram">
+      <div class="table-container">
+        <table class="size-table" id="babytee-table">
+          <thead>
+            <tr>
+              <th>{{ 'size_guide.point_size' | t }}</th>
+              <th>XS</th>
+              <th>{{ 'size_guide.size_s' | t }}</th>
+              <th>{{ 'size_guide.size_m' | t }}</th>
+              <th>{{ 'size_guide.size_l' | t }}</th>
+            </tr>
+          </thead>
+          <tbody id="babytee-cm" style="display: table-row-group;">
+            <tr>
+              <td class="measurement-point">A</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'a', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'a', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'cm' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">B</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'b', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'b', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'cm' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">C</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'c', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'c', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'cm' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'cm' %}</td>
+            </tr>
+          </tbody>
+          <tbody id="babytee-inches" style="display: none;">
+            <tr>
+              <td class="measurement-point">A</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'a', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'a', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'inches' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">B</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'b', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'b', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'inches' %}</td>
+            </tr>
+            <tr>
+              <td class="measurement-point">C</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'c', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'c', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'inches' %}</td>
+              <td>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'inches' %}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Mobile stacked list (Baby Blue Tee) -->
+      <div class="mobile-size-list">
+        <div id="babytee-list-cm" class="size-list-grid" style="display: flex;">
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XS</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'cm' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'cm' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'cm' %}</dd>
+            </dl>
+          </div>
+        </div>
+        <div id="babytee-list-inches" class="size-list-grid" style="display: none;">
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">XS</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'xs', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">S</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 's', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">M</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+          <div class="mobile-size-card">
+            <div class="mobile-size-card__title">
+              <span class="mobile-size-card__badge">L</span> Baby Blue Tee
+            </div>
+            <dl class="mobile-size-measurements">
+              <dt>A</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'inches' %}</dd>
+              <dt>B</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'inches' %}</dd>
+              <dt>C</dt><dd>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'inches' %}</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      <div class="garment-diagram">
+        <img
+          src="{{ 'baby blue tee.svg' | asset_url }}"
+          alt="Baby Blue Tee Measurement Diagram"
+          class="diagram-image"
+          width="240"
+          height="240"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Black Zip Up Section -->
+  <div class="size-table-section">
+    <div class="size-table-header">
+      <h2 class="table-title">Black Zip Up</h2>
     </div>
 
     <div class="table-with-diagram">
@@ -700,11 +1032,11 @@
 
       <div class="garment-diagram">
         <img
-          src="{{ 'hoodie-diagram.svg' | asset_url }}"
-          alt="Hoodie Measurement Diagram"
+          src="{{ 'zip-hoodie.svg' | asset_url }}"
+          alt="Black Zip Up Measurement Diagram"
           class="diagram-image"
-          width="280"
-          height="373"
+          width="240"
+          height="240"
         >
       </div>
     </div>
@@ -754,53 +1086,45 @@
     });
 
     // Add active class to the clicked unit tabs
-  const activeTabs = document.querySelectorAll('.unit-tab');
-  activeTabs.forEach(tab => {
+    const activeTabs = document.querySelectorAll('.unit-tab');
+    activeTabs.forEach(tab => {
       if ((unit === 'cm' && tab.textContent.trim() === '{{ 'size_guide.cm' | t }}') ||
           (unit === 'inches' && tab.textContent.trim() === '{{ 'size_guide.inches' | t }}')) {
-    tab.classList.add('active');
-    tab.setAttribute('aria-pressed', 'true');
+        tab.classList.add('active');
+        tab.setAttribute('aria-pressed', 'true');
       }
     });
 
-    // Switch T-shirt table units
-    const tshirtCmBody = document.getElementById('tshirt-cm');
-    const tshirtInchesBody = document.getElementById('tshirt-inches');
-  const tshirtListCm = document.getElementById('tshirt-list-cm');
-  const tshirtListInches = document.getElementById('tshirt-list-inches');
-
-    // Switch Hoodie table units
-    const hoodieCmBody = document.getElementById('hoodie-cm');
-    const hoodieInchesBody = document.getElementById('hoodie-inches');
-  const hoodieListCm = document.getElementById('hoodie-list-cm');
-  const hoodieListInches = document.getElementById('hoodie-list-inches');
-
+    // All product categories
+    const categories = ['tshirt', 'longsleeve', 'babytee', 'hoodie'];
+    
     // Switch measurement note
     const noteCm = document.getElementById('measurement-note-cm');
     const noteInches = document.getElementById('measurement-note-inches');
 
+    categories.forEach(cat => {
+      const cmBody = document.getElementById(cat + '-cm');
+      const inchesBody = document.getElementById(cat + '-inches');
+      const listCm = document.getElementById(cat + '-list-cm');
+      const listInches = document.getElementById(cat + '-list-inches');
+
+      if (unit === 'cm') {
+        if (cmBody) cmBody.style.display = 'table-row-group';
+        if (inchesBody) inchesBody.style.display = 'none';
+        if (listCm) listCm.style.display = 'flex';
+        if (listInches) listInches.style.display = 'none';
+      } else {
+        if (cmBody) cmBody.style.display = 'none';
+        if (inchesBody) inchesBody.style.display = 'table-row-group';
+        if (listCm) listCm.style.display = 'none';
+        if (listInches) listInches.style.display = 'flex';
+      }
+    });
+
     if (unit === 'cm') {
-      // Show CM, hide inches for both tables
-      tshirtCmBody.style.display = 'table-row-group';
-      tshirtInchesBody.style.display = 'none';
-  if (tshirtListCm) tshirtListCm.style.display = 'flex';
-  if (tshirtListInches) tshirtListInches.style.display = 'none';
-      hoodieCmBody.style.display = 'table-row-group';
-      hoodieInchesBody.style.display = 'none';
-  if (hoodieListCm) hoodieListCm.style.display = 'flex';
-  if (hoodieListInches) hoodieListInches.style.display = 'none';
       noteCm.style.display = 'block';
       noteInches.style.display = 'none';
     } else {
-      // Show inches, hide CM for both tables
-      tshirtCmBody.style.display = 'none';
-      tshirtInchesBody.style.display = 'table-row-group';
-  if (tshirtListCm) tshirtListCm.style.display = 'none';
-  if (tshirtListInches) tshirtListInches.style.display = 'flex';
-      hoodieCmBody.style.display = 'none';
-      hoodieInchesBody.style.display = 'table-row-group';
-  if (hoodieListCm) hoodieListCm.style.display = 'none';
-  if (hoodieListInches) hoodieListInches.style.display = 'flex';
       noteCm.style.display = 'none';
       noteInches.style.display = 'block';
     }
