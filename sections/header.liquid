@@ -23,9 +23,9 @@
           <li class="header-menu-item">
             <a href="{{ routes.collections_url }}/accessories" class="header-menu-link">Accessories</a>
           </li>
-          <li class="header-menu-item">
+          {% comment %} <li class="header-menu-item">
             <a href="{{ pages['news'].url }}" class="header-menu-link">News</a>
-          </li>
+          </li> {% endcomment %}
         </ul>
       </nav>
     </div>
@@ -151,7 +151,7 @@
       <li><a href="{{ routes.collections_url }}/female-anxiety">Female Anxiety</a></li>
       <li><a href="{{ routes.collections_url }}/gift-cards">Gift Card</a></li>
       <li><a href="{{ routes.collections_url }}/accessories">Accessories</a></li>
-      <li><a href="{{ pages['news'].url }}">News</a></li>
+      {% comment %} <li><a href="{{ pages['news'].url }}">News</a></li> {% endcomment %}
     </ul>
     <div class="mobile-nav-actions">
       {% if shop.customer_accounts_enabled %}
