@@ -11,6 +11,7 @@
   "current": {
     "min_page_margin": 10,
     "logo_image": "shopify://shop_images/Logo_white.svg",
+    "password_background_image": "shopify://shop_images/WhatsApp_Image_2026-02-06_at_01.47.53.jpg",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
