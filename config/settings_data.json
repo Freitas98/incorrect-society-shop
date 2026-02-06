@@ -10,6 +10,7 @@
 {
   "current": {
     "min_page_margin": 10,
+    "logo_image": "shopify://shop_images/Logo_white.svg",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
