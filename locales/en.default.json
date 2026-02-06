@@ -254,7 +254,9 @@
     "section10_title": "10. Changes to Terms",
     "section10_html": "We reserve the right to update these terms at any time. Continued use of our website constitutes acceptance of any changes.",
     "last_updated_label": "Last updated:",
-    "contact_label_html": "For questions about these terms, <a href=\"/pages/contact-us\">contact us</a>."
+    "contact_label_html": "For questions about these terms, <a href=\"/pages/contact-us\">contact us</a>.",
+    "processing_highlight": "The payment will be processed immediately upon placing the order.",
+
   },
   "challenge": {
     "title": "Please verify you are human",

@@ -160,6 +160,12 @@
     "settings": [
       {
         "type": "image_picker",
+        "id": "logo_image",
+        "label": "Logo image",
+        "info": "Image shown as logo on the password page"
+      },
+      {
+        "type": "image_picker",
         "id": "password_background_image",
         "label": "Background image",
         "info": "Image shown as background on the password page"
