@@ -121,6 +121,10 @@
     margin: 0 auto;
   }
 
+  .old-collections-grid[data-products-per-row="2"] .old-collections-product-card {
+    flex: 0 0 calc(50% - var(--space-xl));
+  }
+
   .old-collections-grid[data-products-per-row="3"] .old-collections-product-card {
     flex: 0 0 calc(33.333% - var(--space-xl));
   }
@@ -286,7 +290,7 @@
       "type": "range",
       "id": "products_per_row",
       "label": "Products per row",
-      "min": 3,
+      "min": 2,
       "max": 4,
       "step": 1,
       "default": 3

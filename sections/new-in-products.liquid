@@ -101,6 +101,10 @@
     margin: 0 auto;
   }
 
+  .new-in-grid[data-products-per-row="2"] .new-in-product-card {
+    flex: 0 0 calc(50% - var(--space-xl));
+  }
+
   .new-in-grid[data-products-per-row="3"] .new-in-product-card {
     flex: 0 0 calc(33.333% - var(--space-xl));
   }
@@ -267,7 +271,7 @@
       "type": "range",
       "id": "products_per_row",
       "label": "Products per row",
-      "min": 3,
+      "min": 2,
       "max": 4,
       "step": 1,
       "default": 3
