@@ -65,6 +65,17 @@
     ]
   },
   {
+    "name": "Collections",
+    "settings": [
+      {
+        "type": "collection",
+        "id": "current_collection",
+        "label": "Current Collection",
+        "info": "Select the current/featured collection to be displayed as 'New In'"
+      }
+    ]
+  },
+  {
     "name": "t:general.colors",
     "settings": [
       {

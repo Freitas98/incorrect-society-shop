@@ -1,0 +1,291 @@
+{% comment %}
+  New In Products Section
+  Shows products from the current/featured collection
+{% endcomment %}
+
+{%- liquid
+  assign heading = section.settings.heading | default: 'New In'
+  assign products_per_row = section.settings.products_per_row | default: 3
+  assign products_limit = section.settings.products_limit | default: 12
+  
+  # Get current collection from theme settings
+  assign current_collection_handle = settings.current_collection
+  
+  if current_collection_handle != blank
+    assign current_collection = collections[current_collection_handle]
+  else
+    assign current_collection = blank
+  endif
+-%}
+
+{% if current_collection and current_collection.products.size > 0 %}
+<section class="new-in-section">
+  <div class="new-in-container">
+    <h2 class="new-in-heading">{{ heading }}</h2>
+    
+    <div class="new-in-grid" data-products-per-row="{{ products_per_row }}">
+      {% for product in current_collection.products limit: products_limit %}
+        <div class="new-in-product-card">
+          <a href="{{ product.url }}" class="new-in-product-link">
+            <div class="new-in-product-image-wrapper">
+              {% if product.featured_image %}
+                <img 
+                  src="{{ product.featured_image | image_url: width: 600 }}"
+                  alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                  class="new-in-product-image"
+                  loading="lazy"
+                  width="300"
+                  height="400"
+                >
+                {% if product.images[1] %}
+                  <img 
+                    src="{{ product.images[1] | image_url: width: 600 }}"
+                    alt="{{ product.images[1].alt | escape | default: product.title }}"
+                    class="new-in-product-image-hover"
+                    loading="lazy"
+                    width="300"
+                    height="400"
+                  >
+                {% endif %}
+              {% else %}
+                <div class="new-in-product-placeholder">
+                  {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
+              {% endif %}
+            </div>
+            
+            <div class="new-in-product-info">
+              <h3 class="new-in-product-title">{{ product.title }}</h3>
+              <div class="new-in-product-price">
+                {% if product.compare_at_price > product.price %}
+                  <span class="new-in-product-price-sale">{{ product.price | money }}</span>
+                  <span class="new-in-product-price-compare">{{ product.compare_at_price | money }}</span>
+                {% else %}
+                  <span class="new-in-product-price-regular">{{ product.price | money }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .new-in-section {
+    padding: var(--space-4xl) var(--page-margin);
+    background-color: var(--color-background);
+  }
+
+  .new-in-container {
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+
+  .new-in-heading {
+    font-family: var(--font-heading-family);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: var(--font-heading-weight);
+    letter-spacing: var(--font-heading-letter-spacing);
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    color: var(--color-foreground);
+  }
+
+  .new-in-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xl);
+    margin: 0 auto;
+  }
+
+  .new-in-grid[data-products-per-row="3"] .new-in-product-card {
+    flex: 0 0 calc(33.333% - var(--space-xl));
+  }
+
+  .new-in-grid[data-products-per-row="4"] .new-in-product-card {
+    flex: 0 0 calc(25% - var(--space-xl));
+  }
+
+  .new-in-product-card {
+    max-width: 350px;
+    min-width: 250px;
+  }
+
+  .new-in-product-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .new-in-product-link:hover {
+    transform: translateY(-4px);
+  }
+
+  .new-in-product-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 133.33%; /* 3:4 aspect ratio */
+    overflow: hidden;
+    background-color: var(--color-surface);
+    margin-bottom: var(--space-md);
+  }
+
+  .new-in-product-image,
+  .new-in-product-image-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: opacity 0.3s ease;
+  }
+
+  .new-in-product-image-hover {
+    opacity: 0;
+  }
+
+  .new-in-product-link:hover .new-in-product-image-hover {
+    opacity: 1;
+  }
+
+  .new-in-product-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+  }
+
+  .new-in-product-placeholder .placeholder-svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .new-in-product-info {
+    text-align: center;
+  }
+
+  .new-in-product-title {
+    font-family: var(--font-primary-family);
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    margin-bottom: var(--space-xs);
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .new-in-product-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    font-family: var(--font-primary-family);
+    font-size: var(--font-size-sm);
+  }
+
+  .new-in-product-price-regular,
+  .new-in-product-price-sale {
+    color: var(--color-foreground);
+  }
+
+  .new-in-product-price-sale {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .new-in-product-price-compare {
+    color: var(--color-foreground-muted);
+    text-decoration: line-through;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .new-in-product-card {
+      flex: 0 0 calc(33.333% - var(--space-lg)) !important;
+      min-width: 220px;
+    }
+    
+    .new-in-grid {
+      gap: var(--space-lg);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .new-in-section {
+      padding: var(--space-3xl) var(--page-margin);
+    }
+
+    .new-in-product-card {
+      flex: 0 0 calc(50% - var(--space-md)) !important;
+      min-width: 150px;
+    }
+
+    .new-in-grid {
+      gap: var(--space-md);
+    }
+
+    .new-in-heading {
+      margin-bottom: var(--space-2xl);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .new-in-product-card {
+      flex: 0 0 calc(50% - var(--space-sm)) !important;
+    }
+    
+    .new-in-grid {
+      gap: var(--space-sm);
+    }
+  }
+</style>
+{% endif %}
+
+{% schema %}
+{
+  "name": "New In Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "New In"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "label": "Products per row",
+      "min": 3,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Maximum products to show",
+      "min": 6,
+      "max": 24,
+      "step": 3,
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "New In Products"
+    }
+  ]
+}
+{% endschema %}

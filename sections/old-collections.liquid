@@ -1,0 +1,310 @@
+{% comment %}
+  Old Collections Section
+  Shows all products except those in the current collection
+{% endcomment %}
+
+{%- liquid
+  assign heading = section.settings.heading | default: 'Old Collections'
+  assign products_per_row = section.settings.products_per_row | default: 3
+  assign products_limit = section.settings.products_limit | default: 24
+  
+  # Get current collection from theme settings
+  assign current_collection_handle = settings.current_collection
+  
+  if current_collection_handle != blank
+    assign current_collection = collections[current_collection_handle]
+  else
+    assign current_collection = blank
+  endif
+  
+  # Get all products
+  assign all_products = collections.all.products
+  
+  # Create array of current collection product IDs for filtering
+  assign current_product_ids = ''
+  if current_collection
+    for product in current_collection.products
+      assign current_product_ids = current_product_ids | append: product.id | append: ','
+    endfor
+  endif
+-%}
+
+<section class="old-collections-section">
+  <div class="old-collections-container">
+    <h2 class="old-collections-heading">{{ heading }}</h2>
+    
+    <div class="old-collections-grid" data-products-per-row="{{ products_per_row }}">
+      {% assign count = 0 %}
+      {% for product in all_products %}
+        {% if count >= products_limit %}
+          {% break %}
+        {% endif %}
+        
+        {% comment %} Check if product is NOT in current collection {% endcomment %}
+        {% assign product_id_string = product.id | append: ',' %}
+        {% unless current_product_ids contains product_id_string %}
+          {% assign count = count | plus: 1 %}
+          <div class="old-collections-product-card">
+            <a href="{{ product.url }}" class="old-collections-product-link">
+              <div class="old-collections-product-image-wrapper">
+                {% if product.featured_image %}
+                  <img 
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.featured_image.alt | escape | default: product.title }}"
+                    class="old-collections-product-image"
+                    loading="lazy"
+                    width="300"
+                    height="400"
+                  >
+                  {% if product.images[1] %}
+                    <img 
+                      src="{{ product.images[1] | image_url: width: 600 }}"
+                      alt="{{ product.images[1].alt | escape | default: product.title }}"
+                      class="old-collections-product-image-hover"
+                      loading="lazy"
+                      width="300"
+                      height="400"
+                    >
+                  {% endif %}
+                {% else %}
+                  <div class="old-collections-product-placeholder">
+                    {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div class="old-collections-product-info">
+                <h3 class="old-collections-product-title">{{ product.title }}</h3>
+                <div class="old-collections-product-price">
+                  {% if product.compare_at_price > product.price %}
+                    <span class="old-collections-product-price-sale">{{ product.price | money }}</span>
+                    <span class="old-collections-product-price-compare">{{ product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span class="old-collections-product-price-regular">{{ product.price | money }}</span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </div>
+        {% endunless %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .old-collections-section {
+    padding: var(--space-4xl) var(--page-margin);
+    background-color: var(--color-background);
+  }
+
+  .old-collections-container {
+    max-width: var(--page-width);
+    margin: 0 auto;
+  }
+
+  .old-collections-heading {
+    font-family: var(--font-heading-family);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: var(--font-heading-weight);
+    letter-spacing: var(--font-heading-letter-spacing);
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    color: var(--color-foreground);
+  }
+
+  .old-collections-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xl);
+    margin: 0 auto;
+  }
+
+  .old-collections-grid[data-products-per-row="3"] .old-collections-product-card {
+    flex: 0 0 calc(33.333% - var(--space-xl));
+  }
+
+  .old-collections-grid[data-products-per-row="4"] .old-collections-product-card {
+    flex: 0 0 calc(25% - var(--space-xl));
+  }
+
+  .old-collections-product-card {
+    max-width: 350px;
+    min-width: 250px;
+  }
+
+  .old-collections-product-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+  }
+
+  .old-collections-product-link:hover {
+    transform: translateY(-4px);
+  }
+
+  .old-collections-product-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 133.33%; /* 3:4 aspect ratio */
+    overflow: hidden;
+    background-color: var(--color-surface);
+    margin-bottom: var(--space-md);
+  }
+
+  .old-collections-product-image,
+  .old-collections-product-image-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: opacity 0.3s ease;
+  }
+
+  .old-collections-product-image-hover {
+    opacity: 0;
+  }
+
+  .old-collections-product-link:hover .old-collections-product-image-hover {
+    opacity: 1;
+  }
+
+  .old-collections-product-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+  }
+
+  .old-collections-product-placeholder .placeholder-svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .old-collections-product-info {
+    text-align: center;
+  }
+
+  .old-collections-product-title {
+    font-family: var(--font-primary-family);
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    margin-bottom: var(--space-xs);
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .old-collections-product-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    font-family: var(--font-primary-family);
+    font-size: var(--font-size-sm);
+  }
+
+  .old-collections-product-price-regular,
+  .old-collections-product-price-sale {
+    color: var(--color-foreground);
+  }
+
+  .old-collections-product-price-sale {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .old-collections-product-price-compare {
+    color: var(--color-foreground-muted);
+    text-decoration: line-through;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .old-collections-product-card {
+      flex: 0 0 calc(33.333% - var(--space-lg)) !important;
+      min-width: 220px;
+    }
+    
+    .old-collections-grid {
+      gap: var(--space-lg);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .old-collections-section {
+      padding: var(--space-3xl) var(--page-margin);
+    }
+
+    .old-collections-product-card {
+      flex: 0 0 calc(50% - var(--space-md)) !important;
+      min-width: 150px;
+    }
+
+    .old-collections-grid {
+      gap: var(--space-md);
+    }
+
+    .old-collections-heading {
+      margin-bottom: var(--space-2xl);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .old-collections-product-card {
+      flex: 0 0 calc(50% - var(--space-sm)) !important;
+    }
+    
+    .old-collections-grid {
+      gap: var(--space-sm);
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Old Collections",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Old Collections"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row",
+      "label": "Products per row",
+      "min": 3,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Maximum products to show",
+      "min": 12,
+      "max": 48,
+      "step": 6,
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Old Collections"
+    }
+  ]
+}
+{% endschema %}

@@ -27,13 +27,20 @@
         "display_type": "stack"
       }
     },
-    "product_grid": {
-      "type": "new-arrivals-grid",
+    "new_in_products": {
+      "type": "new-in-products",
       "settings": {
-        "title": "All Products",
-        "collection": "all",
-        "products_count": 24,
-        "featured_collections": []
+        "heading": "New In",
+        "products_per_row": 3,
+        "products_limit": 12
+      }
+    },
+    "old_collections": {
+      "type": "old-collections",
+      "settings": {
+        "heading": "Old Collections",
+        "products_per_row": 3,
+        "products_limit": 24
       }
     },
     "hero_gallery": {
@@ -105,7 +112,8 @@
   },
   "order": [
     "hero_images",
-    "product_grid",
+    "new_in_products",
+    "old_collections",
     "hero_gallery"
   ]
 }
