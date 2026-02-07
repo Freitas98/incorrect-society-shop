@@ -73,7 +73,7 @@
     </nav>
     
     {% if section.settings.cta_text != blank %}
-      <a href="{{ section.settings.cta_url | default: '#' }}" class="hero-cta-btn">
+      <a href="{{ section.settings.cta_url | default: '/pages/all-products' }}" class="hero-cta-btn">
         {{ section.settings.cta_text }}
       </a>
     {% endif %}
