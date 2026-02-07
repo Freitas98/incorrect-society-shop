@@ -1,6 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
-
 /** Critical CSS for the theme. This file is included on every page. */
+@font-face {
+  font-family: 'Century Gothic';
+  src: url('Century Gothic.woff2') format('woff2');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Century Gothic Bold';
+  src: url('Century Gothic Bold.woff2') format('woff2');
+  font-style: bold;
+}
+
 
 /* Reset styles inspired by https://www.joshwcomeau.com/css/custom-css-reset/ */
 html {
@@ -1661,10 +1671,6 @@ body[data-template="index"] {
   .page-width {
     padding-left: 15px;
     padding-right: 15px;
-  }
-  
-  .shopify-section {
-    overflow-x: hidden;
   }
   
   /* Ensure all text doesn't overflow */

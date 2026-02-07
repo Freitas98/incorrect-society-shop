@@ -31,52 +31,52 @@
         
         <!-- Overlay -->
         <div class="hero-slide-overlay" style="background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});"></div>
-        
-        <!-- Content - Links with dynamic highlighting based on slide -->
-        <div class="hero-slide-content">
-          <nav class="hero-text-links">
-            {% for i in (1..5) %}
-              {% liquid
-                assign link_text_key = 'link_text_' | append: i
-                assign link_url_key = 'link_url_' | append: i
-                assign link_badge_key = 'link_badge_' | append: i
-                assign link_text = section.settings[link_text_key]
-                assign link_url = section.settings[link_url_key]
-                assign link_badge = section.settings[link_badge_key]
-                
-                # Determine the correct URL for each link
-                assign final_url = link_url
-                if link_text == 'Female Anxiety'
-                  assign final_url = routes.collections_url | append: '/female-anxiety'
-                elsif link_text == 'Hoodies'
-                  assign final_url = pages['all-products'].url | append: '?type=hoodie'
-                elsif link_text == 'T-Shirts'
-                  assign final_url = pages['all-products'].url | append: '?type=t-shirt'
-                elsif link_text == 'Acessórios' or link_text == 'Accessories'
-                  assign final_url = routes.collections_url | append: '/accessories'
-                elsif link_text == 'Gift Card' or link_text == 'Gift Cards'
-                  assign final_url = routes.collections_url | append: '/gift-cards'
-                endif
-              %}
-              {% if link_text != blank %}
-                <a href="{{ final_url | default: '#' }}" class="hero-text-link" data-link-index="{{ i }}">
-                  {{ link_text }}
-                  {% if link_badge != blank %}
-                    <span class="hero-link-badge">{{ link_badge }}</span>
-                  {% endif %}
-                </a>
-              {% endif %}
-            {% endfor %}
-          </nav>
-          
-          {% if section.settings.cta_text != blank %}
-            <a href="{{ section.settings.cta_url | default: '#' }}" class="hero-cta-btn">
-              {{ section.settings.cta_text }}
-            </a>
-          {% endif %}
-        </div>
       </div>
     {% endfor %}
+  </div>
+  
+  <!-- Fixed Navigation Menu -->
+  <div class="hero-fixed-navigation">
+    <nav class="hero-text-links">
+      {% for i in (1..5) %}
+        {% liquid
+          assign link_text_key = 'link_text_' | append: i
+          assign link_url_key = 'link_url_' | append: i
+          assign link_badge_key = 'link_badge_' | append: i
+          assign link_text = section.settings[link_text_key]
+          assign link_url = section.settings[link_url_key]
+          assign link_badge = section.settings[link_badge_key]
+          
+          # Determine the correct URL for each link
+          assign final_url = link_url
+          if link_text == 'Female Anxiety'
+            assign final_url = routes.collections_url | append: '/female-anxiety'
+          elsif link_text == 'Hoodies'
+            assign final_url = pages['all-products'].url | append: '?type=hoodie'
+          elsif link_text == 'T-Shirts'
+            assign final_url = pages['all-products'].url | append: '?type=t-shirt'
+          elsif link_text == 'Acessórios' or link_text == 'Accessories'
+            assign final_url = routes.collections_url | append: '/accessories'
+          elsif link_text == 'Gift Card' or link_text == 'Gift Cards'
+            assign final_url = routes.collections_url | append: '/gift-cards'
+          endif
+        %}
+        {% if link_text != blank %}
+          <a href="{{ final_url | default: '#' }}" class="hero-text-link" data-link-index="{{ i }}">
+            {{ link_text }}
+            {% if link_badge != blank %}
+              <span class="hero-link-badge">{{ link_badge }}</span>
+            {% endif %}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    
+    {% if section.settings.cta_text != blank %}
+      <a href="{{ section.settings.cta_url | default: '#' }}" class="hero-cta-btn">
+        {{ section.settings.cta_text }}
+      </a>
+    {% endif %}
   </div>
   
   <!-- Navigation Dots -->
@@ -125,6 +125,7 @@
   .hero-slider-container {
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .hero-slide {
@@ -185,16 +186,31 @@
     pointer-events: none;
   }
 
-  .hero-slide-content {
-    position: relative;
-    z-index: 2;
+  /* Fixed Navigation Menu */
+  .hero-fixed-navigation {
+    position: fixed;
+    top: 50vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 40px 20px;
-    max-width: 900px;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+
+  .hero-fixed-navigation.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .hero-fixed-navigation * {
+    pointer-events: auto;
   }
 
   /* Text Links Navigation */
@@ -213,9 +229,12 @@
     color: #ffffff;
     text-decoration: none;
     opacity: 0.5;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), 
+                transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                font-size 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     line-height: 1.2;
+    will-change: opacity, transform, font-size;
   }
 
   .hero-text-link:hover {
@@ -323,6 +342,10 @@
       right: 20px;
     }
 
+    .hero-fixed-navigation {
+      padding: 20px;
+    }
+
     .hero-text-link {
       font-size: clamp(24px, 8vw, 40px);
     }
@@ -365,6 +388,8 @@
     const navDots = section.querySelectorAll('.hero-nav-dot');
     const navContainer = section.querySelector('.hero-slider-nav');
     const counter = section.querySelector('.hero-nav-current');
+    const fixedNav = section.querySelector('.hero-fixed-navigation');
+    const links = section.querySelectorAll('.hero-text-link');
 
     if (slides.length <= 1) return;
 
@@ -387,28 +412,22 @@
       // Slide 0 (index 0) = Link 1, Slide 1 = Link 2, etc.
       const highlightLinkIndex = index + 1; // Links are 1-indexed
       
-      slides.forEach(slide => {
-        const links = slide.querySelectorAll('.hero-text-link');
-        links.forEach(link => {
-          const linkIndex = parseInt(link.dataset.linkIndex);
-          if (linkIndex === highlightLinkIndex) {
-            link.classList.add('hero-text-link--featured');
-          } else {
-            link.classList.remove('hero-text-link--featured');
-          }
-        });
+      links.forEach(link => {
+        const linkIndex = parseInt(link.dataset.linkIndex);
+        if (linkIndex === highlightLinkIndex) {
+          link.classList.add('hero-text-link--featured');
+        } else {
+          link.classList.remove('hero-text-link--featured');
+        }
       });
     };
     
     // Initialize first slide highlight
-    slides.forEach(slide => {
-      const links = slide.querySelectorAll('.hero-text-link');
-      links.forEach(link => {
-        const linkIndex = parseInt(link.dataset.linkIndex);
-        if (linkIndex === 1) {
-          link.classList.add('hero-text-link--featured');
-        }
-      });
+    links.forEach(link => {
+      const linkIndex = parseInt(link.dataset.linkIndex);
+      if (linkIndex === 1) {
+        link.classList.add('hero-text-link--featured');
+      }
     });
 
     // Scroll to slide using window scroll
@@ -477,15 +496,72 @@
       }, 50);
     }, { passive: true });
 
-    // Intersection observer to show/hide nav when slider section is visible
+    // Control menu position - clamped between first and last slide centers
+    const updateMenuPosition = () => {
+      if (!fixedNav || slides.length === 0) return;
+      
+      const firstSlide = slides[0];
+      const lastSlide = slides[slides.length - 1];
+      
+      const firstSlideRect = firstSlide.getBoundingClientRect();
+      const lastSlideRect = lastSlide.getBoundingClientRect();
+      
+      const viewportHeight = window.innerHeight;
+      const viewportCenter = viewportHeight / 2;
+      
+      // Calculate center positions of slides relative to viewport
+      const firstSlideCenter = firstSlideRect.top + (firstSlideRect.height / 2);
+      const lastSlideCenter = lastSlideRect.top + (lastSlideRect.height / 2);
+      
+      let menuTop;
+      
+      // Before first slide center: fix to first slide center position
+      if (firstSlideCenter > viewportCenter) {
+        menuTop = firstSlideCenter;
+      }
+      // After last slide center: fix to last slide center position
+      else if (lastSlideCenter < viewportCenter) {
+        menuTop = lastSlideCenter;
+      }
+      // Between first and last: follow viewport center
+      else {
+        menuTop = viewportCenter;
+      }
+      
+      // Always show menu (it's clamped within range)
+      fixedNav.classList.add('is-visible');
+      // Use transform to keep vertical centering
+      fixedNav.style.top = menuTop + 'px';
+      fixedNav.style.transform = 'translate(-50%, -50%)';
+    };
+    
+    // Update on scroll with RAF for smooth performance
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateMenuPosition();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', updateMenuPosition, { passive: true });
+    
+    // Initial positioning
+    setTimeout(updateMenuPosition, 100);
+    
+    // Update nav dots visibility
     if (navContainer) {
-      const sectionObserver = new IntersectionObserver((entries) => {
+      const navObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           navContainer.classList.toggle('is-visible', entry.isIntersecting);
         });
       }, { root: null, threshold: 0.1 });
-
-      sectionObserver.observe(section);
+      
+      navObserver.observe(section);
     }
   })();
 </script>
