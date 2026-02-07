@@ -16,6 +16,7 @@
     target="_blank"
     rel="noopener"
     tabindex="0"
+    class="cd-link"
   >
     <img
       height="50"
@@ -24,12 +25,12 @@
       alt="CD Cover"
       class="cd-cover-minimal"
       id="cdCoverImg"
+      draggable="false"
     >
   </a>
   <audio
     id="cdAudioPlayer"
     preload="auto"
-    autoplay
     src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"
   ></audio>
 </div>
@@ -47,6 +48,10 @@
     margin-right: auto;
     margin-top: 0;
     margin-bottom: 20px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
   }
   .cd-play-btn-minimal {
     background: none;
@@ -57,6 +62,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
   }
   .cd-play-btn-minimal svg polygon {
     transition: fill 0.15s;
@@ -69,6 +76,12 @@
     fill: var(--color-primary);
   }
 
+  .cd-link {
+    display: block;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
   .cd-cover-minimal {
     width: 64px;
     height: 64px;
@@ -78,6 +91,12 @@
     background: #111;
     object-fit: cover;
     transition: box-shadow 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: auto;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
   .cd-cover-minimal.rotating {
     animation: cd-spin 2.5s linear infinite;
@@ -204,11 +223,32 @@
     // Restore state from localStorage
     var savedTime = parseFloat(localStorage.getItem('musicPlayerTime') || '0');
     var wasPaused = localStorage.getItem('musicPlayerPaused') === 'true';
-    // Always set play intent unless user intentionally paused
+    
+    // Autoplay strategy: try multiple approaches
     if (!wasPaused) {
       playBtn.setAttribute('data-intent', 'play');
-      // Try to play immediately
-      audio.play().catch(function () {});
+      
+      // Strategy 1: Try immediate play with low volume
+      audio.volume = 0.3;
+      var playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(function() {
+          // Success! Gradually increase volume
+          var vol = 0.3;
+          var volumeInterval = setInterval(function() {
+            if (vol < 1) {
+              vol += 0.1;
+              audio.volume = Math.min(vol, 1);
+            } else {
+              clearInterval(volumeInterval);
+            }
+          }, 100);
+        }).catch(function(error) {
+          // Failed, will try on first interaction
+          audio.volume = 1;
+        });
+      }
     } else {
       playBtn.setAttribute('data-intent', 'pause');
     }
@@ -225,15 +265,22 @@
     }
     function globalTryPlay(e) {
       if (e && playBtn.contains(e.target)) return;
-      // Always try to play unless user intentionally paused
+      // Try to play on first user interaction
       if (audio.paused && localStorage.getItem('musicPlayerPaused') !== 'true') {
         playBtn.setAttribute('data-intent', 'play');
+        audio.volume = 1; // Ensure full volume
         audio.play().catch(function () {});
+        // Remove listeners after first successful play
+        document.removeEventListener('click', globalTryPlay, true);
+        document.removeEventListener('touchstart', globalTryPlay, true);
+        document.removeEventListener('keydown', globalTryPlay, true);
+        document.removeEventListener('scroll', globalTryPlay, true);
       }
     }
     document.addEventListener('click', globalTryPlay, true);
     document.addEventListener('touchstart', globalTryPlay, true);
     document.addEventListener('keydown', globalTryPlay, true);
+    document.addEventListener('scroll', globalTryPlay, true);
     playBtn.addEventListener('click', function (e) {
       if (playBtn.getAttribute('data-intent') === 'play' && audio.paused) {
         audio.play().catch(function () {});

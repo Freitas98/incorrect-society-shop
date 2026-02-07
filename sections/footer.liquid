@@ -202,7 +202,7 @@
 
   /* Footer Bottom */
   .footer-bottom {
-    margin-top: 60px;
+    margin-top: 20px;
     padding: 30px 40px;
     border-top: 1px solid var(--color-border);
   }
@@ -263,8 +263,58 @@
       gap: 20px;
       text-align: center;
     }
+
+    .footer-music-player-wrapper {
+      bottom: 15px;
+      right: 15px;
+      padding: 6px 10px;
+    }
+
+    .footer-music-player-wrapper .cd-music-player-minimal {
+      gap: 12px;
+    }
+
+    .footer-music-player-wrapper .cd-cover-minimal {
+      width: 50px;
+      height: 50px;
+    }
+
+    .footer-music-player-wrapper .cd-play-btn-minimal svg {
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  /* Music Player - Fixed position */
+  .footer-music-player-wrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 50px;
+    padding: 8px 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .footer-music-player-wrapper:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+  }
+
+  .footer-music-player-wrapper .cd-music-player-minimal {
+    margin: 0;
   }
 {% endstylesheet %}
+
+<!-- Music Player - Fixed Bottom Right -->
+<div class="footer-music-player-wrapper">
+  {% render 'music-player' %}
+</div>
 
 {% schema %}
 {
