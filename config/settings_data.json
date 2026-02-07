@@ -11,6 +11,8 @@
   "current": {
     "min_page_margin": 10,
     "current_collection": "female-anxiety",
+    "music_cover_image": "shopify://shop_images/cd_cover.png",
+    "music_track_1_name": "Cor da Pele",
     "logo_image": "shopify://shop_images/Logo_white.svg",
     "password_background_image": "shopify://shop_images/WhatsApp_Image_2026-02-06_at_01.47.53.jpg",
     "sections": {
