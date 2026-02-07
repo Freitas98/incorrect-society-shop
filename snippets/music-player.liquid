@@ -1,3 +1,14 @@
+{%- liquid
+  # Get Spotify URL and CD Cover from settings or use defaults
+  assign spotify_url = settings.music_spotify_url | default: 'https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4'
+  
+  if settings.music_cover_image
+    assign cd_cover = settings.music_cover_image | image_url: width: 200
+  else
+    assign cd_cover = 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/cd_cover.png?v=1770504901'
+  endif
+-%}
+
 <div class="cd-music-player-minimal">
   <a id="cdPlayPause" class="cd-play-btn-minimal" aria-label="Play/Pause" type="button">
     <span id="cd-icon-play">
@@ -12,7 +23,7 @@
     </span>
   </a>
   <a
-    href="https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=_l840rJIQM2YWJbwExCXYw&pi=mEFiEApITtuu4"
+    href="{{ spotify_url }}"
     target="_blank"
     rel="noopener"
     tabindex="0"
@@ -21,7 +32,7 @@
     <img
       height="50"
       width="50"
-      src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/cd_cover.png?v=1770504901"
+      src="{{ cd_cover }}"
       alt="CD Cover"
       class="cd-cover-minimal"
       id="cdCoverImg"
@@ -31,7 +42,7 @@
   <audio
     id="cdAudioPlayer"
     preload="auto"
-    src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841"
+    src=""
   ></audio>
 </div>
 <style>
@@ -120,45 +131,46 @@
     return array;
   }
 
+  // Build tracks from Liquid settings
   const tracks = [
-    {
-      name: 'Port António',
-      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842',
-    },
-    {
-      name: 'Isso é Sério',
-      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842',
-    },
-    { name: 'MAFIA', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841' },
-    { name: 'OLD SKOOL', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841' },
-    { name: 'Push ups', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841' },
-    {
-      name: 'Toni do Rock',
-      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841',
-    },
-    { name: 'COFFEE BEAN', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841' },
-    { name: 'DOVE', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840' },
-    {
-      name: 'Besta',
-      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840',
-    },
-    { name: 'Insomnia', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840' },
-    { name: 'CorDaPele', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839' },
-    { name: 'No Pole', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840' },
-    {
-      name: 'DEEP IN THE WATER',
-      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840',
-    },
-    { name: 'PARKING LOT', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839' },
-    {
-      name: 'Nem Metade / Não Me Confundam',
-      url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839',
-    },
-    { name: 'Mikasa', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838' },
-    { name: 'Levels', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838' },
-    { name: 'AMANHÃ', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838' },
-    { name: "THAT'S THAT", url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837' },
-  ];
+    {%- for i in (1..50) -%}
+      {%- capture track_name_key -%}music_track_{{ i }}_name{%- endcapture -%}
+      {%- capture track_url_key -%}music_track_{{ i }}_url{%- endcapture -%}
+      {%- assign track_name = settings[track_name_key] -%}
+      {%- assign track_url = settings[track_url_key] -%}
+      {%- if track_name != blank and track_url != blank -%}
+        {
+          name: {{ track_name | json }},
+          url: {{ track_url | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ].filter(t => t.name && t.url);
+
+  // Fallback to default tracks if none configured
+  if (tracks.length === 0) {
+    tracks.push(
+      { name: 'Port António', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Port_Antonio.mp3?v=1755727842' },
+      { name: 'Isso é Sério', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Isso_e_Serio.mp3?v=1755727842' },
+      { name: 'MAFIA', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/MAFIA.mp3?v=1755727841' },
+      { name: 'OLD SKOOL', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/OLD_SKOOL.mp3?v=1755727841' },
+      { name: 'Push ups', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Push_Ups.mp3?v=1755727841' },
+      { name: 'Toni do Rock', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Toni_do_Rock.mp3?v=1755727841' },
+      { name: 'COFFEE BEAN', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/COFFEE_BEAN.mp3?v=1755727841' },
+      { name: 'DOVE', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DOVE.mp3?v=1755727840' },
+      { name: 'Besta', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Besta_o_teu_melhor_amigo.mp3?v=1755727840' },
+      { name: 'Insomnia', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Insomnia.mp3?v=1755727840' },
+      { name: 'CorDaPele', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/CorDaPele.mp3?v=1755727839' },
+      { name: 'No Pole', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/No_Pole.mp3?v=1755727840' },
+      { name: 'DEEP IN THE WATER', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER.mp3?v=1755727840' },
+      { name: 'PARKING LOT', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Parking_Lot.mp3?v=1755727839' },
+      { name: 'Nem Metade / Não Me Confundam', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Nao_Me_Confundam.mp3?v=1755727839' },
+      { name: 'Mikasa', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/mikasa.mp3?v=1755727838' },
+      { name: 'Levels', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Levels.mp3?v=1755727838' },
+      { name: 'AMANHÃ', url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/AMANHA.mp3?v=1755727838' },
+      { name: "THAT'S THAT", url: 'https://cdn.shopify.com/s/files/1/0954/9840/4181/files/THATS_THAT.mp3?v=1755727837' }
+    );
+  }
 
   // --- SHUFFLE SESSION LOGIC ---
   function getShuffledOrder() {

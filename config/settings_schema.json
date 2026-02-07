@@ -167,6 +167,727 @@
     ]
   },
   {
+    "name": "Music Player",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Playlist Configuration"
+      },
+      {
+        "type": "url",
+        "id": "music_spotify_url",
+        "label": "Spotify Playlist URL",
+        "info": "Link to your Spotify playlist (shown when clicking the CD)"
+      },
+      {
+        "type": "image_picker",
+        "id": "music_cover_image",
+        "label": "CD Cover Image",
+        "info": "Square image recommended (500x500px)"
+      },
+      {
+        "type": "header",
+        "content": "Track 1"
+      },
+      {
+        "type": "text",
+        "id": "music_track_1_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_1_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 2"
+      },
+      {
+        "type": "text",
+        "id": "music_track_2_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_2_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 3"
+      },
+      {
+        "type": "text",
+        "id": "music_track_3_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_3_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 4"
+      },
+      {
+        "type": "text",
+        "id": "music_track_4_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_4_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 5"
+      },
+      {
+        "type": "text",
+        "id": "music_track_5_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_5_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 6"
+      },
+      {
+        "type": "text",
+        "id": "music_track_6_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_6_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 7"
+      },
+      {
+        "type": "text",
+        "id": "music_track_7_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_7_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 8"
+      },
+      {
+        "type": "text",
+        "id": "music_track_8_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_8_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 9"
+      },
+      {
+        "type": "text",
+        "id": "music_track_9_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_9_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 10"
+      },
+      {
+        "type": "text",
+        "id": "music_track_10_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_10_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 11"
+      },
+      {
+        "type": "text",
+        "id": "music_track_11_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_11_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 12"
+      },
+      {
+        "type": "text",
+        "id": "music_track_12_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_12_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 13"
+      },
+      {
+        "type": "text",
+        "id": "music_track_13_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_13_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 14"
+      },
+      {
+        "type": "text",
+        "id": "music_track_14_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_14_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 15"
+      },
+      {
+        "type": "text",
+        "id": "music_track_15_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_15_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 16"
+      },
+      {
+        "type": "text",
+        "id": "music_track_16_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_16_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 17"
+      },
+      {
+        "type": "text",
+        "id": "music_track_17_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_17_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 18"
+      },
+      {
+        "type": "text",
+        "id": "music_track_18_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_18_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 19"
+      },
+      {
+        "type": "text",
+        "id": "music_track_19_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_19_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 20"
+      },
+      {
+        "type": "text",
+        "id": "music_track_20_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_20_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 21"
+      },
+      {
+        "type": "text",
+        "id": "music_track_21_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_21_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 22"
+      },
+      {
+        "type": "text",
+        "id": "music_track_22_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_22_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 23"
+      },
+      {
+        "type": "text",
+        "id": "music_track_23_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_23_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 24"
+      },
+      {
+        "type": "text",
+        "id": "music_track_24_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_24_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 25"
+      },
+      {
+        "type": "text",
+        "id": "music_track_25_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_25_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 26"
+      },
+      {
+        "type": "text",
+        "id": "music_track_26_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_26_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 27"
+      },
+      {
+        "type": "text",
+        "id": "music_track_27_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_27_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 28"
+      },
+      {
+        "type": "text",
+        "id": "music_track_28_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_28_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 29"
+      },
+      {
+        "type": "text",
+        "id": "music_track_29_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_29_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 30"
+      },
+      {
+        "type": "text",
+        "id": "music_track_30_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_30_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 31"
+      },
+      {
+        "type": "text",
+        "id": "music_track_31_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_31_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 32"
+      },
+      {
+        "type": "text",
+        "id": "music_track_32_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_32_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 33"
+      },
+      {
+        "type": "text",
+        "id": "music_track_33_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_33_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 34"
+      },
+      {
+        "type": "text",
+        "id": "music_track_34_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_34_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 35"
+      },
+      {
+        "type": "text",
+        "id": "music_track_35_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_35_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 36"
+      },
+      {
+        "type": "text",
+        "id": "music_track_36_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_36_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 37"
+      },
+      {
+        "type": "text",
+        "id": "music_track_37_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_37_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 38"
+      },
+      {
+        "type": "text",
+        "id": "music_track_38_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_38_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 39"
+      },
+      {
+        "type": "text",
+        "id": "music_track_39_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_39_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 40"
+      },
+      {
+        "type": "text",
+        "id": "music_track_40_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_40_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 41"
+      },
+      {
+        "type": "text",
+        "id": "music_track_41_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_41_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 42"
+      },
+      {
+        "type": "text",
+        "id": "music_track_42_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_42_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 43"
+      },
+      {
+        "type": "text",
+        "id": "music_track_43_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_43_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 44"
+      },
+      {
+        "type": "text",
+        "id": "music_track_44_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_44_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 45"
+      },
+      {
+        "type": "text",
+        "id": "music_track_45_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_45_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 46"
+      },
+      {
+        "type": "text",
+        "id": "music_track_46_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_46_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 47"
+      },
+      {
+        "type": "text",
+        "id": "music_track_47_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_47_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 48"
+      },
+      {
+        "type": "text",
+        "id": "music_track_48_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_48_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 49"
+      },
+      {
+        "type": "text",
+        "id": "music_track_49_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_49_url",
+        "label": "MP3 File URL"
+      },
+      {
+        "type": "header",
+        "content": "Track 50"
+      },
+      {
+        "type": "text",
+        "id": "music_track_50_name",
+        "label": "Track Name"
+      },
+      {
+        "type": "url",
+        "id": "music_track_50_url",
+        "label": "MP3 File URL"
+      }
+    ]
+  },
+  {
     "name": "Password Page",
     "settings": [
       {
