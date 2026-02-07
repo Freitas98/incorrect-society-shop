@@ -3,57 +3,54 @@
 %}
 
 <section class="collections-page">
-  <div class="collections-page__inner">
-    <header class="collections-page__header">
+  <div class="collections-page-container">
+    <header class="collections-page-header">
       {% if section.settings.heading != blank %}
-        <h1 class="collection-title">{{ section.settings.heading }}</h1>
+        <h1 class="collections-page-title">{{ section.settings.heading }}</h1>
       {% else %}
-        <h1 class="collection-title">{{ 'collections.title' | t }}</h1>
+        <h1 class="collections-page-title">{{ 'collections.title' | t }}</h1>
       {% endif %}
 
       {% if section.settings.subheading != blank %}
-        <p class="collection-description">{{ section.settings.subheading }}</p>
+        <p class="collections-page-description">{{ section.settings.subheading }}</p>
       {% endif %}
     </header>
 
-    <div
-      id="{{ collections_id }}"
-      class="collections-grid"
-      style="--collections-gap: {{ section.settings.grid_gap }}px;"
-    >
+    <div class="collections-page-separator"></div>
+
+    <div id="{{ collections_id }}" class="collections-grid">
       {% for collection in collections %}
         <article class="collection-card">
-          <a class="collection-card__link" href="{{ collection.url }}">
-            <div class="collection-card__media">
+          <a class="collection-card-link" href="{{ collection.url }}">
+            <div class="collection-card-image-wrapper">
               {% if collection.featured_image %}
-                {% render 'image',
-                  class: 'collection-card__image',
-                  image: collection.featured_image,
-                  width: 900,
-                  height: 600,
-                %}
+                <img 
+                  src="{{ collection.featured_image | image_url: width: 900 }}"
+                  alt="{{ collection.featured_image.alt | escape | default: collection.title }}"
+                  class="collection-card-image"
+                  loading="lazy"
+                  width="900"
+                  height="600"
+                >
               {% else %}
-                <div class="collection-card__placeholder">{{ 'general.no_image' | t }}</div>
+                <div class="collection-card-placeholder">
+                  {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+                </div>
               {% endif %}
-              <span class="collection-card__overlay"></span>
-              {% if section.settings.show_counts %}
-                <span class="collection-card__badge">
-                  {{ collection.all_products_count }}
-                  {{ collection.all_products_count | pluralize: 'item', 'items' }}
-                </span>
-              {% endif %}
+              <div class="collection-card-overlay"></div>
             </div>
 
-            <div class="collection-card__body">
-              <h2 class="collection-card__title">{{ collection.title }}</h2>
-
+            <div class="collection-card-info">
+              <div class="collection-card-info-separator"></div>
+              <div class="collection-card-info-row">
+                <h2 class="collection-card-title">{{ collection.title }}</h2>
+                {% if section.settings.show_counts %}
+                  <span class="collection-card-count">{{ collection.all_products_count }}</span>
+                {% endif %}
+              </div>
               {% if section.settings.show_description and collection.description != blank %}
-                <p class="collection-card__excerpt">
-                  {{ collection.description | strip_html | truncatewords: 18 }}
-                </p>
-              {% elsif section.settings.show_counts %}
-                <p class="collection-card__excerpt collection-card__excerpt--muted">
-                  Explore {{ collection.title | downcase }}
+                <p class="collection-card-description">
+                  {{ collection.description | strip_html | truncatewords: 12 }}
                 </p>
               {% endif %}
             </div>
@@ -64,7 +61,252 @@
   </div>
 </section>
 
-{% comment %} Styles moved to assets/theme-sections.css {% endcomment %}
+<style>
+  .collections-page {
+    padding: 60px 0;
+    background-color: var(--color-background);
+  }
+
+  .collections-page-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .collections-page-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .collections-page-title {
+    font-family: var(--font-heading-family);
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: var(--font-heading-weight);
+    color: var(--color-foreground);
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .collections-page-description {
+    font-family: var(--font-primary-family);
+    font-size: 14px;
+    color: var(--color-foreground);
+    opacity: 0.7;
+    margin: 0;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .collections-page-separator {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 0 0 40px 0;
+  }
+
+  .collections-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .collection-card {
+    width: calc(33.333% - 14px);
+    position: relative;
+  }
+
+  .collection-card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .collection-card-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background-color: var(--color-surface, #f5f5f5);
+  }
+
+  .collection-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: transform 0.6s ease;
+  }
+
+  .collection-card-link:hover .collection-card-image {
+    transform: scale(1.05);
+  }
+
+  .collection-card-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+  }
+
+  .collection-card-placeholder .placeholder-svg {
+    width: 40%;
+    height: 40%;
+    opacity: 0.3;
+  }
+
+  .collection-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .collection-card-link:hover .collection-card-overlay {
+    opacity: 1;
+  }
+
+  .collection-card-info {
+    padding: 0;
+  }
+
+  .collection-card-info-separator {
+    height: 1px;
+    background-color: var(--color-border);
+    margin: 12px 0 10px 0;
+  }
+
+  .collection-card-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .collection-card-title {
+    font-family: var(--font-primary-family);
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+    color: var(--color-foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  .collection-card-count {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--color-foreground);
+    opacity: 0.5;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .collection-card-description {
+    font-family: var(--font-primary-family);
+    font-size: 11px;
+    color: var(--color-foreground);
+    opacity: 0.6;
+    margin: 6px 0 0 0;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 1400px) {
+    .collections-grid {
+      gap: 25px 18px;
+    }
+    
+    .collection-card {
+      width: calc(33.333% - 12px);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .collections-page {
+      padding: 40px 0;
+    }
+
+    .collections-page-container {
+      padding: 0 20px;
+    }
+
+    .collections-grid {
+      gap: 20px 15px;
+    }
+    
+    .collection-card {
+      width: calc(50% - 8px);
+    }
+
+    .collections-page-title {
+      font-size: 22px;
+    }
+
+    .collections-page-description {
+      font-size: 13px;
+    }
+
+    .collection-card-title {
+      font-size: 11px;
+    }
+
+    .collection-card-count {
+      font-size: 11px;
+    }
+
+    .collection-card-description {
+      font-size: 10px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .collections-page-container {
+      padding: 0 15px;
+    }
+
+    .collections-grid {
+      gap: 20px 12px;
+    }
+    
+    .collection-card {
+      width: calc(50% - 6px);
+    }
+
+    .collections-page-header {
+      margin-bottom: 25px;
+    }
+
+    .collections-page-separator {
+      margin-bottom: 30px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .collections-page-container {
+      padding: 0 12px;
+    }
+
+    .collections-grid {
+      gap: 15px 10px;
+    }
+    
+    .collection-card {
+      width: calc(50% - 5px);
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -80,29 +322,19 @@
       "type": "textarea",
       "id": "subheading",
       "label": "Intro copy",
-      "default": "Move through curated drops, limited capsules, and core staples. Pick your world and stay incorrect."
+      "default": "Move through curated drops, limited capsules, and core staples."
     },
     {
       "type": "checkbox",
       "id": "show_description",
       "label": "Show collection description excerpt",
-      "default": true
+      "default": false
     },
     {
       "type": "checkbox",
       "id": "show_counts",
       "label": "Show product counts",
       "default": true
-    },
-    {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
     }
   ],
   "presets": [{ "name": "t:general.collections_grid" }]
