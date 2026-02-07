@@ -60,7 +60,8 @@
           <article class="product-card-enhanced" 
                    data-product-id="{{ product.id }}"
                    data-product-handle="{{ product.handle }}"
-                   data-available="{{ product.available }}">
+                   data-available="{{ product.available }}"
+                   data-product-type="{{ product.metafields.custom.type | downcase }}">
             
             <div class="product-image-container">
               <a href="{{ product.url }}" class="product-card-link">
@@ -684,6 +685,23 @@
       } catch (error) {
         console.error('Error adding to cart:', error);
       }
+    }
+
+    // Type filter from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    
+    if (typeParam) {
+      const products = section.querySelectorAll('.product-card-enhanced');
+      const filterType = typeParam.toLowerCase();
+      
+      products.forEach(product => {
+        const productType = (product.dataset.productType || '').toLowerCase();
+        
+        if (!productType.includes(filterType)) {
+          product.style.display = 'none';
+        }
+      });
     }
   });
 </script>
