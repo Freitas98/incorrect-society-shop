@@ -7,11 +7,42 @@
   assign products_count = section.settings.products_count | default: 4
   assign heading = section.settings.heading | default: 'You may also like'
   
-  # Get related products from the same collection
+  # Check if product is gift card or accessory
+  assign is_gift_card = false
+  assign is_accessory = false
+  
+  # Check product type
+  assign product_type_lower = product.type | downcase
+  if product_type_lower contains 'gift' or product_type_lower contains 'card' or product_type_lower contains 'cartão'
+    assign is_gift_card = true
+  endif
+  
+  # Check if product is in accessories collection
+  for collection in product.collections
+    assign collection_handle_lower = collection.handle | downcase
+    if collection_handle_lower contains 'acess' or collection_handle_lower contains 'access'
+      assign is_accessory = true
+      break
+    endif
+  endfor
+  
+  # Get related products
   assign related_products = blank
   assign temp_products = blank
   
-  if product.collections.size > 0
+  # If gift card or accessory, show products from current collection
+  if is_gift_card or is_accessory
+    assign current_collection_handle = settings.current_collection
+    if current_collection_handle != blank
+      assign current_collection = collections[current_collection_handle]
+      if current_collection
+        assign related_products = current_collection.products
+      endif
+    endif
+  endif
+  
+  # Otherwise, get products from the same collection as usual
+  if related_products == blank and product.collections.size > 0
     assign first_collection = product.collections.first
     for p in first_collection.products
       if p.id != product.id
@@ -22,7 +53,7 @@
   endif
 -%}
 
-{% if product.collections.size > 0 and related_products.size > 0 %}
+{% if related_products != blank and related_products.size > 0 %}
 <section class="related-products-section">
   <div class="related-products-container">
     <h2 class="related-products-heading">{{ heading }}</h2>
