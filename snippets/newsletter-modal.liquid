@@ -32,7 +32,8 @@
               }
             </script>
           {% else %}
-            <input type="hidden" name="contact[tags]" value="newsletter">
+            <input type="hidden" name="contact[tags]" value="newsletter_modal">
+            <input type="hidden" name="contact[accepts_marketing]" value="true">
             
             <div class="form-group">
               <input 
@@ -45,26 +46,9 @@
               >
             </div>
             
-            <div class="form-group">
-              <input 
-                type="text" 
-                name="contact[first_name]" 
-                class="form-input" 
-                placeholder="Name"
-              >
-            </div>
-            
             <button type="submit" class="newsletter-submit-btn">
               Join Now
             </button>
-            
-            <div class="newsletter-consent">
-              <label class="checkbox-container">
-                <input type="checkbox" name="contact[note][consent]" value="I agree to receive emails">
-                <span class="checkmark"></span>
-                <span class="consent-text">I agree to receive emails with all the news from Incorrect Society and accept the Privacy Policy</span>
-              </label>
-            </div>
           {% endif %}
           
           {% if form.errors %}
