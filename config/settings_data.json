@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "type_primary_font": "work_sans_n4",
     "min_page_margin": 10,
     "current_collection": "female-anxiety",
     "music_cover_image": "shopify://shop_images/cd_cover.png",
