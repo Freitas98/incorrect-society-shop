@@ -7,7 +7,6 @@
       {% form 'customer', id: 'FooterNewsletterForm', class: 'footer-newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
         <input type="hidden" name="contact[tags]" value="newsletter_footer">
         <input type="hidden" name="contact[accepts_marketing]" value="true">
-        <input type="hidden" name="return_to" value="{{ request.path }}">
         {%- if form.posted_successfully? -%}
           <p class="newsletter-form__message newsletter-form__message--success">
             Thank you for subscribing! Check your e-mail for your 10% discount.

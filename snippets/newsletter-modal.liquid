@@ -21,7 +21,6 @@
         <p class="newsletter-subheading">Get 10% off your first order</p>
         
         {% form 'customer', id: 'NewsletterModalForm', class: 'newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
-          <input type="hidden" name="return_to" value="{{ request.path }}">
           {% if form.posted_successfully? %}
             <div class="newsletter-success-message" style="text-align: center; width: 100%;">
               <h3>Thank you for subscribing!</h3>
