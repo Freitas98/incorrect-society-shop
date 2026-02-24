@@ -23,9 +23,13 @@
   </p>
 
   {% form 'customer', id: 'NewsletterForm', class: 'contact-form newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
+    <input type="hidden" name="contact[tags]" value="newsletter_page">
+    <input type="hidden" name="contact[accepts_marketing]" value="true">
+    <input type="hidden" name="return_to" value="{{ request.path }}">
+
     {% if form.posted_successfully? %}
       <p class="newsletter-success newsletter-feedback" style="text-align: center; width: 100%;">
-        {{ 'newsletter.success' | t }}
+        Thank you for subscribing! Check your e-mail for your 10% discount.
       </p>
       <script>
         if (window.history.replaceState) {
@@ -35,32 +39,36 @@
           localStorage.setItem('newsletter_modal_status', 'subscribed');
         } catch(e){}
       </script>
-    {% endif %}
-    {% if form.errors %}
+    {% elsif form.errors %}
       <div class="newsletter-errors newsletter-feedback">
-        {{ form.errors | default_errors }}
+        {%- capture error_messages -%}{{ form.errors | default_errors }}{%- endcapture -%}
+        {%- if error_messages contains 'taken' or error_messages contains 'already' -%}
+          This email is already subscribed to our newsletter.
+        {%- else -%}
+          {{ error_messages }}
+        {%- endif -%}
       </div>
     {% endif %}
-    <div class="newsletter-message newsletter-feedback" aria-live="polite" hidden></div>
 
-    <input
-      type="email"
-      name="contact[email]"
-      id="NewsletterForm-email"
-      placeholder="{{ 'newsletter.email_placeholder' | t }}"
-      autocomplete="email"
-      required
-    >
+    {% unless form.posted_successfully? %}
+      <div class="newsletter-message newsletter-feedback" aria-live="polite" hidden></div>
 
-    <input type="hidden" name="contact[tags]" value="newsletter_page">
-    <input type="hidden" name="contact[accepts_marketing]" value="true">
+      <input
+        type="email"
+        name="contact[email]"
+        id="NewsletterForm-email"
+        placeholder="{{ 'newsletter.email_placeholder' | t }}"
+        autocomplete="email"
+        required
+      >
 
-    <button
-      type="submit"
-      class="btn btn--primary"
-    >
-      {{ 'newsletter.subscribe_cta' | t }}
-    </button>
+      <button
+        type="submit"
+        class="btn btn--primary"
+      >
+        {{ 'newsletter.subscribe_cta' | t }}
+      </button>
+    {% endunless %}
   {% endform %}
 </div>
 

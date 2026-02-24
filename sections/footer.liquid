@@ -4,19 +4,30 @@
     <div class="footer-newsletter-section">
       <h3 class="footer-newsletter-title">Newsletter | subscribe & get a 10% off</h3>
       <p class="footer-newsletter-subtitle">Receive news about Scuffers collections, restocks, events and sales.</p>
-      {% form 'customer', class: 'footer-newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
+      {% form 'customer', id: 'FooterNewsletterForm', class: 'footer-newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
         <input type="hidden" name="contact[tags]" value="newsletter_footer">
         <input type="hidden" name="contact[accepts_marketing]" value="true">
-        <div class="footer-newsletter-input-wrapper">
-          <input type="email" name="contact[email]" placeholder="Enter your email address" required class="footer-newsletter-input">
-        </div>
-        {%- if form.errors -%}
-          <small class="newsletter-form__message form__message">
-            {{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}
-          </small>
-        {%- endif -%}
+        <input type="hidden" name="return_to" value="{{ request.path }}">
         {%- if form.posted_successfully? -%}
-          <p class="newsletter-form__message newsletter-form__message--success">Thanks for subscribing!</p>
+          <p class="newsletter-form__message newsletter-form__message--success">
+            Thank you for subscribing! Check your e-mail for your 10% discount.
+          </p>
+          <script>try { localStorage.setItem('newsletter_modal_status', 'subscribed'); } catch(e){}</script>
+        {%- else -%}
+          <div class="footer-newsletter-input-wrapper">
+            <input type="email" name="contact[email]" placeholder="Enter your email address" required class="footer-newsletter-input">
+            <button type="submit" class="footer-newsletter-submit" aria-label="Subscribe">→</button>
+          </div>
+          {%- if form.errors -%}
+            <div class="newsletter-form__message newsletter-form__message--error">
+              {%- capture error_messages -%}{{ form.errors | default_errors }}{%- endcapture -%}
+              {%- if error_messages contains 'taken' or error_messages contains 'already' -%}
+                This email is already subscribed to our newsletter.
+              {%- else -%}
+                {{ error_messages }}
+              {%- endif -%}
+            </div>
+          {%- endif -%}
         {%- endif -%}
       {% endform %}
       <a href="{{ pages['newsletter'].url }}" class="footer-signup-link">
@@ -124,6 +135,7 @@
 
   .footer-newsletter-input-wrapper {
     position: relative;
+    display: flex;
   }
 
   .footer-newsletter-input {
@@ -139,6 +151,36 @@
   .footer-newsletter-input::placeholder {
     color: var(--color-foreground);
     opacity: 0.5;
+  }
+
+  .footer-newsletter-submit {
+    background-color: var(--color-foreground);
+    color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-left: none;
+    padding: 0 16px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .footer-newsletter-submit:hover {
+    opacity: 0.8;
+  }
+
+  .newsletter-form__message--success {
+    color: var(--color-foreground);
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .newsletter-form__message--error {
+    color: #d93025;
+    font-size: 12px;
+    margin-top: 8px;
+    line-height: 1.5;
   }
 
   .footer-signup-link {

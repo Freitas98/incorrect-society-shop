@@ -20,16 +20,18 @@
         
         <p class="newsletter-subheading">Get 10% off your first order</p>
         
-        {% form 'customer', class: 'newsletter-form', id: 'NewsletterModalForm', onsubmit: 'window.loadingScreen.show();' %}
+        {% form 'customer', id: 'NewsletterModalForm', class: 'newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
+          <input type="hidden" name="return_to" value="{{ request.path }}">
           {% if form.posted_successfully? %}
             <div class="newsletter-success-message" style="text-align: center; width: 100%;">
-              <h3>Welcome to the club!</h3>
-              <p>Check your email for your discount code.</p>
+              <h3>Thank you for subscribing!</h3>
+              <p>Check your e-mail for your 10% discount.</p>
             </div>
             <script>
               if (window.history.replaceState) {
                 window.history.replaceState(null, null, window.location.pathname);
               }
+              try { localStorage.setItem('newsletter_modal_status', 'subscribed'); } catch(e){}
             </script>
           {% else %}
             <input type="hidden" name="contact[tags]" value="newsletter_modal">
@@ -53,7 +55,12 @@
           
           {% if form.errors %}
             <div class="newsletter-errors">
-              {{ form.errors | default_errors }}
+              {%- capture error_messages -%}{{ form.errors | default_errors }}{%- endcapture -%}
+              {%- if error_messages contains 'taken' or error_messages contains 'already' -%}
+                This email is already subscribed to our newsletter.
+              {%- else -%}
+                {{ error_messages }}
+              {%- endif -%}
             </div>
           {% endif %}
         {% endform %}
@@ -292,8 +299,9 @@
       return true;
     }
     
-    // Check if we are showing success message
+    // Check if we are showing success or error message from form submission
     const successMessage = modal.querySelector('.newsletter-success-message');
+    const formErrors = modal.querySelector('.newsletter-errors');
     if (successMessage) {
       // Show immediately if success message is present (e.g. after captcha redirect)
       modal.classList.add('is-visible');
@@ -301,10 +309,13 @@
         localStorage.setItem(storageKey, 'subscribed');
       } catch (_) {}
       
-      // Hide after 3 seconds
+      // Hide after 5 seconds
       setTimeout(() => {
         modal.classList.remove('is-visible');
-      }, 3000);
+      }, 5000);
+    } else if (formErrors) {
+      // Show modal to display error message
+      modal.classList.add('is-visible');
     } else {
       // Only show if not subscribed and not closed in this session
       if (shouldShow()) {
