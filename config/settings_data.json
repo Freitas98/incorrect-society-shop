@@ -49,8 +49,9 @@
     "music_track_17_url": "https://cdn.shopify.com/s/files/1/0954/9840/4181/files/DEEP_IN_THE_WATER_spotdown.org_a0a0a50d-8870-404a-baff-9ec2bb4f68d6.mp3?v=1770511221",
     "logo_image": "shopify://shop_images/Logo_white.svg",
     "password_background_image": "shopify://shop_images/WhatsApp_Image_2026-02-06_at_01.47.53.jpg",
-    "password_timer_enabled": false,
-    "password_open_date": "2026-02-08T20:00:00+00:00",
+    "password_timer_enabled": true,
+    "password_open_date": "2026-10-01T20:00:00+00:00",
+    "password_auto_password": "SinnersClub2026",
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
