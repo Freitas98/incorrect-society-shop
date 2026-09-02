@@ -904,6 +904,13 @@
       },
       {
         "type": "checkbox",
+        "id": "password_show_shop_description",
+        "label": "Show shop description",
+        "default": true,
+        "info": "Show the store description below the logo. Nothing is shown if the description is empty."
+      },
+      {
+        "type": "checkbox",
         "id": "password_timer_enabled",
         "label": "Enable countdown timer",
         "default": true,
