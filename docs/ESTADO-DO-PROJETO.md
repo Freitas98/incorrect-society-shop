@@ -4,7 +4,7 @@ Análise de referência: 2026-09-02 · commit `d023630` · branch `main`.
 
 Atualização de 2026-09-03: corrigida localmente a precedência do modo countdown desativado e a preservação do booleano `false` na página de password. Countdown ativo mantém entrada manual antes da abertura e ENTER com preenchimento automático depois, conforme pedido do utilizador. Adicionados testes em `tests/password-page.test.cjs`; não houve publicação ou validação de autenticação real na Shopify. Os resultados abaixo continuam a descrever a análise original. O preenchimento automático foi mantido intencionalmente; a ressalva de segurança relativa à password enviada ao cliente continua aplicável.
 
-Também adicionada a opção `password_show_shop_description`, em Password Page, para mostrar a descrição existente da loja (`shop.description`) abaixo do logótipo e com a mesma fonte. Ativa por defeito; sem texto ou com a opção desativada, o parágrafo não é renderizado. Foram acrescentadas verificações estruturais do schema, condição, escape e tipografia aos testes locais; a apresentação com os dados reais da loja precisa de confirmação em preview.
+Também adicionada a opção `password_show_visitor_message`, em Password Page, para mostrar a mensagem nativa da página de acesso (`shop.password_message`) abaixo do logótipo e com a mesma fonte. Esta é a mensagem definida no admin em Acesso à loja → Mensagem para os seus visitantes; não é a descrição SEO da loja. Ativa por defeito; sem mensagem ou com a opção desativada, o parágrafo não é renderizado. Foram acrescentadas verificações estruturais do schema, condição, escape e tipografia aos testes locais; a apresentação com os dados reais da loja precisa de confirmação em preview.
 
 ## 1. Conclusão
 

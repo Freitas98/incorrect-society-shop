@@ -75,7 +75,7 @@ Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. N�
 - Countdown ativo a partir da abertura (incluindo igualdade): ocultar contador/input, preencher a password configurada e mostrar ENTER. A submissão exige clique; não há navegação automática.
 - Preservar `false` em `password_timer_enabled` com `allow_false: true` e serializar o booleano com `json`. O modo desativado tem precedência sobre a data.
 - O preenchimento automático faz parte do comportamento explicitamente pedido pelo utilizador; a ressalva de exposição no cliente continua documentada no relatório. Não remover esta funcionalidade sem acordo.
-- `password_show_shop_description` (checkbox em Password Page, ativo por defeito) mostra `shop.description` abaixo do logótipo, com a fonte herdada da página. Desligado ou com descrição vazia, não renderiza o parágrafo. É independente do estado do countdown; o texto é escapado e mantém quebras de linha.
+- `password_show_visitor_message` (checkbox em Password Page, ativo por defeito) mostra `shop.password_message` abaixo do logótipo, com a fonte herdada da página. É a mensagem definida no admin em Acesso à loja → Mensagem para os seus visitantes, e não a descrição SEO da loja. Desligado ou com mensagem vazia, não renderiza o parágrafo. É independente do estado do countdown; o texto é escapado e mantém quebras de linha.
 - Testes locais sem dependências: `node --test tests/password-page.test.cjs`. Usam o script real com configuração fictícia, DOM e relógio simulados; não autenticam na Shopify.
 
 ## Convenções para novas alterações

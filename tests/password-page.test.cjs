@@ -9,28 +9,28 @@ const script = source.match(/<script>\s*([\s\S]*?)<\/script>/)[1];
 const openingTime = Date.parse('2030-10-01T18:00:00Z');
 const fixturePassword = 'test-fixture-only';
 
-test('shop description visibility is a password page checkbox, enabled by default', () => {
+test('visitor message visibility is a password page checkbox, enabled by default', () => {
   const schema = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/settings_schema.json'), 'utf8'));
   const passwordSettings = schema.find((group) => group.name === 'Password Page').settings;
-  const descriptionSettings = passwordSettings.filter((setting) => setting.id === 'password_show_shop_description');
-  assert.equal(descriptionSettings.length, 1);
-  assert.equal(descriptionSettings[0].type, 'checkbox');
-  assert.equal(descriptionSettings[0].default, true);
+  const visitorMessageSettings = passwordSettings.filter((setting) => setting.id === 'password_show_visitor_message');
+  assert.equal(visitorMessageSettings.length, 1);
+  assert.equal(visitorMessageSettings[0].type, 'checkbox');
+  assert.equal(visitorMessageSettings[0].default, true);
 });
 
-test('description markup is gated by its setting and a nonempty store description', () => {
-  assert.match(source, /\{%\s*if settings\.password_show_shop_description and shop\.description != blank\s*%\}\s*<p class="password-shop-description">[\s\S]*?<\/p>\s*\{%\s*endif\s*%\}/);
+test('visitor message markup is gated by its setting and the Shopify password message', () => {
+  assert.match(source, /\{%\s*if settings\.password_show_visitor_message and shop\.password_message != blank\s*%\}\s*<p class="password-visitor-message">[\s\S]*?<\/p>\s*\{%\s*endif\s*%\}/);
 });
 
-test('description escapes HTML before preserving line breaks', () => {
-  assert.match(source, /<p class="password-shop-description">\{\{\s*shop\.description\s*\|\s*escape\s*\|\s*newline_to_br\s*\}\}<\/p>/);
+test('visitor message escapes HTML before preserving line breaks', () => {
+  assert.match(source, /<p class="password-visitor-message">\{\{\s*shop\.password_message\s*\|\s*escape\s*\|\s*newline_to_br\s*\}\}<\/p>/);
 });
 
-test('description inherits the page font and sits between the logo and timer', () => {
-  const descriptionIndex = source.indexOf('<p class="password-shop-description">');
-  assert.ok(descriptionIndex > source.indexOf('<div class="password-logo-container">'));
-  assert.ok(descriptionIndex < source.indexOf('<div class="password-timer"'));
-  assert.match(source, /\.password-shop-description\s*\{[^}]*font-family:\s*inherit;/);
+test('visitor message inherits the page font and sits between the logo and timer', () => {
+  const visitorMessageIndex = source.indexOf('<p class="password-visitor-message">');
+  assert.ok(visitorMessageIndex > source.indexOf('<div class="password-logo-container">'));
+  assert.ok(visitorMessageIndex < source.indexOf('<div class="password-timer"'));
+  assert.match(source, /\.password-visitor-message\s*\{[^}]*font-family:\s*inherit;/);
 });
 
 // Execute the actual page script with an isolated DOM and clock. No Shopify requests.

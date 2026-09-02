@@ -904,10 +904,10 @@
       },
       {
         "type": "checkbox",
-        "id": "password_show_shop_description",
-        "label": "Show shop description",
+        "id": "password_show_visitor_message",
+        "label": "Show visitor message",
         "default": true,
-        "info": "Show the store description below the logo. Nothing is shown if the description is empty."
+        "info": "Show the message configured in Shopify under visitor access. Nothing is shown if the message is empty."
       },
       {
         "type": "checkbox",
