@@ -9,22 +9,25 @@
  */
 {
   "sections": {
-    "hero_images": {
-      "type": "full-width-images",
-      "blocks": {
-        "hero_image_1": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/image00042.jpg",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "hero_image_1"
-      ],
+    "hero_editorial": {
+      "type": "hero-editorial-banner",
       "settings": {
-        "display_type": "stack"
+        "image": "shopify://shop_images/image00042.jpg",
+        "image_height": "large",
+        "image_position": "center center",
+        "tag": "ARCHIVES • 2025–2026",
+        "heading": "THE COMPLETE\nARCHIVE",
+        "text": "Every silhouette we've crafted from day one. From the early roots of the Outsider collection and the raw identity of Female Anxiety, to the latest Secrets & Sins drop. Heavyweight hoodies, signature tees, and timeless cuts.",
+        "content_position": "right",
+        "text_color": "light",
+        "scrim_opacity": 25,
+        "button_1_text": "EXPLORE HOODIES",
+        "button_1_link": "/collections/all?type=hoodie",
+        "button_2_text": "EXPLORE TEES",
+        "button_2_link": "/collections/all?type=t-shirt",
+        "corner_tag": "ALL COLLECTIONS",
+        "corner_button_text": "EXPLORE NOW",
+        "corner_button_link": "/pages/all-products"
       }
     },
     "new_in_products": {
@@ -136,7 +139,7 @@
     }
   },
   "order": [
-    "hero_images",
+    "hero_editorial",
     "new_in_products",
     "old_collections",
     "hero_slider_gallery_YdWxrj"

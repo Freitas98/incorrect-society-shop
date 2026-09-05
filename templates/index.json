@@ -9,22 +9,25 @@
  */
 {
   "sections": {
-    "hero_images": {
-      "type": "full-width-images",
-      "blocks": {
-        "hero_image_1": {
-          "type": "image",
-          "settings": {
-            "image": "shopify://shop_images/image00035.jpg",
-            "link": ""
-          }
-        }
-      },
-      "block_order": [
-        "hero_image_1"
-      ],
+    "hero_editorial": {
+      "type": "hero-editorial-banner",
       "settings": {
-        "display_type": "stack"
+        "image": "shopify://shop_images/image00035.jpg",
+        "image_height": "large",
+        "image_position": "left center",
+        "tag": "SECRETS & SINS • DROP 01",
+        "heading": "NOT MADE\nFOR EVERYONE",
+        "text": "A collection built on unfiltered expression. Heavyweight 280gsm cotton, relaxed boxy silhouettes, and distinct graphics made to outlast every trend. Secrets kept, sins committed. Welcome to Incorrect Society.",
+        "content_position": "right",
+        "text_color": "dark",
+        "scrim_opacity": 15,
+        "button_1_text": "SHOP NEW DROP",
+        "button_1_link": "/collections/secrets-and-sins",
+        "button_2_text": "EXPLORE ALL",
+        "button_2_link": "/pages/all-products",
+        "corner_tag": "DROP 01",
+        "corner_button_text": "SHOP NOW",
+        "corner_button_link": "/collections/secrets-and-sins"
       }
     },
     "new_arrivals": {
@@ -129,7 +132,7 @@
     }
   },
   "order": [
-    "hero_images",
+    "hero_editorial",
     "new_arrivals",
     "hero_gallery"
   ]
