@@ -15,7 +15,7 @@
         "hero_image_1": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/01_HOMEPAGE_HERO_Parede_Bicolor_Duo.jpg",
+            "image": "shopify://shop_images/image00035.jpg",
             "link": ""
           }
         }
@@ -101,13 +101,13 @@
       "settings": {
         "link_text_1": "Secrets And Sins",
         "link_url_1": "",
-        "link_badge_1": "JUST LANDED",
+        "link_badge_1": "NEW COLLECTION",
         "link_text_2": "Female Anxiety",
         "link_url_2": "",
-        "link_badge_2": "WINTER 2026",
+        "link_badge_2": "OLD",
         "link_text_3": "Outsider",
         "link_url_3": "",
-        "link_badge_3": "SUMMER 2025",
+        "link_badge_3": "OLD",
         "link_text_4": "Hoodies",
         "link_url_4": "",
         "link_badge_4": "",
