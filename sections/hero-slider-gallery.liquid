@@ -38,7 +38,7 @@
   <!-- Fixed Navigation Menu -->
   <div class="hero-fixed-navigation">
     <nav class="hero-text-links">
-      {% for i in (1..5) %}
+      {% for i in (1..8) %}
         {% liquid
           assign link_text_key = 'link_text_' | append: i
           assign link_url_key = 'link_url_' | append: i
@@ -49,16 +49,28 @@
           
           # Determine the correct URL for each link
           assign final_url = link_url
-          if link_text == 'Female Anxiety'
+          assign text_down = link_text | downcase | strip
+          if link_url != blank
+            assign final_url = link_url
+          elsif text_down == 'secrets and sins'
+            assign final_url = routes.collections_url | append: '/secrets-and-sins'
+          elsif text_down == 'female anxiety'
             assign final_url = routes.collections_url | append: '/female-anxiety'
-          elsif link_text == 'Hoodies'
+          elsif text_down == 'outsider'
+            assign final_url = routes.collections_url | append: '/outsider'
+          elsif text_down == 'hoodies'
             assign final_url = pages['all-products'].url | append: '?type=hoodie'
-          elsif link_text == 'T-Shirts'
+          elsif text_down == 't-shirts' or text_down == 'tshirts'
             assign final_url = pages['all-products'].url | append: '?type=t-shirt'
-          elsif link_text == 'Acessórios' or link_text == 'Accessories'
+          elsif text_down contains 'acess' or text_down contains 'access'
             assign final_url = routes.collections_url | append: '/accessories'
-          elsif link_text == 'Gift Card' or link_text == 'Gift Cards'
+          elsif text_down contains 'gift'
             assign final_url = routes.collections_url | append: '/gift-cards'
+          else
+            assign handle_guess = link_text | handleize
+            if collections[handle_guess].url != blank
+              assign final_url = collections[handle_guess].url
+            endif
           endif
         %}
         {% if link_text != blank %}
@@ -249,14 +261,15 @@
 
   .hero-link-badge {
     position: absolute;
-    top: 0;
-    right: -30px;
+    top: 2px;
+    left: calc(100% + 10px);
     font-family: var(--font-primary-family);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    opacity: 0.7;
+    opacity: 0.75;
+    white-space: nowrap;
   }
 
   /* CTA Button */
@@ -668,6 +681,63 @@
     {
       "type": "text",
       "id": "link_badge_5",
+      "label": "Badge (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Link 6"
+    },
+    {
+      "type": "text",
+      "id": "link_text_6",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_url_6",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_6",
+      "label": "Badge (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Link 7"
+    },
+    {
+      "type": "text",
+      "id": "link_text_7",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_url_7",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_7",
+      "label": "Badge (optional)"
+    },
+    {
+      "type": "header",
+      "content": "Link 8"
+    },
+    {
+      "type": "text",
+      "id": "link_text_8",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "link_url_8",
+      "label": "URL"
+    },
+    {
+      "type": "text",
+      "id": "link_badge_8",
       "label": "Badge (optional)"
     },
     {

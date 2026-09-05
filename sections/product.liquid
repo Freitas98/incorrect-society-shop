@@ -116,6 +116,25 @@
                   <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'm', point: 'c', unit: 'inches' %}</span></div>
                   <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'a', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'b', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'babytee', size: 'l', point: 'c', unit: 'inches' %}</span></div>
                 </div>
+              {% elsif garment_type == 'tshirt' %}
+                <div class="size-guide-table size-guide-table--5-points" data-unit="cm">
+                  <div class="size-row header">
+                    <span>Size</span><span>Chest</span><span>Length</span><span>Sleeve</span><span>Shoulder</span><span>Opening</span>
+                  </div>
+                  <div class="size-row"><span>S</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'chest', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'length', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'sleeve', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'shoulder', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'opening', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'chest', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'length', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'sleeve', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'shoulder', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'opening', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'chest', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'length', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'sleeve', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'shoulder', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'opening', unit: 'cm' %}</span></div>
+                  <div class="size-row"><span>XL</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'chest', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'length', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'sleeve', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'shoulder', unit: 'cm' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'opening', unit: 'cm' %}</span></div>
+                </div>
+                <div class="size-guide-table size-guide-table--5-points" data-unit="inches" style="display:none;">
+                  <div class="size-row header">
+                    <span>Size</span><span>Chest</span><span>Length</span><span>Sleeve</span><span>Shoulder</span><span>Opening</span>
+                  </div>
+                  <div class="size-row"><span>S</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'chest', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'length', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'sleeve', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'shoulder', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 's', point: 'opening', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>M</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'chest', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'length', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'sleeve', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'shoulder', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'm', point: 'opening', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>L</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'chest', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'length', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'sleeve', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'shoulder', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'l', point: 'opening', unit: 'inches' %}</span></div>
+                  <div class="size-row"><span>XL</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'chest', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'length', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'sleeve', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'shoulder', unit: 'inches' %}</span><span>{% render 'size-measurements', garment: 'tshirt', size: 'xl', point: 'opening', unit: 'inches' %}</span></div>
+                </div>
               {% else %}
                 <div class="size-guide-table" data-unit="cm">
                   <div class="size-row header">
@@ -544,8 +563,8 @@
     background: var(--color-background, #fff);
     border: 1px solid var(--color-border);
     padding: 15px;
-    min-width: 380px;
-    max-width: 420px;
+    min-width: 530px;
+    max-width: 580px;
     z-index: 999999;
     opacity: 0;
     visibility: hidden;
@@ -625,7 +644,7 @@
   }
   
   .size-guide-diagram img {
-    max-width: 180px;
+    max-width: 140px;
     height: auto;
     opacity: 0.9;
   }
@@ -649,15 +668,26 @@
   /* Size Guide Table */
   .size-guide-table {
     margin-top: 0;
+    width: 100%;
   }
   
   .size-guide-table .size-row {
     display: grid;
-    grid-template-columns: 35px repeat(3, 1fr);
+    grid-template-columns: 35px repeat(3, minmax(0, 1fr));
     gap: 8px;
     padding: 6px 0;
     font-size: 11px;
     border-bottom: 1px solid var(--color-border);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .size-guide-table--5-points .size-row {
+    grid-template-columns: 30px repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    font-size: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .size-guide-table .size-row.header {
@@ -673,6 +703,12 @@
   
   .size-guide-table .size-row span {
     white-space: nowrap;
+    text-align: center;
+    display: block;
+  }
+
+  .size-guide-table .size-row span:first-child {
+    text-align: left;
   }
   
   /* Center Column - Fullscreen Images */

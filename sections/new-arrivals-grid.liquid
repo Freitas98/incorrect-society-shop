@@ -74,7 +74,7 @@
     </div>
 
     <!-- Product Grid -->
-    <div class="new-arrivals-grid">
+    <div class="new-arrivals-grid{% if products.size <= 2 %} new-arrivals-grid--two-items{% endif %}">
       {% for product in products limit: products_to_show %}
         {% liquid
           # Get badge from metafield or determine automatically
@@ -121,9 +121,15 @@
             <a href="{{ product.url }}" class="product-card-link">
               <!-- Product Image Container -->
               <div class="product-image-wrapper">
-                {% if badge_text != '' %}
+                {% if badge_text != '' and product.available %}
                   <span class="product-badge {{ badge_class }}">{{ badge_text }}</span>
                 {% endif %}
+
+                {% unless product.available %}
+                  <div class="product-sold-out-overlay" aria-hidden="true">
+                    <span class="product-sold-out-badge">{{ 'products.product.sold_out' | t }}</span>
+                  </div>
+                {% endunless %}
                 
                 {% if product.featured_media %}
                   <img 
@@ -182,11 +188,7 @@
                 <span class="product-title-enhanced">{{ product.title }}</span>
               </a>
               <span class="product-price-enhanced">
-                {% if product.available %}
-                  {% render 'price', amount: product.price, product: product %}
-                {% else %}
-                  <span class="sold-out-text">{{ 'products.product.sold_out' | t }}</span>
-                {% endif %}
+                {% render 'price', amount: product.price, product: product %}
               </span>
             </div>
             
@@ -431,6 +433,27 @@
     position: relative;
   }
 
+  /* Two items layout for high-impact display */
+  .new-arrivals-grid--two-items {
+    max-width: 1300px;
+    gap: 40px 30px;
+    justify-content: center;
+  }
+
+  .new-arrivals-grid--two-items .product-card-enhanced {
+    width: calc(50% - 20px);
+    max-width: 600px;
+  }
+
+  .new-arrivals-grid--two-items .product-title-enhanced {
+    font-size: clamp(14px, 1.3vw, 18px);
+    font-weight: 500;
+  }
+
+  .new-arrivals-grid--two-items .product-price-enhanced {
+    font-size: clamp(14px, 1.3vw, 18px);
+  }
+
   @media (max-width: 1400px) {
     .new-arrivals-grid {
       gap: 25px 15px;
@@ -462,6 +485,16 @@
     
     .product-card-enhanced {
       width: calc(50% - 6px);
+    }
+
+    .new-arrivals-grid--two-items {
+      gap: 25px 12px;
+    }
+
+    .new-arrivals-grid--two-items .product-card-enhanced {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
     }
     
     .new-arrivals-header {
@@ -584,6 +617,37 @@
   .product-badge.badge-back {
     background-color: transparent;
     color: var(--color-foreground);
+  }
+
+  /* Sold Out Overlay */
+  .product-sold-out-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(140, 140, 140, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card-enhanced[data-available="false"] .product-image-main,
+  .product-card-enhanced[data-available="false"] .product-image-hover {
+    filter: grayscale(85%) opacity(0.8);
+  }
+
+  .product-sold-out-badge {
+    background: #666666;
+    color: #ffffff;
+    font-family: var(--font-heading-family);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
   /* Quick Add Button */

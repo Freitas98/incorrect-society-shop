@@ -66,6 +66,11 @@
           <div class="related-product-card">
           <a href="{{ related_product.url }}" class="related-product-link">
             <div class="related-product-image-wrapper">
+              {% unless related_product.available %}
+                <div class="product-sold-out-overlay" aria-hidden="true">
+                  <span class="product-sold-out-badge">{{ 'products.product.sold_out' | t }}</span>
+                </div>
+              {% endunless %}
               {% if related_product.featured_image %}
                 <img 
                   src="{{ related_product.featured_image | image_url: width: 600 }}"
@@ -180,6 +185,37 @@
 
   .related-product-image-hover {
     opacity: 0;
+  }
+
+  /* Sold Out Overlay */
+  .related-product-card[data-available="false"] .related-product-image,
+  .related-product-card[data-available="false"] .related-product-image-hover {
+    filter: grayscale(85%) opacity(0.8);
+  }
+
+  .product-sold-out-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(140, 140, 140, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-sold-out-badge {
+    background: #666666;
+    color: #ffffff;
+    font-family: var(--font-heading-family);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
   .related-product-link:hover .related-product-image-hover {

@@ -9,23 +9,33 @@
 {% endcomment %}
 
 {% comment %}
-  Boxy T-Shirts measurements (CM) - Yellow Tee style
+  Boxy T-Shirts measurements (CM) - Secrets And Sins & T-Shirts collection
+  Chest, Length, Sleeve, Shoulder width, Sleeve Opening
 {% endcomment %}
-{% assign tshirt_s_a = 60 %}
-{% assign tshirt_s_b = 62 %}
-{% assign tshirt_s_c = 23 %}
+{% assign tshirt_s_chest = 60 %}
+{% assign tshirt_s_length = 64 %}
+{% assign tshirt_s_sleeve = 23 %}
+{% assign tshirt_s_shoulder = 63 %}
+{% assign tshirt_s_opening = 20 %}
 
-{% assign tshirt_m_a = 62 %}
-{% assign tshirt_m_b = 64 %}
-{% assign tshirt_m_c = 24 %}
+{% assign tshirt_m_chest = 62 %}
+{% assign tshirt_m_length = 66 %}
+{% assign tshirt_m_sleeve = 24 %}
+{% assign tshirt_m_shoulder = 65 %}
+{% assign tshirt_m_opening = 21 %}
 
-{% assign tshirt_l_a = 64 %}
-{% assign tshirt_l_b = 66 %}
-{% assign tshirt_l_c = 25 %}
+{% assign tshirt_l_chest = 64 %}
+{% assign tshirt_l_length = 68 %}
+{% assign tshirt_l_sleeve = 25 %}
+{% assign tshirt_l_shoulder = 67 %}
+{% assign tshirt_l_opening = 22 %}
 
-{% assign tshirt_xl_a = 66 %}
-{% assign tshirt_xl_b = 68 %}
-{% assign tshirt_xl_c = 26 %}
+{% assign tshirt_xl_chest = 66 %}
+{% assign tshirt_xl_length = 70 %}
+{% assign tshirt_xl_sleeve = 26 %}
+{% assign tshirt_xl_shoulder = 69 %}
+{% assign tshirt_xl_opening = 23 %}
+
 
 {% comment %}
   Too Scared Longsleeve Boxy measurements (CM)
@@ -105,30 +115,49 @@
   {% assign cm_value = 0 %}
 
   {% case variable_name %}
-    {% when 'tshirt_s_a' -%}
-      {%- assign cm_value = tshirt_s_a %}
-    {% when 'tshirt_s_b' -%}
-      {%- assign cm_value = tshirt_s_b %}
-    {% when 'tshirt_s_c' -%}
-      {%- assign cm_value = tshirt_s_c %}
-    {% when 'tshirt_m_a' -%}
-      {%- assign cm_value = tshirt_m_a %}
-    {% when 'tshirt_m_b' -%}
-      {%- assign cm_value = tshirt_m_b %}
-    {% when 'tshirt_m_c' -%}
-      {%- assign cm_value = tshirt_m_c %}
-    {% when 'tshirt_l_a' -%}
-      {%- assign cm_value = tshirt_l_a %}
-    {% when 'tshirt_l_b' -%}
-      {%- assign cm_value = tshirt_l_b %}
-    {% when 'tshirt_l_c' -%}
-      {%- assign cm_value = tshirt_l_c %}
-    {% when 'tshirt_xl_a' -%}
-      {%- assign cm_value = tshirt_xl_a %}
-    {% when 'tshirt_xl_b' -%}
-      {%- assign cm_value = tshirt_xl_b %}
-    {% when 'tshirt_xl_c' -%}
-      {%- assign cm_value = tshirt_xl_c %}
+    {% when 'tshirt_s_a', 'tshirt_s_chest' -%}
+      {%- assign cm_value = tshirt_s_chest %}
+    {% when 'tshirt_s_b', 'tshirt_s_length' -%}
+      {%- assign cm_value = tshirt_s_length %}
+    {% when 'tshirt_s_c', 'tshirt_s_sleeve' -%}
+      {%- assign cm_value = tshirt_s_sleeve %}
+    {% when 'tshirt_s_d', 'tshirt_s_shoulder', 'tshirt_s_shoulder_width' -%}
+      {%- assign cm_value = tshirt_s_shoulder %}
+    {% when 'tshirt_s_e', 'tshirt_s_opening', 'tshirt_s_sleeve_opening' -%}
+      {%- assign cm_value = tshirt_s_opening %}
+
+    {% when 'tshirt_m_a', 'tshirt_m_chest' -%}
+      {%- assign cm_value = tshirt_m_chest %}
+    {% when 'tshirt_m_b', 'tshirt_m_length' -%}
+      {%- assign cm_value = tshirt_m_length %}
+    {% when 'tshirt_m_c', 'tshirt_m_sleeve' -%}
+      {%- assign cm_value = tshirt_m_sleeve %}
+    {% when 'tshirt_m_d', 'tshirt_m_shoulder', 'tshirt_m_shoulder_width' -%}
+      {%- assign cm_value = tshirt_m_shoulder %}
+    {% when 'tshirt_m_e', 'tshirt_m_opening', 'tshirt_m_sleeve_opening' -%}
+      {%- assign cm_value = tshirt_m_opening %}
+
+    {% when 'tshirt_l_a', 'tshirt_l_chest' -%}
+      {%- assign cm_value = tshirt_l_chest %}
+    {% when 'tshirt_l_b', 'tshirt_l_length' -%}
+      {%- assign cm_value = tshirt_l_length %}
+    {% when 'tshirt_l_c', 'tshirt_l_sleeve' -%}
+      {%- assign cm_value = tshirt_l_sleeve %}
+    {% when 'tshirt_l_d', 'tshirt_l_shoulder', 'tshirt_l_shoulder_width' -%}
+      {%- assign cm_value = tshirt_l_shoulder %}
+    {% when 'tshirt_l_e', 'tshirt_l_opening', 'tshirt_l_sleeve_opening' -%}
+      {%- assign cm_value = tshirt_l_opening %}
+
+    {% when 'tshirt_xl_a', 'tshirt_xl_chest' -%}
+      {%- assign cm_value = tshirt_xl_chest %}
+    {% when 'tshirt_xl_b', 'tshirt_xl_length' -%}
+      {%- assign cm_value = tshirt_xl_length %}
+    {% when 'tshirt_xl_c', 'tshirt_xl_sleeve' -%}
+      {%- assign cm_value = tshirt_xl_sleeve %}
+    {% when 'tshirt_xl_d', 'tshirt_xl_shoulder', 'tshirt_xl_shoulder_width' -%}
+      {%- assign cm_value = tshirt_xl_shoulder %}
+    {% when 'tshirt_xl_e', 'tshirt_xl_opening', 'tshirt_xl_sleeve_opening' -%}
+      {%- assign cm_value = tshirt_xl_opening %}
     {% comment %} Too Scared Longsleeve {% endcomment %}
     {% when 'longsleeve_s_a' -%}
       {%- assign cm_value = longsleeve_s_a %}

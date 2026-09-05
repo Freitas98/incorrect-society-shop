@@ -16,7 +16,7 @@
     <div class="collection-separator"></div>
   </div>
 
-  <div class="collection-products">
+  <div class="collection-products{% if collection.products.size <= 2 %} collection-products--two-items{% endif %}">
     {% paginate collection.products by 12 %}
       {% for product in collection.products %}
         {% liquid
@@ -51,9 +51,15 @@
           <div class="product-image-container">
             <a href="{{ product.url }}" class="product-link">
               <div class="product-image">
-                {% if badge_text != '' %}
+                {% if badge_text != '' and product.available %}
                   <span class="product-badge {{ badge_class }}">{{ badge_text }}</span>
                 {% endif %}
+
+                {% unless product.available %}
+                  <div class="product-sold-out-overlay" aria-hidden="true">
+                    <span class="product-sold-out-badge">{{ 'products.product.sold_out' | t }}</span>
+                  </div>
+                {% endunless %}
                 
                 {% if product.featured_media %}
                   <img
@@ -109,14 +115,10 @@
                 <span class="product-title">{{ product.title }}</span>
               </a>
               <span class="product-price">
-                {% if product.available %}
-                  {% if product.gift_card? or product.type == 'Gift Card' %}
-                    {{ 'gift_card.start_at' | t }} {% render 'price', amount: product.price, product: product %}
-                  {% else %}
-                    {% render 'price', amount: product.price, product: product %}
-                  {% endif %}
+                {% if product.gift_card? or product.type == 'Gift Card' %}
+                  {{ 'gift_card.start_at' | t }} {% render 'price', amount: product.price, product: product %}
                 {% else %}
-                  <span class="sold-out-text">{{ 'products.product.sold_out' | t }}</span>
+                  {% render 'price', amount: product.price, product: product %}
                 {% endif %}
               </span>
             </div>
@@ -200,6 +202,39 @@
     box-sizing: border-box;
   }
 
+  /* Two items layout for high-impact display */
+  .collection-products--two-items {
+    max-width: 1300px;
+    gap: 40px 30px;
+    justify-content: center;
+  }
+
+  .collection-products--two-items .product-card {
+    width: calc(50% - 20px);
+    max-width: 600px;
+  }
+
+  .collection-products--two-items .product-title {
+    font-size: clamp(14px, 1.3vw, 18px);
+    font-weight: 500;
+  }
+
+  .collection-products--two-items .product-price {
+    font-size: clamp(14px, 1.3vw, 18px);
+  }
+
+  @media (max-width: 768px) {
+    .collection-products--two-items {
+      gap: 25px 12px;
+      padding: 0 15px;
+    }
+    .collection-products--two-items .product-card {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+  }
+
   .product-image-container {
     position: relative;
     width: 100%;
@@ -267,6 +302,37 @@
     z-index: 2;
     background-color: transparent;
     color: var(--color-foreground);
+  }
+
+  /* Sold Out Overlay */
+  .product-sold-out-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(140, 140, 140, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card[data-available="false"] .product-image-main,
+  .product-card[data-available="false"] .product-image-hover {
+    filter: grayscale(85%) opacity(0.8);
+  }
+
+  .product-sold-out-badge {
+    background: #666666;
+    color: #ffffff;
+    font-family: var(--font-heading-family);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   }
 
   /* Quick Add Button */

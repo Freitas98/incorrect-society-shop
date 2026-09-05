@@ -14,18 +14,13 @@
           <li class="header-menu-item">
             <a href="{{ pages['all-products'].url }}" class="header-menu-link">Shop</a>
           </li>
+          {% assign current_col_handle = settings.current_collection | default: 'secrets-and-sins' %}
+          {% assign current_col = collections[current_col_handle] %}
           <li class="header-menu-item">
-            <a href="{{ routes.collections_url }}/female-anxiety" class="header-menu-link">Female Anxiety</a>
+            <a href="{% if current_col %}{{ current_col.url }}{% else %}{{ routes.collections_url }}/secrets-and-sins{% endif %}" class="header-menu-link">
+              {%- if current_col.title != blank -%}{{ current_col.title }}{%- else -%}Secrets And Sins{%- endif -%}
+            </a>
           </li>
-          <li class="header-menu-item">
-            <a href="{{ routes.collections_url }}/gift-cards" class="header-menu-link">Gift Card</a>
-          </li>
-          <li class="header-menu-item">
-            <a href="{{ routes.collections_url }}/accessories" class="header-menu-link">Accessories</a>
-          </li>
-          {% comment %} <li class="header-menu-item">
-            <a href="{{ pages['news'].url }}" class="header-menu-link">News</a>
-          </li> {% endcomment %}
         </ul>
       </nav>
     </div>
@@ -148,10 +143,11 @@
     </div>
     <ul class="mobile-nav-menu">
       <li><a href="{{ pages['all-products'].url }}">Shop</a></li>
-      <li><a href="{{ routes.collections_url }}/female-anxiety">Female Anxiety</a></li>
-      <li><a href="{{ routes.collections_url }}/gift-cards">Gift Card</a></li>
-      <li><a href="{{ routes.collections_url }}/accessories">Accessories</a></li>
-      {% comment %} <li><a href="{{ pages['news'].url }}">News</a></li> {% endcomment %}
+      <li>
+        <a href="{% if current_col %}{{ current_col.url }}{% else %}{{ routes.collections_url }}/secrets-and-sins{% endif %}">
+          {%- if current_col.title != blank -%}{{ current_col.title }}{%- else -%}Secrets And Sins{%- endif -%}
+        </a>
+      </li>
     </ul>
     <div class="mobile-nav-actions">
       {% if shop.customer_accounts_enabled %}

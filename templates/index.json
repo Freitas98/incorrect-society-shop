@@ -30,8 +30,8 @@
     "new_arrivals": {
       "type": "new-arrivals-grid",
       "settings": {
-        "title": "Female Anxiety",
-        "collection": "female-anxiety",
+        "title": "Secrets And Sins",
+        "collection": "secrets-and-sins",
         "products_count": 12,
         "featured_collections": []
       }
@@ -83,21 +83,27 @@
         "slide_1"
       ],
       "settings": {
-        "link_text_1": "Female Anxiety",
+        "link_text_1": "Secrets And Sins",
         "link_url_1": "",
-        "link_badge_1": "",
-        "link_text_2": "Hoodies",
+        "link_badge_1": "NEW COLLECTION",
+        "link_text_2": "Female Anxiety",
         "link_url_2": "",
-        "link_badge_2": "",
-        "link_text_3": "T-Shirts",
+        "link_badge_2": "OLD",
+        "link_text_3": "Outsider",
         "link_url_3": "",
-        "link_badge_3": "",
-        "link_text_4": "Acessórios",
+        "link_badge_3": "OLD",
+        "link_text_4": "Hoodies",
         "link_url_4": "",
         "link_badge_4": "",
-        "link_text_5": "Gift Card",
+        "link_text_5": "T-Shirts",
         "link_url_5": "",
-        "link_badge_5": "",
+        "link_badge_5": "NEW ITEMS",
+        "link_text_6": "Accessories",
+        "link_url_6": "",
+        "link_badge_6": "",
+        "link_text_7": "Gift Card",
+        "link_url_7": "",
+        "link_badge_7": "",
         "cta_text": "SHOP ALL",
         "cta_url": ""
       }
