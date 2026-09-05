@@ -60,6 +60,17 @@ svg {
   height: auto;
 }
 
+/* Dynamic product image fit helpers */
+.image-fit-cover {
+  object-fit: cover !important;
+  object-position: center top !important;
+}
+
+.image-fit-contain {
+  object-fit: contain !important;
+  object-position: center !important;
+}
+
 *[hidden] {
   display: none !important;
 }

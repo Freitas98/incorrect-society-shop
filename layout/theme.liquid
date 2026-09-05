@@ -126,5 +126,37 @@
     </main>
 
     {% render 'newsletter-modal' %}
+
+    <script>
+      (function () {
+        function autoFitImage(img) {
+          if (!img || !img.naturalWidth || !img.naturalHeight) return;
+          var ratio = img.naturalWidth / img.naturalHeight;
+          if (ratio < 0.82) {
+            img.classList.remove('image-fit-contain');
+            img.classList.add('image-fit-cover');
+          } else {
+            img.classList.remove('image-fit-cover');
+            img.classList.add('image-fit-contain');
+          }
+        }
+        function initAutoFit() {
+          var selector = '.product-image-main, .product-image-hover, .related-product-image, .related-product-image-hover';
+          document.querySelectorAll(selector).forEach(function (img) {
+            if (img.complete && img.naturalWidth) {
+              autoFitImage(img);
+            } else {
+              img.addEventListener('load', function () { autoFitImage(img); });
+            }
+          });
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initAutoFit);
+        } else {
+          initAutoFit();
+        }
+        document.addEventListener('shopify:section:load', initAutoFit);
+      })();
+    </script>
   </body>
 </html>

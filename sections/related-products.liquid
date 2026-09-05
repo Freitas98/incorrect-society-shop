@@ -72,19 +72,53 @@
                 </div>
               {% endunless %}
               {% if related_product.featured_image %}
+                {% liquid
+                  assign main_media = related_product.featured_image
+                  assign main_ar = main_media.aspect_ratio
+                  assign main_fit = 'image-fit-contain'
+                  if main_ar
+                    assign main_ar_num = main_ar | times: 100 | round
+                    if main_ar_num < 82
+                      assign main_fit = 'image-fit-cover'
+                    endif
+                  elsif main_media.width and main_media.height
+                    assign main_w_times_100 = main_media.width | times: 100
+                    assign main_ar_calc = main_w_times_100 | divided_by: main_media.height
+                    if main_ar_calc < 82
+                      assign main_fit = 'image-fit-cover'
+                    endif
+                  endif
+                %}
                 <img 
                   src="{{ related_product.featured_image | image_url: width: 600 }}"
                   alt="{{ related_product.featured_image.alt | escape | default: related_product.title }}"
-                  class="related-product-image"
+                  class="related-product-image {{ main_fit }}"
                   loading="lazy"
                   width="300"
                   height="400"
                 >
                 {% if related_product.images[1] %}
+                  {% liquid
+                    assign hover_media = related_product.images[1]
+                    assign hover_ar = hover_media.aspect_ratio
+                    assign hover_fit = 'image-fit-contain'
+                    if hover_ar
+                      assign hover_ar_num = hover_ar | times: 100 | round
+                      if hover_ar_num < 82
+                        assign hover_fit = 'image-fit-cover'
+                      endif
+                    elsif hover_media.width and hover_media.height
+                      assign hover_w_times_100 = hover_media.width | times: 100
+                      assign hover_ar_calc = hover_w_times_100 | divided_by: hover_media.height
+                      if hover_ar_calc < 82
+                        assign hover_fit = 'image-fit-cover'
+                      endif
+                    endif
+                  %}
                   <img 
                     src="{{ related_product.images[1] | image_url: width: 600 }}"
                     alt="{{ related_product.images[1].alt | escape | default: related_product.title }}"
-                    class="related-product-image-hover"
+                    class="related-product-image-hover {{ hover_fit }}"
                     loading="lazy"
                     width="300"
                     height="400"
@@ -167,7 +201,7 @@
     width: 100%;
     padding-bottom: 133.33%; /* 3:4 aspect ratio */
     overflow: hidden;
-    background-color: var(--color-surface);
+    background-color: transparent;
     margin-bottom: var(--space-md);
   }
 
@@ -178,9 +212,21 @@
     left: 0;
     width: 100%;
     height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: opacity 0.3s ease;
+  }
+
+  .related-product-image.image-fit-cover,
+  .related-product-image-hover.image-fit-cover {
     object-fit: cover;
     object-position: center top;
-    transition: opacity 0.3s ease;
+  }
+
+  .related-product-image.image-fit-contain,
+  .related-product-image-hover.image-fit-contain {
+    object-fit: contain;
+    object-position: center;
   }
 
   .related-product-image-hover {

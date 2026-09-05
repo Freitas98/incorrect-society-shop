@@ -137,19 +137,53 @@
                   </div>
                 {% endunless %}
                 {% if product.featured_media %}
+                  {% liquid
+                    assign main_media = product.featured_media
+                    assign main_ar = main_media.aspect_ratio | default: main_media.preview_image.aspect_ratio
+                    assign main_fit = 'image-fit-contain'
+                    if main_ar
+                      assign main_ar_num = main_ar | times: 100 | round
+                      if main_ar_num < 82
+                        assign main_fit = 'image-fit-cover'
+                      endif
+                    elsif main_media.width and main_media.height
+                      assign main_w_times_100 = main_media.width | times: 100
+                      assign main_ar_calc = main_w_times_100 | divided_by: main_media.height
+                      if main_ar_calc < 82
+                        assign main_fit = 'image-fit-cover'
+                      endif
+                    endif
+                  %}
                   <img
                     src="{{ product.featured_media | image_url: width: 600 }}"
                     alt="{{ product.featured_media.alt | escape | default: product.title }}"
-                    class="product-image-main"
+                    class="product-image-main {{ main_fit }}"
                     width="600"
                     height="600"
                     loading="lazy"
                   >
                   {% if product.media[1] %}
+                    {% liquid
+                      assign hover_media = product.media[1]
+                      assign hover_ar = hover_media.aspect_ratio | default: hover_media.preview_image.aspect_ratio
+                      assign hover_fit = 'image-fit-contain'
+                      if hover_ar
+                        assign hover_ar_num = hover_ar | times: 100 | round
+                        if hover_ar_num < 82
+                          assign hover_fit = 'image-fit-cover'
+                        endif
+                      elsif hover_media.width and hover_media.height
+                        assign hover_w_times_100 = hover_media.width | times: 100
+                        assign hover_ar_calc = hover_w_times_100 | divided_by: hover_media.height
+                        if hover_ar_calc < 82
+                          assign hover_fit = 'image-fit-cover'
+                        endif
+                      endif
+                    %}
                     <img 
                       src="{{ product.media[1] | image_url: width: 600 }}" 
                       alt="{{ product.media[1].alt | escape | default: product.title }}"
-                      class="product-image-hover"
+                      class="product-image-hover {{ hover_fit }}"
                       loading="lazy"
                       width="600"
                       height="600"
@@ -248,7 +282,7 @@
     position: relative;
     width: 100%;
     aspect-ratio: 3 / 4;
-    background-color: var(--color-surface, #f5f5f5);
+    background-color: transparent;
     overflow: hidden;
   }
 
@@ -259,9 +293,21 @@
     left: 0;
     width: 100%;
     height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transition: opacity 0.4s ease;
+  }
+
+  .product-image-main.image-fit-cover,
+  .product-image-hover.image-fit-cover {
     object-fit: cover;
     object-position: center top;
-    transition: opacity 0.4s ease;
+  }
+
+  .product-image-main.image-fit-contain,
+  .product-image-hover.image-fit-contain {
+    object-fit: contain;
+    object-position: center;
   }
 
   .product-image-hover {
