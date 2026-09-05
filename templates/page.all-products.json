@@ -15,7 +15,7 @@
         "hero_image_1": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/Tezza-5185.jpg",
+            "image": "shopify://shop_images/image00042.jpg",
             "link": ""
           }
         }
@@ -111,6 +111,9 @@
         "link_text_7": "Gift Card",
         "link_url_7": "",
         "link_badge_7": "",
+        "link_text_8": "",
+        "link_url_8": "",
+        "link_badge_8": "",
         "cta_text": "SHOP ALL",
         "cta_url": ""
       }
