@@ -15,7 +15,7 @@
         "hero_image_1": {
           "type": "image",
           "settings": {
-            "image": "shopify://shop_images/1.jpg",
+            "image": "shopify://shop_images/01_HOMEPAGE_HERO_Parede_Bicolor_Duo.jpg",
             "link": ""
           }
         }
@@ -39,48 +39,64 @@
     "hero_gallery": {
       "type": "hero-slider-gallery",
       "blocks": {
-        "slide_7mjEzn": {
+        "slide_TRF4Fx": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-8678_21c5e70d-9a6a-45b9-9039-236c94eaa19e.jpg",
+            "image": "shopify://shop_images/08_EDITORIAL_Interior_Lounge.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_rRYCnP": {
+        "slide_EVKLWg": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-4790.jpg",
+            "image": "shopify://shop_images/02_HOMEPAGE_HERO_ALT_Portao_Amarelo.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_7jLVrm": {
+        "slide_qHNHxm": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-0556_1d0f24a4-c443-4c80-832f-12acb3968f31.jpg",
+            "image": "shopify://shop_images/03_SHOP_ALL_HERO_Frente_Ao_Mar.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_9CcafR": {
+        "slide_DeXYRD": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-1702_3424ec24-08a7-4575-b216-41027c307a01.jpg",
+            "image": "shopify://shop_images/04_GALERIA_Slide_Costas_Portao.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_1": {
+        "slide_R6tGrG": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/x_e222aba5-852b-4880-83fc-e675bc60ff46.jpg",
+            "image": "shopify://shop_images/05_GALERIA_Slide_Parede_Verde_Banco.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_UBWxKD": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/06_GALERIA_Slide_Macro_Duo.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_he7D4F": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/07_EDITORIAL_Lookbook_Rocha_Mar.jpg",
             "overlay_opacity": 30
           }
         }
       },
       "block_order": [
-        "slide_7mjEzn",
-        "slide_rRYCnP",
-        "slide_7jLVrm",
-        "slide_9CcafR",
-        "slide_1"
+        "slide_TRF4Fx",
+        "slide_EVKLWg",
+        "slide_qHNHxm",
+        "slide_DeXYRD",
+        "slide_R6tGrG",
+        "slide_UBWxKD",
+        "slide_he7D4F"
       ],
       "settings": {
         "link_text_1": "Secrets And Sins",
@@ -104,6 +120,9 @@
         "link_text_7": "Gift Card",
         "link_url_7": "",
         "link_badge_7": "",
+        "link_text_8": "",
+        "link_url_8": "",
+        "link_badge_8": "",
         "cta_text": "SHOP ALL",
         "cta_url": ""
       }
