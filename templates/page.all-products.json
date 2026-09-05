@@ -43,62 +43,78 @@
         "products_limit": 24
       }
     },
-    "hero_gallery": {
+    "hero_slider_gallery_YdWxrj": {
       "type": "hero-slider-gallery",
       "blocks": {
-        "slide_RMzDbY": {
+        "slide_rHfxDL": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-3260_c567398a-92bd-4d55-a6b4-ffd3f76dc305.jpg",
+            "image": "shopify://shop_images/08_EDITORIAL_Interior_Lounge.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_x4race": {
+        "slide_dX4NeV": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-5713.jpg",
+            "image": "shopify://shop_images/02_HOMEPAGE_HERO_ALT_Portao_Amarelo.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_YBGtaQ": {
+        "slide_AXcxfy": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-6449_7e0efc66-6ee8-4241-a3e3-2aa532f4e7b6.jpg",
+            "image": "shopify://shop_images/03_SHOP_ALL_HERO_Frente_Ao_Mar.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_NXxANd": {
+        "slide_wTwDxe": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-5712.jpg",
+            "image": "shopify://shop_images/04_GALERIA_Slide_Costas_Portao.jpg",
             "overlay_opacity": 30
           }
         },
-        "slide_1": {
+        "slide_EteTMp": {
           "type": "slide",
           "settings": {
-            "image": "shopify://shop_images/Tezza-1445.jpg",
+            "image": "shopify://shop_images/05_GALERIA_Slide_Parede_Verde_Banco.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_cTMtG6": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/06_GALERIA_Slide_Macro_Duo.jpg",
+            "overlay_opacity": 30
+          }
+        },
+        "slide_DLEN7g": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/07_EDITORIAL_Lookbook_Rocha_Mar.jpg",
             "overlay_opacity": 30
           }
         }
       },
       "block_order": [
-        "slide_RMzDbY",
-        "slide_x4race",
-        "slide_YBGtaQ",
-        "slide_NXxANd",
-        "slide_1"
+        "slide_rHfxDL",
+        "slide_dX4NeV",
+        "slide_AXcxfy",
+        "slide_wTwDxe",
+        "slide_EteTMp",
+        "slide_cTMtG6",
+        "slide_DLEN7g"
       ],
       "settings": {
         "link_text_1": "Secrets And Sins",
         "link_url_1": "",
-        "link_badge_1": "JUST LANDED",
+        "link_badge_1": "Just landed",
         "link_text_2": "Female Anxiety",
         "link_url_2": "",
-        "link_badge_2": "WINTER 2026",
+        "link_badge_2": "Winter 2026",
         "link_text_3": "Outsider",
         "link_url_3": "",
-        "link_badge_3": "SUMMER 2025",
+        "link_badge_3": "Summer 2025",
         "link_text_4": "Hoodies",
         "link_url_4": "",
         "link_badge_4": "",
@@ -123,6 +139,6 @@
     "hero_images",
     "new_in_products",
     "old_collections",
-    "hero_gallery"
+    "hero_slider_gallery_YdWxrj"
   ]
 }
