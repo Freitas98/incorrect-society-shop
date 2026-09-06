@@ -1,15 +1,14 @@
 /**
  * Incorrect Society - Virtual Try-On 3D AR Mirror
- * Real-time body tracking with Google MediaPipe Pose and Three.js WebGL rendering.
- * Loads rigged 3D models (vto-secrets.glb & vto-sinners.glb) with PBR textures and bone articulation.
+ * Luxury WebGL 3D Garment Try-On with Real-Time Pose Tracking (Three.js + MediaPipe Pose).
  */
 
 (function () {
   'use strict';
 
-  // CDN Dependencies
-  const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
-  const GLTF_LOADER_CDN = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/GLTFLoader.js';
+  // Robust CDN dependencies
+  const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js';
+  const GLTF_LOADER_CDN = 'https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js';
   const POSE_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js';
 
   function loadScript(src) {
@@ -21,7 +20,7 @@
       s.src = src;
       s.async = true;
       s.onload = () => resolve();
-      s.onerror = () => reject(new Error('Failed to load ' + src));
+      s.onerror = (e) => reject(new Error('Failed loading ' + src));
       document.head.appendChild(s);
     });
   }
@@ -38,10 +37,7 @@
     const viewport = document.getElementById('vto-viewport');
     const video = document.getElementById('vto-video');
     const canvas = document.getElementById('vto-canvas');
-    const garmentLayer = document.getElementById('vto-garment-layer');
-    const guide = document.getElementById('vto-guide');
-    const statusPill = document.getElementById('vto-status-pill');
-    const loadingOverlay = document.getElementById('vto-loading-overlay');
+    const loaderEl = document.getElementById('vto-loader');
     const flipCamBtn = document.getElementById('vto-flip-cam');
     const permissionCard = document.getElementById('vto-permission-card');
     const reqCamBtn = document.getElementById('vto-request-cam-btn');
@@ -57,15 +53,17 @@
 
     // Controls
     const closeBtns = modal.querySelectorAll('[data-vto-close]');
-    const viewBtns = modal.querySelectorAll('.vto-view-btn');
-    const swatchBtns = modal.querySelectorAll('.vto-swatch-btn');
+    const viewBtns = modal.querySelectorAll('.vto-view-switch .vto-switch-btn');
+    const swatchBtns = modal.querySelectorAll('.vto-color-switch .vto-switch-btn');
     const sizePills = modal.querySelectorAll('.vto-size-pill');
 
     // 3D Model URLs
-    const secretsGlbUrl = modal.dataset.secretsGlb || '';
-    const sinnersGlbUrl = modal.dataset.sinnersGlb || '';
+    let secretsGlbUrl = modal.dataset.secretsGlb || '';
+    let sinnersGlbUrl = modal.dataset.sinnersGlb || '';
+    if (secretsGlbUrl.startsWith('//')) secretsGlbUrl = window.location.protocol + secretsGlbUrl;
+    if (sinnersGlbUrl.startsWith('//')) sinnersGlbUrl = window.location.protocol + sinnersGlbUrl;
 
-    // Size Box-Fit Scaling Table
+    // Sizing scales (box-fit volume multipliers)
     const sizeScales = {
       XS: 0.88,
       S: 0.94,
@@ -78,7 +76,7 @@
     // State
     let isModalOpen = false;
     let stream = null;
-    let facingMode = 'user'; // 'user' (front) or 'environment' (rear)
+    let facingMode = 'user';
     let currentShirt = modal.dataset.defaultShirt || 'grey';
     let currentView = 'front';
     let currentSize = 'M';
@@ -100,8 +98,8 @@
     let animFrameId = null;
 
     // Tracking Smoothing State
-    const targetPos = { x: 0, y: -0.2, z: 0 };
-    const currentPos = { x: 0, y: -0.2, z: 0 };
+    const targetPos = { x: 0, y: -0.22, z: 0 };
+    const currentPos = { x: 0, y: -0.22, z: 0 };
     const targetRot = { x: 0, y: 0, z: 0 };
     const currentRot = { x: 0, y: 0, z: 0 };
     let targetModelScale = 1.0;
@@ -123,40 +121,43 @@
     }
 
     // ------------------------------------------------------------------------
-    // Dynamic Engine Loader (Three.js + MediaPipe)
+    // Dynamic Engine Loader (Three.js + GLTFLoader + MediaPipe)
     // ------------------------------------------------------------------------
     async function load3DEngine() {
       if (is3DReady) return;
 
-      if (loadingOverlay) loadingOverlay.classList.add('active');
+      if (loaderEl) loaderEl.classList.add('active');
 
       try {
-        // 1. Load Three.js core
+        // 1. Load Three.js
         await loadScript(THREE_CDN);
         // 2. Load GLTFLoader
         await loadScript(GLTF_LOADER_CDN);
-        // 3. Load MediaPipe Pose
-        await loadScript(POSE_CDN);
 
+        // Initialize Three.js scene immediately
         initThreeScene();
+
+        // 3. Load 3D Models and display initial model immediately
         await load3DModels();
-        initMediaPipe();
 
+        // Hide loader now that 3D model is active and rendered
+        if (loaderEl) loaderEl.classList.remove('active');
+
+        // Start 60fps render loop
         is3DReady = true;
-
-        // Hide 2D fallback layer once 3D is active
-        if (garmentLayer) garmentLayer.style.display = 'none';
-
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
-        if (guide) guide.classList.remove('vto-guide--hidden');
-
-        // Start render loop
         renderLoop();
+
+        // 4. Load MediaPipe Pose in background
+        loadScript(POSE_CDN)
+          .then(() => {
+            initMediaPipe();
+          })
+          .catch((e) => {
+            console.warn('MediaPipe Pose could not be loaded; manual 3D interaction remains active:', e);
+          });
       } catch (err) {
-        console.error('Error initializing 3D try-on engine:', err);
-        if (loadingOverlay) loadingOverlay.classList.remove('active');
-        // Keep 2D fallback visible if 3D fails
-        if (garmentLayer) garmentLayer.style.display = 'block';
+        console.error('Fatal 3D engine init error:', err);
+        if (loaderEl) loaderEl.classList.remove('active');
       }
     }
 
@@ -169,11 +170,9 @@
 
       scene = new THREE.Scene();
 
-      // Camera: 50 deg FOV closely matches smartphone front cameras
       camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 50);
       camera.position.set(0, 0, 2.2);
 
-      // WebGL Renderer with alpha transparency over video
       renderer = new THREE.WebGLRenderer({
         canvas: canvas,
         alpha: true,
@@ -182,28 +181,28 @@
         powerPreference: 'high-performance'
       });
       renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.15;
-      if (THREE.SRGBColorSpace) {
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
+      if (THREE.sRGBEncoding) {
+        renderer.outputEncoding = THREE.sRGBEncoding;
       }
 
-      // Studio Lighting for High Fabric Realism
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+      // Studio Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 1.25);
       scene.add(ambientLight);
 
       // Key light: angled top-front
       const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
-      keyLight.position.set(1.2, 2.0, 2.2);
+      keyLight.position.set(1.2, 2.2, 2.2);
       scene.add(keyLight);
 
       // Fill light: soft opposite side
-      const fillLight = new THREE.DirectionalLight(0xffffff, 0.7);
+      const fillLight = new THREE.DirectionalLight(0xffffff, 0.75);
       fillLight.position.set(-1.2, 0.8, 1.8);
       scene.add(fillLight);
 
-      // Rim light: back accent for volumetric edge separation
+      // Rim light: back accent for volumetric separation
       const rimLight = new THREE.DirectionalLight(0xffffff, 0.85);
       rimLight.position.set(0, 1.8, -1.8);
       scene.add(rimLight);
@@ -221,37 +220,51 @@
     }
 
     // ------------------------------------------------------------------------
-    // Load 3D Models (secrets.glb & sinners.glb)
+    // Load 3D Models via ArrayBuffer parsing (Zero CORS/path bugs)
     // ------------------------------------------------------------------------
-    function loadGLB(url) {
+    async function fetchAndParseGLB(url) {
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        throw new Error('HTTP ' + resp.status + ' loading ' + url);
+      }
+      const buffer = await resp.arrayBuffer();
+      const loader = new THREE.GLTFLoader();
       return new Promise((resolve, reject) => {
-        const loader = new THREE.GLTFLoader();
-        loader.load(url, (gltf) => resolve(gltf), undefined, (err) => reject(err));
+        loader.parse(
+          buffer,
+          '',
+          (gltf) => resolve(gltf),
+          (err) => reject(err)
+        );
       });
     }
 
     async function load3DModels() {
-      const loaderPromises = [];
+      const tasks = [];
 
       if (secretsGlbUrl) {
-        loaderPromises.push(
-          loadGLB(secretsGlbUrl).then(gltf => {
-            secretsModel = gltf.scene;
-            setupGarmentModel(secretsModel, 'secrets');
-          }).catch(e => console.warn('Could not load secrets.glb:', e))
+        tasks.push(
+          fetchAndParseGLB(secretsGlbUrl)
+            .then((gltf) => {
+              secretsModel = gltf.scene;
+              setupGarmentModel(secretsModel, 'secrets');
+            })
+            .catch((e) => console.error('Could not load secrets.glb:', e))
         );
       }
 
       if (sinnersGlbUrl) {
-        loaderPromises.push(
-          loadGLB(sinnersGlbUrl).then(gltf => {
-            sinnersModel = gltf.scene;
-            setupGarmentModel(sinnersModel, 'sinners');
-          }).catch(e => console.warn('Could not load sinners.glb:', e))
+        tasks.push(
+          fetchAndParseGLB(sinnersGlbUrl)
+            .then((gltf) => {
+              sinnersModel = gltf.scene;
+              setupGarmentModel(sinnersModel, 'sinners');
+            })
+            .catch((e) => console.error('Could not load sinners.glb:', e))
         );
       }
 
-      await Promise.all(loaderPromises);
+      await Promise.all(tasks);
       switchGarmentModel(currentShirt);
     }
 
@@ -272,7 +285,6 @@
         }
       });
 
-      // Wrap in a group with pivot compensation
       model.visible = false;
       scene.add(model);
     }
@@ -285,7 +297,7 @@
 
       currentActiveModel = (colorKey === 'burgundy') ? sinnersModel : secretsModel;
 
-      swatchBtns.forEach(btn => {
+      swatchBtns.forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.shirt === colorKey);
       });
 
@@ -304,24 +316,28 @@
     // ------------------------------------------------------------------------
     function initMediaPipe() {
       if (typeof window.Pose === 'undefined') {
-        console.warn('MediaPipe Pose library not found.');
+        console.warn('MediaPipe Pose library not present.');
         return;
       }
 
-      poseInstance = new window.Pose({
-        locateFile: (file) => 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/' + file,
-      });
+      try {
+        poseInstance = new window.Pose({
+          locateFile: (file) => 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/' + file,
+        });
 
-      poseInstance.setOptions({
-        modelComplexity: 1, // Balanced real-time on mobile
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        smoothSegmentation: false,
-        minDetectionConfidence: 0.5,
-        minTrackingConfidence: 0.5
-      });
+        poseInstance.setOptions({
+          modelComplexity: 1, // Balanced real-time on mobile
+          smoothLandmarks: true,
+          enableSegmentation: false,
+          smoothSegmentation: false,
+          minDetectionConfidence: 0.5,
+          minTrackingConfidence: 0.5
+        });
 
-      poseInstance.onResults(onPoseResults);
+        poseInstance.onResults(onPoseResults);
+      } catch (e) {
+        console.warn('Error setting up MediaPipe Pose:', e);
+      }
     }
 
     function onPoseResults(results) {
@@ -333,7 +349,6 @@
       }
 
       const lm = results.poseLandmarks;
-      // Key Landmarks
       const leftShoulder = lm[11];
       const rightShoulder = lm[12];
       const leftElbow = lm[13];
@@ -341,8 +356,7 @@
       const leftHip = lm[23];
       const rightHip = lm[24];
 
-      // Check shoulder visibility confidence
-      if (!leftShoulder || !rightShoulder || (leftShoulder.visibility < 0.4 && rightShoulder.visibility < 0.4)) {
+      if (!leftShoulder || !rightShoulder || (leftShoulder.visibility < 0.35 && rightShoulder.visibility < 0.35)) {
         hasBodyLock = false;
         return;
       }
@@ -350,10 +364,7 @@
       hasBodyLock = true;
       lastDetectionTime = Date.now();
 
-      // Show Pose Tracking badge
-      if (statusPill) statusPill.classList.add('active');
-
-      // 1. Calculate Torso Dimensions & Angles
+      // 1. Torso Dimensions & Angles
       const dx = leftShoulder.x - rightShoulder.x;
       const dy = leftShoulder.y - rightShoulder.y;
       const dz = (leftShoulder.z || 0) - (rightShoulder.z || 0);
@@ -362,12 +373,11 @@
       const shoulderMidX = (leftShoulder.x + rightShoulder.x) / 2;
       const shoulderMidY = (leftShoulder.y + rightShoulder.y) / 2;
 
-      // Camera visible frustum dimensions at Z=0
+      // Frustum world dimensions at Z=0
       const frustumHeight = 2.0 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
       const frustumWidth = frustumHeight * camera.aspect;
 
-      // 2. Map screen coordinates to Three.js World Space
-      // Video is mirrored for front selfie camera
+      // 2. Map coordinates to Three.js World Space
       let worldX;
       if (facingMode === 'user') {
         worldX = (0.5 - shoulderMidX) * frustumWidth;
@@ -377,37 +387,32 @@
       const worldY = (0.5 - shoulderMidY) * frustumHeight;
 
       // 3. Physical Fit Scaling
-      // Model nominal shoulder width is ~0.65m; total height is ~0.68m
       const measuredShoulderWidthMeters = shoulderWidth2D * frustumWidth;
       const baseFitScale = (measuredShoulderWidthMeters / 0.64);
       targetModelScale = baseFitScale * sizeScale * userScale;
 
-      // Model origin (Y=0) is at the hem; collar is at Y ~ 0.58 * scale
+      // Position: Origin (Y=0) is at the hem; collar is at Y ~ 0.58 * scale
       targetPos.x = worldX + manualPosX;
       targetPos.y = worldY - (0.56 * targetModelScale) + manualPosY;
       targetPos.z = 0;
 
       // 4. Torso Orientation (Roll, Yaw, Pitch)
-      // Roll (side tilt)
       let rollAngle = Math.atan2(dy, dx);
       if (facingMode === 'user') rollAngle = -rollAngle;
       targetRot.z = rollAngle;
 
-      // Yaw (body turning left / right)
-      const yawAngle = dz * 1.6;
+      const yawAngle = dz * 1.5;
       targetRot.y = yawAngle + (currentView === 'back' ? Math.PI : 0) + manualRotY;
 
-      // Pitch (leaning forward / back)
       if (leftHip && rightHip && leftHip.visibility > 0.4) {
         const hipMidY = (leftHip.y + rightHip.y) / 2;
         const torsoH = hipMidY - shoulderMidY;
-        targetRot.x = Math.max(Math.min((torsoH - 0.38) * 0.5, 0.3), -0.3);
+        targetRot.x = Math.max(Math.min((torsoH - 0.38) * 0.45, 0.28), -0.28);
       }
 
       // 5. Rig Sleeve Articulation
       const currentBones = (currentShirt === 'burgundy') ? modelBones.sinners : modelBones.secrets;
       if (currentBones) {
-        // Left arm sleeve
         if (currentBones['upper_arm.L'] && leftElbow && leftElbow.visibility > 0.35) {
           const armDx = leftElbow.x - leftShoulder.x;
           const armDy = leftElbow.y - leftShoulder.y;
@@ -418,7 +423,6 @@
             0.2
           );
         }
-        // Right arm sleeve
         if (currentBones['upper_arm.R'] && rightElbow && rightElbow.visibility > 0.35) {
           const armDx = rightElbow.x - rightShoulder.x;
           const armDy = rightElbow.y - rightShoulder.y;
@@ -433,7 +437,7 @@
     }
 
     // ------------------------------------------------------------------------
-    // 60 FPS WebGL Render Loop with Damped Smoothing
+    // 60 FPS WebGL Render Loop with Smooth Interpolation
     // ------------------------------------------------------------------------
     function renderLoop() {
       if (!isModalOpen) return;
@@ -457,10 +461,9 @@
         targetRot.x = 0;
         targetRot.y = (currentView === 'back' ? Math.PI : 0) + manualRotY;
         targetRot.z = 0;
-        if (statusPill) statusPill.classList.remove('active');
       }
 
-      // Exponential Moving Average Smoothing
+      // Smooth Lerp Interpolation
       const lerpSpeed = 0.22;
       currentPos.x += (targetPos.x - currentPos.x) * lerpSpeed;
       currentPos.y += (targetPos.y - currentPos.y) * lerpSpeed;
@@ -472,14 +475,12 @@
 
       currentModelScale += (targetModelScale - currentModelScale) * lerpSpeed;
 
-      // Apply transforms to active 3D garment
       if (currentActiveModel) {
         currentActiveModel.position.set(currentPos.x, currentPos.y, currentPos.z);
         currentActiveModel.rotation.set(currentRot.x, currentRot.y, currentRot.z);
         currentActiveModel.scale.set(currentModelScale, currentModelScale, currentModelScale);
       }
 
-      // Render Three.js Scene
       if (renderer && scene && camera) {
         renderer.render(scene, camera);
       }
@@ -490,12 +491,11 @@
     // ------------------------------------------------------------------------
     async function startCamera() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showPermissionCard('Camera access is not supported on this browser. Please use Chrome or Safari.');
+        showPermissionCard('Camera is not supported on this browser. Please use Chrome or Safari.');
         return;
       }
 
       if (stream) stopCamera();
-
       if (permissionCard) permissionCard.style.display = 'none';
 
       const constraints = {
@@ -518,17 +518,16 @@
           video.classList.add('vto-video--rear');
         }
 
-        // Initialize 3D Engine and Models
         await load3DEngine();
       } catch (err) {
         console.warn('Camera stream error:', err);
-        showPermissionCard('Please enable camera permissions to try on the piece in real time.');
+        showPermissionCard('Please grant camera access to try on the piece in real time.');
       }
     }
 
     function stopCamera() {
       if (stream) {
-        stream.getTracks().forEach(t => t.stop());
+        stream.getTracks().forEach((t) => t.stop());
         stream = null;
       }
       if (video) video.srcObject = null;
@@ -552,7 +551,7 @@
     }
 
     // ------------------------------------------------------------------------
-    // Modal Lifecycle
+    // Modal Open & Close Lifecycle
     // ------------------------------------------------------------------------
     function openModal() {
       if (isModalOpen) return;
@@ -589,17 +588,16 @@
       stopCamera();
 
       if (snapshotOverlay) snapshotOverlay.style.display = 'none';
-      if (statusPill) statusPill.classList.remove('active');
     }
 
     // ------------------------------------------------------------------------
-    // Controls: Sizing, Color, and Front/Back View
+    // Sizing & View Controls
     // ------------------------------------------------------------------------
     function syncActiveSize(size) {
       currentSize = size;
       sizeScale = sizeScales[size] || 1.0;
 
-      sizePills.forEach(pill => {
+      sizePills.forEach((pill) => {
         pill.classList.toggle('active', pill.dataset.size === size);
       });
 
@@ -614,7 +612,7 @@
 
     function syncActiveView(view) {
       currentView = view;
-      viewBtns.forEach(btn => {
+      viewBtns.forEach((btn) => {
         btn.classList.toggle('active', btn.dataset.view === view);
       });
     }
@@ -626,7 +624,7 @@
 
       let targetVariant = null;
       if (variantData && variantData.variants) {
-        targetVariant = variantData.variants.find(v => {
+        targetVariant = variantData.variants.find((v) => {
           const opts = [v.option1, v.option2, v.option3].filter(Boolean);
           return opts.includes(currentSize);
         });
@@ -665,7 +663,7 @@
     }
 
     function onPointerDown(e) {
-      if (e.target.closest('.vto-header') || e.target.closest('.vto-controls') || e.target.closest('.vto-view-toggle') || e.target.closest('.vto-shirt-toggle') || e.target.closest('.vto-snapshot-overlay')) {
+      if (e.target.closest('.vto-header') || e.target.closest('.vto-dock') || e.target.closest('.vto-snapshot-overlay')) {
         return;
       }
 
@@ -685,8 +683,6 @@
       startManualRotY = manualRotY;
       startManualPosX = manualPosX;
       startManualPosY = manualPosY;
-
-      if (guide) guide.classList.add('vto-guide--hidden');
     }
 
     function onPointerMove(e) {
@@ -707,9 +703,9 @@
       const deltaX = clientX - dragStartX;
       const deltaY = clientY - dragStartY;
 
-      // Horizontal drag rotates the 3D model in space
+      // Horizontal drag rotates the 3D model
       manualRotY = startManualRotY + (deltaX * 0.008);
-      // Vertical drag fine-tunes elevation
+      // Vertical drag adjusts elevation
       manualPosY = startManualPosY - (deltaY * 0.0012);
     }
 
@@ -737,14 +733,14 @@
     }
 
     // ------------------------------------------------------------------------
-    // Photo Snapshot (Video + 3D Garment Render + Branding)
+    // Photo Snapshot (Video + 3D WebGL Garment + Minimal Watermark)
     // ------------------------------------------------------------------------
     function captureSnapshot() {
       if (!video || !video.videoWidth || !renderer) return;
 
       if (flashEl) {
         flashEl.classList.add('active');
-        setTimeout(() => flashEl.classList.remove('active'), 200);
+        setTimeout(() => flashEl.classList.remove('active'), 180);
       }
 
       const captureCanvas = document.createElement('canvas');
@@ -754,7 +750,7 @@
       captureCanvas.height = targetH;
       const ctx = captureCanvas.getContext('2d');
 
-      // 1. Draw Video Frame (with horizontal mirror for selfie)
+      // 1. Draw Video Frame (mirrored if selfie)
       const vW = video.videoWidth;
       const vH = video.videoHeight;
       const vAspect = vW / vH;
@@ -781,7 +777,7 @@
       ctx.drawImage(video, sx, sy, sW, sH, 0, 0, targetW, targetH);
       ctx.restore();
 
-      // 2. Draw 3D Garment WebGL Layer
+      // 2. Draw 3D WebGL Garment
       renderer.render(scene, camera);
       ctx.drawImage(renderer.domElement, 0, 0, targetW, targetH);
 
@@ -817,7 +813,7 @@
 
       let variantId = null;
       if (variantData && variantData.variants) {
-        const found = variantData.variants.find(v => {
+        const found = variantData.variants.find((v) => {
           const opts = [v.option1, v.option2, v.option3].filter(Boolean);
           return opts.includes(currentSize);
         });
@@ -844,7 +840,7 @@
       try {
         const addPromise = window.addToCartAndUpdate
           ? window.addToCartAndUpdate(formData)
-          : fetch('/cart/add.js', { method: 'POST', body: formData }).then(r => r.json());
+          : fetch('/cart/add.js', { method: 'POST', body: formData }).then((r) => r.json());
 
         await addPromise;
 
@@ -868,20 +864,20 @@
     // ------------------------------------------------------------------------
     openBtn.addEventListener('click', openModal);
 
-    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+    closeBtns.forEach((btn) => btn.addEventListener('click', closeModal));
 
     if (flipCamBtn) flipCamBtn.addEventListener('click', toggleFlipCamera);
     if (reqCamBtn) reqCamBtn.addEventListener('click', startCamera);
 
-    viewBtns.forEach(btn => {
+    viewBtns.forEach((btn) => {
       btn.addEventListener('click', () => syncActiveView(btn.dataset.view));
     });
 
-    swatchBtns.forEach(btn => {
+    swatchBtns.forEach((btn) => {
       btn.addEventListener('click', () => switchGarmentModel(btn.dataset.shirt));
     });
 
-    sizePills.forEach(pill => {
+    sizePills.forEach((pill) => {
       pill.addEventListener('click', () => syncActiveSize(pill.dataset.size));
     });
 
@@ -918,7 +914,7 @@
       }
     });
 
-    document.querySelectorAll('input[name^="option-"]').forEach(radio => {
+    document.querySelectorAll('input[name^="option-"]').forEach((radio) => {
       radio.addEventListener('change', () => {
         if (sizeScales[radio.value]) {
           syncActiveSize(radio.value);
