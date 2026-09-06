@@ -1,0 +1,240 @@
+{% comment %}
+  Virtual Try-On Modal (AR / VR Mirror)
+  Renders live camera dressing mirror for apparel products
+{% endcomment %}
+
+{% assign current_variant = product.selected_or_first_available_variant %}
+
+{%- liquid
+  # Determine default garment images based on product title/handle
+  assign prod_handle = product.handle | downcase
+  assign prod_title = product.title | downcase
+
+  assign default_shirt = 'grey'
+  if prod_handle contains 'burgundy' or prod_handle contains 'maroon' or prod_handle contains 'sinner' or prod_handle contains 'morally' or prod_title contains 'burgundy' or prod_title contains 'maroon' or prod_title contains 'sinner'
+    assign default_shirt = 'burgundy'
+  endif
+
+  assign burgundy_front_url = 'vto-burgundy-front.png' | asset_url
+  assign burgundy_back_url = 'vto-burgundy-back.png' | asset_url
+  assign grey_front_url = 'vto-grey-front.png' | asset_url
+  assign grey_back_url = 'vto-grey-back.png' | asset_url
+
+-%}
+
+<!-- Virtual Try-On Modal Container -->
+<div
+  class="vto-modal"
+  id="VirtualTryOnModal"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  data-product-id="{{ product.id }}"
+  data-product-title="{{ product.title | escape }}"
+  data-default-shirt="{{ default_shirt }}"
+  data-burgundy-front="{{ burgundy_front_url }}"
+  data-burgundy-back="{{ burgundy_back_url }}"
+  data-grey-front="{{ grey_front_url }}"
+  data-grey-back="{{ grey_back_url }}"
+>
+  <!-- Dark Backdrop -->
+  <div class="vto-backdrop" data-vto-close></div>
+
+  <!-- Modal Shell -->
+  <div class="vto-shell">
+    <!-- Top Floating Header -->
+    <div class="vto-header">
+      <div class="vto-header-left">
+        <span class="vto-brand-pill">INCORRECT VR</span>
+        <span class="vto-item-title" id="vto-item-title">{{ product.title }}</span>
+      </div>
+
+      <div class="vto-header-right">
+        <!-- Switch Camera (Front/Rear) -->
+        <button
+          type="button"
+          class="vto-btn-icon"
+          id="vto-flip-cam"
+          title="Switch Camera"
+          aria-label="Switch Camera"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.21 1.004 4.186 2.6 5.5"/>
+            <path d="M4 14c0 4.418 3.582 8 8 8s8-3.582 8-8c0-2.21-1.004-4.186-2.6-5.5"/>
+            <polyline points="4 2 4 8 10 8"/>
+            <polyline points="20 22 20 16 14 16"/>
+          </svg>
+        </button>
+
+        <!-- Close Button -->
+        <button
+          type="button"
+          class="vto-btn-icon vto-btn-close"
+          data-vto-close
+          title="Close Mirror"
+          aria-label="Close Mirror"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Camera Viewport -->
+    <div class="vto-viewport" id="vto-viewport">
+      <!-- Hidden Video Stream (Source) -->
+      <video id="vto-video" playsinline muted autoplay></video>
+
+      <!-- Main Mirror Canvas -->
+      <canvas id="vto-canvas"></canvas>
+
+      <!-- Drag & Pinch Interactive Garment Layer -->
+      <div class="vto-garment-layer" id="vto-garment-layer">
+        {%- if default_shirt == 'burgundy' -%}
+          <img
+            id="vto-garment-img"
+            src="{{ 'vto-burgundy-front.png' | asset_url }}"
+            alt="{{ product.title | escape }}"
+            width="800"
+            height="900"
+            crossorigin="anonymous"
+            loading="eager"
+          >
+        {%- else -%}
+          <img
+            id="vto-garment-img"
+            src="{{ 'vto-grey-front.png' | asset_url }}"
+            alt="{{ product.title | escape }}"
+            width="800"
+            height="900"
+            crossorigin="anonymous"
+            loading="eager"
+          >
+        {%- endif -%}
+      </div>
+
+      <!-- Alignment Guide Overlay -->
+      <div class="vto-guide" id="vto-guide">
+        <div class="vto-guide-silhouette">
+          <svg viewBox="0 0 200 240" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-dasharray="8 6">
+            <circle cx="100" cy="50" r="32"/>
+            <path d="M 25,140 C 45,95 75,90 100,90 C 125,90 155,95 175,140 L 175,230 L 25,230 Z"/>
+          </svg>
+        </div>
+        <span class="vto-guide-text">Align shoulders & chest in frame</span>
+      </div>
+
+      <!-- Live Tracking Status Badge -->
+      <div class="vto-status-pill" id="vto-status-pill">
+        <span class="vto-status-dot"></span>
+        <span class="vto-status-text">Pose Tracking Active</span>
+      </div>
+
+      <!-- View Toggle (Front / Back) Floating Control -->
+      <div class="vto-view-toggle" id="vto-view-toggle">
+        <button type="button" class="vto-view-btn active" data-view="front">FRONT</button>
+        <button type="button" class="vto-view-btn" data-view="back">BACK</button>
+      </div>
+
+      <!-- Garment Swatch Toggle (Burgundy / Grey) -->
+      <div class="vto-shirt-toggle" id="vto-shirt-toggle">
+        <button
+          type="button"
+          class="vto-swatch-btn{% if default_shirt == 'burgundy' %} active{% endif %}"
+          data-shirt="burgundy"
+          title="Sinners Circle (Burgundy)"
+        >
+          <span class="vto-swatch-circle" style="background-color: #511c21;"></span>
+        </button>
+        <button
+          type="button"
+          class="vto-swatch-btn{% if default_shirt == 'grey' %} active{% endif %}"
+          data-shirt="grey"
+          title="Secret Society (Grey)"
+        >
+          <span class="vto-swatch-circle" style="background-color: #cfd1d0;"></span>
+        </button>
+      </div>
+
+      <!-- Camera Permission Card (If blocked/prompt) -->
+      <div class="vto-permission-card" id="vto-permission-card" style="display: none;">
+        <div class="vto-permission-icon">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+        <h3 class="vto-permission-title">Camera Access Required</h3>
+        <p class="vto-permission-desc">Please enable camera access to try on the piece directly in your browser mirror.</p>
+        <button type="button" class="vto-action-pill" id="vto-request-cam-btn">
+          Enable Camera
+        </button>
+      </div>
+
+      <!-- Shutter Flash Effect -->
+      <div class="vto-flash" id="vto-flash"></div>
+
+      <!-- Captured Photo Preview Modal -->
+      <div class="vto-snapshot-overlay" id="vto-snapshot-overlay" style="display: none;">
+        <div class="vto-snapshot-modal">
+          <img
+            id="vto-snapshot-img"
+            src="{{ 'vto-grey-front.png' | asset_url }}"
+            alt="Virtual Fit Snapshot"
+            width="1080"
+            height="1440"
+            loading="lazy"
+          >
+          <div class="vto-snapshot-actions">
+            <a href="#" download="incorrect-society-fit.jpg" id="vto-download-btn" class="vto-pill-btn vto-pill-btn--solid">
+              Download Photo
+            </a>
+            <button type="button" id="vto-retake-btn" class="vto-pill-btn vto-pill-btn--outline">
+              Retake
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Controls & Size Switcher -->
+    <div class="vto-controls">
+      <!-- Size Pills -->
+      <div class="vto-sizes-row">
+        <span class="vto-sizes-title">BOX FIT:</span>
+        <div class="vto-size-pills" id="vto-size-pills">
+          <button type="button" class="vto-size-pill" data-size="S" data-scale="0.94">S</button>
+          <button type="button" class="vto-size-pill active" data-size="M" data-scale="1.02">M</button>
+          <button type="button" class="vto-size-pill" data-size="L" data-scale="1.12">L</button>
+          <button type="button" class="vto-size-pill" data-size="XL" data-scale="1.22">XL</button>
+        </div>
+      </div>
+
+      <!-- Action Row -->
+      <div class="vto-actions-row">
+        <!-- Shutter Button (Capture photo) -->
+        <button
+          type="button"
+          class="vto-shutter-btn"
+          id="vto-take-photo-btn"
+          title="Take Photo"
+          aria-label="Take Photo"
+        >
+          <span class="vto-shutter-ring"></span>
+        </button>
+
+        <!-- Direct Add to Cart -->
+        <button
+          type="button"
+          class="vto-add-cart-btn"
+          id="vto-add-cart-btn"
+        >
+          <span class="vto-add-text">Add to Cart</span>
+          <span class="vto-add-price">{% render 'price', amount: current_variant.price, product: product %}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

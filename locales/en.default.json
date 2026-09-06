@@ -135,7 +135,8 @@
       "no_model_info": "Model height and size info coming soon.",
       "description": "Description",
       "add_to_cart": "Add to cart",
-      "sold_out": "Sold out"
+      "sold_out": "Sold out",
+      "try_on_ar": "Try now using VR"
     },
     "options": {
       "size": "Size",

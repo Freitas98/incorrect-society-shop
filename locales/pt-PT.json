@@ -135,7 +135,8 @@
       "no_model_info": "Altura e tamanho do modelo em breve.",
       "description": "Descrição",
       "add_to_cart": "Adicionar ao carrinho",
-      "sold_out": "Esgotado"
+      "sold_out": "Esgotado",
+      "try_on_ar": "Try now using VR"
     },
     "options": {
       "size": "Tamanho",

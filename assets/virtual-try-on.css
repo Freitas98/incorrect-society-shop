@@ -1,0 +1,661 @@
+/* ==========================================================================
+   Virtual Try-On (AR / VR Mirror) Styles - Incorrect Society
+   ========================================================================== */
+
+/* Trigger Button on Product Page */
+.btn-try-on-ar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 22px;
+  margin-top: 10px;
+  background-color: transparent;
+  color: var(--color-text, #000000);
+  border: 1.5px solid var(--color-text, #000000);
+  border-radius: 9999px;
+  font-family: var(--font-heading-family, 'Century Gothic', -apple-system, sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.btn-try-on-ar:hover {
+  background-color: var(--color-text, #000000);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.btn-try-on-ar svg {
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.btn-try-on-ar:hover svg {
+  transform: scale(1.1);
+}
+
+/* Modal Overlay */
+.vto-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  font-family: var(--font-primary-family, 'Century Gothic', -apple-system, sans-serif);
+}
+
+.vto-modal.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Backdrop */
+.vto-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Main Container Shell */
+.vto-shell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 480px;
+  height: 94svh;
+  max-height: 880px;
+  background: #000000;
+  border-radius: 28px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 768px) {
+  .vto-shell {
+    max-width: 100%;
+    height: 100svh;
+    max-height: 100svh;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+/* Top Header */
+.vto-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 18px 14px 18px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.vto-header-left,
+.vto-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.vto-brand-pill {
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: #000000;
+  background: #ffffff;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.vto-item-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.vto-btn-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.vto-btn-icon:hover {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+/* Live Camera Viewport */
+.vto-viewport {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0d0d0d;
+}
+
+/* Video & Canvas Elements */
+#vto-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* Mirror view for selfie */
+  z-index: 1;
+}
+
+#vto-video.vto-video--rear {
+  transform: scaleX(1); /* Normal for rear camera */
+}
+
+#vto-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Interactive Garment Layer */
+.vto-garment-layer {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -35%) scale(1);
+  transform-origin: center top;
+  z-index: 5;
+  width: 78%;
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+  transition: transform 0.08s ease-out;
+}
+
+.vto-garment-layer:active {
+  cursor: grabbing;
+}
+
+.vto-garment-layer img {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Shoulder Alignment Guide */
+.vto-guide {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.vto-guide.vto-guide--hidden {
+  opacity: 0;
+}
+
+.vto-guide-silhouette {
+  width: 180px;
+  height: 220px;
+  animation: vtoPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes vtoPulse {
+  0%, 100% { transform: scale(1); opacity: 0.65; }
+  50% { transform: scale(1.03); opacity: 0.95; }
+}
+
+.vto-guide-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  margin-top: 14px;
+  backdrop-filter: blur(8px);
+}
+
+/* Status Pill */
+.vto-status-pill {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.vto-status-pill.active {
+  opacity: 1;
+}
+
+.vto-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+/* View Toggle (Front / Back) Floating on right side */
+.vto-view-toggle {
+  position: absolute;
+  top: 76px;
+  right: 16px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 3px;
+  backdrop-filter: blur(10px);
+}
+
+.vto-view-btn {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  padding: 7px 11px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vto-view-btn.active {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Color Swatches (Burgundy / Grey) Floating on left side */
+.vto-shirt-toggle {
+  position: absolute;
+  top: 76px;
+  left: 16px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.vto-swatch-btn {
+  background: transparent;
+  border: 2px solid transparent;
+  padding: 2px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.vto-swatch-btn.active {
+  border-color: #ffffff;
+  transform: scale(1.1);
+}
+
+.vto-swatch-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: block;
+}
+
+/* Camera Permission Prompt Card */
+.vto-permission-card {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  background: #000000;
+  color: #ffffff;
+}
+
+.vto-permission-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  color: #ffffff;
+}
+
+.vto-permission-title {
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+}
+
+.vto-permission-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 320px;
+  margin: 0 0 24px 0;
+}
+
+.vto-action-pill {
+  padding: 12px 28px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #000000;
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vto-action-pill:hover {
+  transform: scale(1.04);
+}
+
+/* Shutter Flash */
+.vto-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  background: #ffffff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease-out;
+}
+
+.vto-flash.active {
+  opacity: 0.9;
+}
+
+/* Snapshot Modal Overlay */
+.vto-snapshot-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.vto-snapshot-modal {
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.vto-snapshot-modal img {
+  width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  margin-bottom: 20px;
+}
+
+.vto-snapshot-actions {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.vto-pill-btn {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 9999px;
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vto-pill-btn--solid {
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
+}
+
+.vto-pill-btn--solid:hover {
+  background: #e5e5e5;
+}
+
+.vto-pill-btn--outline {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.vto-pill-btn--outline:hover {
+  border-color: #ffffff;
+}
+
+/* Bottom Controls */
+.vto-controls {
+  position: relative;
+  z-index: 20;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
+  padding: 16px 20px calc(env(safe-area-inset-bottom, 0px) + 20px) 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Size Pills Bar */
+.vto-sizes-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.vto-sizes-title {
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.vto-size-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vto-size-pill {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.vto-size-pill.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: scale(1.08);
+}
+
+/* Bottom Actions Row */
+.vto-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Camera Shutter Button */
+.vto-shutter-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: transparent;
+  border: 3px solid #ffffff;
+  padding: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.vto-shutter-btn:active {
+  transform: scale(0.92);
+}
+
+.vto-shutter-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #ffffff;
+  display: block;
+  transition: background 0.15s ease;
+}
+
+/* Add to Cart in Modal */
+.vto-add-cart-btn {
+  flex: 1;
+  height: 52px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.vto-add-cart-btn:hover {
+  background: var(--color-primary, #8b1e2d);
+  color: #ffffff;
+}
+
+.vto-add-cart-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vto-add-price {
+  font-size: 12px;
+  font-weight: 700;
+}

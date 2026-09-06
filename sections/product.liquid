@@ -336,6 +336,23 @@
         <span class="btn-text">Add to Cart</span>
         <span class="btn-price">{% render 'price', amount: current_variant.price, product: product %}</span>
       </button>
+
+      {% unless product.gift_card? or product.type == 'Gift Card' or product.type == "Accessories" %}
+        <button
+          type="button"
+          class="btn-try-on-ar"
+          id="btn-trigger-vto"
+          aria-haspopup="dialog"
+          aria-controls="VirtualTryOnModal"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          <span>{{ 'products.product.try_on_ar' | t: default: 'Try now using VR' }}</span>
+        </button>
+      {% endunless %}
+
       <div class="cart-message" style="display: none;"></div>
     {% endform %}
   </div>
@@ -362,6 +379,12 @@
     </svg>
   </button>
 </div>
+
+{% unless product.gift_card? or product.type == 'Gift Card' or product.type == "Accessories" %}
+  {{ 'virtual-try-on.css' | asset_url | stylesheet_tag }}
+  {% render 'virtual-try-on-modal', product: product %}
+  <script src="{{ 'virtual-try-on.js' | asset_url }}" defer="defer"></script>
+{% endunless %}
 
 {% stylesheet %}
   /* Override parent shopify-section grid for product page */
