@@ -19,7 +19,8 @@
   assign burgundy_back_url = 'vto-burgundy-back.png' | asset_url
   assign grey_front_url = 'vto-grey-front.png' | asset_url
   assign grey_back_url = 'vto-grey-back.png' | asset_url
-
+  assign secrets_glb_url = 'vto-secrets.glb' | asset_url
+  assign sinners_glb_url = 'vto-sinners.glb' | asset_url
 -%}
 
 <!-- Virtual Try-On Modal Container -->
@@ -36,6 +37,8 @@
   data-burgundy-back="{{ burgundy_back_url }}"
   data-grey-front="{{ grey_front_url }}"
   data-grey-back="{{ grey_back_url }}"
+  data-secrets-glb="{{ secrets_glb_url }}"
+  data-sinners-glb="{{ sinners_glb_url }}"
 >
   <!-- Dark Backdrop -->
   <div class="vto-backdrop" data-vto-close></div>
@@ -87,8 +90,15 @@
       <!-- Hidden Video Stream (Source) -->
       <video id="vto-video" playsinline muted autoplay></video>
 
-      <!-- Main Mirror Canvas -->
+      <!-- Main Mirror Canvas (Three.js WebGL & 3D Garment Scene) -->
       <canvas id="vto-canvas"></canvas>
+
+      <!-- 3D Engine & Body Tracking Loading Overlay -->
+      <div class="vto-loading-overlay" id="vto-loading-overlay">
+        <div class="vto-loading-spinner"></div>
+        <span class="vto-loading-title">INITIALIZING 3D ENGINE</span>
+        <span class="vto-loading-subtitle">Calibrating body tracking & cloth mesh...</span>
+      </div>
 
       <!-- Drag & Pinch Interactive Garment Layer -->
       <div class="vto-garment-layer" id="vto-garment-layer">
