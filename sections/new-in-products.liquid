@@ -35,13 +35,26 @@
               break
             endif
           endfor
+
+          # Classify product type reliably with fallbacks
+          assign raw_type = product.metafields.custom.type | default: product.type | default: '' | downcase
+          assign title_handle_tags = product.title | append: ' ' | append: product.handle | append: ' ' | append: product.tags | join: ' ' | downcase
+          assign final_product_type = raw_type
+
+          if title_handle_tags contains 'hoodie' or title_handle_tags contains 'hoody' or title_handle_tags contains 'sweatshirt' or title_handle_tags contains 'zip'
+            assign final_product_type = final_product_type | append: ' hoodie hoody sweatshirt zip'
+          endif
+          if title_handle_tags contains 'tee' or title_handle_tags contains 't-shirt' or title_handle_tags contains 'tshirt' or title_handle_tags contains 'babytee' or title_handle_tags contains 'longsleeve'
+            assign final_product_type = final_product_type | append: ' tee tees t-shirt tshirt babytee longsleeve'
+          endif
         -%}
         
         <article class="product-card-enhanced" 
                  data-product-id="{{ product.id }}"
                  data-product-handle="{{ product.handle }}"
                  data-available="{{ product.available }}"
-                 data-product-type="{{ product.metafields.custom.type | downcase }}">
+                 data-product-type="{{ final_product_type | strip | escape }}"
+                 data-product-title="{{ product.title | downcase | escape }}">
           
           <div class="product-image-container">
             <a href="{{ product.url }}" class="product-card-link">
@@ -776,34 +789,61 @@
       }
     }
 
-    // Type filter from URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const typeParam = urlParams.get('type');
-    
-    if (typeParam) {
+    // Enhanced product type filter logic
+    function matchesTypeFilter(productEl, filterType) {
+      if (!filterType || filterType === 'all' || filterType === '') return true;
+      const f = filterType.toLowerCase().trim();
+      const productType = (productEl.dataset.productType || '').toLowerCase();
+      const productTitle = (productEl.dataset.productTitle || productEl.querySelector('.product-title, .product-card-title')?.textContent || '').toLowerCase();
+      const combined = productType + ' ' + productTitle;
+
+      if (f === 'hoodie' || f === 'hoodies' || f === 'sweatshirt') {
+        return combined.includes('hoodie') || combined.includes('hoody') || combined.includes('sweatshirt') || combined.includes('zip');
+      }
+      if (f === 't-shirt' || f === 'tshirt' || f === 'tee' || f === 'tees' || f === 'babytee' || f === 'longsleeve') {
+        return combined.includes('tee') || combined.includes('t-shirt') || combined.includes('tshirt') || combined.includes('babytee') || combined.includes('longsleeve');
+      }
+      return combined.includes(f);
+    }
+
+    function applyNewInFilter(typeParam) {
       const products = section.querySelectorAll('.product-card-enhanced');
-      const filterType = typeParam.toLowerCase();
       let visibleCount = 0;
-      
+
       products.forEach(product => {
-        const productType = (product.dataset.productType || '').toLowerCase();
-        
-        if (!productType.includes(filterType)) {
-          product.style.display = 'none';
-        } else {
+        if (matchesTypeFilter(product, typeParam)) {
           product.style.display = '';
           visibleCount++;
+        } else {
+          product.style.display = 'none';
         }
       });
 
-      if (visibleCount === 0) {
+      const parentShopifySection = section.closest('.shopify-section');
+      if (visibleCount === 0 && typeParam && typeParam !== 'all') {
         section.style.display = 'none';
-        const parentShopifySection = section.closest('.shopify-section');
-        if (parentShopifySection) {
-          parentShopifySection.style.display = 'none';
-        }
+        if (parentShopifySection) parentShopifySection.style.display = 'none';
+      } else {
+        section.style.display = '';
+        if (parentShopifySection) parentShopifySection.style.display = '';
       }
     }
+
+    // Run on initial load from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialType = urlParams.get('type');
+    if (initialType) {
+      applyNewInFilter(initialType);
+    }
+
+    // Listen for custom filter event (e.g. from hero banner) and back/forward navigation
+    window.addEventListener('filterProductsByType', (e) => {
+      applyNewInFilter(e.detail?.type || '');
+    });
+    window.addEventListener('popstate', () => {
+      const p = new URLSearchParams(window.location.search).get('type');
+      applyNewInFilter(p || '');
+    });
   });
 </script>
 {% endif %}

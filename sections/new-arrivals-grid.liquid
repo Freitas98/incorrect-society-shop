@@ -108,6 +108,18 @@
               break
             endif
           endfor
+
+          # Classify product type reliably with fallbacks
+          assign raw_type = product.metafields.custom.type | default: product.type | default: '' | downcase
+          assign title_handle_tags = product.title | append: ' ' | append: product.handle | append: ' ' | append: product.tags | join: ' ' | downcase
+          assign final_product_type = raw_type
+
+          if title_handle_tags contains 'hoodie' or title_handle_tags contains 'hoody' or title_handle_tags contains 'sweatshirt' or title_handle_tags contains 'zip'
+            assign final_product_type = final_product_type | append: ' hoodie hoody sweatshirt zip'
+          endif
+          if title_handle_tags contains 'tee' or title_handle_tags contains 't-shirt' or title_handle_tags contains 'tshirt' or title_handle_tags contains 'babytee' or title_handle_tags contains 'longsleeve'
+            assign final_product_type = final_product_type | append: ' tee tees t-shirt tshirt babytee longsleeve'
+          endif
         %}
         
         <article class="product-card-enhanced" 
@@ -115,7 +127,8 @@
                  data-product-handle="{{ product.handle }}"
                  data-collections="{% for col in product.collections %}{{ col.handle }},{% endfor %}"
                  data-available="{{ product.available }}"
-                 data-product-type="{{ product.metafields.custom.type | downcase }}">
+                 data-product-type="{{ final_product_type | strip | escape }}"
+                 data-product-title="{{ product.title | downcase | escape }}">
           
           <div class="product-image-container">
             <a href="{{ product.url }}" class="product-card-link">
@@ -1006,7 +1019,18 @@
         
         // Type filter (hoodie, t-shirt, etc.)
         if (activeFilters.type !== 'all') {
-          if (!productType.includes(activeFilters.type)) {
+          const f = activeFilters.type.toLowerCase().trim();
+          const pTitle = (product.dataset.productTitle || product.querySelector('.product-title, .product-card-title')?.textContent || '').toLowerCase();
+          const combined = productType.toLowerCase() + ' ' + pTitle;
+          let matches = false;
+          if (f === 'hoodie' || f === 'hoodies' || f === 'sweatshirt') {
+            matches = combined.includes('hoodie') || combined.includes('hoody') || combined.includes('sweatshirt') || combined.includes('zip');
+          } else if (f === 't-shirt' || f === 'tshirt' || f === 'tee' || f === 'tees' || f === 'babytee' || f === 'longsleeve') {
+            matches = combined.includes('tee') || combined.includes('t-shirt') || combined.includes('tshirt') || combined.includes('babytee') || combined.includes('longsleeve');
+          } else {
+            matches = combined.includes(f);
+          }
+          if (!matches) {
             visible = false;
           }
         }

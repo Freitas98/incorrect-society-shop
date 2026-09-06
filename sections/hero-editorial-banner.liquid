@@ -559,13 +559,18 @@
       height: auto !important;
       min-height: unset;
       flex-direction: column;
+      background-color: var(--color-background, #ffffff);
     }
 
     .hero-editorial__media {
       position: relative;
       width: 100%;
-      height: 70vh;
-      min-height: 420px;
+      height: 52vh;
+      min-height: 320px;
+    }
+
+    .hero-editorial__img {
+      object-position: center 20% !important;
     }
 
     .hero-editorial__scrim {
@@ -574,28 +579,64 @@
 
     .hero-editorial__container {
       position: relative;
-      padding: 30px 20px 40px 20px;
+      padding: 32px 20px 40px 20px;
       align-items: flex-start !important;
-      background-color: var(--color-background, #ffffff);
-    }
-
-    .hero-editorial--color-light .hero-editorial__container {
-      background-color: #000000;
+      background-color: var(--color-background, #ffffff) !important;
+      color: var(--color-text, #000000) !important;
     }
 
     .hero-editorial__content {
       max-width: 100%;
     }
 
+    .hero-editorial__tag {
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+      color: var(--color-text, #000000) !important;
+      opacity: 0.75;
+    }
+
     .hero-editorial__heading {
       font-size: clamp(32px, 8vw, 44px);
       line-height: 1.05;
       margin-bottom: 16px;
+      color: var(--color-text, #000000) !important;
     }
 
     .hero-editorial__text {
       font-size: 13px;
+      line-height: 1.6;
       margin-bottom: 24px;
+      color: #333333 !important;
+      opacity: 0.9;
+    }
+
+    .hero-editorial__actions {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hero-editorial__btn {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 11px;
+      letter-spacing: 1.8px;
+      text-align: center;
+    }
+
+    .hero-editorial__btn--primary {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #000000 !important;
+    }
+
+    .hero-editorial__btn--secondary {
+      background-color: transparent !important;
+      color: #000000 !important;
+      border: 1px solid #000000 !important;
     }
 
     .hero-editorial__corner {
@@ -607,6 +648,50 @@
       border-top: 1px solid var(--color-border, #e5e5e5);
       width: 100%;
       justify-content: space-between;
+      color: var(--color-text, #000000) !important;
+    }
+
+    .hero-editorial__corner-tag {
+      color: var(--color-text, #000000) !important;
+    }
+
+    .hero-editorial__corner-btn {
+      color: var(--color-text, #000000) !important;
+      border-color: #000000 !important;
     }
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const hero = document.getElementById('HeroEditorial-{{ section.id }}');
+    if (!hero) return;
+
+    const filterLinks = hero.querySelectorAll('a[href*="type="], a.hero-editorial__corner-btn, a[href*="/pages/all-products"]');
+    filterLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        try {
+          const href = link.getAttribute('href');
+          if (!href) return;
+          const url = new URL(href, window.location.origin);
+
+          if (url.pathname === window.location.pathname) {
+            e.preventDefault();
+            const targetType = url.searchParams.get('type') || '';
+            window.history.pushState({}, '', url.pathname + (url.search ? url.search : ''));
+            window.dispatchEvent(new CustomEvent('filterProductsByType', { detail: { type: targetType } }));
+
+            const targetSection = document.querySelector('.new-in-section, .old-collections-section, .collection-products, .new-arrivals-section');
+            if (targetSection) {
+              const yOffset = -70;
+              const y = targetSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+              window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+          }
+        } catch (err) {
+          // Allow default link behavior on error
+        }
+      });
+    });
+  });
+</script>
