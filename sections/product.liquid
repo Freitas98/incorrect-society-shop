@@ -1134,18 +1134,25 @@
     
     .size-guide-popup {
       position: fixed;
-      left: 15px;
-      right: 15px;
+      left: 14px;
+      right: 14px;
       top: auto;
-      bottom: 80px;
+      bottom: 60px;
+      max-height: 82vh;
+      overflow-y: auto;
       min-width: auto;
       max-width: none;
       opacity: 0;
       visibility: hidden;
       transform: translateY(20px);
       z-index: 999999;
-      padding: 20px;
-      padding-top: 35px;
+      padding: 16px 14px 18px 14px;
+      padding-top: 36px;
+      border-radius: 6px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.22);
+      border: 1px solid var(--color-border);
+      background: var(--color-background, #fff);
+      box-sizing: border-box;
     }
     
     .size-guide-popup.active {
@@ -1156,6 +1163,92 @@
     
     .size-guide-close {
       display: flex;
+    }
+
+    .size-guide-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .size-guide-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+
+    .size-guide-table {
+      width: 100%;
+      min-width: 280px;
+    }
+
+    .size-guide-table .size-row {
+      display: grid;
+      grid-template-columns: 32px repeat(3, minmax(55px, 1fr));
+      gap: 6px;
+      padding: 7px 0;
+      font-size: 11px;
+      align-items: center;
+    }
+
+    .size-guide-table--5-points {
+      min-width: 320px;
+    }
+
+    .size-guide-table--5-points .size-row {
+      display: grid;
+      grid-template-columns: 28px repeat(5, minmax(46px, 1fr));
+      gap: 4px;
+      padding: 7px 0;
+      font-size: 10px;
+      align-items: center;
+    }
+
+    .size-guide-table .size-row span {
+      white-space: nowrap;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .size-guide-table .size-row span:first-child {
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .size-guide-table .size-row.header span {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .size-guide-diagram {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 0;
+      border-top: 1px dashed var(--color-border);
+      margin-top: 2px;
+    }
+
+    .size-guide-diagram img {
+      max-width: 130px;
+      max-height: 110px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .size-guide-link {
+      margin-top: 8px;
+      padding-top: 8px;
+      text-align: center;
+      font-size: 11px;
     }
     
     /* Disable hover on mobile - use click only */
@@ -1247,6 +1340,27 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Escape') {
         sizeGuidePopup.classList.remove('active');
       }
+    });
+
+    // Unit toggle handler (CM / IN)
+    const unitBtns = document.querySelectorAll('.unit-btn');
+    unitBtns.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const unit = this.dataset.unit;
+        unitBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const tables = document.querySelectorAll('.size-guide-table');
+        tables.forEach(t => {
+          if (t.dataset.unit === unit) {
+            t.style.display = '';
+          } else {
+            t.style.display = 'none';
+          }
+        });
+      });
     });
   }
 
