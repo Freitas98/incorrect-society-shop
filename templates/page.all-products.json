@@ -20,7 +20,7 @@
         "text": "Built without compromise. Designed in boxy proportions with heavyweight cottons and durable finishes. Discover our complete catalogue below before pieces are permanently archived.",
         "content_position": "right",
         "text_color": "dark",
-        "scrim_opacity": 25,
+        "scrim_opacity": 0,
         "button_1_text": "EXPLORE HOODIES",
         "button_1_link": "/pages/all-products?type=hoodie",
         "button_2_text": "EXPLORE TEES",

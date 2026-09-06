@@ -20,7 +20,7 @@
         "text": "A collection built on unfiltered expression. Heavyweight 280gsm cotton, relaxed boxy silhouettes, and distinct graphics made to outlast every trend. Secrets kept, sins committed. Welcome to Incorrect Society.",
         "content_position": "right",
         "text_color": "dark",
-        "scrim_opacity": 15,
+        "scrim_opacity": 0,
         "button_1_text": "SHOP NEW DROP",
         "button_1_link": "/collections/secrets-and-sins",
         "button_2_text": "EXPLORE ALL",
