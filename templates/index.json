@@ -13,6 +13,7 @@
       "type": "hero-editorial-banner",
       "settings": {
         "image": "shopify://shop_images/image00054.jpg",
+        "mobile_image": "shopify://shop_images/WhatsApp_Image_2026-09-06_at_21.34.19.jpg",
         "image_height": "full",
         "image_position": "left center",
         "tag": "",
