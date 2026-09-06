@@ -8,6 +8,33 @@
  * ------------------------------------------------------------
  */
 {
+  "try_on": {
+    "title": "Provador virtual",
+    "close": "Fechar provador",
+    "camera": "Usar câmara",
+    "upload": "Escolher fotografia",
+    "flip": "Trocar câmara",
+    "save": "Guardar imagem",
+    "product": "Voltar ao produto",
+    "intro": "Escolhe a câmara ou uma fotografia com os ombros, as ancas e os cotovelos visíveis.",
+    "loading": "A preparar a peça e o seguimento corporal…",
+    "searching": "Mostra os ombros, as ancas e os dois cotovelos. Afasta-te se necessário.",
+    "tracking": "Peça ajustada · move os braços",
+    "photoFitted": "Peça ajustada à tua fotografia",
+    "unsupported": "Ainda não existe um modelo 3D associado a este produto ou variante.",
+    "engineError": "Não foi possível iniciar o provador. Verifica a ligação e tenta novamente.",
+    "cameraUnavailable": "A câmara necessita de HTTPS e de um navegador compatível. Podes escolher uma fotografia.",
+    "cameraDenied": "O acesso à câmara não foi autorizado. Ativa-o no navegador ou escolhe uma fotografia.",
+    "cameraError": "A câmara parou. Volta a ativá-la ou escolhe uma fotografia.",
+    "invalidPhoto": "Escolhe uma fotografia JPG, PNG ou WebP até 15 MB.",
+    "webglLost": "A renderização 3D parou. Fecha e volta a abrir o provador.",
+    "ease": "Ajuste visual da largura",
+    "length": "Ajuste visual do comprimento",
+    "privacy": "A câmara e as fotografias são processadas no teu dispositivo, sem envio de imagens. Os recursos de seguimento são descarregados da Google/jsDelivr.",
+    "note": "Pré-visualização visual, não uma recomendação de tamanho. O produto selecionado mantém-se.",
+    "adjust": "Ajustar a peça",
+    "view": "Câmara ou fotografia com a peça 3D"
+  },
   "404": {
     "title": "Página Não Encontrada",
     "subtitle": "Oops",

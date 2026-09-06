@@ -80,6 +80,23 @@ Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. N�
 
 ## Convenções para novas alterações
 
+### Provador virtual — implementação local de 2026-09-06
+
+- Entrada: `sections/product.liquid` → `snippets/virtual-try-on-modal.liquid`, isolado por `section.id`; controlador `assets/virtual-try-on.js`, estilos `assets/virtual-try-on.css`.
+- Produtos distintos, confirmados pelo utilizador: ID `11569665933653` = Secrets; ID `11569666097493` = Sinners. Não inferir a peça pelo título ou cor. Fallback por estes IDs; `custom.try_on_model` do produto substitui o fallback, os seletores de produto da secção têm precedência e o metafield da variante pode substituir o modelo dessa variante. Valores válidos: `secrets`, `sinners`.
+- Apenas produtos explicitamente associados mostram o botão. O provador não altera variantes nem adiciona outro produto ao carrinho; a compra continua no formulário original.
+- Câmara/fotografia processadas no dispositivo. Não enviar imagens, landmarks ou capturas para servidores. Pedir acesso à câmara apenas após clique em Usar câmara; terminar tracks, worker, frames e recursos 3D ao fechar/descarregar a secção. Não ativar uma câmara real durante testes automatizados.
+- Modelo 3D e dependências pesadas só carregam depois de escolher uma fonte. Three.js 0.180.0 e MediaPipe Tasks Vision 0.10.22-rc.20250304 vendorizados em `assets/vto-*`; WASM e modelo Pose Full são obtidos de URLs fixas Google/jsDelivr. Licenças e reprodução em `docs/TRY-ON.md` e `scripts/vendor-try-on.cjs`.
+- `layout/theme.liquid` inclui uma única `vto-import-map`; os nomes `@incorrect/vto-*` resolvem para `asset_url` versionadas, sem download antecipado. Não voltar a imports relativos sem versão nem duplicar Three.js; o worker recebe a URL versionada do bundle MediaPipe porque import maps do documento não se aplicam a workers.
+- `vto-pose-worker.js` devolve cada bitmap com os seus landmarks, sem bloquear a interface com inferência. `vto-fit.js` converte coordenadas para o mesmo enquadramento contain da imagem/câmara; `vto-renderer.js` aplica matrizes aos ossos respeitando o bind original. O espelho selfie também troca a atribuição anatómica dos braços.
+- `vto-pose-processor.js` é partilhado pelo worker e pela alternativa para navegadores sem OffscreenCanvas. Essa alternativa continua inteiramente local, mas corre a inferência na thread principal com limite de 8 pedidos/s; não a apresentar como equivalente em performance ao worker (máximo 20/s). Passar canvas explícito evita fallback DOM inválido dentro de workers WebKit.
+- GLB em metros, +Y para cima, +Z frente; ossos `root`, `spine`, `chest`, `neck`, `upper_arm.L/R`. O loader pode retirar os pontos dos nomes. Ombros anatómicos ±0,235 m / altura 0,57 m; ancas 0,08 m. Não trocar estas âncoras pela largura externa dos ombros oversized.
+- As mangas foram reponderadas através do Blender MCP: toda a extremidade acompanha o respetivo braço, incluindo a face inferior. Testes inspecionam os GLB reais. Não voltar a misturar pesos do tronco na extremidade das mangas.
+- É uma sobreposição 3D deformável com oclusão aproximada de cabeça/pescoço/antebraços/mãos; não uma simulação física do tecido, remoção generativa da roupa original ou recomendação de tamanho. Largura/comprimento são ajustes visuais, não S/M/L reais.
+- Testes locais: `node --test tests/password-page.test.cjs tests/vto-fit.test.cjs tests/vto-models.test.cjs`; integração Liquid requer a dependência isolada documentada. Fotografias públicas e vídeo de movimentos reais foram usados com uma câmara simulada no Chrome. WebKit de teste validou fotografias/reabertura; o caminho sem worker também passou a câmara simulada em Chrome. Viewport mobile testado; câmara física, Safari no iPhone, Chrome no Android e tema Shopify remoto ainda não validados. Não confundir com publicação.
+
+### Regras gerais
+
 1. Ler os templates, secções, snippets e consumidores relevantes antes de editar; preferir alterações pequenas e coerentes com o tema.
 2. Não introduzir uma framework ou pipeline de build sem necessidade concreta e acordo do utilizador.
 3. Usar `section.id` e seletores locais para novas instâncias de componentes. Evitar IDs globais repetidos e inicializações duplicadas.

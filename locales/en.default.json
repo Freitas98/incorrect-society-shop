@@ -8,6 +8,33 @@
  * ------------------------------------------------------------
  */
 {
+  "try_on": {
+    "title": "Virtual fitting room",
+    "close": "Close fitting room",
+    "camera": "Use camera",
+    "upload": "Choose photo",
+    "flip": "Switch camera",
+    "save": "Save image",
+    "product": "Back to product",
+    "intro": "Choose your camera or a photo showing shoulders, hips and elbows.",
+    "loading": "Preparing your garment and body tracking…",
+    "searching": "Show your shoulders, hips and both elbows. Step back if needed.",
+    "tracking": "Garment fitted · move your arms",
+    "photoFitted": "Garment fitted to your photo",
+    "unsupported": "No 3D model is assigned to this product or variant yet.",
+    "engineError": "Could not start the fitting room. Check your connection and try again.",
+    "cameraUnavailable": "Camera needs HTTPS and a compatible browser. You can choose a photo instead.",
+    "cameraDenied": "Camera access was not allowed. Enable it in your browser or choose a photo.",
+    "cameraError": "The camera stopped. Start it again or choose a photo.",
+    "invalidPhoto": "Choose a JPG, PNG or WebP photo up to 15 MB.",
+    "webglLost": "3D rendering stopped. Close and reopen the fitting room.",
+    "ease": "Visual width adjustment",
+    "length": "Visual length adjustment",
+    "privacy": "Camera and photos are processed on your device, not uploaded. Tracking resources are downloaded from Google/jsDelivr.",
+    "note": "Visual preview, not a size recommendation. Your selected product stays the same.",
+    "adjust": "Adjust fit",
+    "view": "Camera or photo with the 3D garment"
+  },
   "404": {
     "title": "Page Not Found",
     "subtitle": "Oops",

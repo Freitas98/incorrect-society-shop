@@ -1,0 +1,14 @@
+{% comment %}One layout-level map; defining URLs does not download the modules.{% endcomment %}
+<script type="importmap">
+{
+  "imports": {
+    "@incorrect/vto-pose-processor": {{ 'vto-pose-processor.js' | asset_url | json }},
+    "@incorrect/vto-renderer": {{ 'vto-renderer.js' | asset_url | json }},
+    "@incorrect/vto-fit": {{ 'vto-fit.js' | asset_url | json }},
+    "@incorrect/vto-three": {{ 'vto-three.module.js' | asset_url | json }},
+    "@incorrect/vto-three-core": {{ 'vto-three.core.js' | asset_url | json }},
+    "@incorrect/vto-gltf-loader": {{ 'vto-gltf-loader.js' | asset_url | json }},
+    "@incorrect/vto-buffer-utils": {{ 'vto-buffer-utils.js' | asset_url | json }}
+  }
+}
+</script>

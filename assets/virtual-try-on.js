@@ -1,1005 +1,250 @@
-/**
- * Incorrect Society - Virtual Try-On 3D AR Mirror
- * Luxury WebGL 3D Garment Try-On with Real-Time Pose Tracking (Three.js + MediaPipe Pose).
- */
-
-(function () {
+/* On-device camera/photo try-on. No frame or photo is sent to a server. */
+(() => {
   'use strict';
-
-  // Robust CDN dependencies
-  const THREE_CDN = 'https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js';
-  const GLTF_LOADER_CDN = 'https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js';
-  const POSE_CDN = 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js';
-
-  function loadScript(src) {
-    if (document.querySelector('script[src="' + src + '"]')) {
-      return Promise.resolve();
-    }
-    return new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = src;
-      s.async = true;
-      s.onload = () => resolve();
-      s.onerror = (e) => reject(new Error('Failed loading ' + src));
-      document.head.appendChild(s);
-    });
-  }
-
-  function initVirtualTryOn() {
-    const modal = document.getElementById('VirtualTryOnModal');
-    const openBtn = document.getElementById('btn-trigger-vto');
-
-    if (!modal || !openBtn) return;
-    if (modal.dataset.vtoInitialized === 'true') return;
-    modal.dataset.vtoInitialized = 'true';
-
-    // DOM Elements
-    const viewport = document.getElementById('vto-viewport');
-    const video = document.getElementById('vto-video');
-    const canvas = document.getElementById('vto-canvas');
-    const loaderEl = document.getElementById('vto-loader');
-    const flipCamBtn = document.getElementById('vto-flip-cam');
-    const permissionCard = document.getElementById('vto-permission-card');
-    const reqCamBtn = document.getElementById('vto-request-cam-btn');
-    const flashEl = document.getElementById('vto-flash');
-    const takePhotoBtn = document.getElementById('vto-take-photo-btn');
-    const addCartBtn = document.getElementById('vto-add-cart-btn');
-
-    // Snapshot Elements
-    const snapshotOverlay = document.getElementById('vto-snapshot-overlay');
-    const snapshotImg = document.getElementById('vto-snapshot-img');
-    const downloadBtn = document.getElementById('vto-download-btn');
-    const retakeBtn = document.getElementById('vto-retake-btn');
-
-    // Controls
-    const closeBtns = modal.querySelectorAll('[data-vto-close]');
-    const viewBtns = modal.querySelectorAll('.vto-view-switch .vto-switch-btn');
-    const swatchBtns = modal.querySelectorAll('.vto-color-switch .vto-switch-btn');
-    const sizePills = modal.querySelectorAll('.vto-size-pill');
-
-    // 3D Model URLs
-    let secretsGlbUrl = modal.dataset.secretsGlb || '';
-    let sinnersGlbUrl = modal.dataset.sinnersGlb || '';
-    if (secretsGlbUrl.startsWith('//')) secretsGlbUrl = window.location.protocol + secretsGlbUrl;
-    if (sinnersGlbUrl.startsWith('//')) sinnersGlbUrl = window.location.protocol + sinnersGlbUrl;
-
-    // Sizing scales (box-fit volume multipliers)
-    const sizeScales = {
-      XS: 0.88,
-      S: 0.94,
-      M: 1.00,
-      L: 1.08,
-      XL: 1.16,
-      XXL: 1.24
-    };
-
-    // State
-    let isModalOpen = false;
-    let stream = null;
-    let facingMode = 'user';
-    let currentShirt = modal.dataset.defaultShirt || 'grey';
-    let currentView = 'front';
-    let currentSize = 'M';
-    let sizeScale = 1.00;
-    let userScale = 1.0;
-    let manualRotY = 0;
-    let manualPosX = 0;
-    let manualPosY = 0;
-
-    // Three.js State
-    let renderer = null;
-    let scene = null;
-    let camera = null;
-    let secretsModel = null;
-    let sinnersModel = null;
-    let currentActiveModel = null;
-    let neckOccluder = null;
-    let modelBones = { secrets: {}, sinners: {} };
-    let is3DReady = false;
-    let animFrameId = null;
-
-    // Dedicated Offscreen Processing Canvas for iOS Safari & Android WebKit compatibility
-    const procCanvas = document.createElement('canvas');
-    const procCtx = procCanvas.getContext('2d', { willReadFrequently: true });
-    procCanvas.width = 360;
-    procCanvas.height = 480;
-
-    // Tracking Smoothing State
-    const targetPos = { x: 0, y: -0.22, z: 0 };
-    const currentPos = { x: 0, y: -0.22, z: 0 };
-    const targetRot = { x: 0, y: 0, z: 0 };
-    const currentRot = { x: 0, y: 0, z: 0 };
-    let targetModelScale = 1.0;
-    let currentModelScale = 1.0;
-    let hasBodyLock = false;
-    let lastDetectionTime = 0;
-
-    // MediaPipe State
-    let poseInstance = null;
-    let isProcessingFrame = false;
-
-    // Variant Data from Product Form
-    let variantData = null;
-    try {
-      const dataEl = document.getElementById('variant-data');
-      if (dataEl) variantData = JSON.parse(dataEl.textContent);
-    } catch (e) {
-      console.warn('Could not parse variant data:', e);
-    }
-
-    // ------------------------------------------------------------------------
-    // Dynamic Engine Loader (Three.js + GLTFLoader + MediaPipe)
-    // ------------------------------------------------------------------------
-    async function load3DEngine() {
-      if (is3DReady) return;
-
-      if (loaderEl) loaderEl.classList.add('active');
-
-      try {
-        // 1. Load Three.js
-        await loadScript(THREE_CDN);
-        // 2. Load GLTFLoader
-        await loadScript(GLTF_LOADER_CDN);
-
-        // Initialize Three.js scene immediately
-        initThreeScene();
-
-        // 3. Load 3D Models and display initial model immediately
-        await load3DModels();
-
-        // Hide loader now that 3D model is active and rendered
-        if (loaderEl) loaderEl.classList.remove('active');
-
-        // Start 60fps render loop
-        is3DReady = true;
-        renderLoop();
-
-        // 4. Load MediaPipe Pose in background
-        loadScript(POSE_CDN)
-          .then(() => {
-            initMediaPipe();
-          })
-          .catch((e) => {
-            console.warn('MediaPipe Pose could not be loaded; manual 3D interaction remains active:', e);
-          });
-      } catch (err) {
-        console.error('Fatal 3D engine init error:', err);
-        if (loaderEl) loaderEl.classList.remove('active');
-      }
-    }
-
-    // ------------------------------------------------------------------------
-    // Three.js Scene Setup
-    // ------------------------------------------------------------------------
-    function initThreeScene() {
-      const width = viewport.clientWidth || window.innerWidth;
-      const height = viewport.clientHeight || window.innerHeight;
-
-      scene = new THREE.Scene();
-
-      camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 50);
-      camera.position.set(0, 0, 2.2);
-
-      renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        alpha: true,
-        antialias: true,
-        preserveDrawingBuffer: true,
-        powerPreference: 'high-performance'
+  if(window.IncorrectTryOn)return;
+  const instances=new Map();
+  class TryOn {
+    constructor(dialog) {
+      this.dialog=dialog;this.section=dialog.closest('.shopify-section')||document;
+      this.config=JSON.parse(dialog.querySelector('[data-vto-config]').textContent);
+      this.q=role=>dialog.querySelector('[data-vto-'+role+']');this.text=this.config.strings;
+      this.media=this.q('media');this.ctx=this.media.getContext('2d');
+      this.canvas=this.q('canvas');this.stage=this.q('stage');this.input=this.q('file');
+      this.video=document.createElement('video');this.video.muted=true;this.video.playsInline=true;
+      this.generation=0;this.session=0;this.pending=false;this.facing='user';this.mode=null;this.frameInterval=50;
+      this.events=new AbortController();
+      const on=(el,event,fn)=>el.addEventListener(event,fn,{signal:this.events.signal});
+      on(dialog,'click',e=>{
+        const action=e.target.closest('[data-vto-action]')?.dataset.vtoAction;
+        if(e.target===dialog||action==='close')this.close();
+        if(action==='camera')this.startCamera();
+        if(action==='upload')this.input.click();
+        if(action==='flip'){this.facing=this.facing==='user'?'environment':'user';this.startCamera();}
+        if(action==='save')this.save();
+        if(action==='product')this.close();
       });
-      renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.15;
-      if (THREE.sRGBEncoding) {
-        renderer.outputEncoding = THREE.sRGBEncoding;
-      }
-
-      // Studio Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 1.25);
-      scene.add(ambientLight);
-
-      // Key light: angled top-front
-      const keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
-      keyLight.position.set(1.2, 2.2, 2.2);
-      scene.add(keyLight);
-
-      // Fill light: soft opposite side
-      const fillLight = new THREE.DirectionalLight(0xffffff, 0.75);
-      fillLight.position.set(-1.2, 0.8, 1.8);
-      scene.add(fillLight);
-
-      // Rim light: back accent for volumetric separation
-      const rimLight = new THREE.DirectionalLight(0xffffff, 0.85);
-      rimLight.position.set(0, 1.8, -1.8);
-      scene.add(rimLight);
-
-      // Head & Neck Depth Occluder (allows real head to come out of shirt collar)
-      const occluderGeo = new THREE.CylinderGeometry(0.09, 0.11, 0.38, 24);
-      const occluderMat = new THREE.MeshBasicMaterial({
-        colorWrite: false,
-        depthWrite: true
+      on(dialog,'cancel',()=>this.close());on(dialog,'close',()=>{if(!dialog.open)this.cleanup();});
+      on(this.input,'change',()=>{const file=this.input.files[0];if(file)this.startPhoto(file);this.input.value='';});
+      on(this.q('ease'),'input',()=>this.refit());on(this.q('length'),'input',()=>this.refit());
+      on(document,'visibilitychange',()=>{if(document.hidden&&this.mode==='camera')this.close();});
+      this.contextLost=e=>{e.preventDefault();if(this.opened)this.fail('webglLost');};
+      this.canvas.addEventListener('webglcontextlost',this.contextLost);
+      this.resizeObserver=new ResizeObserver(()=>this.resize());this.resizeObserver.observe(this.stage);
+    }
+    selectedModel() {
+      const options=[];
+      this.section.querySelectorAll('input[name^="option-"]:checked').forEach(el=>{
+        const i=Number(el.name.match(/option-(\d+)/)?.[1])-1;if(i>=0)options[i]=el.value;
       });
-      neckOccluder = new THREE.Mesh(occluderGeo, occluderMat);
-      neckOccluder.renderOrder = -1;
-      neckOccluder.visible = false;
-      scene.add(neckOccluder);
-
-      window.addEventListener('resize', onWindowResize);
+      const selector=this.section.querySelector('.variant-selector');
+      const variant=options.length?this.config.variants.find(v=>v.options.every((o,i)=>o===options[i])):
+        this.config.variants.find(v=>String(v.id)===selector?.value);
+      return options.length&&!variant?'':variant?.model||this.config.model;
     }
-
-    function onWindowResize() {
-      if (!renderer || !camera || !viewport) return;
-      const width = viewport.clientWidth;
-      const height = viewport.clientHeight;
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      renderer.setSize(width, height);
+    open(opener) {
+      if(this.opened)return;
+      this.opener=opener;this.modelKey=this.selectedModel();this.session++;
+      this.opened=true;this.previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';
+      this.dialog.showModal();this.q('choices').hidden=false;this.q('save').disabled=true;
+      this.status(this.config.models[this.modelKey]?'intro':'unsupported');
+      this.q('camera').disabled=this.q('upload').disabled=!this.config.models[this.modelKey];this.resize();
     }
-
-    // ------------------------------------------------------------------------
-    // Load 3D Models via ArrayBuffer parsing (Zero CORS/path bugs)
-    // ------------------------------------------------------------------------
-    async function fetchAndParseGLB(url) {
-      const resp = await fetch(url);
-      if (!resp.ok) {
-        throw new Error('HTTP ' + resp.status + ' loading ' + url);
+    status(key){
+      const textKey=key==='tracking'&&this.mode==='photo'?'photoFitted':key;
+      if(this.dialog.dataset.state!==key||this.statusTextKey!==textKey)this.q('status').textContent=this.text[textKey]||textKey;
+      this.statusTextKey=textKey;this.dialog.dataset.state=key;
+    }
+    close(){if(this.dialog.open)this.dialog.close();this.cleanup();}
+    cleanup() {
+      if(!this.opened)return;this.opened=false;this.generation++;this.session++;
+      cancelAnimationFrame(this.raf);this.stopStream();this.abort?.abort();this.abort=null;
+      clearTimeout(this.workerTimeout);this.rejectWorker?.(new Error('cancelled'));this.rejectWorker=null;
+      this.worker?.terminate();this.worker=null;
+      this.engine?.dispose();this.engine=null;this.enginePromise=null;this.workerPromise=null;
+      this.pending=false;this.lastResult=null;this.mode=null;
+      this.bitmap?.close();this.bitmap=null;this.ctx.clearRect(0,0,this.media.width,this.media.height);
+      document.body.style.overflow=this.previousOverflow;this.opener?.focus();this.q('busy').hidden=true;
+    }
+    destroy(){this.close();this.events.abort();this.canvas.removeEventListener('webglcontextlost',this.contextLost);this.resizeObserver.disconnect();}
+    freshCanvas(){
+      // A deliberately released WebGL context cannot be immediately reused.
+      // Keep the semantic attributes, but create a fresh drawing surface.
+      const canvas=this.canvas.cloneNode(false);
+      this.canvas.removeEventListener('webglcontextlost',this.contextLost);
+      this.canvas.replaceWith(canvas);this.canvas=canvas;
+      canvas.addEventListener('webglcontextlost',this.contextLost);
+    }
+    stopStream(){this.stream?.getTracks().forEach(t=>t.stop());this.stream=null;this.video.srcObject=null;}
+    fail(key){
+      if(!this.opened)return;
+      this.status(key);this.q('busy').hidden=true;this.engine?.hide();this.q('save').disabled=true;this.pending=false;
+      if(key!=='invalidPhoto'){this.failed=true;cancelAnimationFrame(this.raf);this.stopStream();}
+    }
+    async prepare(generation) {
+      this.abort ||= new AbortController();
+      const session=this.session,signal=this.abort.signal;
+      if(!this.enginePromise){
+        const promise=(async()=>{
+          const {GarmentRenderer}=await import('@incorrect/vto-renderer');
+          if(!this.opened||session!==this.session)throw new Error('cancelled');
+          this.engine?.dispose();this.freshCanvas();
+          const engine=new GarmentRenderer(this.canvas);this.engine=engine;this.resize();
+          await engine.load(new URL(this.config.models[this.modelKey],location.href).href,signal);
+        })().catch(e=>{if(this.enginePromise===promise)this.enginePromise=null;throw e;});
+        this.enginePromise=promise;
       }
-      const buffer = await resp.arrayBuffer();
-      const loader = new THREE.GLTFLoader();
-      return new Promise((resolve, reject) => {
-        loader.parse(
-          buffer,
-          '',
-          (gltf) => resolve(gltf),
-          (err) => reject(err)
-        );
-      });
-    }
-
-    async function load3DModels() {
-      const tasks = [];
-
-      if (secretsGlbUrl) {
-        tasks.push(
-          fetchAndParseGLB(secretsGlbUrl)
-            .then((gltf) => {
-              secretsModel = gltf.scene;
-              setupGarmentModel(secretsModel, 'secrets');
-            })
-            .catch((e) => console.error('Could not load secrets.glb:', e))
-        );
+      if(!this.workerPromise){
+        const promise=this.makeWorker(session,signal).catch(e=>{if(this.workerPromise===promise)this.workerPromise=null;throw e;});
+        this.workerPromise=promise;
       }
-
-      if (sinnersGlbUrl) {
-        tasks.push(
-          fetchAndParseGLB(sinnersGlbUrl)
-            .then((gltf) => {
-              sinnersModel = gltf.scene;
-              setupGarmentModel(sinnersModel, 'sinners');
-            })
-            .catch((e) => console.error('Could not load sinners.glb:', e))
-        );
-      }
-
-      await Promise.all(tasks);
-      switchGarmentModel(currentShirt);
+      await Promise.all([this.enginePromise,this.workerPromise]);
+      return this.opened&&generation===this.generation;
     }
-
-    function setupGarmentModel(model, key) {
-      modelBones[key] = {};
-
-      model.traverse((child) => {
-        if (child.isBone) {
-          modelBones[key][child.name] = child;
-        }
-        if (child.isMesh) {
-          child.castShadow = true;
-          child.receiveShadow = true;
-          if (child.material) {
-            child.material.side = THREE.DoubleSide;
-            child.material.roughness = 0.85;
+    async makeWorker(session,signal) {
+      if(typeof OffscreenCanvas==='undefined'){
+        const {createPoseProcessor}=await import('@incorrect/vto-pose-processor');
+        if(!this.opened||session!==this.session)throw new Error('cancelled');
+        this.worker?.terminate();
+        const bridge={postMessage:data=>processor.postMessage(data),terminate:()=>processor.close()};
+        const processor=createPoseProcessor({send:data=>bridge.onmessage?.({data}),createCanvas:()=>document.createElement('canvas')});
+        this.worker=bridge;this.frameInterval=125;
+      }else{
+        const response=await fetch(this.config.workerUrl,{signal});
+        if(!response.ok)throw new Error('engineError');
+        const blob=URL.createObjectURL(new Blob([await response.text()],{type:'text/javascript'}));
+        if(!this.opened||session!==this.session){URL.revokeObjectURL(blob);throw new Error('cancelled');}
+        this.worker?.terminate();
+        this.worker=new Worker(blob);URL.revokeObjectURL(blob);this.frameInterval=50;
+      }
+      await new Promise((resolve,reject)=>{
+        this.rejectWorker=reject;
+        this.workerTimeout=setTimeout(()=>{this.worker?.terminate();reject(new Error('engineError'));},60000);
+        this.worker.onmessage=({data})=>{
+          if(session!==this.session){data.bitmap?.close();return;}
+          if(data.kind==='ready'){clearTimeout(this.workerTimeout);this.rejectWorker=null;resolve();}
+          else if(data.kind==='error'){
+            if(data.id!==undefined&&data.id!==this.generation)return;
+            clearTimeout(this.workerTimeout);this.worker?.terminate();this.worker=null;this.workerPromise=null;
+            this.rejectWorker=null;reject(new Error('engineError'));this.fail('engineError');
           }
-        }
-      });
-
-      model.visible = false;
-      scene.add(model);
-    }
-
-    function switchGarmentModel(colorKey) {
-      currentShirt = colorKey;
-
-      if (secretsModel) secretsModel.visible = (colorKey === 'grey');
-      if (sinnersModel) sinnersModel.visible = (colorKey === 'burgundy');
-
-      currentActiveModel = (colorKey === 'burgundy') ? sinnersModel : secretsModel;
-
-      swatchBtns.forEach((btn) => {
-        btn.classList.toggle('active', btn.dataset.shirt === colorKey);
-      });
-
-      const titleEl = document.getElementById('vto-item-title');
-      if (titleEl) {
-        titleEl.textContent = (colorKey === 'burgundy')
-          ? 'Secrets & Sins - Burgundy Tee'
-          : 'Secrets & Sins - Grey Tee';
-      }
-
-      updateAddToCartButtonState();
-    }
-
-    // ------------------------------------------------------------------------
-    // Google MediaPipe Pose Setup
-    // ------------------------------------------------------------------------
-    function initMediaPipe() {
-      if (typeof window.Pose === 'undefined') {
-        console.warn('MediaPipe Pose library not present.');
-        return;
-      }
-
-      try {
-        poseInstance = new window.Pose({
-          locateFile: (file) => 'https://cdn.jsdelivr.net/npm/@mediapipe/pose/' + file,
-        });
-
-        poseInstance.setOptions({
-          modelComplexity: 1, // Balanced real-time on mobile
-          smoothLandmarks: true,
-          enableSegmentation: false,
-          smoothSegmentation: false,
-          minDetectionConfidence: 0.5,
-          minTrackingConfidence: 0.5
-        });
-
-        poseInstance.onResults(onPoseResults);
-      } catch (e) {
-        console.warn('Error setting up MediaPipe Pose:', e);
-      }
-    }
-
-    function onPoseResults(results) {
-      isProcessingFrame = false;
-
-      if (!results || !results.poseLandmarks) {
-        hasBodyLock = false;
-        return;
-      }
-
-      const lm = results.poseLandmarks;
-      const leftShoulder = lm[11];
-      const rightShoulder = lm[12];
-      const leftElbow = lm[13];
-      const rightElbow = lm[14];
-      const leftHip = lm[23];
-      const rightHip = lm[24];
-
-      if (!leftShoulder || !rightShoulder || (leftShoulder.visibility < 0.35 && rightShoulder.visibility < 0.35)) {
-        hasBodyLock = false;
-        return;
-      }
-
-      hasBodyLock = true;
-      lastDetectionTime = Date.now();
-
-      // 1. Account for Object-Fit: Cover Crop Geometry
-      const vW = video.videoWidth || 720;
-      const vH = video.videoHeight || 1280;
-      const vpW = viewport.clientWidth || window.innerWidth;
-      const vpH = viewport.clientHeight || window.innerHeight;
-
-      const scaleFactor = Math.max(vpW / vW, vpH / vH);
-      const renderedVW = vW * scaleFactor;
-      const renderedVH = vH * scaleFactor;
-      const offsetX = (renderedVW - vpW) / 2;
-      const offsetY = (renderedVH - vpH) / 2;
-
-      function mapToScreen(normX, normY) {
-        const px = (normX * renderedVW) - offsetX;
-        const py = (normY * renderedVH) - offsetY;
-        const sx = px / vpW;
-        const sy = py / vpH;
-        const screenX = (facingMode === 'user') ? (1.0 - sx) : sx;
-        const screenY = sy;
-        return { x: screenX, y: screenY };
-      }
-
-      const pLShoulder = mapToScreen(leftShoulder.x, leftShoulder.y);
-      const pRShoulder = mapToScreen(rightShoulder.x, rightShoulder.y);
-
-      // 2. Frustum World Dimensions at Z=0
-      const frustumHeight = 2.0 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-      const frustumWidth = frustumHeight * camera.aspect;
-
-      function screenToWorld(pt) {
-        return {
-          x: (pt.x - 0.5) * frustumWidth,
-          y: (0.5 - pt.y) * frustumHeight
+          else this.onPose(data);
         };
-      }
-
-      const wLShoulder = screenToWorld(pLShoulder);
-      const wRShoulder = screenToWorld(pRShoulder);
-
-      const clavicleWorld = {
-        x: (wLShoulder.x + wRShoulder.x) / 2,
-        y: (wLShoulder.y + wRShoulder.y) / 2
-      };
-
-      const shoulderSpanWorld = Math.hypot(
-        wLShoulder.x - wRShoulder.x,
-        wLShoulder.y - wRShoulder.y
-      );
-
-      // 3. Anatomical Fit Scaling
-      const baseFitScale = (shoulderSpanWorld / 0.54);
-      targetModelScale = Math.max(Math.min(baseFitScale * sizeScale * userScale, 1.8), 0.5);
-
-      // In the 3D model, the collar neckline is at Y ~ 0.58 relative to hem (Y=0)
-      targetPos.x = clavicleWorld.x + manualPosX;
-      targetPos.y = clavicleWorld.y - (0.58 * targetModelScale) + manualPosY;
-      targetPos.z = 0;
-
-      // 4. Torso Orientation (Roll, Yaw, Pitch)
-      const shoulderDx = wLShoulder.x - wRShoulder.x;
-      const shoulderDy = wLShoulder.y - wRShoulder.y;
-      targetRot.z = Math.atan2(shoulderDy, shoulderDx);
-
-      const depthZ = (leftShoulder.z || 0) - (rightShoulder.z || 0);
-      const yawMultiplier = (facingMode === 'user') ? -1.8 : 1.8;
-      targetRot.y = (depthZ * yawMultiplier) + (currentView === 'back' ? Math.PI : 0) + manualRotY;
-
-      if (leftHip && rightHip && leftHip.visibility > 0.35) {
-        const pHip = mapToScreen((leftHip.x + rightHip.x) / 2, (leftHip.y + rightHip.y) / 2);
-        const wHip = screenToWorld(pHip);
-        const torsoDy = clavicleWorld.y - wHip.y;
-        targetRot.x = Math.max(Math.min((0.55 - torsoDy) * 0.5, 0.28), -0.28);
-      }
-
-      // 5. Update Neck Depth Occluder
-      if (neckOccluder) {
-        neckOccluder.visible = (currentView === 'front');
-        neckOccluder.position.set(
-          clavicleWorld.x + manualPosX,
-          clavicleWorld.y + (0.12 * targetModelScale) + manualPosY,
-          -0.02
-        );
-        neckOccluder.scale.set(targetModelScale, targetModelScale, targetModelScale);
-        neckOccluder.rotation.set(targetRot.x, targetRot.y, targetRot.z);
-      }
-
-      // 6. Rig Sleeve Articulation
-      const currentBones = (currentShirt === 'burgundy') ? modelBones.sinners : modelBones.secrets;
-      if (currentBones) {
-        if (currentBones['upper_arm.L'] && leftElbow && leftElbow.visibility > 0.3) {
-          const pElbow = mapToScreen(leftElbow.x, leftElbow.y);
-          const wElbow = screenToWorld(pElbow);
-          const armAngle = Math.atan2(wElbow.y - wLShoulder.y, wElbow.x - wLShoulder.x) + 1.57;
-          currentBones['upper_arm.L'].rotation.z = THREE.MathUtils.lerp(
-            currentBones['upper_arm.L'].rotation.z,
-            Math.max(Math.min(armAngle * 0.45, 0.7), -0.7),
-            0.25
-          );
-        }
-        if (currentBones['upper_arm.R'] && rightElbow && rightElbow.visibility > 0.3) {
-          const pElbow = mapToScreen(rightElbow.x, rightElbow.y);
-          const wElbow = screenToWorld(pElbow);
-          const armAngle = Math.atan2(wElbow.y - wRShoulder.y, wElbow.x - wRShoulder.x) - 1.57;
-          currentBones['upper_arm.R'].rotation.z = THREE.MathUtils.lerp(
-            currentBones['upper_arm.R'].rotation.z,
-            Math.max(Math.min(armAngle * 0.45, 0.7), -0.7),
-            0.25
-          );
-        }
-      }
+        this.worker.onerror=()=>{
+          if(session!==this.session)return;
+          clearTimeout(this.workerTimeout);this.worker?.terminate();this.worker=null;this.workerPromise=null;
+          this.rejectWorker=null;reject(new Error('engineError'));this.fail('engineError');
+        };
+        this.worker.postMessage({kind:'init',vision:new URL(this.config.visionUrl,location.href).href,
+          processor:new URL(this.config.processorUrl,location.href).href,
+          wasm:'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm',
+          model:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'});
+      });
     }
-
-    // ------------------------------------------------------------------------
-    // 60 FPS WebGL Render Loop with Smooth Interpolation
-    // ------------------------------------------------------------------------
-    function renderLoop() {
-      if (!isModalOpen) return;
-
-      animFrameId = requestAnimationFrame(renderLoop);
-
-      // Send video frames to MediaPipe Pose via the dedicated offscreen canvas
-      // This eliminates iOS Safari WebKit tainted canvas / read errors completely!
-      if (poseInstance && video && video.readyState >= 2 && !isProcessingFrame) {
-        isProcessingFrame = true;
-        try {
-          procCtx.drawImage(video, 0, 0, procCanvas.width, procCanvas.height);
-          poseInstance.send({ image: procCanvas }).catch(() => {
-            isProcessingFrame = false;
-          });
-        } catch (e) {
-          isProcessingFrame = false;
-        }
-      }
-
-      // If body is not in view, glide gently to center studio presentation
-      if (!hasBodyLock || (Date.now() - lastDetectionTime > 1200)) {
-        targetPos.x = manualPosX;
-        targetPos.y = -0.22 + manualPosY;
-        targetPos.z = 0;
-        targetModelScale = 1.05 * sizeScale * userScale;
-        targetRot.x = 0;
-        targetRot.y = (currentView === 'back' ? Math.PI : 0) + manualRotY;
-        targetRot.z = 0;
-        if (neckOccluder) neckOccluder.visible = false;
-      }
-
-      // Smooth Lerp Interpolation
-      const lerpSpeed = 0.28;
-      currentPos.x += (targetPos.x - currentPos.x) * lerpSpeed;
-      currentPos.y += (targetPos.y - currentPos.y) * lerpSpeed;
-      currentPos.z += (targetPos.z - currentPos.z) * lerpSpeed;
-
-      currentRot.x += (targetRot.x - currentRot.x) * lerpSpeed;
-      currentRot.y += (targetRot.y - currentRot.y) * lerpSpeed;
-      currentRot.z += (targetRot.z - currentRot.z) * lerpSpeed;
-
-      currentModelScale += (targetModelScale - currentModelScale) * lerpSpeed;
-
-      if (currentActiveModel) {
-        currentActiveModel.position.set(currentPos.x, currentPos.y, currentPos.z);
-        currentActiveModel.rotation.set(currentRot.x, currentRot.y, currentRot.z);
-        currentActiveModel.scale.set(currentModelScale, currentModelScale, currentModelScale);
-      }
-
-      if (renderer && scene && camera) {
-        renderer.render(scene, camera);
-      }
+    begin(mode) {
+      const generation=++this.generation;cancelAnimationFrame(this.raf);this.stopStream();this.mode=mode;this.failed=false;
+      this.pending=false;this.lastResult=null;this.engine?.reset();this.q('save').disabled=true;
+      this.bitmap?.close();this.bitmap=null;this.ctx.clearRect(0,0,this.media.width,this.media.height);
+      this.q('choices').hidden=true;this.q('busy').hidden=false;this.q('flip').hidden=mode!=='camera';
+      this.status('loading');return generation;
     }
-
-    // ------------------------------------------------------------------------
-    // Camera Stream Management
-    // ------------------------------------------------------------------------
-    async function startCamera() {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showPermissionCard('Camera is not supported on this browser. Please use Chrome or Safari.');
-        return;
-      }
-
-      if (stream) stopCamera();
-      if (permissionCard) permissionCard.style.display = 'none';
-
-      const constraints = {
-        audio: false,
-        video: {
-          facingMode: facingMode,
-          width: { ideal: 1280, max: 1920 },
-          height: { ideal: 720, max: 1080 }
-        }
-      };
-
+    async startCamera() {
+      if(!this.opened)return;const generation=this.begin('camera');
       try {
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = stream;
-        await video.play();
-
-        video.width = video.videoWidth || 720;
-        video.height = video.videoHeight || 1280;
-
-        if (facingMode === 'user') {
-          video.classList.remove('vto-video--rear');
-        } else {
-          video.classList.add('vto-video--rear');
-        }
-
-        await load3DEngine();
-      } catch (err) {
-        console.warn('Camera stream error:', err);
-        showPermissionCard('Please grant camera access to try on the piece in real time.');
+        if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia)throw new Error('cameraUnavailable');
+        const stream=await navigator.mediaDevices.getUserMedia({audio:false,video:{facingMode:{ideal:this.facing},width:{ideal:1280},height:{ideal:720}}});
+        if(!this.opened||generation!==this.generation){stream.getTracks().forEach(t=>t.stop());return;}
+        this.stream=stream;this.video.srcObject=stream;await this.video.play();
+        this.mirror=(stream.getVideoTracks()[0].getSettings().facingMode||this.facing)==='user';
+        if(!await this.prepare(generation))return;
+        this.q('busy').hidden=true;this.status('searching');this.lastVideoTime=-1;this.lastFrameTime=0;
+        const loop=async time=>{
+          if(!this.opened||generation!==this.generation||this.failed)return;this.raf=requestAnimationFrame(loop);
+          if(this.pending||time-this.lastFrameTime<this.frameInterval||this.video.currentTime===this.lastVideoTime||this.video.readyState<2)return;
+          this.lastFrameTime=time;this.lastVideoTime=this.video.currentTime;this.pending=true;
+          try {
+            const bitmap=await createImageBitmap(this.video);
+            if(!this.opened||generation!==this.generation){bitmap.close();return;}
+            this.postFrame(bitmap,generation,false);
+          }catch(e){if(this.opened&&generation===this.generation)this.fail('cameraError');}
+        };this.raf=requestAnimationFrame(loop);
+      }catch(error){
+        if(!this.opened||generation!==this.generation)return;this.stopStream();
+        this.fail(['NotAllowedError','PermissionDeniedError'].includes(error.name)?'cameraDenied':
+          error.message==='cameraUnavailable'?'cameraUnavailable':'engineError');
       }
     }
-
-    function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach((t) => t.stop());
-        stream = null;
-      }
-      if (video) video.srcObject = null;
-      if (animFrameId) {
-        cancelAnimationFrame(animFrameId);
-        animFrameId = null;
-      }
-    }
-
-    async function toggleFlipCamera() {
-      facingMode = (facingMode === 'user') ? 'environment' : 'user';
-      await startCamera();
-    }
-
-    function showPermissionCard(msg) {
-      if (permissionCard) {
-        const desc = permissionCard.querySelector('p');
-        if (desc && msg) desc.textContent = msg;
-        permissionCard.style.display = 'flex';
-      }
-    }
-
-    // ------------------------------------------------------------------------
-    // Modal Open & Close Lifecycle
-    // ------------------------------------------------------------------------
-    function openModal() {
-      if (isModalOpen) return;
-      isModalOpen = true;
-
-      document.body.style.overflow = 'hidden';
-
-      const checkedSize = document.querySelector('input[name^="option-"]:checked');
-      if (checkedSize && sizeScales[checkedSize.value]) {
-        syncActiveSize(checkedSize.value);
-      } else {
-        syncActiveSize('M');
-      }
-
-      manualPosX = 0;
-      manualPosY = 0;
-      manualRotY = 0;
-      userScale = 1.0;
-
-      modal.classList.add('active');
-      modal.setAttribute('aria-hidden', 'false');
-
-      startCamera();
-    }
-
-    function closeModal() {
-      if (!isModalOpen) return;
-      isModalOpen = false;
-
-      modal.classList.remove('active');
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-
-      stopCamera();
-
-      if (snapshotOverlay) snapshotOverlay.style.display = 'none';
-    }
-
-    // ------------------------------------------------------------------------
-    // Sizing & View Controls
-    // ------------------------------------------------------------------------
-    function syncActiveSize(size) {
-      currentSize = size;
-      sizeScale = sizeScales[size] || 1.0;
-
-      sizePills.forEach((pill) => {
-        pill.classList.toggle('active', pill.dataset.size === size);
-      });
-
-      const pageRadio = document.querySelector('input[name^="option-"][value="' + size + '"]');
-      if (pageRadio && !pageRadio.checked) {
-        pageRadio.checked = true;
-        pageRadio.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-
-      updateAddToCartButtonState();
-    }
-
-    function syncActiveView(view) {
-      currentView = view;
-      viewBtns.forEach((btn) => {
-        btn.classList.toggle('active', btn.dataset.view === view);
-      });
-    }
-
-    function updateAddToCartButtonState() {
-      if (!addCartBtn) return;
-      const selector = document.querySelector('select.variant-selector');
-      if (!selector) return;
-
-      let targetVariant = null;
-      if (variantData && variantData.variants) {
-        targetVariant = variantData.variants.find((v) => {
-          const opts = [v.option1, v.option2, v.option3].filter(Boolean);
-          return opts.includes(currentSize);
-        });
-      }
-
-      const isAvailable = targetVariant ? targetVariant.available : true;
-      addCartBtn.disabled = !isAvailable;
-
-      const textEl = addCartBtn.querySelector('.vto-add-text');
-      if (textEl) {
-        textEl.textContent = isAvailable ? 'Add to Cart' : 'Sold Out';
-      }
-
-      const priceEl = addCartBtn.querySelector('.vto-add-price');
-      if (priceEl && targetVariant && targetVariant.priceHtml) {
-        priceEl.innerHTML = targetVariant.priceHtml;
-      }
-    }
-
-    // ------------------------------------------------------------------------
-    // Touch & Mouse 3D Manipulation (Pan, Pinch & 360 Spin)
-    // ------------------------------------------------------------------------
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let startManualRotY = 0;
-    let startManualPosX = 0;
-    let startManualPosY = 0;
-    let pinchDistance = 0;
-    let startUserScale = 1.0;
-
-    function getDistance(t1, t2) {
-      const dx = t1.clientX - t2.clientX;
-      const dy = t1.clientY - t2.clientY;
-      return Math.hypot(dx, dy);
-    }
-
-    function onPointerDown(e) {
-      if (e.target.closest('.vto-header') || e.target.closest('.vto-dock') || e.target.closest('.vto-snapshot-overlay')) {
-        return;
-      }
-
-      if (e.touches && e.touches.length === 2) {
-        isDragging = false;
-        pinchDistance = getDistance(e.touches[0], e.touches[1]);
-        startUserScale = userScale;
-        return;
-      }
-
-      isDragging = true;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      dragStartX = clientX;
-      dragStartY = clientY;
-      startManualRotY = manualRotY;
-      startManualPosX = manualPosX;
-      startManualPosY = manualPosY;
-    }
-
-    function onPointerMove(e) {
-      if (e.touches && e.touches.length === 2) {
-        const dist = getDistance(e.touches[0], e.touches[1]);
-        if (pinchDistance > 0) {
-          const factor = dist / pinchDistance;
-          userScale = Math.min(Math.max(startUserScale * factor, 0.7), 1.6);
-        }
-        return;
-      }
-
-      if (!isDragging) return;
-
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-
-      const deltaX = clientX - dragStartX;
-      const deltaY = clientY - dragStartY;
-
-      // Horizontal drag rotates the 3D model
-      manualRotY = startManualRotY + (deltaX * 0.008);
-      // Vertical drag adjusts elevation
-      manualPosY = startManualPosY - (deltaY * 0.0012);
-    }
-
-    function onPointerUp() {
-      isDragging = false;
-      pinchDistance = 0;
-    }
-
-    function onWheel(e) {
-      if (!isModalOpen) return;
-      e.preventDefault();
-      userScale = Math.min(Math.max(userScale + (e.deltaY * -0.001), 0.7), 1.6);
-    }
-
-    let lastTap = 0;
-    function onDoubleTap() {
-      const now = Date.now();
-      if (now - lastTap < 300) {
-        manualRotY = 0;
-        manualPosX = 0;
-        manualPosY = 0;
-        userScale = 1.0;
-      }
-      lastTap = now;
-    }
-
-    // ------------------------------------------------------------------------
-    // Photo Snapshot (Video + 3D WebGL Garment + Minimal Watermark)
-    // ------------------------------------------------------------------------
-    function captureSnapshot() {
-      if (!video || !video.videoWidth || !renderer) return;
-
-      if (flashEl) {
-        flashEl.classList.add('active');
-        setTimeout(() => flashEl.classList.remove('active'), 180);
-      }
-
-      const captureCanvas = document.createElement('canvas');
-      const targetW = 1080;
-      const targetH = 1440;
-      captureCanvas.width = targetW;
-      captureCanvas.height = targetH;
-      const ctx = captureCanvas.getContext('2d');
-
-      // 1. Draw Video Frame (mirrored if selfie)
-      const vW = video.videoWidth;
-      const vH = video.videoHeight;
-      const vAspect = vW / vH;
-      const tAspect = targetW / targetH;
-
-      let sW, sH, sx, sy;
-      if (vAspect > tAspect) {
-        sH = vH;
-        sW = vH * tAspect;
-        sx = (vW - sW) / 2;
-        sy = 0;
-      } else {
-        sW = vW;
-        sH = vW / tAspect;
-        sx = 0;
-        sy = (vH - sH) / 2;
-      }
-
-      ctx.save();
-      if (facingMode === 'user') {
-        ctx.translate(targetW, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(video, sx, sy, sW, sH, 0, 0, targetW, targetH);
-      ctx.restore();
-
-      // 2. Draw 3D WebGL Garment
-      renderer.render(scene, camera);
-      ctx.drawImage(renderer.domElement, 0, 0, targetW, targetH);
-
-      // 3. Subtle Brand Watermark
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.88)';
-      ctx.font = '700 24px "Century Gothic", sans-serif';
-      ctx.letterSpacing = '3px';
-      ctx.textAlign = 'center';
-      ctx.fillText('INCORRECT SOCIETY', targetW / 2, targetH - 45);
-
-      ctx.font = '500 13px "Century Gothic", sans-serif';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-      ctx.fillText('SECRETS & SINS · 3D VIRTUAL TRY-ON', targetW / 2, targetH - 22);
-
-      const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.94);
-
-      if (snapshotImg) snapshotImg.src = dataUrl;
-      if (downloadBtn) {
-        downloadBtn.href = dataUrl;
-        downloadBtn.setAttribute('download', 'incorrect-society-' + currentShirt + '-' + currentSize.toLowerCase() + '.jpg');
-      }
-      if (snapshotOverlay) snapshotOverlay.style.display = 'flex';
-    }
-
-    // ------------------------------------------------------------------------
-    // Add to Cart
-    // ------------------------------------------------------------------------
-    async function handleAddToCart() {
-      if (!addCartBtn || addCartBtn.disabled) return;
-
-      const textEl = addCartBtn.querySelector('.vto-add-text');
-      const originalText = textEl ? textEl.textContent : 'Add to Cart';
-
-      let variantId = null;
-      if (variantData && variantData.variants) {
-        const found = variantData.variants.find((v) => {
-          const opts = [v.option1, v.option2, v.option3].filter(Boolean);
-          return opts.includes(currentSize);
-        });
-        if (found) variantId = found.id;
-      }
-
-      if (!variantId) {
-        const selector = document.querySelector('select.variant-selector');
-        if (selector) variantId = selector.value;
-      }
-
-      if (!variantId) {
-        console.error('No variant ID resolved.');
-        return;
-      }
-
-      addCartBtn.disabled = true;
-      if (textEl) textEl.textContent = 'Adding...';
-
-      const formData = new FormData();
-      formData.append('id', variantId);
-      formData.append('quantity', '1');
-
+    async startPhoto(file) {
+      if(!this.opened)return;
+      if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>15*1024*1024){this.fail('invalidPhoto');return;}
+      const generation=this.begin('photo');this.mirror=false;
+      let bitmap;
       try {
-        const addPromise = window.addToCartAndUpdate
-          ? window.addToCartAndUpdate(formData)
-          : fetch('/cart/add.js', { method: 'POST', body: formData }).then((r) => r.json());
-
-        await addPromise;
-
-        if (textEl) textEl.textContent = 'Added to Cart ✓';
-        setTimeout(() => {
-          addCartBtn.disabled = false;
-          if (textEl) textEl.textContent = originalText;
-        }, 2200);
-      } catch (err) {
-        console.error('Add to cart failed:', err);
-        if (textEl) textEl.textContent = 'Error Adding';
-        setTimeout(() => {
-          addCartBtn.disabled = false;
-          if (textEl) textEl.textContent = originalText;
-        }, 2200);
+        bitmap=await createImageBitmap(file,{imageOrientation:'from-image'});
+        if(Math.max(bitmap.width,bitmap.height)>1800){
+          const factor=1800/Math.max(bitmap.width,bitmap.height);
+          const smaller=await createImageBitmap(bitmap,{resizeWidth:Math.round(bitmap.width*factor),resizeHeight:Math.round(bitmap.height*factor)});
+          bitmap.close();bitmap=smaller;
+        }
+        if(!await this.prepare(generation)){bitmap.close();return;}
+        this.pending=true;this.postFrame(bitmap,generation,true);bitmap=null;
+      }catch(error){
+        bitmap?.close();
+        if(this.opened&&generation===this.generation)console.warn('Virtual try-on photo setup:',error.name,error.message);
+        if(this.opened&&generation===this.generation)this.fail(error.name==='InvalidStateError'?'invalidPhoto':'engineError');
       }
     }
-
-    // ------------------------------------------------------------------------
-    // Event Listeners
-    // ------------------------------------------------------------------------
-    openBtn.addEventListener('click', openModal);
-
-    closeBtns.forEach((btn) => btn.addEventListener('click', closeModal));
-
-    if (flipCamBtn) flipCamBtn.addEventListener('click', toggleFlipCamera);
-    if (reqCamBtn) reqCamBtn.addEventListener('click', startCamera);
-
-    viewBtns.forEach((btn) => {
-      btn.addEventListener('click', () => syncActiveView(btn.dataset.view));
-    });
-
-    swatchBtns.forEach((btn) => {
-      btn.addEventListener('click', () => switchGarmentModel(btn.dataset.shirt));
-    });
-
-    sizePills.forEach((pill) => {
-      pill.addEventListener('click', () => syncActiveSize(pill.dataset.size));
-    });
-
-    if (viewport) {
-      viewport.addEventListener('mousedown', onPointerDown);
-      window.addEventListener('mousemove', onPointerMove);
-      window.addEventListener('mouseup', onPointerUp);
-
-      viewport.addEventListener('touchstart', onPointerDown, { passive: true });
-      window.addEventListener('touchmove', onPointerMove, { passive: true });
-      window.addEventListener('touchend', onPointerUp, { passive: true });
-      window.addEventListener('touchcancel', onPointerUp, { passive: true });
-
-      viewport.addEventListener('wheel', onWheel, { passive: false });
-      viewport.addEventListener('click', onDoubleTap);
+    postFrame(bitmap,generation,still) {
+      this.worker.postMessage({kind:'frame',id:generation,bitmap,still,timestamp:performance.now()},[bitmap]);
     }
-
-    if (takePhotoBtn) takePhotoBtn.addEventListener('click', captureSnapshot);
-    if (retakeBtn) {
-      retakeBtn.addEventListener('click', () => {
-        if (snapshotOverlay) snapshotOverlay.style.display = 'none';
-      });
+    onPose(data) {
+      if(!this.opened||data.id!==this.generation||this.failed){data.bitmap?.close();return;}
+      this.pending=false;this.bitmap?.close();this.bitmap=data.bitmap;this.lastResult=data;
+      this.q('busy').hidden=true;this.resize();
     }
-
-    if (addCartBtn) addCartBtn.addEventListener('click', handleAddToCart);
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isModalOpen) {
-        if (snapshotOverlay && snapshotOverlay.style.display === 'flex') {
-          snapshotOverlay.style.display = 'none';
-        } else {
-          closeModal();
-        }
-      }
-    });
-
-    document.querySelectorAll('input[name^="option-"]').forEach((radio) => {
-      radio.addEventListener('change', () => {
-        if (sizeScales[radio.value]) {
-          syncActiveSize(radio.value);
-        }
-      });
-    });
+    resize() {
+      if(!this.opened)return;
+      const width=Math.max(1,this.stage.clientWidth),height=Math.max(1,this.stage.clientHeight);
+      const ratio=Math.min(devicePixelRatio||1,1.5);
+      const pw=Math.round(width*ratio),ph=Math.round(height*ratio);
+      if(this.media.width!==pw||this.media.height!==ph){this.media.width=pw;this.media.height=ph;}
+      this.engine?.resize(width,height);this.refit();
+    }
+    refit() {
+      if(!this.bitmap||!this.engine)return;
+      const w=this.stage.clientWidth,h=this.stage.clientHeight,b=this.bitmap,scale=Math.min(w/b.width,h/b.height);
+      this.rect={x:(w-b.width*scale)/2,y:(h-b.height*scale)/2,width:b.width*scale,height:b.height*scale};
+      const r=this.rect,ctx=this.ctx;ctx.setTransform(this.media.width/w,0,0,this.media.height/h,0,0);
+      ctx.clearRect(0,0,w,h);ctx.save();if(this.mirror){ctx.translate(w,0);ctx.scale(-1,1);}
+      ctx.drawImage(b,r.x,r.y,r.width,r.height);ctx.restore();
+      const fit=this.engine.fit(this.lastResult,r,{mirror:this.mirror,still:this.mode==='photo',
+        ease:Number(this.q('ease').value)/100,lengthScale:Number(this.q('length').value)/100});
+      this.q('save').disabled=!fit;this.status(fit?'tracking':'searching');
+    }
+    save() {
+      if(this.q('save').disabled||!this.engine)return;
+      const output=document.createElement('canvas');output.width=this.media.width;output.height=this.media.height;
+      const ctx=output.getContext('2d');ctx.fillStyle='#111';ctx.fillRect(0,0,output.width,output.height);
+      ctx.drawImage(this.media,0,0);this.engine.render();ctx.drawImage(this.canvas,0,0,output.width,output.height);
+      output.toBlob(blob=>{
+        if(!blob)return;const url=URL.createObjectURL(blob),link=document.createElement('a');
+        link.href=url;link.download='incorrect-society-'+this.modelKey+'-try-on.jpg';link.click();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+      },'image/jpeg',.94);
+    }
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initVirtualTryOn);
-  } else {
-    initVirtualTryOn();
-  }
-
-  document.addEventListener('shopify:section:load', (event) => {
-    if (event.detail && event.detail.sectionId) {
-      initVirtualTryOn();
-    }
+  function init(root=document){root.querySelectorAll('[data-vto-dialog]').forEach(el=>{
+    if(!instances.has(el))instances.set(el,new TryOn(el));
+  });}
+  document.addEventListener('click',e=>{
+    const opener=e.target.closest('[data-vto-open]');if(!opener)return;
+    const instance=instances.get(document.getElementById(opener.getAttribute('aria-controls')));
+    for(const other of instances.values())if(other!==instance&&other.opened)other.close();
+    instance?.open(opener);
   });
+  document.addEventListener('shopify:section:load',e=>init(e.target));
+  document.addEventListener('shopify:section:unload',e=>{
+    for(const [el,instance] of instances)if(e.target.contains(el)){instance.destroy();instances.delete(el);}
+  });
+  window.IncorrectTryOn={init};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>init());else init();
 })();

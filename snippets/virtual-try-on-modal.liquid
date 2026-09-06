@@ -1,197 +1,76 @@
-{% comment %}
-  Virtual Try-On 3D AR Mirror - Incorrect Society
-  High-fidelity WebGL 3D Garment Try-On with Real-Time Pose Tracking
-{% endcomment %}
-
-{% assign current_variant = product.selected_or_first_available_variant %}
-
-{%- liquid
-  assign prod_handle = product.handle | downcase
-  assign prod_title = product.title | downcase
-
-  assign default_shirt = 'grey'
-  if prod_handle contains 'burgundy' or prod_handle contains 'maroon' or prod_handle contains 'sinner' or prod_handle contains 'morally' or prod_title contains 'burgundy' or prod_title contains 'maroon' or prod_title contains 'sinner'
-    assign default_shirt = 'burgundy'
-  endif
-
-  assign secrets_glb_url = 'vto-secrets.glb' | asset_url
-  assign sinners_glb_url = 'vto-sinners.glb' | asset_url
--%}
-
-<!-- Virtual Try-On Modal Container -->
-<div
-  class="vto-modal"
-  id="VirtualTryOnModal"
-  role="dialog"
-  aria-modal="true"
-  aria-hidden="true"
-  data-product-id="{{ product.id }}"
-  data-product-title="{{ product.title | escape }}"
-  data-default-shirt="{{ default_shirt }}"
-  data-secrets-glb="{{ secrets_glb_url }}"
-  data-sinners-glb="{{ sinners_glb_url }}"
->
-  <!-- Dark Backdrop -->
-  <div class="vto-backdrop" data-vto-close></div>
-
-  <!-- Modal Shell -->
+{% comment %}Product-specific, local-only virtual try-on. Model keys are explicit, never inferred from colour/title.{% endcomment %}
+<dialog class="vto-modal" id="VirtualTryOn-{{ section.id }}" data-vto-dialog aria-labelledby="VtoTitle-{{ section.id }}" aria-describedby="VtoPrivacy-{{ section.id }}">
   <div class="vto-shell">
-    <!-- Clean Minimalist Header -->
     <header class="vto-header">
-      <div class="vto-header-brand">
-        <span class="vto-brand-text">INCORRECT SOCIETY</span>
-        <span class="vto-dot-sep">·</span>
-        <span class="vto-item-name" id="vto-item-title">{{ product.title }}</span>
-      </div>
-
-      <div class="vto-header-actions">
-        <!-- Switch Camera (Front/Rear) -->
-        <button
-          type="button"
-          class="vto-btn-icon"
-          id="vto-flip-cam"
-          title="Switch Camera"
-          aria-label="Switch Camera"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.21 1.004 4.186 2.6 5.5"/>
-            <path d="M4 14c0 4.418 3.582 8 8 8s8-3.582 8-8c0-2.21-1.004-4.186-2.6-5.5"/>
-            <polyline points="4 2 4 8 10 8"/>
-            <polyline points="20 22 20 16 14 16"/>
-          </svg>
-        </button>
-
-        <!-- Close Button -->
-        <button
-          type="button"
-          class="vto-btn-icon vto-btn-close"
-          data-vto-close
-          title="Close Mirror"
-          aria-label="Close Mirror"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-      </div>
+      <div><span class="vto-eyebrow">INCORRECT SOCIETY</span><h2 id="VtoTitle-{{ section.id }}">{{ product.title | escape }}</h2></div>
+      <button type="button" class="vto-close" data-vto-action="close" aria-label="{{ 'try_on.close' | t | escape }}">×</button>
     </header>
-
-    <!-- Main Viewport (Full Bleed Video + Three.js 3D WebGL Canvas) -->
-    <div class="vto-viewport" id="vto-viewport">
-      <!-- Hidden Video Stream (Source) -->
-      <video id="vto-video" playsinline muted autoplay></video>
-
-      <!-- Three.js 3D WebGL Canvas -->
-      <canvas id="vto-canvas"></canvas>
-
-      <!-- Minimalist Hairline Loader -->
-      <div class="vto-loader" id="vto-loader">
-        <div class="vto-spinner"></div>
-        <span class="vto-loader-text">LOADING 3D GARMENT...</span>
-      </div>
-
-      <!-- Permission Card (if camera blocked) -->
-      <div class="vto-permission-card" id="vto-permission-card" style="display: none;">
-        <div class="vto-permission-icon">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/>
-          </svg>
-        </div>
-        <h3 class="vto-permission-title">Camera Access Required</h3>
-        <p class="vto-permission-desc">Enable camera permissions in your browser to try on the piece in real time.</p>
-        <button type="button" class="vto-action-pill" id="vto-request-cam-btn">
-          Enable Camera
-        </button>
-      </div>
-
-      <!-- Shutter Flash -->
-      <div class="vto-flash" id="vto-flash"></div>
-
-      <!-- Photo Preview Modal -->
-      <div class="vto-snapshot-overlay" id="vto-snapshot-overlay" style="display: none;">
-        <div class="vto-snapshot-modal">
-          <img
-            id="vto-snapshot-img"
-            src="{{ 'vto-grey-front.png' | asset_url }}"
-            alt="Snapshot"
-            width="1080"
-            height="1440"
-            loading="lazy"
-          >
-          <div class="vto-snapshot-actions">
-            <a href="#" download="incorrect-society-fit.jpg" id="vto-download-btn" class="vto-pill-btn vto-pill-btn--solid">
-              Download Photo
-            </a>
-            <button type="button" id="vto-retake-btn" class="vto-pill-btn vto-pill-btn--outline">
-              Retake
-            </button>
-          </div>
-        </div>
-      </div>
+    <div class="vto-stage" data-vto-stage>
+      <canvas data-vto-media aria-hidden="true"></canvas>
+      <canvas data-vto-canvas role="img" aria-label="{{ 'try_on.view' | t | escape }}"></canvas>
+      <div class="vto-choices" data-vto-choices><h3>{{ 'try_on.title' | t }}</h3><p>{{ 'try_on.intro' | t }}</p></div>
+      <div class="vto-busy" data-vto-busy hidden><span class="vto-spinner" aria-hidden="true"></span></div>
     </div>
-
-    <!-- Floating Dock Controls (Bottom) -->
-    <div class="vto-dock">
-      <!-- Top Row: Selectors (Color · Size · View) -->
-      <div class="vto-dock-row">
-        <!-- Color Switcher -->
-        <div class="vto-switch-group vto-color-switch">
-          <button
-            type="button"
-            class="vto-switch-btn{% if default_shirt == 'burgundy' %} active{% endif %}"
-            data-shirt="burgundy"
-          >
-            <span class="vto-dot-color" style="background-color: #511c21;"></span>
-            <span>BURGUNDY</span>
-          </button>
-          <button
-            type="button"
-            class="vto-switch-btn{% if default_shirt == 'grey' %} active{% endif %}"
-            data-shirt="grey"
-          >
-            <span class="vto-dot-color" style="background-color: #cfd1d0;"></span>
-            <span>GREY</span>
-          </button>
-        </div>
-
-        <!-- Size Pills -->
-        <div class="vto-size-group" id="vto-size-pills">
-          <button type="button" class="vto-size-pill" data-size="S">S</button>
-          <button type="button" class="vto-size-pill active" data-size="M">M</button>
-          <button type="button" class="vto-size-pill" data-size="L">L</button>
-          <button type="button" class="vto-size-pill" data-size="XL">XL</button>
-        </div>
-
-        <!-- View Toggle (Front / Back) -->
-        <div class="vto-switch-group vto-view-switch" id="vto-view-toggle">
-          <button type="button" class="vto-switch-btn active" data-view="front">FRONT</button>
-          <button type="button" class="vto-switch-btn" data-view="back">BACK</button>
-        </div>
+    <div class="vto-controls">
+      <p class="vto-status" data-vto-status role="status" aria-live="polite"></p>
+      <div class="vto-actions">
+        <button type="button" data-vto-camera data-vto-action="camera">{{ 'try_on.camera' | t }}</button>
+        <button type="button" data-vto-upload data-vto-action="upload">{{ 'try_on.upload' | t }}</button>
+        <button type="button" data-vto-flip data-vto-action="flip" hidden>{{ 'try_on.flip' | t }}</button>
+        <button type="button" data-vto-save data-vto-action="save" disabled>{{ 'try_on.save' | t }}</button>
       </div>
-
-      <!-- Bottom Row: Shutter + Add to Cart -->
-      <div class="vto-action-row">
-        <button
-          type="button"
-          class="vto-shutter-btn"
-          id="vto-take-photo-btn"
-          title="Take Photo"
-          aria-label="Take Photo"
-        >
-          <span class="vto-shutter-inner"></span>
-        </button>
-
-        <button
-          type="button"
-          class="vto-add-cart-btn"
-          id="vto-add-cart-btn"
-        >
-          <span class="vto-add-text">Add to Cart</span>
-          <span class="vto-add-price">{% render 'price', amount: current_variant.price, product: product %}</span>
-        </button>
-      </div>
+      <details class="vto-adjust">
+        <summary>{{ 'try_on.adjust' | t }}</summary>
+        <label for="VtoEase-{{ section.id }}">{{ 'try_on.ease' | t }}</label>
+        <input id="VtoEase-{{ section.id }}" data-vto-ease type="range" min="85" max="120" value="100" step="1">
+        <label for="VtoLength-{{ section.id }}">{{ 'try_on.length' | t }}</label>
+        <input id="VtoLength-{{ section.id }}" data-vto-length type="range" min="85" max="115" value="100" step="1">
+      </details>
+      <p class="vto-note">{{ 'try_on.note' | t }}</p>
+      <p class="vto-privacy" id="VtoPrivacy-{{ section.id }}">{{ 'try_on.privacy' | t }}</p>
+      <button class="vto-return" type="button" data-vto-action="product">{{ 'try_on.product' | t }}</button>
     </div>
+    <input data-vto-file type="file" accept="image/jpeg,image/png,image/webp" hidden aria-label="{{ 'try_on.upload' | t | escape }}">
+    {% capture vto_config %}
+    {
+      "model": {{ vto_model | json }},
+      "workerUrl": {{ 'vto-pose-worker.js' | asset_url | json }},
+      "processorUrl": {{ 'vto-pose-processor.js' | asset_url | json }},
+      "visionUrl": {{ 'vto-vision.js' | asset_url | json }},
+      "models": {"secrets": {{ 'vto-secrets.glb' | asset_url | json }}, "sinners": {{ 'vto-sinners.glb' | asset_url | json }}},
+      "variants": [{% for variant in product.variants %}
+        {"id": {{ variant.id | json }}, "options": {{ variant.options | json }}, "model": {{ variant.metafields.custom.try_on_model.value | default: vto_model | json }}}
+        {% unless forloop.last %},{% endunless %}{% endfor %}],
+      "strings": {
+        "title": {{ 'try_on.title' | t | json }},
+        "close": {{ 'try_on.close' | t | json }},
+        "camera": {{ 'try_on.camera' | t | json }},
+        "upload": {{ 'try_on.upload' | t | json }},
+        "flip": {{ 'try_on.flip' | t | json }},
+        "save": {{ 'try_on.save' | t | json }},
+        "product": {{ 'try_on.product' | t | json }},
+        "intro": {{ 'try_on.intro' | t | json }},
+        "loading": {{ 'try_on.loading' | t | json }},
+        "searching": {{ 'try_on.searching' | t | json }},
+        "tracking": {{ 'try_on.tracking' | t | json }},
+        "photoFitted": {{ 'try_on.photoFitted' | t | json }},
+        "unsupported": {{ 'try_on.unsupported' | t | json }},
+        "engineError": {{ 'try_on.engineError' | t | json }},
+        "cameraUnavailable": {{ 'try_on.cameraUnavailable' | t | json }},
+        "cameraDenied": {{ 'try_on.cameraDenied' | t | json }},
+        "cameraError": {{ 'try_on.cameraError' | t | json }},
+        "invalidPhoto": {{ 'try_on.invalidPhoto' | t | json }},
+        "webglLost": {{ 'try_on.webglLost' | t | json }},
+        "ease": {{ 'try_on.ease' | t | json }},
+        "length": {{ 'try_on.length' | t | json }},
+        "privacy": {{ 'try_on.privacy' | t | json }},
+        "note": {{ 'try_on.note' | t | json }},
+        "adjust": {{ 'try_on.adjust' | t | json }},
+        "view": {{ 'try_on.view' | t | json }}
+      }
+    }
+    {% endcapture %}
+    {%- capture vto_lt_escape -%}\u003c{%- endcapture -%}
+    <script type="application/json" data-vto-config>{{ vto_config | replace: '<', vto_lt_escape }}</script>
   </div>
-</div>
+</dialog>
