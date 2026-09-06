@@ -1589,23 +1589,47 @@ body[data-template="index"] {
 /* When a full-width-images section is used as hero (first image), make sure
    the first image fills the viewport so it appears like a hero under the
    transparent navbar. */
-.full-width-images-section .full-width-image-container:first-child .full-width-image {
+.full-width-images-section .full-width-image-container:first-child .full-width-image,
+.hero-editorial-section .hero-editorial,
+.hero-editorial {
   height: 100svh;
   width: 100%;
   object-fit: cover;
 }
 
 /* Break out from constrained content grid so images go edge-to-edge */
-.full-width-images-section .full-width-image-container {
+.full-width-images-section .full-width-image-container,
+.hero-editorial-section,
+.shopify-section:has(.hero-editorial),
+.shopify-section.hero-editorial-section {
   width: 100vw;
+  max-width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+}
+
+/* Remove main-content flex gap when full-width hero is present */
+.main-content:has(.hero-editorial-section),
+.main-content:has(.hero-editorial),
+body[data-template="index"] .main-content {
+  gap: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .main-content:has(.hero-editorial-section),
+  .main-content:has(.hero-editorial),
+  body[data-template="index"] .main-content {
+    padding-top: 0 !important;
+  }
 }
 
 /* Pull the first hero up so it sits behind the announcement bar and header
    (header spacer keeps flow below header for other content). Uses CSS
    variables set by the header script: --announcement-height and --site-header-height. */
-.full-width-images-section .full-width-image-container:first-child {
+.full-width-images-section .full-width-image-container:first-child,
+.hero-editorial-section,
+.main-content > .shopify-section:has(.hero-editorial),
+.main-content > .hero-editorial-section {
   /* Pull the hero up so it sits behind the announcement bar and header
      but preserve document flow with the header spacer. */
   margin-top: calc(-1 * (var(--announcement-height, 46px) + var(--site-header-height, 0px)));

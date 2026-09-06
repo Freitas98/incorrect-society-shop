@@ -160,7 +160,7 @@
   endif
 %}
 
-<div class="hero-editorial {{ height_class }} hero-editorial--color-{{ section.settings.text_color }} hero-editorial--pos-{{ section.settings.content_position }}" id="HeroEditorial-{{ section.id }}">
+<div class="hero-editorial full-width full-width-image-container {{ height_class }} hero-editorial--color-{{ section.settings.text_color }} hero-editorial--pos-{{ section.settings.content_position }}" id="HeroEditorial-{{ section.id }}">
   <!-- Background Image -->
   <div class="hero-editorial__media">
     {% if section.settings.image != blank %}
@@ -246,13 +246,43 @@
 </div>
 
 <style>
+  /* Break out of .shopify-section grid and span 100vw edge-to-edge */
+  .hero-editorial-section,
+  .shopify-section:has(.hero-editorial),
+  .shopify-section.hero-editorial-section {
+    display: block !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    padding: 0 !important;
+    grid-column: 1 / -1 !important;
+    /* Pull hero up behind announcement bar and transparent header */
+    margin-top: calc(-1 * (var(--announcement-height, 46px) + var(--site-header-height, 0px))) !important;
+    z-index: 0;
+  }
+
+  .main-content:has(.hero-editorial-section),
+  .main-content:has(.hero-editorial) {
+    gap: 0 !important;
+  }
+
+  @media (max-width: 768px) {
+    .main-content:has(.hero-editorial-section),
+    .main-content:has(.hero-editorial) {
+      padding-top: 0 !important;
+    }
+  }
+
   .hero-editorial {
     position: relative;
-    width: 100%;
-    max-width: 100vw;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
     overflow: hidden;
     display: flex;
     align-items: center;
+    grid-column: 1 / -1 !important;
   }
 
   .hero-editorial--full,

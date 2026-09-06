@@ -1304,7 +1304,7 @@
       if (!el) return false;
 
       // If the element itself is a theme full-width image container, accept
-      const candidate = el.closest('.full-width-image-container, .full-width-image, .fullscreen-slide, .full-width-images-section');
+      const candidate = el.closest('.full-width-image-container, .full-width-image, .fullscreen-slide, .full-width-images-section, .hero-editorial, .hero-editorial-section');
       if (candidate) return true;
 
       // Walk ancestors for IMG/background checks
@@ -1315,7 +1315,7 @@
           // Require image to cover a decent chunk of the viewport height
           if (imgRect.height >= (window.innerHeight * 0.3)) return true;
           // Also accept if image is explicitly inside a full-width container
-          if (node.closest('.full-width-image-container, .fullscreen-slide')) return true;
+          if (node.closest('.full-width-image-container, .fullscreen-slide, .hero-editorial, .hero-editorial-section')) return true;
         }
 
         const bg = getComputedStyle(node).backgroundImage || '';
