@@ -13,7 +13,7 @@
       "type": "hero-editorial-banner",
       "settings": {
         "image": "shopify://shop_images/image00042.jpg",
-        "image_height": "large",
+        "image_height": "full",
         "image_position": "center center",
         "tag": "FULL COLLECTION",
         "heading": "BREAK THE\nPATTERN",
