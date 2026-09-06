@@ -79,10 +79,11 @@
       "id": "text_color",
       "label": "Text Color Scheme",
       "options": [
+        { "value": "auto", "label": "Auto-Invert / Subtrair Fundo (Difference)" },
         { "value": "dark", "label": "Dark Text (#000)" },
         { "value": "light", "label": "Light Text (#fff)" }
       ],
-      "default": "dark"
+      "default": "auto"
     },
     {
       "type": "range",
@@ -226,12 +227,16 @@
   <!-- Bottom Corner Area (Bottom-Left by default) -->
   {% if section.settings.corner_tag != blank or section.settings.corner_heading != blank or section.settings.button_1_text != blank or section.settings.button_2_text != blank or section.settings.corner_button_text != blank %}
     <div class="hero-editorial__corner hero-editorial__corner--{{ section.settings.content_position }}">
-      {% if section.settings.corner_tag != blank %}
-        <span class="hero-editorial__corner-tag">{{ section.settings.corner_tag }}</span>
-      {% endif %}
+      {% if section.settings.corner_tag != blank or section.settings.corner_heading != blank %}
+        <div class="hero-editorial__corner-text">
+          {% if section.settings.corner_tag != blank %}
+            <span class="hero-editorial__corner-tag">{{ section.settings.corner_tag }}</span>
+          {% endif %}
 
-      {% if section.settings.corner_heading != blank %}
-        <h3 class="hero-editorial__corner-heading">{{ section.settings.corner_heading }}</h3>
+          {% if section.settings.corner_heading != blank %}
+            <h3 class="hero-editorial__corner-heading">{{ section.settings.corner_heading }}</h3>
+          {% endif %}
+        </div>
       {% endif %}
 
       {% if section.settings.button_1_text != blank or section.settings.button_2_text != blank or section.settings.corner_button_text != blank %}
@@ -380,7 +385,7 @@
     position: absolute;
     top: calc(var(--announcement-height, 46px) + var(--site-header-height, 80px) + 24px);
     bottom: clamp(28px, 4vw, 44px);
-    width: clamp(250px, 20vw, 320px);
+    width: clamp(280px, 25vw, 420px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -392,12 +397,12 @@
   }
 
   .hero-editorial__column--right {
-    right: clamp(24px, 3.5vw, 64px);
+    right: clamp(20px, 3.5vw, 60px);
     align-items: flex-end;
   }
 
   .hero-editorial__column--left {
-    left: clamp(24px, 3.5vw, 64px);
+    left: clamp(20px, 3.5vw, 60px);
     align-items: flex-start;
   }
 
@@ -412,23 +417,24 @@
   .hero-editorial__tag {
     font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
     font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2.2px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
     margin-bottom: 12px;
     display: block;
   }
 
-  /* Monumental Squeezed Heading */
+  /* Monumental Squeezed Heading - MUITO MAIOR */
   .hero-editorial__heading {
     font-family: var(--font-heading-family, 'Century Gothic', -apple-system, sans-serif);
-    font-size: clamp(44px, 5.2vw, 84px);
+    font-size: clamp(52px, 6.4vw, 108px);
     font-weight: 900;
     line-height: 0.88;
     letter-spacing: -0.035em;
     text-transform: none;
     margin: 0;
     word-break: normal;
+    overflow-wrap: break-word;
     text-align: left;
     width: 100%;
   }
@@ -448,15 +454,15 @@
     align-items: flex-start;
   }
 
-  /* Bolder, High-Contrast Editorial Description */
+  /* Bolder, High-Contrast Editorial Description - MAIOR E MAIS BOLD */
   .hero-editorial__text {
     font-family: var(--font-primary-family, 'Century Gothic', sans-serif);
-    font-size: clamp(12px, 0.85vw, 13.5px);
-    font-weight: 700;
-    line-height: 1.32;
+    font-size: clamp(14.5px, 1.1vw, 17.5px);
+    font-weight: 800;
+    line-height: 1.34;
     letter-spacing: -0.01em;
     margin: 0;
-    max-width: 270px;
+    max-width: clamp(280px, 23vw, 380px);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -467,6 +473,34 @@
 
   .hero-editorial__column--left .hero-editorial__text {
     text-align: left;
+  }
+
+  /* AUTO-INVERT / SUBTRAIR FUNDO (Difference Mode) */
+  .hero-editorial--color-auto .hero-editorial__tag,
+  .hero-editorial--color-auto .hero-editorial__heading,
+  .hero-editorial--color-auto .hero-editorial__text,
+  .hero-editorial--color-auto .hero-editorial__corner-tag,
+  .hero-editorial--color-auto .hero-editorial__corner-heading {
+    color: #ffffff !important;
+    mix-blend-mode: difference !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .hero-editorial--color-auto .hero-editorial__btn {
+    background-color: rgba(255, 255, 255, 0.88);
+    color: #000000;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    font-weight: 700;
+  }
+
+  .hero-editorial--color-auto .hero-editorial__btn:hover {
+    background-color: #000000;
+    color: #ffffff;
+    border-color: #000000;
   }
 
   /* Color Schemes for raw typography on photo */
@@ -517,7 +551,7 @@
     bottom: clamp(28px, 4vw, 44px);
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     z-index: 3;
     pointer-events: auto;
     background: transparent !important;
@@ -526,30 +560,35 @@
   }
 
   .hero-editorial__corner--right {
-    left: clamp(24px, 3.5vw, 64px);
+    left: clamp(20px, 3.5vw, 60px);
     align-items: flex-start;
   }
 
   .hero-editorial__corner--left {
-    right: clamp(24px, 3.5vw, 64px);
+    right: clamp(20px, 3.5vw, 60px);
     align-items: flex-end;
+  }
+
+  .hero-editorial__corner-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .hero-editorial__corner-tag {
     font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1.8px;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    opacity: 0.75;
   }
 
   .hero-editorial__corner-heading {
     font-family: var(--font-heading-family, 'Century Gothic', sans-serif);
-    font-size: clamp(20px, 2.2vw, 28px);
+    font-size: clamp(26px, 2.6vw, 38px);
     font-weight: 900;
     letter-spacing: -0.025em;
-    line-height: 1.08;
+    line-height: 1.05;
     margin: 0 0 6px 0;
   }
 
@@ -566,10 +605,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 20px;
+    padding: 9px 22px;
     font-family: var(--font-primary-family, 'Century Gothic', sans-serif);
-    font-size: 11.5px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     letter-spacing: 0.5px;
     text-decoration: none;
     border-radius: 9999px;
@@ -579,7 +618,7 @@
   }
 
   .hero-editorial--color-dark .hero-editorial__btn {
-    background-color: rgba(255, 255, 255, 0.72);
+    background-color: rgba(255, 255, 255, 0.85);
     color: #000000;
     border: 1px solid rgba(0, 0, 0, 0.12);
     backdrop-filter: blur(10px);
@@ -609,10 +648,13 @@
   /* Responsive Rules */
   @media (max-width: 1024px) {
     .hero-editorial__column {
-      width: clamp(240px, 26vw, 300px);
+      width: clamp(260px, 28vw, 360px);
     }
     .hero-editorial__heading {
-      font-size: clamp(36px, 4.4vw, 56px);
+      font-size: clamp(40px, 5.5vw, 70px);
+    }
+    .hero-editorial__text {
+      font-size: clamp(13px, 1.2vw, 15px);
     }
   }
 
@@ -675,27 +717,26 @@
     }
 
     .hero-editorial__tag {
-      font-size: 10px;
+      font-size: 11px;
       letter-spacing: 2px;
       margin-bottom: 6px;
     }
 
     .hero-editorial__heading {
-      font-size: clamp(28px, 7.5vw, 38px) !important;
-      line-height: 0.95 !important;
-      letter-spacing: -0.02em !important;
-      margin: 0 0 8px 0 !important;
+      font-size: clamp(34px, 9vw, 50px) !important;
+      line-height: 0.92 !important;
+      letter-spacing: -0.025em !important;
+      margin: 0 0 10px 0 !important;
       text-align: left !important;
     }
 
     .hero-editorial__text {
-      font-size: 12px !important;
-      font-weight: 600 !important;
-      line-height: 1.38 !important;
+      font-size: 14px !important;
+      font-weight: 800 !important;
+      line-height: 1.36 !important;
       max-width: 100% !important;
       text-align: left !important;
-      margin: 0 0 14px 0 !important;
-      opacity: 0.95;
+      margin: 0 0 16px 0 !important;
     }
 
     .hero-editorial__corner {
@@ -723,8 +764,9 @@
 
     .hero-editorial__btn {
       flex: 1 1 0px !important;
-      padding: 11px 14px !important;
-      font-size: 11px !important;
+      padding: 12px 16px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
       text-align: center !important;
       justify-content: center !important;
     }
@@ -732,10 +774,10 @@
 
   @media (max-width: 480px) {
     .hero-editorial__heading {
-      font-size: clamp(24px, 6.8vw, 32px) !important;
+      font-size: clamp(28px, 8vw, 42px) !important;
     }
     .hero-editorial__text {
-      font-size: 11.5px !important;
+      font-size: 13px !important;
     }
   }
 </style>

@@ -17,18 +17,18 @@
         "image_position": "center center",
         "tag": "",
         "heading": "BREAK\nTHE\nPATTERN",
-        "text": "Built without compromise. Designed in boxy proportions with heavyweight cottons and durable finishes. Discover our complete catalogue below before pieces are permanently archived.",
+        "text": "A collection built on unfiltered expression. Heavyweight 280gsm cotton, relaxed boxy silhouettes, and distinct graphics made to outlast every trend. Secrets kept, sins committed.",
         "content_position": "right",
-        "text_color": "dark",
+        "text_color": "auto",
         "scrim_opacity": 0,
-        "button_1_text": "Hoodies",
-        "button_1_link": "/pages/all-products?type=hoodie",
+        "button_1_text": "Shop Now",
+        "button_1_link": "/collections/secrets-and-sins",
         "button_2_text": "T-Shirts",
-        "button_2_link": "/pages/all-products?type=t-shirt",
-        "corner_tag": "ARCHIVE",
-        "corner_heading": "All Products",
-        "corner_button_text": "View All",
-        "corner_button_link": "/pages/all-products"
+        "button_2_link": "/collections/secrets-and-sins",
+        "corner_tag": "DROP 01",
+        "corner_heading": "Secrets & Sins",
+        "corner_button_text": "Shop Now",
+        "corner_button_link": "/collections/secrets-and-sins"
       }
     },
     "new_in_products": {
