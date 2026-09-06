@@ -1,47 +1,786 @@
-/* Product trigger stays lightweight; all fitting-room styles are scoped. */
-.btn-try-on-ar{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px;margin-top:10px;border:1px solid currentColor;border-radius:30px;background:transparent;color:inherit;font:700 11px 'Century Gothic',sans-serif;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer}
-.vto-modal{padding:0;border:1px solid #444;border-radius:16px;background:#111;color:#fff;width:min(960px,96vw);max-width:96vw;height:min(900px,94dvh);max-height:94dvh;font-family:'Century Gothic',sans-serif;overflow:hidden}
-.vto-modal:not([open]){display:none}
-.vto-modal::backdrop{background:rgba(0,0,0,.85)}
-.vto-modal [hidden]{display:none!important}
-.vto-shell{height:100%;display:grid;grid-template-columns:minmax(0,1fr) 270px;grid-template-rows:auto minmax(0,1fr)}
-.vto-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #333;gap:10px}
-.vto-eyebrow{font-size:10px;letter-spacing:2px;color:#aaa}
-.vto-header h2{font:500 16px 'Century Gothic',sans-serif;color:#fff;margin:6px 0 0}
-.vto-close{border:0;background:transparent;color:#fff;font-size:30px;width:44px;height:44px;cursor:pointer}
-.vto-stage{position:relative;overflow:hidden;min-height:180px;background:#1a1a1a}
-.vto-stage canvas{position:absolute;inset:0;width:100%;height:100%}
-.vto-controls{padding:20px;overflow-y:auto;border-left:1px solid #333}
-.vto-status{font-size:12px;line-height:1.6;min-height:60px;margin:0 0 16px}
-.vto-actions{display:flex;flex-wrap:wrap;gap:8px}
-.vto-actions button,.vto-return{font:600 11px 'Century Gothic',sans-serif;padding:12px 14px;min-height:44px;border:1px solid #666;border-radius:22px;background:transparent;color:#fff;cursor:pointer}
-.vto-actions button:first-child{background:#fff;color:#111;border-color:#fff}
-.vto-actions button:disabled{opacity:.4;cursor:not-allowed}
-.vto-modal button:hover:not(:disabled){border-color:#fff}
-.vto-modal :focus-visible{outline:3px solid #d9c89c;outline-offset:3px}
-.vto-adjust{border-top:1px solid #444;margin-top:24px;padding-top:16px;font-size:12px}
-.vto-adjust summary{cursor:pointer;min-height:32px}
-.vto-adjust label{display:block;font-size:11px;margin:14px 0 5px}
-.vto-adjust input{width:100%;accent-color:#a24e60;min-height:28px}
-.vto-note,.vto-privacy{font-size:10px;line-height:1.7;color:#aaa;margin:18px 0}
-.vto-return{font-size:10px;margin-top:8px}
-.vto-choices,.vto-busy{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:32px;pointer-events:none}
-.vto-choices h3{font-weight:400;color:#fff}
-.vto-choices p{font-size:12px;line-height:1.7;max-width:300px;color:#bbb}
-.vto-busy{background:rgba(0,0,0,.3)}
-.vto-spinner{width:32px;height:32px;border:2px solid #555;border-top-color:#fff;border-radius:50%;animation:vto-spin 1s linear infinite}
-@keyframes vto-spin{to{transform:rotate(360deg)}}
-@media(max-width:700px){
- .vto-modal{margin:0;width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;border:0;border-radius:0}
- .vto-shell{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(180px,1fr) auto}
- .vto-header{padding:calc(8px + env(safe-area-inset-top)) 16px 8px}
- .vto-header h2{font-size:13px}
- .vto-controls{padding:10px 16px calc(10px + env(safe-area-inset-bottom));max-height:38dvh;border-left:0;border-top:1px solid #333}
- .vto-status{min-height:0;margin-bottom:8px;font-size:11px}
- .vto-actions{gap:6px}
- .vto-actions button{padding:10px;font-size:10px;flex:1}
- .vto-adjust{margin-top:10px;padding-top:10px}
- .vto-note,.vto-privacy{margin:8px 0;font-size:9px}
- .vto-return{margin:0;padding:6px 12px}
+/* Product trigger stays lightweight; all fitting-room styles are strictly scoped. */
+.btn-try-on-ar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 20px;
+  margin-top: 12px;
+  border: 1px solid currentColor;
+  border-radius: 30px;
+  background: transparent;
+  color: inherit;
+  font: 700 11px 'Century Gothic', -apple-system, sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
-@media(prefers-reduced-motion:reduce){.vto-spinner{animation:none}}
+.btn-try-on-ar:hover {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+/* Modal Dialog & Backdrop */
+dialog.vto-modal {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #09090b !important;
+  color: #ffffff !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  position: fixed !important;
+  inset: 0 !important;
+  font-family: 'Century Gothic', -apple-system, sans-serif;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+dialog.vto-modal:not([open]) {
+  display: none;
+}
+dialog.vto-modal::backdrop {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(8px);
+}
+.vto-modal [hidden] {
+  display: none !important;
+}
+
+/* Modal Grid Shell */
+.vto-shell {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  grid-template-rows: 70px minmax(0, 1fr);
+  background: #09090b;
+  overflow: hidden;
+}
+
+/* Header */
+.vto-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  background: #09090b;
+  border-bottom: 1px solid #1a1a1a;
+  z-index: 10;
+}
+.vto-header-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.vto-eyebrow {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #888888;
+  text-transform: uppercase;
+}
+.vto-header-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.vto-title-tag {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(89, 26, 42, 0.45);
+  border: 1px solid #7d253b;
+  color: #f0a8b7;
+  text-transform: uppercase;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+.vto-header-product-title {
+  font: 600 13px 'Century Gothic', sans-serif;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+.vto-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #333333;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.vto-close:hover {
+  background: #ffffff;
+  color: #09090b;
+  border-color: #ffffff;
+}
+
+/* Center Stage (3D Mirror Canvas) */
+.vto-stage {
+  position: relative;
+  overflow: hidden;
+  background: #0e0e11;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+}
+.vto-stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Status Pill / Show Shoulders Aviso */
+.vto-stage-status {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  background: rgba(12, 12, 16, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  z-index: 5;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  max-width: calc(100% - 320px);
+}
+.vto-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e5a00d;
+  box-shadow: 0 0 8px #e5a00d;
+  transition: background 0.3s, box-shadow 0.3s;
+  flex-shrink: 0;
+}
+.vto-modal[data-state="tracking"] .vto-status-dot {
+  background: #22c55e;
+  box-shadow: 0 0 10px #22c55e;
+}
+.vto-status-label {
+  font: 600 11px 'Century Gothic', sans-serif;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+/* Quick Action Stage Buttons (Switch Camera & Capture Image) */
+.vto-stage-actions {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  z-index: 5;
+}
+.vto-stage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: rgba(12, 12, 16, 0.92);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 24px;
+  color: #ffffff;
+  font: 600 11px 'Century Gothic', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+.vto-stage-btn:hover:not(:disabled) {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+}
+.vto-stage-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Empty / Choices Overlay */
+.vto-choices {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(9, 9, 11, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 6;
+}
+.vto-choices-card {
+  max-width: 400px;
+  padding: 36px 32px;
+  background: rgba(15, 15, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+.vto-choices-eyebrow {
+  font-size: 8.5px;
+  letter-spacing: 3px;
+  color: #777777;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.vto-choices-title {
+  font: 600 18px 'Century Gothic', sans-serif;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+}
+.vto-choices-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #a8a8a8;
+  margin: 0 0 24px;
+}
+.vto-choices-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vto-btn-choice-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background: #ffffff;
+  color: #09090b;
+  border: 0;
+  border-radius: 24px;
+  font: 700 11px 'Century Gothic', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.vto-btn-choice-primary:hover {
+  opacity: 0.9;
+}
+.vto-btn-choice-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 24px;
+  font: 600 11px 'Century Gothic', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vto-btn-choice-secondary:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Busy / Spinner */
+.vto-busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(9, 9, 11, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 8;
+  gap: 16px;
+}
+.vto-spinner {
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: vto-spin 0.9s linear infinite;
+}
+.vto-busy-label {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+@keyframes vto-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Sidebar / Controls & Commerce */
+.vto-controls {
+  padding: 24px 20px;
+  background: #0c0c0f;
+  border-left: 1px solid #1a1a1a;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Active Product Panel */
+.vto-product-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.vto-section-subtitle {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #777777;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+.vto-product-name {
+  font: 700 15px 'Century Gothic', sans-serif;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+.vto-product-price-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.vto-product-price {
+  font: 600 16px 'Century Gothic', sans-serif;
+  color: #ffffff;
+}
+.vto-badge-stock {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  color: #4ade80;
+  text-transform: uppercase;
+}
+.vto-badge-stock.out-of-stock {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+/* Size Block */
+.vto-size-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vto-size-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.vto-size-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #aaaaaa;
+  text-transform: uppercase;
+}
+.vto-size-active-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.vto-size-options {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.vto-size-btn {
+  flex: 1;
+  min-width: 44px;
+  height: 40px;
+  background: #141418;
+  border: 1px solid #2a2a30;
+  border-radius: 4px;
+  color: #ffffff;
+  font: 600 11px 'Century Gothic', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vto-size-btn:hover:not(:disabled) {
+  border-color: #ffffff;
+}
+.vto-size-btn.active {
+  background: #591a2a;
+  border-color: #591a2a;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(89, 26, 42, 0.5);
+}
+.vto-size-btn.is-soldout:not(.active) {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+/* Size Guide & Fit Accuracy Notice */
+.vto-size-notice {
+  padding: 12px 14px;
+  background: rgba(89, 26, 42, 0.12);
+  border: 1px solid rgba(89, 26, 42, 0.35);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.vto-size-notice-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 700 9.5px 'Century Gothic', sans-serif;
+  letter-spacing: 1.5px;
+  color: #e599a8;
+  text-transform: uppercase;
+}
+.vto-size-notice-head svg {
+  stroke: #e599a8;
+  flex-shrink: 0;
+}
+.vto-size-notice-text {
+  font-size: 10px;
+  line-height: 1.55;
+  color: #c4c4cc;
+  margin: 0;
+}
+
+/* Add to Cart CTA */
+.vto-add-to-cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  background: #ffffff;
+  color: #09090b;
+  border: 0;
+  border-radius: 6px;
+  font: 700 11px 'Century Gothic', sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.vto-add-to-cart-btn:hover:not(:disabled) {
+  background: #f0f0f0;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+.vto-add-to-cart-btn.added {
+  background: #166534;
+  color: #ffffff;
+}
+.vto-add-to-cart-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.vto-cart-toast {
+  padding: 10px 14px;
+  background: rgba(22, 101, 52, 0.2);
+  border: 1px solid #166534;
+  border-radius: 4px;
+  color: #86efac;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  text-align: center;
+}
+
+/* Suggested Pieces from Collection */
+.vto-suggested-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-top: 1px solid #1a1a1a;
+  padding-top: 18px;
+}
+.vto-suggested-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vto-catalog-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #141418;
+  border: 1px solid #222228;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+.vto-catalog-card:hover {
+  border-color: #44444c;
+  background: #191920;
+}
+.vto-catalog-card.active {
+  border-color: #591a2a;
+  background: rgba(89, 26, 42, 0.15);
+}
+.vto-catalog-thumb {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 6px;
+  background: #18181c;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.vto-catalog-info {
+  flex: 1;
+  min-width: 0;
+}
+.vto-catalog-title {
+  font: 600 11.5px 'Century Gothic', sans-serif;
+  letter-spacing: 0.8px;
+  color: #ffffff;
+  margin: 0 0 4px;
+  white-space: normal;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+.vto-catalog-price {
+  font-size: 11px;
+  color: #888888;
+}
+.vto-catalog-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.vto-catalog-card.active .vto-catalog-badge {
+  border-color: #591a2a;
+  background: #591a2a;
+}
+
+/* Source Switchers */
+.vto-source-switchers {
+  display: flex;
+  gap: 8px;
+}
+.vto-source-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: #141418;
+  border: 1px solid #222228;
+  border-radius: 4px;
+  color: #c4c4c4;
+  font: 600 10.5px 'Century Gothic', sans-serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vto-source-btn:hover {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+/* Footnotes & Return */
+.vto-note, .vto-privacy {
+  font-size: 9.5px;
+  line-height: 1.6;
+  color: #666666;
+  margin: 0;
+}
+.vto-return {
+  padding: 10px;
+  background: transparent;
+  border: 1px solid #333333;
+  border-radius: 4px;
+  color: #888888;
+  font: 600 10px 'Century Gothic', sans-serif;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vto-return:hover {
+  color: #ffffff;
+  border-color: #888888;
+}
+
+/* Focus outline */
+.vto-modal :focus-visible {
+  outline: 2px solid #591a2a;
+  outline-offset: 2px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Responsive Mobile Layout (max-width: 768px)                                */
+/* -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  dialog.vto-modal {
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overscroll-behavior: contain;
+  }
+  .vto-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(180px, 1fr) auto;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+  .vto-header {
+    padding: max(10px, env(safe-area-inset-top)) 16px 10px;
+    height: auto;
+  }
+  .vto-header-title {
+    gap: 10px;
+  }
+  .vto-header-product-title {
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .vto-close {
+    width: 44px;
+    height: 44px;
+  }
+  /* Status pill / show shoulders aviso on mobile: centered at top */
+  .vto-stage-status {
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 24px);
+    padding: 7px 14px;
+    font-size: 9.5px;
+    box-sizing: border-box;
+    z-index: 6;
+  }
+  .vto-status-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  /* Camera action buttons on mobile: side-by-side at bottom of camera viewfinder */
+  .vto-stage-actions {
+    top: auto;
+    bottom: 14px;
+    right: 14px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: nowrap;
+    z-index: 10;
+  }
+  .vto-stage-btn {
+    padding: 8px 12px;
+    font-size: 9.5px;
+    gap: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .vto-controls {
+    border-left: 0;
+    border-top: 1px solid #1f1f25;
+    padding: 14px 16px max(14px, env(safe-area-inset-bottom));
+    max-height: 48dvh;
+    background: rgba(12, 12, 15, 0.96);
+    backdrop-filter: blur(14px);
+    border-radius: 16px 16px 0 0;
+    gap: 16px;
+    touch-action: pan-y;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .vto-product-name {
+    font-size: 13px;
+  }
+  .vto-size-btn {
+    height: 38px;
+    font-size: 10px;
+  }
+  .vto-add-to-cart-btn {
+    height: 44px;
+    font-size: 10px;
+  }
+  .vto-suggested-grid {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 4px 2px 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .vto-catalog-card {
+    min-width: 230px;
+    max-width: 260px;
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+  .vto-source-switchers {
+    margin-top: -4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vto-spinner {
+    animation: none;
+  }
+}

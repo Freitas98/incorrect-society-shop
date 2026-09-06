@@ -22,6 +22,7 @@ test('explicit product identity selects the correct model; unrelated titles/colo
     [product(99),{vto_secrets_product:{id:99},vto_sinners_product:{id:100}},[true,'secrets']],
     [product(100),{vto_secrets_product:{id:99},vto_sinners_product:{id:100}},[true,'sinners']],
     [product(101),{vto_secrets_product:{id:99},vto_sinners_product:{id:100}},[false,'']],
+    [product(11569665933653),{enable_virtual_try_on:false},[false,'secrets']],
   ]){
     const output=(await engine().parseAndRender(selection,{product:p,section:{settings}})).trim();
     assert.deepEqual(output.split('|').map(JSON.parse),expected);

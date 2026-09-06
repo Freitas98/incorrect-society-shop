@@ -33,6 +33,9 @@
       assign vto_available = true
     endif
   endfor
+  if section.settings.enable_virtual_try_on == false or settings.enable_virtual_try_on == false
+    assign vto_available = false
+  endif
 -%}
 
 <div class="product-page-new{% if product.gift_card? or product.type == 'Gift Card' %} product-page--gift-card{% endif %}">
@@ -410,7 +413,7 @@
 
 {% if vto_available %}
   {{ 'virtual-try-on.css' | asset_url | stylesheet_tag }}
-  {% render 'virtual-try-on-modal', product: product, section: section, vto_model: vto_model %}
+  {% render 'virtual-try-on-modal', product: product, section: section, vto_model: vto_model, collection: product.collections.first %}
   <script src="{{ 'virtual-try-on.js' | asset_url }}" defer="defer"></script>
 {% endif %}
 
@@ -1727,6 +1730,7 @@ document.addEventListener('DOMContentLoaded', function() {
   "name": "t:general.product",
   "settings": [
     {"type": "header", "content": "Virtual try-on"},
+    {"type": "checkbox", "id": "enable_virtual_try_on", "label": "Enable Virtual Try-On (VR)", "default": true},
     {"type": "paragraph", "content": "Assign each 3D model to its exact product. For per-variant models, use the custom.try_on_model text metafield with secrets or sinners."},
     {"type": "product", "id": "vto_secrets_product", "label": "Secrets — 3D model"},
     {"type": "product", "id": "vto_sinners_product", "label": "Sinners — 3D model"}

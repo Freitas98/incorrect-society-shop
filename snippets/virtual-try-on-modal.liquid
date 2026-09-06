@@ -1,46 +1,293 @@
 {% comment %}Product-specific, local-only virtual try-on. Model keys are explicit, never inferred from colour/title.{% endcomment %}
+{%- liquid
+  assign candidate_products = collection.products
+  if candidate_products == blank or candidate_products.size == 0
+    assign candidate_products = collections['secrets-and-sins'].products
+  endif
+  assign p_secrets = all_products['secrets-white-tee']
+  assign p_sinners = all_products['sins-burgundy-tee']
+-%}
 <dialog class="vto-modal" id="VirtualTryOn-{{ section.id }}" data-vto-dialog aria-labelledby="VtoTitle-{{ section.id }}" aria-describedby="VtoPrivacy-{{ section.id }}">
   <div class="vto-shell">
+    <!-- Top Bar / Header -->
     <header class="vto-header">
-      <div><span class="vto-eyebrow">INCORRECT SOCIETY</span><h2 id="VtoTitle-{{ section.id }}">{{ product.title | escape }}</h2></div>
-      <button type="button" class="vto-close" data-vto-action="close" aria-label="{{ 'try_on.close' | t | escape }}">×</button>
+      <div class="vto-header-brand">
+        <span class="vto-eyebrow">INCORRECT SOCIETY</span>
+        <h2 id="VtoTitle-{{ section.id }}" class="vto-header-title">
+          <span class="vto-title-tag">TRY NOW USING VR</span>
+          <span class="vto-header-product-title" data-vto-header-title>{{ product.title | escape }}</span>
+        </h2>
+      </div>
+      <button type="button" class="vto-close" data-vto-action="close" aria-label="{{ 'try_on.close' | t | escape }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </header>
+
+    <!-- Center Stage: 3D Mirror & Real-time Canvas -->
     <div class="vto-stage" data-vto-stage>
       <canvas data-vto-media aria-hidden="true"></canvas>
       <canvas data-vto-canvas role="img" aria-label="{{ 'try_on.view' | t | escape }}"></canvas>
-      <div class="vto-choices" data-vto-choices><h3>{{ 'try_on.title' | t }}</h3><p>{{ 'try_on.intro' | t }}</p></div>
-      <div class="vto-busy" data-vto-busy hidden><span class="vto-spinner" aria-hidden="true"></span></div>
-    </div>
-    <div class="vto-controls">
-      <p class="vto-status" data-vto-status role="status" aria-live="polite"></p>
-      <div class="vto-actions">
-        <button type="button" data-vto-camera data-vto-action="camera">{{ 'try_on.camera' | t }}</button>
-        <button type="button" data-vto-upload data-vto-action="upload">{{ 'try_on.upload' | t }}</button>
-        <button type="button" data-vto-flip data-vto-action="flip" hidden>{{ 'try_on.flip' | t }}</button>
-        <button type="button" data-vto-save data-vto-action="save" disabled>{{ 'try_on.save' | t }}</button>
+
+      <!-- Status Pill Overlay -->
+      <div class="vto-stage-status" data-vto-status-pill>
+        <span class="vto-status-dot"></span>
+        <span class="vto-status-label" data-vto-status role="status" aria-live="polite">{{ 'try_on.intro' | t }}</span>
       </div>
-      <details class="vto-adjust">
-        <summary>{{ 'try_on.adjust' | t }}</summary>
-        <label for="VtoEase-{{ section.id }}">{{ 'try_on.ease' | t }}</label>
-        <input id="VtoEase-{{ section.id }}" data-vto-ease type="range" min="85" max="120" value="100" step="1">
-        <label for="VtoLength-{{ section.id }}">{{ 'try_on.length' | t }}</label>
-        <input id="VtoLength-{{ section.id }}" data-vto-length type="range" min="85" max="115" value="100" step="1">
-      </details>
+
+      <!-- Quick Action Controls on Stage -->
+      <div class="vto-stage-actions">
+        <button type="button" class="vto-stage-btn vto-btn-flip" data-vto-flip data-vto-action="flip" hidden title="{{ 'try_on.flip' | t | escape }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 16l4-4-4-4M4 8l-4 4 4 4M20 12H4"/>
+          </svg>
+          <span>{{ 'try_on.flip' | t }}</span>
+        </button>
+        <button type="button" class="vto-stage-btn vto-btn-save" data-vto-save data-vto-action="save" disabled title="{{ 'try_on.save' | t | escape }}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          <span>{{ 'try_on.save' | t }}</span>
+        </button>
+      </div>
+
+      <!-- Welcome / Choices Overlay -->
+      <div class="vto-choices" data-vto-choices>
+        <div class="vto-choices-card">
+          <div class="vto-choices-eyebrow">INCORRECT SOCIETY FITTING ROOM</div>
+          <h3 class="vto-choices-title">{{ 'try_on.title' | t }}</h3>
+          <p class="vto-choices-desc">{{ 'try_on.intro' | t }}</p>
+          <div class="vto-choices-actions">
+            <button type="button" class="vto-btn-choice-primary" data-vto-camera data-vto-action="camera">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              <span>{{ 'try_on.camera' | t }}</span>
+            </button>
+            <button type="button" class="vto-btn-choice-secondary" data-vto-upload data-vto-action="upload">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span>{{ 'try_on.upload' | t }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Busy / Loading Overlay -->
+      <div class="vto-busy" data-vto-busy hidden>
+        <div class="vto-spinner" aria-hidden="true"></div>
+        <p class="vto-busy-label">{{ 'try_on.loading' | t }}</p>
+      </div>
+    </div>
+
+    <!-- Right Sidebar / Commerce & Controls -->
+    <div class="vto-controls">
+      <!-- Active Product Info Card -->
+      <div class="vto-product-panel">
+        <div class="vto-product-heading-group">
+          <span class="vto-section-subtitle">CURRENT PIECE</span>
+          <h3 class="vto-product-name" data-vto-product-name>{{ product.title | escape }}</h3>
+          <div class="vto-product-price-row">
+            <span class="vto-product-price" data-vto-product-price>{{ product.price | money }}</span>
+            <span class="vto-badge-stock" data-vto-stock-badge>AVAILABLE</span>
+          </div>
+        </div>
+
+        <!-- Size Selector -->
+        <div class="vto-size-block">
+          <div class="vto-size-header">
+            <span class="vto-size-title">{{ 'try_on.select_size' | t }}</span>
+            <span class="vto-size-active-label" data-vto-active-size-label></span>
+          </div>
+          <div class="vto-size-options" data-vto-sizes>
+            {% for variant in product.variants %}
+              <button type="button"
+                class="vto-size-btn{% if forloop.first %} active{% endif %}{% unless variant.available %} is-soldout{% endunless %}"
+                data-vto-size-btn
+                data-variant-id="{{ variant.id }}"
+                data-size-title="{{ variant.title | escape }}">
+                {{ variant.title | escape }}
+              </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Size Guide & Fit Simulation Notice -->
+        <div class="vto-size-notice">
+          <div class="vto-size-notice-head">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>{{ 'try_on.size_disclaimer_title' | t }}</span>
+          </div>
+          <p class="vto-size-notice-text">
+            {{ 'try_on.size_disclaimer_body' | t }}
+          </p>
+        </div>
+
+        <!-- Add To Cart CTA -->
+        <button type="button" class="vto-add-to-cart-btn" data-vto-add-cart>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="vto-cart-cta-text" data-vto-cart-cta-text>{{ 'try_on.add_to_cart' | t }}</span>
+          <span class="vto-cart-cta-separator">—</span>
+          <span class="vto-cart-cta-price" data-vto-cart-cta-price>{{ product.price | money }}</span>
+        </button>
+        <div class="vto-cart-toast" data-vto-cart-toast hidden></div>
+      </div>
+
+      <!-- Suggested Pieces from Collection -->
+      <div class="vto-suggested-section">
+        <div class="vto-suggested-header">
+          <span class="vto-section-subtitle">{{ 'try_on.other_pieces' | t }}</span>
+        </div>
+        <div class="vto-suggested-grid" data-vto-collection-grid>
+          <!-- Dynamic thumbnails populated by JS -->
+        </div>
+      </div>
+
+      <!-- Source Toggle Buttons (Camera / Photo) - shown once session starts -->
+      <div class="vto-source-switchers" data-vto-source-switchers hidden>
+        <button type="button" class="vto-source-btn" data-vto-action="camera">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>{{ 'try_on.camera' | t }}</span>
+        </button>
+        <button type="button" class="vto-source-btn" data-vto-action="upload">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span>{{ 'try_on.upload' | t }}</span>
+        </button>
+      </div>
+
       <p class="vto-note">{{ 'try_on.note' | t }}</p>
       <p class="vto-privacy" id="VtoPrivacy-{{ section.id }}">{{ 'try_on.privacy' | t }}</p>
       <button class="vto-return" type="button" data-vto-action="product">{{ 'try_on.product' | t }}</button>
     </div>
+
+    <!-- Hidden file input for user photo uploads -->
     <input data-vto-file type="file" accept="image/jpeg,image/png,image/webp" hidden aria-label="{{ 'try_on.upload' | t | escape }}">
+
+    <!-- Single application/json script for configuration -->
     {% capture vto_config %}
     {
       "model": {{ vto_model | json }},
       "workerUrl": {{ 'vto-pose-worker.js' | asset_url | json }},
       "processorUrl": {{ 'vto-pose-processor.js' | asset_url | json }},
       "visionUrl": {{ 'vto-vision.js' | asset_url | json }},
-      "models": {"secrets": {{ 'vto-secrets.glb' | asset_url | json }}, "sinners": {{ 'vto-sinners.glb' | asset_url | json }}},
+      "models": {
+        "secrets": {{ 'vto-secrets.glb' | asset_url | json }},
+        "sinners": {{ 'vto-sinners.glb' | asset_url | json }}
+      },
+      "currentProduct": {
+        "id": {{ product.id | json }},
+        "title": {{ product.title | json }},
+        "price": {{ product.price | json }},
+        "priceFormatted": {{ product.price | money | json }},
+        "featuredImage": {{ product.featured_image | image_url: width: 300 | json }},
+        "model": {{ vto_model | json }}
+      },
       "variants": [{% for variant in product.variants %}
-        {"id": {{ variant.id | json }}, "options": {{ variant.options | json }}, "model": {{ variant.metafields.custom.try_on_model.value | default: vto_model | json }}}
-        {% unless forloop.last %},{% endunless %}{% endfor %}],
+        {
+          "id": {{ variant.id | json }},
+          "title": {{ variant.title | json }},
+          "available": {{ variant.available | json }},
+          "price": {{ variant.price | json }},
+          "priceFormatted": {{ variant.price | money | json }},
+          "options": {{ variant.options | json }},
+          "model": {{ variant.metafields.custom.try_on_model.value | default: vto_model | json }}
+        }{% unless forloop.last %},{% endunless %}{% endfor %}
+      ],
+      "collectionItems": [
+        {%- assign added_item = false -%}
+        {%- if candidate_products and candidate_products.size > 0 -%}
+          {%- for item in candidate_products -%}
+            {%- liquid
+              assign item_model = item.metafields.custom.try_on_model.value | default: ''
+              if item_model == blank
+                case item.id
+                  when 11569665933653
+                    assign item_model = 'secrets'
+                  when 11569666097493
+                    assign item_model = 'sinners'
+                endcase
+              endif
+            -%}
+            {%- if item_model == 'secrets' or item_model == 'sinners' -%}
+              {%- if added_item %},{% endif -%}
+              {
+                "id": {{ item.id | json }},
+                "title": {{ item.title | json }},
+                "price": {{ item.price | json }},
+                "priceFormatted": {{ item.price | money | json }},
+                "featuredImage": {{ item.featured_image | image_url: width: 240 | json }},
+                "model": {{ item_model | json }},
+                "variants": [{% for v in item.variants %}
+                  {
+                    "id": {{ v.id | json }},
+                    "title": {{ v.title | json }},
+                    "available": {{ v.available | json }},
+                    "price": {{ v.price | json }},
+                    "priceFormatted": {{ v.price | money | json }},
+                    "options": {{ v.options | json }},
+                    "model": {{ v.metafields.custom.try_on_model.value | default: item_model | json }}
+                  }{% unless forloop.last %},{% endunless %}{% endfor %}
+                ]
+              }
+              {%- assign added_item = true -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+        {%- if added_item == false and p_secrets and p_sinners -%}
+          {
+            "id": {{ p_secrets.id | json }},
+            "title": {{ p_secrets.title | json }},
+            "price": {{ p_secrets.price | json }},
+            "priceFormatted": {{ p_secrets.price | money | json }},
+            "featuredImage": {{ p_secrets.featured_image | image_url: width: 240 | json }},
+            "model": "secrets",
+            "variants": [{% for v in p_secrets.variants %}
+              {
+                "id": {{ v.id | json }},
+                "title": {{ v.title | json }},
+                "available": {{ v.available | json }},
+                "price": {{ v.price | json }},
+                "priceFormatted": {{ v.price | money | json }},
+                "options": {{ v.options | json }},
+                "model": "secrets"
+              }{% unless forloop.last %},{% endunless %}{% endfor %}
+            ]
+          },
+          {
+            "id": {{ p_sinners.id | json }},
+            "title": {{ p_sinners.title | json }},
+            "price": {{ p_sinners.price | json }},
+            "priceFormatted": {{ p_sinners.price | money | json }},
+            "featuredImage": {{ p_sinners.featured_image | image_url: width: 240 | json }},
+            "model": "sinners",
+            "variants": [{% for v in p_sinners.variants %}
+              {
+                "id": {{ v.id | json }},
+                "title": {{ v.title | json }},
+                "available": {{ v.available | json }},
+                "price": {{ v.price | json }},
+                "priceFormatted": {{ v.price | money | json }},
+                "options": {{ v.options | json }},
+                "model": "sinners"
+              }{% unless forloop.last %},{% endunless %}{% endfor %}
+            ]
+          }
+        {%- endif -%}
+      ],
       "strings": {
         "title": {{ 'try_on.title' | t | json }},
         "close": {{ 'try_on.close' | t | json }},
@@ -66,7 +313,17 @@
         "privacy": {{ 'try_on.privacy' | t | json }},
         "note": {{ 'try_on.note' | t | json }},
         "adjust": {{ 'try_on.adjust' | t | json }},
-        "view": {{ 'try_on.view' | t | json }}
+        "view": {{ 'try_on.view' | t | json }},
+        "addToCart": {{ 'try_on.add_to_cart' | t | json }},
+        "addingToCart": {{ 'try_on.adding_to_cart' | t | json }},
+        "addedToCart": {{ 'try_on.added_to_cart' | t | json }},
+        "selectSize": {{ 'try_on.select_size' | t | json }},
+        "size": {{ 'try_on.size' | t | json }},
+        "otherPieces": {{ 'try_on.other_pieces' | t | json }},
+        "tryPiece": {{ 'try_on.try_piece' | t | json }},
+        "outOfStock": {{ 'try_on.out_of_stock' | t | json }},
+        "sizeDisclaimerTitle": {{ 'try_on.size_disclaimer_title' | t | json }},
+        "sizeDisclaimerBody": {{ 'try_on.size_disclaimer_body' | t | json }}
       }
     }
     {% endcapture %}

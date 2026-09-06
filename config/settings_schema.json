@@ -931,5 +931,17 @@
         "info": "This password will be auto-filled when the timer reaches zero"
       }
     ]
+  },
+  {
+    "name": "Virtual Try-On",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_virtual_try_on",
+        "label": "Enable Virtual Try-On (VR)",
+        "default": true,
+        "info": "Enable 3D Virtual Try-On for supported garments across the store"
+      }
+    ]
   }
 ]
