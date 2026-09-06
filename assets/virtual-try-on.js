@@ -93,9 +93,16 @@
     let secretsModel = null;
     let sinnersModel = null;
     let currentActiveModel = null;
+    let neckOccluder = null;
     let modelBones = { secrets: {}, sinners: {} };
     let is3DReady = false;
     let animFrameId = null;
+
+    // Dedicated Offscreen Processing Canvas for iOS Safari & Android WebKit compatibility
+    const procCanvas = document.createElement('canvas');
+    const procCtx = procCanvas.getContext('2d', { willReadFrequently: true });
+    procCanvas.width = 360;
+    procCanvas.height = 480;
 
     // Tracking Smoothing State
     const targetPos = { x: 0, y: -0.22, z: 0 };
@@ -206,6 +213,17 @@
       const rimLight = new THREE.DirectionalLight(0xffffff, 0.85);
       rimLight.position.set(0, 1.8, -1.8);
       scene.add(rimLight);
+
+      // Head & Neck Depth Occluder (allows real head to come out of shirt collar)
+      const occluderGeo = new THREE.CylinderGeometry(0.09, 0.11, 0.38, 24);
+      const occluderMat = new THREE.MeshBasicMaterial({
+        colorWrite: false,
+        depthWrite: true
+      });
+      neckOccluder = new THREE.Mesh(occluderGeo, occluderMat);
+      neckOccluder.renderOrder = -1;
+      neckOccluder.visible = false;
+      scene.add(neckOccluder);
 
       window.addEventListener('resize', onWindowResize);
     }
@@ -364,73 +382,113 @@
       hasBodyLock = true;
       lastDetectionTime = Date.now();
 
-      // 1. Torso Dimensions & Angles
-      const dx = leftShoulder.x - rightShoulder.x;
-      const dy = leftShoulder.y - rightShoulder.y;
-      const dz = (leftShoulder.z || 0) - (rightShoulder.z || 0);
+      // 1. Account for Object-Fit: Cover Crop Geometry
+      const vW = video.videoWidth || 720;
+      const vH = video.videoHeight || 1280;
+      const vpW = viewport.clientWidth || window.innerWidth;
+      const vpH = viewport.clientHeight || window.innerHeight;
 
-      const shoulderWidth2D = Math.hypot(dx, dy);
-      const shoulderMidX = (leftShoulder.x + rightShoulder.x) / 2;
-      const shoulderMidY = (leftShoulder.y + rightShoulder.y) / 2;
+      const scaleFactor = Math.max(vpW / vW, vpH / vH);
+      const renderedVW = vW * scaleFactor;
+      const renderedVH = vH * scaleFactor;
+      const offsetX = (renderedVW - vpW) / 2;
+      const offsetY = (renderedVH - vpH) / 2;
 
-      // Frustum world dimensions at Z=0
+      function mapToScreen(normX, normY) {
+        const px = (normX * renderedVW) - offsetX;
+        const py = (normY * renderedVH) - offsetY;
+        const sx = px / vpW;
+        const sy = py / vpH;
+        const screenX = (facingMode === 'user') ? (1.0 - sx) : sx;
+        const screenY = sy;
+        return { x: screenX, y: screenY };
+      }
+
+      const pLShoulder = mapToScreen(leftShoulder.x, leftShoulder.y);
+      const pRShoulder = mapToScreen(rightShoulder.x, rightShoulder.y);
+
+      // 2. Frustum World Dimensions at Z=0
       const frustumHeight = 2.0 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
       const frustumWidth = frustumHeight * camera.aspect;
 
-      // 2. Map coordinates to Three.js World Space
-      let worldX;
-      if (facingMode === 'user') {
-        worldX = (0.5 - shoulderMidX) * frustumWidth;
-      } else {
-        worldX = (shoulderMidX - 0.5) * frustumWidth;
+      function screenToWorld(pt) {
+        return {
+          x: (pt.x - 0.5) * frustumWidth,
+          y: (0.5 - pt.y) * frustumHeight
+        };
       }
-      const worldY = (0.5 - shoulderMidY) * frustumHeight;
 
-      // 3. Physical Fit Scaling
-      const measuredShoulderWidthMeters = shoulderWidth2D * frustumWidth;
-      const baseFitScale = (measuredShoulderWidthMeters / 0.64);
-      targetModelScale = baseFitScale * sizeScale * userScale;
+      const wLShoulder = screenToWorld(pLShoulder);
+      const wRShoulder = screenToWorld(pRShoulder);
 
-      // Position: Origin (Y=0) is at the hem; collar is at Y ~ 0.58 * scale
-      targetPos.x = worldX + manualPosX;
-      targetPos.y = worldY - (0.56 * targetModelScale) + manualPosY;
+      const clavicleWorld = {
+        x: (wLShoulder.x + wRShoulder.x) / 2,
+        y: (wLShoulder.y + wRShoulder.y) / 2
+      };
+
+      const shoulderSpanWorld = Math.hypot(
+        wLShoulder.x - wRShoulder.x,
+        wLShoulder.y - wRShoulder.y
+      );
+
+      // 3. Anatomical Fit Scaling
+      const baseFitScale = (shoulderSpanWorld / 0.54);
+      targetModelScale = Math.max(Math.min(baseFitScale * sizeScale * userScale, 1.8), 0.5);
+
+      // In the 3D model, the collar neckline is at Y ~ 0.58 relative to hem (Y=0)
+      targetPos.x = clavicleWorld.x + manualPosX;
+      targetPos.y = clavicleWorld.y - (0.58 * targetModelScale) + manualPosY;
       targetPos.z = 0;
 
       // 4. Torso Orientation (Roll, Yaw, Pitch)
-      let rollAngle = Math.atan2(dy, dx);
-      if (facingMode === 'user') rollAngle = -rollAngle;
-      targetRot.z = rollAngle;
+      const shoulderDx = wLShoulder.x - wRShoulder.x;
+      const shoulderDy = wLShoulder.y - wRShoulder.y;
+      targetRot.z = Math.atan2(shoulderDy, shoulderDx);
 
-      const yawAngle = dz * 1.5;
-      targetRot.y = yawAngle + (currentView === 'back' ? Math.PI : 0) + manualRotY;
+      const depthZ = (leftShoulder.z || 0) - (rightShoulder.z || 0);
+      const yawMultiplier = (facingMode === 'user') ? -1.8 : 1.8;
+      targetRot.y = (depthZ * yawMultiplier) + (currentView === 'back' ? Math.PI : 0) + manualRotY;
 
-      if (leftHip && rightHip && leftHip.visibility > 0.4) {
-        const hipMidY = (leftHip.y + rightHip.y) / 2;
-        const torsoH = hipMidY - shoulderMidY;
-        targetRot.x = Math.max(Math.min((torsoH - 0.38) * 0.45, 0.28), -0.28);
+      if (leftHip && rightHip && leftHip.visibility > 0.35) {
+        const pHip = mapToScreen((leftHip.x + rightHip.x) / 2, (leftHip.y + rightHip.y) / 2);
+        const wHip = screenToWorld(pHip);
+        const torsoDy = clavicleWorld.y - wHip.y;
+        targetRot.x = Math.max(Math.min((0.55 - torsoDy) * 0.5, 0.28), -0.28);
       }
 
-      // 5. Rig Sleeve Articulation
+      // 5. Update Neck Depth Occluder
+      if (neckOccluder) {
+        neckOccluder.visible = (currentView === 'front');
+        neckOccluder.position.set(
+          clavicleWorld.x + manualPosX,
+          clavicleWorld.y + (0.12 * targetModelScale) + manualPosY,
+          -0.02
+        );
+        neckOccluder.scale.set(targetModelScale, targetModelScale, targetModelScale);
+        neckOccluder.rotation.set(targetRot.x, targetRot.y, targetRot.z);
+      }
+
+      // 6. Rig Sleeve Articulation
       const currentBones = (currentShirt === 'burgundy') ? modelBones.sinners : modelBones.secrets;
       if (currentBones) {
-        if (currentBones['upper_arm.L'] && leftElbow && leftElbow.visibility > 0.35) {
-          const armDx = leftElbow.x - leftShoulder.x;
-          const armDy = leftElbow.y - leftShoulder.y;
-          const armAngle = Math.atan2(armDy, armDx) - 1.57;
+        if (currentBones['upper_arm.L'] && leftElbow && leftElbow.visibility > 0.3) {
+          const pElbow = mapToScreen(leftElbow.x, leftElbow.y);
+          const wElbow = screenToWorld(pElbow);
+          const armAngle = Math.atan2(wElbow.y - wLShoulder.y, wElbow.x - wLShoulder.x) + 1.57;
           currentBones['upper_arm.L'].rotation.z = THREE.MathUtils.lerp(
             currentBones['upper_arm.L'].rotation.z,
-            Math.max(Math.min(armAngle * 0.4, 0.6), -0.6),
-            0.2
+            Math.max(Math.min(armAngle * 0.45, 0.7), -0.7),
+            0.25
           );
         }
-        if (currentBones['upper_arm.R'] && rightElbow && rightElbow.visibility > 0.35) {
-          const armDx = rightElbow.x - rightShoulder.x;
-          const armDy = rightElbow.y - rightShoulder.y;
-          const armAngle = -Math.atan2(armDy, -armDx) + 1.57;
+        if (currentBones['upper_arm.R'] && rightElbow && rightElbow.visibility > 0.3) {
+          const pElbow = mapToScreen(rightElbow.x, rightElbow.y);
+          const wElbow = screenToWorld(pElbow);
+          const armAngle = Math.atan2(wElbow.y - wRShoulder.y, wElbow.x - wRShoulder.x) - 1.57;
           currentBones['upper_arm.R'].rotation.z = THREE.MathUtils.lerp(
             currentBones['upper_arm.R'].rotation.z,
-            Math.max(Math.min(armAngle * 0.4, 0.6), -0.6),
-            0.2
+            Math.max(Math.min(armAngle * 0.45, 0.7), -0.7),
+            0.25
           );
         }
       }
@@ -444,12 +502,18 @@
 
       animFrameId = requestAnimationFrame(renderLoop);
 
-      // Send video frames to MediaPipe Pose
+      // Send video frames to MediaPipe Pose via the dedicated offscreen canvas
+      // This eliminates iOS Safari WebKit tainted canvas / read errors completely!
       if (poseInstance && video && video.readyState >= 2 && !isProcessingFrame) {
         isProcessingFrame = true;
-        poseInstance.send({ image: video }).catch(() => {
+        try {
+          procCtx.drawImage(video, 0, 0, procCanvas.width, procCanvas.height);
+          poseInstance.send({ image: procCanvas }).catch(() => {
+            isProcessingFrame = false;
+          });
+        } catch (e) {
           isProcessingFrame = false;
-        });
+        }
       }
 
       // If body is not in view, glide gently to center studio presentation
@@ -461,10 +525,11 @@
         targetRot.x = 0;
         targetRot.y = (currentView === 'back' ? Math.PI : 0) + manualRotY;
         targetRot.z = 0;
+        if (neckOccluder) neckOccluder.visible = false;
       }
 
       // Smooth Lerp Interpolation
-      const lerpSpeed = 0.22;
+      const lerpSpeed = 0.28;
       currentPos.x += (targetPos.x - currentPos.x) * lerpSpeed;
       currentPos.y += (targetPos.y - currentPos.y) * lerpSpeed;
       currentPos.z += (targetPos.z - currentPos.z) * lerpSpeed;
@@ -511,6 +576,9 @@
         stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
         await video.play();
+
+        video.width = video.videoWidth || 720;
+        video.height = video.videoHeight || 1280;
 
         if (facingMode === 'user') {
           video.classList.remove('vto-video--rear');
