@@ -73,36 +73,67 @@ export class GarmentRenderer {
       bone.matrix.copy(parentInverse.multiply(desired));bone.matrixWorldNeedsUpdate=true;
       bone.updateMatrixWorld(true);
     }
-    // Depth-only neck/forearm proxies keep the real person visible over cloth
-    // when a forearm moves in front of the torso. No torso-wide cut-out.
-    const neck=this.occluders[0];neck.visible=true;
-    const m=new THREE.Matrix4().fromArray(fit.matrices.chest);
-    neck.matrixAutoUpdate=false;
-    neck.matrix.copy(m.multiply(new THREE.Matrix4().makeTranslation(0,.705,0)).scale(new THREE.Vector3(.070,.23,.070)));
-    neck.matrixWorldNeedsUpdate=true;
+    // In front view: anatomical neck occluder fills the neck opening at Y = 0.64 (Z = -0.015),
+    // sitting comfortably behind the front collar (Z ~ +0.07) and in front of the inside label/back collar (Z ~ -0.055).
+    // In back view: the back of the shirt is a solid fabric panel facing camera; neck occluder is hidden so it never punches holes in the back!
+    const isFrontView = fit.normal[2] > 0.15;
+    const neck=this.occluders[0];
+    neck.visible=isFrontView;
+    if(isFrontView){
+      const m=new THREE.Matrix4().fromArray(fit.matrices.chest);
+      neck.matrixAutoUpdate=false;
+      neck.matrix.copy(m.multiply(new THREE.Matrix4().makeTranslation(0,.64,-.015)).scale(new THREE.Vector3(.072,.20,.055)));
+      neck.matrixWorldNeedsUpdate=true;
+    }
     fit.arms.forEach((arm,i)=>{
       const o=this.occluders[i+1],a=new THREE.Vector3(...arm.elbow),b=new THREE.Vector3(...arm.wrist);
-      o.visible=true;o.position.copy(a).add(b).multiplyScalar(.5);
-      o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize());
-      o.scale.set(arm.radius,a.distanceTo(b),arm.radius);
+      const hand = this.hands[i];
+      // Forearm only crosses in front of torso when:
+      // 1. Person is facing front (in back view, arms are behind the shirt from camera perspective)
+      // 2. Wrist is vertically between hips and collar
+      // 3. Wrist is strictly within central chest width (|x - center| < scale * 0.18)
+      // Arms raised to the side (fists, gestures, holding phone near shoulder) are outside this range,
+      // guaranteeing that occluders NEVER cut holes into the sleeves!
+      const isCrossingChest = isFrontView &&
+        b.y > fit.hips[1] &&
+        b.y < fit.shoulders[1] + fit.scale * 0.06 &&
+        Math.abs(b.x - fit.shoulders[0]) < fit.scale * 0.18;
+
+      if (!isCrossingChest) {
+        o.visible = false;
+        if (hand) hand.visible = false;
+        return;
+      }
+
+      o.visible = true;
+      // Start 70% down the forearm from elbow towards wrist:
+      // Strictly localized over the chest where hand/phone crosses, safely away from the sleeve cuff!
+      const posA = new THREE.Vector3().lerpVectors(a, b, 0.70);
+      const frontTorsoZ = fit.shoulders[2] + fit.scale * 0.08;
+      const posB = new THREE.Vector3(b.x, b.y, Math.max(b.z, frontTorsoZ + 2));
+      posA.z = Math.max(posA.z, frontTorsoZ + 1);
+      o.position.copy(posA).add(posB).multiplyScalar(.5);
+      o.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), posB.clone().sub(posA).normalize());
+      const forearmRadius = fit.scale * 0.016;
+      o.scale.set(forearmRadius, Math.max(0.001, posA.distanceTo(posB)), forearmRadius);
+
+      if (hand) {
+        hand.visible = true;
+        const armDir = posB.clone().sub(posA).normalize();
+        const handPos = posB.clone().add(armDir.multiplyScalar(fit.scale * 0.024));
+        hand.position.copy(handPos);
+        const handRadius = fit.scale * 0.022;
+        hand.scale.set(handRadius, handRadius, handRadius);
+      }
     });
     for(let i=fit.arms.length+1;i<3;i++)this.occluders[i].visible=false;
     const nose=fit.landmarks[0],leftEar=fit.landmarks[7],rightEar=fit.landmarks[8];
-    this.head.visible=!!nose;
-    if(nose){
+    this.head.visible=isFrontView && !!nose;
+    if(this.head.visible && nose){
       const center=leftEar&&rightEar?leftEar.map((v,i)=>(v+rightEar[i])/2):nose;
-      const radius=leftEar&&rightEar?Math.max(fit.scale*.067,Math.hypot(leftEar[0]-rightEar[0],leftEar[1]-rightEar[1])*.65):fit.scale*.083;
-      this.head.position.set(center[0],center[1],Math.max(center[2],nose[2])+fit.scale*.07);
-      this.head.scale.set(radius,radius*1.28,radius);
-    }
-    for(let i=0;i<2;i++){
-      const wrist=fit.landmarks[15+i],index=fit.landmarks[19+i],pinky=fit.landmarks[17+i],hand=this.hands[i];
-      hand.visible=!!(wrist&&index&&pinky);
-      if(hand.visible){
-        const center=wrist.map((v,k)=>(v+index[k]+pinky[k])/3);
-        const radius=Math.max(fit.scale*.033,Math.hypot(...index.map((v,k)=>v-wrist[k]))*.65);
-        hand.position.set(center[0],center[1],center[2]+fit.scale*.015);hand.scale.set(radius,radius,radius*.6);
-      }
+      const radius=leftEar&&rightEar?Math.max(fit.scale*.065,Math.hypot(leftEar[0]-rightEar[0],leftEar[1]-rightEar[1])*.60):fit.scale*.075;
+      this.head.position.set(center[0],center[1],Math.max(center[2],nose[2])+fit.scale*.05);
+      this.head.scale.set(radius,radius*1.15,radius);
     }
     this.lastFit=fit;this.render();return fit;
   }

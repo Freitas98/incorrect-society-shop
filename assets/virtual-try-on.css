@@ -701,22 +701,25 @@ dialog.vto-modal::backdrop {
     width: 44px;
     height: 44px;
   }
-  /* Status pill / show shoulders aviso on mobile: centered at top */
+  /* Status pill / show shoulders aviso on mobile: centered at top with clean multi-line wrapping */
   .vto-stage-status {
     top: 12px;
     left: 50%;
     transform: translateX(-50%);
-    width: max-content;
+    width: auto;
     max-width: calc(100% - 24px);
-    padding: 7px 14px;
+    padding: 8px 14px;
     font-size: 9.5px;
     box-sizing: border-box;
     z-index: 6;
+    text-align: center;
   }
   .vto-status-label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.35;
+    text-align: center;
   }
   /* Camera action buttons on mobile: side-by-side at bottom of camera viewfinder */
   .vto-stage-actions {

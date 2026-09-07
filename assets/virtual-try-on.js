@@ -5,13 +5,13 @@
   const instances = new Map();
 
   const SIZE_SCALE_MAP = {
-    'xs': { ease: 0.93, lengthScale: 0.95 },
-    's':  { ease: 0.96, lengthScale: 0.97 },
-    'm':  { ease: 1.00, lengthScale: 1.00 },
-    'l':  { ease: 1.06, lengthScale: 1.04 },
-    'xl': { ease: 1.12, lengthScale: 1.08 },
-    '2xl': { ease: 1.18, lengthScale: 1.12 },
-    'xxl': { ease: 1.18, lengthScale: 1.12 }
+    'xs': { ease: 0.935, lengthScale: 0.939 },
+    's':  { ease: 0.968, lengthScale: 0.970 },
+    'm':  { ease: 1.000, lengthScale: 1.000 },
+    'l':  { ease: 1.032, lengthScale: 1.030 },
+    'xl': { ease: 1.065, lengthScale: 1.061 },
+    '2xl': { ease: 1.097, lengthScale: 1.091 },
+    'xxl': { ease: 1.097, lengthScale: 1.091 }
   };
 
   class TryOn {
@@ -686,7 +686,8 @@
         mirror: this.mirror,
         still: this.mode === 'photo',
         ease: this.currentEase || 1.0,
-        lengthScale: this.currentLengthScale || 1.0
+        lengthScale: this.currentLengthScale || 1.0,
+        shoulderLift: 0.022
       });
       this.q('save').disabled = !fit;
       this.status(fit ? 'tracking' : 'searching');

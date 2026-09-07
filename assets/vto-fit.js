@@ -34,7 +34,7 @@ export function transform(m,p) {
   return [0,1,2].map(i => m[i]*p[0]+m[4+i]*p[1]+m[8+i]*p[2]+m[12+i]);
 }
 
-export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthScale=1}={}) {
+export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthScale=1,shoulderLift=0}={}) {
   if (![11,12,23,24].every(i=>visible(landmarks?.[i]))) return null;
   // Mirror the person AND swap anatomical assignments. Reflecting X alone
   // reverses the body basis and incorrectly displays the back of the shirt.
@@ -61,15 +61,45 @@ export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthS
   const ls=point(ids.l),rs=point(ids.r),lh=point(ids.hl),rh=point(ids.hr);
   const shoulders=mid(ls,rs),hips=mid(lh,rh),up=sub(shoulders,hips);
   if (length(sub(ls,rs))<rect.width*.025 || length(up)<rect.height*.10) return null;
-  const sx=mul(sub(ls,rs),1/.47),sy=mul(up,1/.49);
-  const scale=length(sx),normal=unit(cross(sx,sy));
-  if (length(normal)<.9) return null;
+  const sx=mul(sub(ls,rs),1/.47),up_raw=sub(shoulders,hips);
+  // Orthogonalize up vector against shoulder axis (sx) to eliminate shear distortion:
+  // Non-orthogonal sx/sy causes slanted collars, trapezius hole cutting, and crooked necklines on photos/tilted postures.
+  const u_sx=unit(sx);
+  const up_ortho=sub(up_raw,mul(u_sx,dot(up_raw,u_sx)));
+  const scale=length(sx);
+  // Garment torso length stabilization:
+  // In the 3D model, the Boxy tee has nominal torso length (shoulder-to-hip) of scale * 0.49.
+  // Bounding vertical torso stretch prevents the t-shirt from extending down to mid-thigh like a dress.
+  const nominalTorso=scale*.49;
+  const boundedTorso=clamp(length(up_raw),nominalTorso*.85,nominalTorso*1.08);
+  const sy=mul(unit(up_ortho),boundedTorso/.49);
+  const rawNormal=unit(cross(sx,sy));
+  if (length(rawNormal)<.9) return null;
+  // Torso pitch stabilization for elevated / superior camera perspective:
+  // Clamping vertical pitch prevents camera downward angle from projecting the collar forward into the chin/air.
+  // Preserving the sign of Z from cross(sx,sy) ensures 180° back-view has a positive determinant (no inverted geometry/culling).
+  const pitch=clamp(rawNormal[1],-.12,.12);
+  const nx=rawNormal[0],signZ=rawNormal[2]<0?-1:1,nz=signZ*Math.sqrt(Math.max(.1,1-nx*nx-pitch*pitch));
+  const normal=unit([nx,pitch,nz]);
   const depth=mul(normal,scale*.90);
-  const chest=matrix(mul(sx,ease),sy,depth,REST.shoulder,shoulders);
+  // Elevate shoulder anchor along torso axis so collar covers trapezius on athletic builds,
+  // while strictly clamping elevation below the chin/jaw to prevent collar hover onto beard/chin.
+  let liftAmount=scale*shoulderLift;
+  if (visible(landmarks?.[0])) {
+    const nose=point(0);
+    const mouthL=visible(landmarks?.[9])?point(9):null;
+    const mouthR=visible(landmarks?.[10])?point(10):null;
+    const chinY=(mouthL&&mouthR)?(mouthL[1]+mouthR[1])/2-scale*.025:nose[1]-scale*.075;
+    const maxCollarLift=Math.max(0,chinY-shoulders[1]-scale*.095);
+    liftAmount=Math.min(liftAmount,maxCollarLift);
+  }
+  const liftOffset=mul(unit(up_ortho),liftAmount);
+  const chestAnchor=add(shoulders,liftOffset);
+  const chest=matrix(mul(sx,ease),sy,depth,REST.shoulder,chestAnchor);
   const hipWidth=length(sub(lh,rh));
   // Preserve oversized ease; taper the lower mesh towards the tracked hips.
   const hx=mul(unit(sub(lh,rh)),clamp(hipWidth/.33,scale*.82,scale*1.22)*ease);
-  const lowerTarget=sub(shoulders,mul(up,lengthScale));
+  const lowerTarget=sub(chestAnchor,mul(up_ortho,lengthScale));
   const spine=matrix(hx,mul(sy,lengthScale),depth,REST.hip,lowerTarget);
   const matrices={root:spine,spine,chest,neck:chest};
   const arms=[];
@@ -82,11 +112,11 @@ export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthS
     // A forearm pointing directly into the camera must retain sleeve volume.
     const v=unit(length(sideways)>.05?sideways:cross(unit(sx),u)),z=unit(cross(u,v));
     const rv=[-ru[1],ru[0],0],rz=[0,0,1];
-    const longitudinal=clamp(length(dir)*.90/length(rest),scale*.55,scale*1.6);
+    const longitudinal=clamp(length(dir)*.90/length(rest)*lengthScale,scale*.55,scale*1.8);
     const transverse=scale*ease;
     const cols=[0,1,2].map(i=>add(add(mul(u,longitudinal*ru[i]),mul(v,transverse*rv[i])),mul(z,transverse*rz[i])));
     matrices['upper_arm.'+side]=matrix(...cols,REST['shoulder'+side],s);
-    if(visible(landmarks[wi])) arms.push({elbow:e,wrist:point(wi),radius:scale*.034});
+    if(visible(landmarks[wi])) arms.push({elbow:e,wrist:point(wi),radius:scale*.024});
   }
   return {matrices,shoulders,hips,normal,scale,arms,landmarks:landmarks.map((p,i)=>visible(p)?point(i):null)};
 }
