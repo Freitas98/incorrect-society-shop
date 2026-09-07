@@ -54,7 +54,7 @@
     "password_timer_enabled": true,
     "password_open_date": "2026-10-01T20:00:00+00:00",
     "password_auto_password": "SecretsAndSins2026",
-    "enable_virtual_try_on": false,
+    "enable_virtual_try_on": true,
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
