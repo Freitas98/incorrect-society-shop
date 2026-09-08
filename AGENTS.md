@@ -80,10 +80,11 @@ Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. N�
 
 ## Convenções para novas alterações
 
-### Provador virtual — V2 publicada em 2026-09-08
+### Provador virtual — V2 e correção mobile publicadas em 2026-09-08
 
 Consultar `docs/TRY-ON-V2.md` para arquitetura, medidas, evidências e validações pendentes. `docs/TRY-ON.md` preserva a primeira versão como histórico. A V2 parte do redesign do utilizador (`ff35b21`), preserva as alterações posteriores do editor (`fdcb920`) e foi publicada com autorização explícita pelo commit `204c4f6` em `main`. Confirmada no tema live `incorrect-society-shop/main`, ID `184958812501`, loja `uuxj91-bd.myshopify.com`: os 21 ficheiros de tema alterados coincidem com o commit. Definições, template/secção de produto e layout foram preservados. Para desligar globalmente: Definições do tema → Virtual Try-On → **Enable Virtual Try-On (VR)** (`settings.enable_virtual_try_on`).
 
+- Correção posterior ao teste em iPhone 15 Pro Max: commit `339bf6b`, publicado em `main` no mesmo tema live. Os seis assets alterados coincidiram com a nova leitura Shopify; configurações/template/secção de produto não mudaram. Câmara simulada com recursos versionados reais do CDN confirmou Pose Lite/GPU, LOD leve, DPR 1, 30 frames e limpeza sem erros. A redução de aquecimento e o caimento no iPhone físico aguardam novo teste.
 - Entrada: `sections/product.liquid` → `snippets/virtual-try-on-modal.liquid`, isolado por `section.id`; controlador `assets/virtual-try-on.js`, estilos `assets/virtual-try-on.css`.
 - Produtos distintos, confirmados pelo utilizador: ID `11569665933653` = Secrets; ID `11569666097493` = Sinners. Não inferir a peça pelo título ou cor. Fallback por estes IDs; `custom.try_on_model` do produto substitui o fallback, os seletores de produto da secção têm precedência e o metafield da variante pode substituir o modelo dessa variante. Valores válidos: `secrets`, `sinners`.
 - Apenas produtos explicitamente associados mostram o botão. O redesign do utilizador permite escolher outra peça, variante e adicionar ao carrinho dentro do modal. Preservar esse fluxo e o formulário original. O POST usa o ID exato da variante ativa e emite `cartUpdated` com `source: 'try-on'` após obter o carrinho confirmado. Falhas 422, atualização falhada e resultado de rede incerto têm tratamentos distintos; nunca repetir um POST automaticamente.

@@ -131,6 +131,10 @@ O utilizador testou a versão publicada e reportou lentidão extrema, aqueciment
 
 Novo teste necessário no iPhone: modo automático, sessão curta, braço a segurar o telemóvel, mãos à frente, troca de tamanhos e comparação de escala. A redução de trabalho está medida; a redução de aquecimento tem de ser confirmada no aparelho.
 
+Publicação desta correção: commit `339bf6b`, enviado para `main` e confirmado no tema live `184958812501`. Os seis assets alterados coincidem com a leitura autenticada Shopify; os quatro controlos comparados (`settings_data`, `settings_schema`, template e secção de produto) permaneceram idênticos. Cópias locais antes/depois em `C:/dev/incorrect-society-backups/production-{before,after}-iphone-fix-20260908`, fora do Git/servidor.
+
+Verificação CDN após publicação: fotografias Secrets e Sinners, 20 respostas por peça, sem erros JS/worker; câmara simulada em perfil tátil com memória não exposta, 30 frames, Pose Lite/GPU, GLB leve, DPR 1, pedido 640×480/24 fps e limpeza dos workers/tracks. O primeiro ensaio de câmara usou por engano a URL sem versão do controlador existente no HTML da fixture local, recebendo um objeto CDN anterior (1280 px); o teste detetou a configuração errada. Foi corrigida apenas a fixture para usar URLs versionadas e repetidos os ensaios. A secção Shopify já usa `asset_url`, incluindo o controlador; não remover essa versão nem usar caminhos CDN nus em testes como prova do código atual.
+
 Comandos adicionais:
 
 ```powershell
