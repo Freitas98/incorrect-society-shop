@@ -1,6 +1,6 @@
-# Virtual Fitting Room — evolução local de 2026-09-07 (em validação)
+# Virtual Fitting Room V2 — publicada em 2026-09-08 (validação física pendente)
 
-Base: `ff35b21`, checkout inicialmente limpo. O utilizador informou que a versão anterior está publicada e pediu maior realismo, movimento, comparação de tamanhos/apoio à compra e funcionamento em aparelhos menos potentes. Acrescentou que mãos/antebraços não devem abrir buracos na peça. A estética e o comércio introduzidos pelo utilizador foram preservados. Estas novas alterações não foram publicadas.
+Base: `ff35b21`, checkout inicialmente limpo. O utilizador informou que a versão anterior está publicada e pediu maior realismo, movimento, comparação de tamanhos/apoio à compra e funcionamento em aparelhos menos potentes. Acrescentou que mãos/antebraços não devem abrir buracos na peça. A estética e o comércio introduzidos pelo utilizador foram preservados. A evolução começou localmente em 2026-09-07 e foi publicada com autorização explícita em 2026-09-08, commit `204c4f6`; o registo final abaixo distingue publicação de validação física.
 
 ## Medidas e escolha de tamanho
 
@@ -94,6 +94,9 @@ Ronda de contorno atual e compatibilidade (2026-09-08):
 - Cópia de segurança local, fora do tema e do Git: `C:/dev/incorrect-society-backups/production-before-v2-20260908`. Pode conter configuração privada: não publicar nem servir por HTTP. O commit `fdcb920` também identifica a base anterior à V2.
 - Não se alterou o interruptor nem os valores guardados do editor: `settings.enable_virtual_try_on` já estava ativo. Para desligar: editor do tema → Definições do tema → Virtual Try-On → desmarcar **Enable Virtual Try-On (VR)** → Guardar. A opção homónima na secção Product também pode desligar o provador nesse template.
 - Preparação final: 58 testes Node passaram; Theme Check 0 erros / 10 avisos preexistentes. Verificação da sincronização live e teste físico são passos distintos; não assumir sucesso remoto apenas pelo push Git.
+- Publicação concluída por `git push origin main`, commit `204c4f6`, através da ligação GitHub–Shopify existente. Nova leitura autenticada do tema live confirmou os 21 ficheiros alterados, incluindo os quatro GLB, e zero alterações aos cinco controlos comparados: `settings_data`, `settings_schema`, template de produto, secção de produto e layout. A Shopify confirmou `processing: false` e função `live`.
+- Os 16 assets alterados responderam HTTP 200 no CDN da montra; os quatro GLB coincidem byte a byte. O CDN minifica JS/CSS, pelo que comparação textual direta desses recursos não é válida. O teste de browser com os módulos minificados reais e os GLB do CDN passou Secrets e Sinners (20 respostas CDN por peça, fotografia ajustada, sem erros JS/worker nem POST). Usou HTML Liquid/catálogo fictício servido localmente e uma fotografia pública; não substitui teste das páginas Shopify autenticadas.
+- A página pública do produto redireciona para `/password` e identifica o mesmo tema publicado. Não foram submetidas credenciais, usada uma câmara real nem efetuadas compras. O utilizador vai validar as páginas reais e a câmara física: mãos/antebraços à frente, braços cruzados/levantados, rotação, troca de câmara, S/M/L/XL, modo leve e fecho/reabertura. Caimento e recomendação continuam aproximações por validar contra peças reais.
 
 Comandos adicionais:
 
