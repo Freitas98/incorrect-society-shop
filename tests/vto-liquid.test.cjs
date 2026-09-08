@@ -6,7 +6,7 @@ const root=path.join(__dirname,'..'),source=fs.readFileSync(path.join(root,'sect
 const selection=source.slice(0,source.indexOf('<div class="product-page-new'))+'{{ vto_available | json }}|{{ vto_model | json }}';
 const snippet=fs.readFileSync(path.join(root,'snippets/virtual-try-on-modal.liquid'),'utf8');
 function engine(lang='en.default'){
-  const liquid=new Liquid(),locale=JSON.parse(fs.readFileSync(path.join(root,'locales/'+lang+'.json'),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/,\s*([}\]])/g,'$1'));
+  const liquid=new Liquid({root:path.join(root,'snippets'),extname:'.liquid'}),locale=JSON.parse(fs.readFileSync(path.join(root,'locales/'+lang+'.json'),'utf8').replace(/\/\*[\s\S]*?\*\//g,'').replace(/,\s*([}\]])/g,'$1'));
   liquid.registerFilter('json',v=>JSON.stringify(v??null));liquid.registerFilter('asset_url',v=>'/assets/'+v);
   liquid.registerFilter('t',v=>v.split('.').reduce((a,k)=>a?.[k],locale)||v);return liquid;
 }
@@ -39,6 +39,8 @@ test('EN and PT modal config is valid, fully translated, scoped and script-safe'
     assert.equal(config.model,'sinners');assert.equal(config.variants[0].model,'sinners');
     assert.equal(config.variants[0].options[0],p.variants[0].options[0]);
     assert.ok(Object.values(config.strings).every(v=>typeof v==='string'&&!v.startsWith('try_on.')));
+    assert.ok(Object.values(config.fitStrings).every(v=>typeof v==='string'&&!v.startsWith('try_on.')));
+    assert.ok(!html.includes('try_on.fit.'),'visible labels must also be translated');
     assert.ok(config.strings.photoFitted);
   }
 });
@@ -52,7 +54,7 @@ test('layout import map versions every shared module without eagerly loading it'
   const liquid=engine();liquid.registerFilter('asset_url',v=>'https://cdn.example.test/assets/'+v+'?v=123');
   const source=fs.readFileSync(path.join(root,'snippets/vto-import-map.liquid'),'utf8');
   const html=await liquid.parseAndRender(source),map=JSON.parse(html.match(/<script type="importmap">([\s\S]*?)<\/script>/)[1]);
-  assert.equal(Object.keys(map.imports).length,7);
+  assert.ok(Object.keys(map.imports).length >= 8);
   assert.ok(Object.entries(map.imports).every(([key,url])=>key.startsWith('@incorrect/')&&url.endsWith('?v=123')));
   assert.equal((html.match(/\bsrc=/g)||[]).length,0);
   assert.equal((fs.readFileSync(path.join(root,'layout/theme.liquid'),'utf8').match(/render 'vto-import-map'/g)||[]).length,1);

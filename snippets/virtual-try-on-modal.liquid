@@ -30,6 +30,7 @@
     <div class="vto-stage" data-vto-stage>
       <canvas data-vto-media aria-hidden="true"></canvas>
       <canvas data-vto-canvas role="img" aria-label="{{ 'try_on.view' | t | escape }}"></canvas>
+      <canvas data-vto-foreground aria-hidden="true" style="pointer-events:none"></canvas>
 
       <!-- Status Pill Overlay -->
       <div class="vto-stage-status" data-vto-status-pill>
@@ -91,11 +92,11 @@
       <!-- Active Product Info Card -->
       <div class="vto-product-panel">
         <div class="vto-product-heading-group">
-          <span class="vto-section-subtitle">CURRENT PIECE</span>
+          <span class="vto-section-subtitle">{{ 'try_on.fit.currentPiece' | t }}</span>
           <h3 class="vto-product-name" data-vto-product-name>{{ product.title | escape }}</h3>
           <div class="vto-product-price-row">
             <span class="vto-product-price" data-vto-product-price>{{ product.price | money }}</span>
-            <span class="vto-badge-stock" data-vto-stock-badge>AVAILABLE</span>
+            <span class="vto-badge-stock" data-vto-stock-badge>{{ 'try_on.fit.available' | t }}</span>
           </div>
         </div>
 
@@ -118,6 +119,42 @@
           </div>
         </div>
 
+        <div class="vto-measurements" data-vto-measurements></div>
+        <details class="vto-profile">
+          <summary>{{ 'try_on.fit.profile' | t }}</summary>
+          <p>{{ 'try_on.fit.profileHint' | t }}</p>
+          <label>{{ 'try_on.fit.method' | t }}
+            <select data-vto-profile="method">
+              <option value="shirt">{{ 'try_on.fit.shirt' | t }}</option>
+              <option value="body">{{ 'try_on.fit.body' | t }}</option>
+            </select>
+          </label>
+          <div data-vto-profile-shirt class="vto-profile-fields">
+            <p>{{ 'try_on.fit.shirtHint' | t }}</p>
+            <label>{{ 'try_on.fit.width' | t }}<input data-vto-profile="width" type="number" min="35" max="90" step="0.5" inputmode="decimal" placeholder="35–90" autocomplete="off"></label>
+            <label>{{ 'try_on.fit.length' | t }}<input data-vto-profile="length" type="number" min="40" max="100" step="0.5" inputmode="decimal" placeholder="40–100" autocomplete="off"></label>
+          </div>
+          <div data-vto-profile-body class="vto-profile-fields" hidden>
+            <p>{{ 'try_on.fit.bodyHint' | t }}</p>
+            <label>{{ 'try_on.fit.chest' | t }}<input data-vto-profile="chest" type="number" min="60" max="180" step="0.5" inputmode="decimal" placeholder="60–180" autocomplete="off"></label>
+            <label>{{ 'try_on.fit.preference' | t }}
+              <select data-vto-profile="preference">
+                <option value="boxy">{{ 'try_on.fit.boxy' | t }}</option>
+                <option value="relaxed">{{ 'try_on.fit.relaxed' | t }}</option>
+                <option value="closer">{{ 'try_on.fit.closer' | t }}</option>
+              </select>
+            </label>
+          </div>
+          <div class="vto-calibration">
+            <span class="vto-section-subtitle">{{ 'try_on.fit.calibration' | t }}</span>
+            <label>{{ 'try_on.fit.shoulder' | t }}<input data-vto-profile="shoulder" type="number" min="28" max="65" step="0.5" inputmode="decimal" placeholder="28–65" autocomplete="off"></label>
+            <p>{{ 'try_on.fit.shoulderHint' | t }}</p>
+          </div>
+          <button type="button" class="vto-source-btn" data-vto-clear-profile>{{ 'try_on.fit.reset' | t }}</button>
+        </details>
+        <div class="vto-fit-advice" data-vto-fit-advice role="status" aria-live="polite"></div>
+        <button type="button" class="vto-source-btn" data-vto-use-recommendation hidden>{{ 'try_on.fit.compare' | t }}</button>
+        <p class="vto-fit-scale" data-vto-fit-scale>{{ 'try_on.fit.uncalibrated' | t }}</p>
         <!-- Size Guide & Fit Simulation Notice -->
         <div class="vto-size-notice">
           <div class="vto-size-notice-head">
@@ -144,7 +181,7 @@
           <span class="vto-cart-cta-separator">—</span>
           <span class="vto-cart-cta-price" data-vto-cart-cta-price>{{ product.price | money }}</span>
         </button>
-        <div class="vto-cart-toast" data-vto-cart-toast hidden></div>
+        <div class="vto-cart-toast" data-vto-cart-toast role="status" aria-live="polite" hidden></div>
       </div>
 
       <!-- Suggested Pieces from Collection -->
@@ -169,7 +206,15 @@
         </button>
       </div>
 
+      <label class="vto-quality">{{ 'try_on.fit.quality' | t }}
+        <select data-vto-quality>
+          <option value="auto">{{ 'try_on.fit.qualityAuto' | t }}</option>
+          <option value="lite">{{ 'try_on.fit.qualityLite' | t }}</option>
+        </select>
+        <span>{{ 'try_on.fit.qualityHint' | t }}</span>
+      </label>
       <p class="vto-note">{{ 'try_on.note' | t }}</p>
+      <p class="vto-note" data-vto-occlusion-note role="status" hidden>{{ 'try_on.fit.occlusionUnavailable' | t }}</p>
       <p class="vto-privacy" id="VtoPrivacy-{{ section.id }}">{{ 'try_on.privacy' | t }}</p>
       <button class="vto-return" type="button" data-vto-action="product">{{ 'try_on.product' | t }}</button>
     </div>
@@ -189,6 +234,7 @@
         "sinners": {{ 'vto-sinners.glb' | asset_url | json }}
       },
       "currentProduct": {
+        "optionNames": {{ product.options | json }},
         "id": {{ product.id | json }},
         "title": {{ product.title | json }},
         "price": {{ product.price | json }},
@@ -226,6 +272,7 @@
               {%- if added_item %},{% endif -%}
               {
                 "id": {{ item.id | json }},
+                "optionNames": {{ item.options | json }},
                 "title": {{ item.title | json }},
                 "price": {{ item.price | json }},
                 "priceFormatted": {{ item.price | money | json }},
@@ -250,6 +297,7 @@
         {%- if added_item == false and p_secrets and p_sinners -%}
           {
             "id": {{ p_secrets.id | json }},
+            "optionNames": {{ p_secrets.options | json }},
             "title": {{ p_secrets.title | json }},
             "price": {{ p_secrets.price | json }},
             "priceFormatted": {{ p_secrets.price | money | json }},
@@ -269,6 +317,7 @@
           },
           {
             "id": {{ p_sinners.id | json }},
+            "optionNames": {{ p_sinners.options | json }},
             "title": {{ p_sinners.title | json }},
             "price": {{ p_sinners.price | json }},
             "priceFormatted": {{ p_sinners.price | money | json }},
@@ -288,6 +337,53 @@
           }
         {%- endif -%}
       ],
+      "liteModels": {"secrets": {{ 'vto-secrets-lite.glb' | asset_url | json }}, "sinners": {{ 'vto-sinners-lite.glb' | asset_url | json }}},
+      "occlusionUrl": {{ 'vto-occlusion.js' | asset_url | json }},
+      "segmentationUrl": {{ 'vto-segmentation.js' | asset_url | json }},
+      "measurements": {% render 'size-measurements', action: 'json', garment: 'tshirt' %},
+      "fitStrings": {
+        "profile": {{ 'try_on.fit.profile' | t | json }},
+        "profileHint": {{ 'try_on.fit.profileHint' | t | json }},
+        "method": {{ 'try_on.fit.method' | t | json }},
+        "shirt": {{ 'try_on.fit.shirt' | t | json }},
+        "body": {{ 'try_on.fit.body' | t | json }},
+        "width": {{ 'try_on.fit.width' | t | json }},
+        "length": {{ 'try_on.fit.length' | t | json }},
+        "chest": {{ 'try_on.fit.chest' | t | json }},
+        "preference": {{ 'try_on.fit.preference' | t | json }},
+        "closer": {{ 'try_on.fit.closer' | t | json }},
+        "relaxed": {{ 'try_on.fit.relaxed' | t | json }},
+        "boxy": {{ 'try_on.fit.boxy' | t | json }},
+        "bodyHint": {{ 'try_on.fit.bodyHint' | t | json }},
+        "shirtHint": {{ 'try_on.fit.shirtHint' | t | json }},
+        "calibration": {{ 'try_on.fit.calibration' | t | json }},
+        "shoulder": {{ 'try_on.fit.shoulder' | t | json }},
+        "shoulderHint": {{ 'try_on.fit.shoulderHint' | t | json }},
+        "calibrated": {{ 'try_on.fit.calibrated' | t | json }},
+        "uncalibrated": {{ 'try_on.fit.uncalibrated' | t | json }},
+        "incomplete": {{ 'try_on.fit.incomplete' | t | json }},
+        "match": {{ 'try_on.fit.match' | t | json }},
+        "outside": {{ 'try_on.fit.outside' | t | json }},
+        "unsupported": {{ 'try_on.fit.unsupported' | t | json }},
+        "difference": {{ 'try_on.fit.difference' | t | json }},
+        "ease": {{ 'try_on.fit.ease' | t | json }},
+        "tie": {{ 'try_on.fit.tie' | t | json }},
+        "tolerance": {{ 'try_on.fit.tolerance' | t | json }},
+        "soldout": {{ 'try_on.fit.soldout' | t | json }},
+        "compare": {{ 'try_on.fit.compare' | t | json }},
+        "reset": {{ 'try_on.fit.reset' | t | json }},
+        "measurements": {{ 'try_on.fit.measurements' | t | json }},
+        "sleeve": {{ 'try_on.fit.sleeve' | t | json }},
+        "garmentShoulder": {{ 'try_on.fit.garmentShoulder' | t | json }},
+        "opening": {{ 'try_on.fit.opening' | t | json }},
+        "available": {{ 'try_on.fit.available' | t | json }},
+        "currentPiece": {{ 'try_on.fit.currentPiece' | t | json }},
+        "cartError": {{ 'try_on.fit.cartError' | t | json }},
+        "cartRefresh": {{ 'try_on.fit.cartRefresh' | t | json }},
+        "cartUnknown": {{ 'try_on.fit.cartUnknown' | t | json }},
+        "viewCart": {{ 'try_on.fit.viewCart' | t | json }},
+        "invalid": {{ 'try_on.fit.invalid' | t | json }}
+      },
       "strings": {
         "title": {{ 'try_on.title' | t | json }},
         "close": {{ 'try_on.close' | t | json }},

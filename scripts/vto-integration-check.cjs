@@ -19,18 +19,18 @@ let activeBrowser,activePage;
     window.__vtoTest={tracks:[],fits:[],workers:0,terminated:0,inference:[]};
     const NativeWorker=window.Worker;
     window.Worker=class extends NativeWorker{
-      constructor(...args){super(...args);window.__vtoTest.workers++;this.addEventListener('message',({data})=>{if(data.ms)window.__vtoTest.inference.push(data.ms);});}
+      constructor(...args){super(...args);window.__vtoTest.workers++;this.addEventListener('message',({data})=>{if(data.kind==='pose'&&data.ms)window.__vtoTest.inference.push(data.ms);});}
       terminate(){window.__vtoTest.terminated++;return super.terminate();}
     };
     navigator.mediaDevices.getUserMedia=async()=>{
       if(window.__denyCamera)throw new DOMException('Denied','NotAllowedError');
-      const image=new Image();image.src='/artifacts/try-on/pose.jpg';await image.decode();
-      const canvas=document.createElement('canvas');canvas.width=960;canvas.height=640;
+      const image=new Image();image.src='/artifacts/try-on/male_full_height_hands.jpg';await image.decode();
+      const canvas=document.createElement('canvas');canvas.width=640;canvas.height=960;
       const ctx=canvas.getContext('2d');let frame=0;
       const draw=()=>{
         frame++;const scale=.80+.045*Math.sin(frame/22),shift=55*Math.sin(frame/18);
-        ctx.fillStyle='#abc';ctx.fillRect(0,0,960,640);ctx.save();
-        ctx.translate(480+shift,320);ctx.scale(scale,scale);ctx.drawImage(image,-480,-320,960,640);ctx.restore();
+        ctx.fillStyle='#abc';ctx.fillRect(0,0,640,960);ctx.save();
+        ctx.translate(320+shift,480);ctx.scale(scale,scale);ctx.drawImage(image,-320,-480,640,960);ctx.restore();
       };draw();
       const stream=canvas.captureStream(20),timer=setInterval(draw,50);
       stream.getTracks().forEach(track=>{
@@ -46,18 +46,22 @@ let activeBrowser,activePage;
     const {GarmentRenderer}=await import('@incorrect/vto-renderer');const fit=GarmentRenderer.prototype.fit;
     GarmentRenderer.prototype.fit=function(...args){
       const result=fit.apply(this,args);
-      if(result)window.__vtoTest.fits.push({shoulders:result.shoulders,scale:result.scale,normal:result.normal,arms:result.arms,at:performance.now(),mirror:args[2].mirror});
+      if(result)window.__vtoTest.fits.push({shoulders:result.shoulders,scale:result.scale,normal:result.normal,arms:result.arms,at:performance.now(),mirror:args[2].mirror,
+        personPixels:args[0].person?.alpha.filter(v=>v>215).length||0,foregroundPixels:args[0].foreground?.alpha.filter(v=>v>180).length||0});
       return result;
     };
   });
   await page.locator('[data-vto-open]').click();await page.locator('[data-vto-camera]').click();
-  await page.waitForFunction(()=>window.__vtoTest.fits.length>=25,null,{timeout:60000});
+  await page.waitForFunction(()=>window.__vtoTest.fits.length>=25||document.querySelector('[data-vto-dialog]').dataset.state==='engineError',null,{timeout:60000});
+  assert.equal(await page.locator('[data-vto-dialog]').getAttribute('data-state'),'tracking');
   const camera=await page.evaluate(()=>({fits:window.__vtoTest.fits,inference:window.__vtoTest.inference,workers:window.__vtoTest.workers}));
   assert.ok(Math.max(...camera.fits.map(f=>f.shoulders[0]))-Math.min(...camera.fits.map(f=>f.shoulders[0]))>15,'garment must follow source motion');
   assert.ok(camera.fits.every(f=>f.mirror&&f.normal[2]>0),'selfie keeps front orientation');
+  assert.ok(camera.fits.some(f=>f.personPixels>100),'the live pose must return current person evidence');
+  assert.ok(camera.fits.some(f=>f.foregroundPixels>30),'current person gating must retain observed foreground, not merely hide all hands');
   await page.screenshot({path:path.join(out,'camera-moving.png')});
   // Switch to a photo with a different arm configuration while camera is active.
-  await page.locator('[data-vto-file]').setInputFiles(path.join(out,'male_full_height_hands.jpg'));
+  await page.locator('[data-vto-file]').setInputFiles(path.join(out,'pose.jpg'));
   await page.waitForFunction(()=>document.querySelector('[data-vto-dialog]').dataset.state==='tracking'&&window.__vtoTest.fits.at(-1)?.mirror===false,null,{timeout:30000});
   assert.ok(await page.evaluate(()=>window.__vtoTest.tracks.every(t=>t.readyState==='ended')));
   const download=page.waitForEvent('download');await page.locator('[data-vto-save]').click();

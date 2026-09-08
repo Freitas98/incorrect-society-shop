@@ -1,5 +1,7 @@
 # Provador virtual — 2026-09-06
 
+> Documento histórico da primeira versão. A evolução local de 2026-09-07, ainda em validação, está em [TRY-ON-V2.md](TRY-ON-V2.md); contém alterações aos contratos de tamanhos, comércio, deformação e oclusão.
+
 Implementação local para as duas t-shirts Incorrect Society, com imagem de câmara ou fotografia e malha 3D deformada pelo corpo. Não foi feito push Git, sincronização de tema nem publicação na Shopify.
 
 ## Associação aos produtos

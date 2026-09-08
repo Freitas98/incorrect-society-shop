@@ -4,8 +4,9 @@ let processor;
 self.onmessage=async({data})=>{
   try{
     if(data.kind==='init'){
-      const {createPoseProcessor}=await import(data.processor);
-      processor=createPoseProcessor({send:(message,transfer)=>self.postMessage(message,transfer),createCanvas:()=>new OffscreenCanvas(1,1)});
+      const module=await import(data.processor);
+      const factory=module[data.task==='segment'?'createSegmentationProcessor':'createPoseProcessor'];
+      processor=factory({send:(message,transfer)=>self.postMessage(message,transfer),createCanvas:()=>new OffscreenCanvas(1,1)});
     }
     await processor.postMessage(data);
   }catch(error){data.bitmap?.close();self.postMessage({id:data.id,kind:'error',message:error.message});}

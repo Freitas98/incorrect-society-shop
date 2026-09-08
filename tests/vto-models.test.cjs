@@ -13,10 +13,11 @@ function readModel(name){
   };
   return {gltf,read,bytes:data.length};
 }
-for(const name of ['secrets','sinners']){
+for(const name of ['secrets','sinners','secrets-lite','sinners-lite']){
   test(name+': real GLB has mobile-sized embedded textures, valid skinning and fully driven cuffs',()=>{
     const {gltf,read,bytes}=readModel(name);
     assert.ok(bytes<2*1024*1024);
+    if(name.endsWith('-lite'))assert.ok(bytes<800*1024);
     assert.ok(gltf.images.length>=2);assert.ok(gltf.images.every(i=>i.bufferView!==undefined&&!i.uri));
     assert.equal(gltf.skins.length,1);
     const names=gltf.skins[0].joints.map(i=>gltf.nodes[i].name);

@@ -491,6 +491,28 @@ dialog.vto-modal::backdrop {
 }
 
 /* Add to Cart CTA */
+.vto-profile { border: 1px solid #39333a; border-radius: 8px; padding: 12px; }
+.vto-profile summary { cursor: pointer; font-size: 12px; font-weight: 700; padding: 4px 0; }
+.vto-profile p, .vto-fit-advice, .vto-fit-scale { font-size: 11px; line-height: 1.55; color: #c4c4cc; margin: 8px 0; }
+.vto-profile label { display: grid; gap: 6px; font-size: 11px; color: #ddd; margin-top: 12px; }
+.vto-profile input, .vto-profile select { width: 100%; box-sizing: border-box; min-height: 44px; padding: 8px 10px; border: 1px solid #55505a; border-radius: 4px; background: #18151b; color: #fff; font: inherit; font-size: 16px; }
+.vto-profile input:invalid { border-color: #e599a8; }
+.vto-profile .vto-source-btn { width: 100%; margin-top: 12px; min-height: 44px; }
+.vto-calibration { margin-top: 16px; border-top: 1px solid #39333a; padding-top: 14px; }
+.vto-measurements { font-size: 11px; line-height: 1.6; color: #ddd; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+.vto-measurements strong { grid-column: 1 / -1; font-size: 10px; text-transform: uppercase; letter-spacing: .7px; }
+.vto-fit-advice { padding: 12px; border-left: 2px solid #ad6578; background: #21171d; white-space: pre-line; }
+.vto-fit-advice:empty { display: none; }
+.vto-cart-toast a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.vto-quality { display: grid; gap: 8px; font-size: 11px; color: #ddd; }
+.vto-quality select { width: 100%; min-height: 44px; padding: 8px 10px; background: #18151b; color: #fff; border: 1px solid #55505a; border-radius: 4px; font: inherit; font-size: 16px; }
+.vto-quality span { font-size: 10px; line-height: 1.55; color: #b8afb4; }
+.vto-modal[data-state="tracking"] .vto-stage-status { animation: vto-fit-status-hide .2s linear 2s forwards; }
+@keyframes vto-fit-status-hide { to { opacity: 0; } }
+.vto-fit-scale { font-size: 10px; color: #b8afb4; }
+.vto-size-btn[aria-pressed="true"] { outline: 1px solid #e599a8; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .vto-modal * { transition: none !important; } }
+
 .vto-add-to-cart-btn {
   display: flex;
   align-items: center;

@@ -104,7 +104,14 @@
   Usage: {% render 'size-measurements', action: 'note', unit: 'cm' %}
 {% endcomment %}
 
-{% if action == 'note' %}
+{% if action == 'json' and garment == 'tshirt' %}
+  {"unit":"cm","tolerance":2,"sizes":{
+    "S":{"chest":{{ tshirt_s_chest }},"length":{{ tshirt_s_length }},"sleeve":{{ tshirt_s_sleeve }},"shoulder":{{ tshirt_s_shoulder }},"opening":{{ tshirt_s_opening }}},
+    "M":{"chest":{{ tshirt_m_chest }},"length":{{ tshirt_m_length }},"sleeve":{{ tshirt_m_sleeve }},"shoulder":{{ tshirt_m_shoulder }},"opening":{{ tshirt_m_opening }}},
+    "L":{"chest":{{ tshirt_l_chest }},"length":{{ tshirt_l_length }},"sleeve":{{ tshirt_l_sleeve }},"shoulder":{{ tshirt_l_shoulder }},"opening":{{ tshirt_l_opening }}},
+    "XL":{"chest":{{ tshirt_xl_chest }},"length":{{ tshirt_xl_length }},"sleeve":{{ tshirt_xl_sleeve }},"shoulder":{{ tshirt_xl_shoulder }},"opening":{{ tshirt_xl_opening }}}
+  }}
+{% elsif action == 'note' %}
   {% if unit == 'inches' %}
     {{ 'size_guide.measurement_note_inches' | t | default: 'ALL MEASUREMENTS MAY VARY UP TO 0.8"' }}
   {% else %}

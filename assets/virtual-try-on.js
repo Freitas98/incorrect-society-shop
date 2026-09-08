@@ -4,16 +4,6 @@
   if (window.IncorrectTryOn) return;
   const instances = new Map();
 
-  const SIZE_SCALE_MAP = {
-    'xs': { ease: 0.935, lengthScale: 0.939 },
-    's':  { ease: 0.968, lengthScale: 0.970 },
-    'm':  { ease: 1.000, lengthScale: 1.000 },
-    'l':  { ease: 1.032, lengthScale: 1.030 },
-    'xl': { ease: 1.065, lengthScale: 1.061 },
-    '2xl': { ease: 1.097, lengthScale: 1.091 },
-    'xxl': { ease: 1.097, lengthScale: 1.091 }
-  };
-
   class TryOn {
     constructor(dialog) {
       this.dialog = dialog;
@@ -24,6 +14,14 @@
       this.media = this.q('media');
       this.ctx = this.media.getContext('2d');
       this.canvas = this.q('canvas');
+      this.foreground = this.q('foreground');
+      this.foregroundCtx = this.foreground.getContext('2d');
+      this.maskCanvas = document.createElement('canvas');
+      this.maskCtx = this.maskCanvas.getContext('2d');
+      this.cutout = document.createElement('canvas');
+      this.cutoutCtx = this.cutout.getContext('2d');
+      this.warpCanvas = document.createElement('canvas');
+      this.warpCtx = this.warpCanvas.getContext('2d', {willReadFrequently: true});
       this.stage = this.q('stage');
       this.input = this.q('file');
       this.video = document.createElement('video');
@@ -41,8 +39,10 @@
       this.activeProduct = this.config.currentProduct || { id: '', title: '', priceFormatted: '', model: this.config.model };
       this.activeVariants = this.config.variants || [];
       this.selectedVariantId = null;
-      this.currentEase = 1.0;
-      this.currentLengthScale = 1.0;
+      this.profile = {};
+      this.modelRevision = 0;
+      this.autoLowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+      this.lowPower = this.autoLowPower;
 
       const on = (el, event, fn) => el.addEventListener(event, fn, { signal: this.events.signal });
       on(dialog, 'click', e => {
@@ -74,6 +74,31 @@
 
       // Initialize sizes, add-to-cart, collection catalog and slider feedback
       this.initCommerce();
+      on(dialog, 'input', e => {
+        const key = e.target.dataset.vtoProfile;
+        if (!key) return;
+        this.profile[key] = e.target.value;
+        this.updateMeasurements();
+        this.refit();
+      });
+      on(this.q('clear-profile'), 'click', () => {
+        this.profile = {};
+        dialog.querySelectorAll('input[data-vto-profile]').forEach(el => { el.value = ''; });
+        dialog.querySelector('[data-vto-profile="method"]').value = 'shirt';
+        dialog.querySelector('[data-vto-profile="preference"]').value = 'boxy';
+        this.updateMeasurements(); this.refit();
+      });
+      on(this.q('use-recommendation'), 'click', () => {
+        const variant = this.activeVariants.find(v => this.sizing?.sizeKey(v, this.activeProduct.optionNames) === this.recommendation?.key);
+        if (variant) this.selectVariant(variant.id);
+      });
+      on(this.q('quality'), 'change', e => {
+        const lowPower = e.target.value === 'lite' || this.autoLowPower;
+        if (lowPower === this.lowPower) return;
+        this.lowPower = lowPower;
+        this.engine?.setQuality(lowPower);
+        this.loadModel(this.modelKey, true);this.resize();
+      });
     }
 
     initCommerce() {
@@ -136,17 +161,44 @@
       }
     }
 
-    getSizeScale(sizeStr) {
-      if (!sizeStr) return { ease: 1.0, lengthScale: 1.0 };
-      const clean = String(sizeStr).trim().toLowerCase();
-      if (SIZE_SCALE_MAP[clean]) return SIZE_SCALE_MAP[clean];
-      if (/\bxs\b/i.test(clean)) return SIZE_SCALE_MAP.xs;
-      if (/\b2xl|xxl\b/i.test(clean)) return SIZE_SCALE_MAP['2xl'];
-      if (/\bxl\b/i.test(clean)) return SIZE_SCALE_MAP.xl;
-      if (/\bl\b/i.test(clean)) return SIZE_SCALE_MAP.l;
-      if (/\bm\b/i.test(clean)) return SIZE_SCALE_MAP.m;
-      if (/\bs\b/i.test(clean)) return SIZE_SCALE_MAP.s;
-      return { ease: 1.0, lengthScale: 1.0 };
+    updateMeasurements() {
+      if (!this.sizing) return;
+      const s = this.sizing, t = this.config.fitStrings, chart = this.config.measurements;
+      const profile = s.profileValues(this.profile);
+      this.bodyShoulder = profile.shoulder;
+      this.bodyChest = profile.chest;
+      this.q('profile-shirt').hidden = profile.method !== 'shirt';
+      this.q('profile-body').hidden = profile.method !== 'body';
+      const selected = this.activeVariants.find(v => v.id === this.selectedVariantId);
+      this.sizeKey = s.sizeKey(selected, this.activeProduct.optionNames);
+      this.measurements = s.dimensions(chart, this.sizeKey);
+      this.ratios = s.garmentRatios(chart, this.sizeKey);
+      const list = this.q('measurements'); list.replaceChildren();
+      if (this.measurements) {
+        const title = document.createElement('strong'); title.textContent = t.measurements; list.append(title);
+        for (const [key, label] of [['chest', t.width], ['length', t.length], ['shoulder', t.garmentShoulder], ['sleeve', t.sleeve], ['opening', t.opening]]) {
+          const row = document.createElement('span');
+          row.textContent = label.replace(/ \(cm\)/, '') + ': ' + this.measurements[key] + ' cm'; list.append(row);
+        }
+      }
+      const recommendation = s.recommend(chart, this.profile, this.activeVariants, this.activeProduct.optionNames);
+      this.recommendation = recommendation;
+      const signed = n => (n > 0 ? '+' : '') + Math.round(n * 10) / 10;
+      const format = (message, values) => Object.entries(values).reduce((str, [k, v]) => str.replaceAll('{' + k + '}', v), message);
+      let advice = t[recommendation.status];
+      if (recommendation.key) {
+        advice = format(advice, {size: recommendation.key});
+        advice += '\n' + (recommendation.method === 'shirt'
+          ? format(t.difference, {width: signed(recommendation.widthDelta), length: signed(recommendation.lengthDelta)})
+          : format(t.ease, {ease: signed(recommendation.ease)}));
+        if (recommendation.tied.length > 1) advice += '\n' + format(t.tie, {sizes: recommendation.tied.join(' / ')});
+        if (!recommendation.available) advice += '\n' + t.soldout;
+        advice += '\n' + format(t.tolerance, {tolerance: recommendation.tolerance});
+      }
+      const invalid = [...this.dialog.querySelectorAll('input[data-vto-profile]')].some(el => !el.closest('[hidden]') && !el.validity.valid);
+      this.q('fit-advice').textContent = invalid ? t.invalid : advice;
+      this.q('use-recommendation').hidden = invalid || !recommendation.key;
+      this.q('fit-scale').textContent = !this.measurements ? t.unsupported : profile.shoulder ? t.calibrated : t.uncalibrated;
     }
 
     renderSizes() {
@@ -167,6 +219,8 @@
         btn.className = 'vto-size-btn' + (variant.id === this.selectedVariantId ? ' active' : '') + (!variant.available ? ' is-soldout' : '');
         btn.textContent = variant.title || variant.options?.[0] || 'Size';
         btn.setAttribute('data-variant-id', String(variant.id));
+        btn.setAttribute('aria-pressed', String(variant.id === this.selectedVariantId));
+        if (!variant.available) btn.setAttribute('aria-label', btn.textContent + ' — ' + this.text.outOfStock);
 
         btn.addEventListener('click', () => {
           this.selectVariant(variant.id);
@@ -178,19 +232,18 @@
       if (label && selected) {
         label.textContent = selected.title || selected.options?.[0] || '';
       }
-      const sizeName = selected?.title || selected?.options?.[0] || '';
-      const scale = this.getSizeScale(sizeName);
-      this.currentEase = scale.ease;
-      this.currentLengthScale = scale.lengthScale;
+      this.updateMeasurements();
       this.updateAddCartState();
     }
 
     selectVariant(variantId) {
+      if (!this.activeVariants.some(v => v.id === variantId)) return;
       this.selectedVariantId = variantId;
       const container = this.q('sizes');
       if (container) {
         container.querySelectorAll('.vto-size-btn').forEach(btn => {
           btn.classList.toggle('active', btn.getAttribute('data-variant-id') === String(variantId));
+          btn.setAttribute('aria-pressed', String(btn.getAttribute('data-variant-id') === String(variantId)));
         });
       }
       const label = this.dialog.querySelector('[data-vto-active-size-label]');
@@ -198,11 +251,9 @@
       if (label && selected) {
         label.textContent = selected.title || selected.options?.[0] || '';
       }
-      const sizeName = selected?.title || selected?.options?.[0] || '';
-      const scale = this.getSizeScale(sizeName);
-      this.currentEase = scale.ease;
-      this.currentLengthScale = scale.lengthScale;
+      this.updateMeasurements();
       this.updateAddCartState();
+      this.loadModel(selected?.model || this.activeProduct.model);
       this.refit();
     }
 
@@ -222,13 +273,18 @@
           stockBadge.classList.add('out-of-stock');
         }
       } else {
-        btn.disabled = false;
+        btn.disabled = !!this.cartPending;
         if (textEl) textEl.textContent = this.text.addToCart || 'Add to cart';
         if (priceEl && variant.priceFormatted) priceEl.textContent = variant.priceFormatted;
         if (stockBadge) {
-          stockBadge.textContent = 'AVAILABLE';
+          stockBadge.textContent = this.config.fitStrings.available;
           stockBadge.classList.remove('out-of-stock');
         }
+      }
+      if (variant?.priceFormatted) {
+        if (priceEl) priceEl.textContent=variant.priceFormatted;
+        const displayedPrice=this.q('product-price');
+        if(displayedPrice)displayedPrice.textContent=variant.priceFormatted;
       }
     }
 
@@ -258,71 +314,90 @@
 
       // Re-render size options for new piece
       this.renderSizes();
+      this.loadModel(this.activeVariants.find(v => v.id === this.selectedVariantId)?.model || item.model);
+    }
 
-      // Switch 3D model if different
-      if (item.model && item.model !== this.modelKey && this.config.models[item.model]) {
-        this.modelKey = item.model;
+    async loadModel(key, force = false) {
+      if (!key || !this.config.models[key]) {
+        this.modelKey = ''; this.loadedModelKey = ''; this.modelRevision++; this.engine?.hide(); this.status('unsupported');
+        this.dialog.querySelectorAll('[data-vto-action="camera"],[data-vto-action="upload"]').forEach(el => { el.disabled = true; });
+        return;
+      }
+      this.dialog.querySelectorAll('[data-vto-action="camera"],[data-vto-action="upload"]').forEach(el => { el.disabled = false; });
+      if (key && (force || key !== this.modelKey) && this.config.models[key]) {
+        this.modelKey = key; this.loadedModelKey = '';
+        const revision = ++this.modelRevision, session = this.session;
         if (this.engine) {
+          this.engine.hide();
           this.q('busy').hidden = false;
           try {
-            await this.engine.load(new URL(this.config.models[this.modelKey], location.href).href, this.abort?.signal);
+            await this.engine.load(this.modelUrl(), this.abort?.signal);
+            if (revision !== this.modelRevision || session !== this.session) return;
+            this.loadedModelKey = key;
             this.refit();
           } catch (e) {
-            console.warn('Virtual try-on model switch error:', e);
+            if (revision === this.modelRevision && session === this.session) {
+              this.enginePromise = null; this.fail('engineError');
+            }
           } finally {
-            this.q('busy').hidden = true;
+            if (revision === this.modelRevision && session === this.session) this.q('busy').hidden = true;
           }
         }
       }
     }
 
     async addToCart() {
-      if (!this.selectedVariantId) return;
-      const btn = this.q('add-cart');
-      const textEl = this.dialog.querySelector('[data-vto-cart-cta-text]');
-      const toast = this.dialog.querySelector('[data-vto-cart-toast]');
-      if (!btn || btn.disabled) return;
-
-      const origText = textEl ? textEl.textContent : '';
-      btn.disabled = true;
-      if (textEl) textEl.textContent = this.text.addingToCart || 'Adding...';
-
-      const formData = new FormData();
-      formData.append('id', String(this.selectedVariantId));
-      formData.append('quantity', '1');
-
+      const variant = this.activeVariants.find(v => v.id === this.selectedVariantId);
+      if (!variant?.available || this.cartPending) return;
+      const session = this.session, productTitle = this.activeProduct.title;
+      const toast = this.q('cart-toast'), label = this.q('cart-cta-text');
+      this.cartPending = true; this.updateAddCartState();
+      if (label) label.textContent = this.text.addingToCart;
+      if (toast) toast.hidden = true;
+      const root = window.Shopify?.routes?.root || '/';
+      let confirmed = false, serverMessage = '';
       try {
-        let cartData;
-        if (window.addToCartAndUpdate) {
-          cartData = await window.addToCartAndUpdate(formData);
-        } else {
-          const res = await fetch((window.Shopify?.routes?.root || '/') + 'cart/add.js', {
-            method: 'POST',
-            body: formData
-          });
-          cartData = await res.json();
+        const response = await fetch(root + 'cart/add.js', {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({items: [{id: variant.id, quantity: 1}]})
+        });
+        confirmed = response.ok;
+        const added = await response.json();
+        if (!response.ok || added.status >= 400) {
+          confirmed = false;
+          serverMessage = typeof added.description === 'string' ? added.description : this.config.fitStrings.cartError;
+          throw new Error('cartRejected');
         }
-
-        btn.classList.add('added');
-        if (textEl) textEl.textContent = this.text.addedToCart || 'Added to cart ✓';
-
-        if (toast) {
-          const variant = this.activeVariants.find(v => v.id === this.selectedVariantId);
+        // A failed refresh must never invite a duplicate add after a successful POST.
+        let refreshed = false;
+        try {
+          const res = await fetch(root + 'cart.js', {cache: 'no-store'});
+          if (!res.ok) throw new Error('cartRefresh');
+          const cart = await res.json();
+          window.dispatchEvent(new CustomEvent('cartUpdated', {detail: {cart, source: 'try-on'}}));
+          refreshed = true;
+        } catch { /* The cart page can reconcile a confirmed add without repeating it. */ }
+        if (session === this.session && this.opened && toast) {
           toast.hidden = false;
-          toast.textContent = `${this.activeProduct.title} (${variant?.title || ''}) — ${this.text.addedToCart || 'Added to bag'}`;
-          setTimeout(() => { toast.hidden = true; }, 4000);
+          toast.textContent = productTitle + ' (' + variant.title + ') — ' + this.text.addedToCart;
+          if (!refreshed) this.appendCartLink(toast, root, this.config.fitStrings.cartRefresh);
         }
-
-        setTimeout(() => {
-          btn.classList.remove('added');
-          btn.disabled = false;
-          if (textEl) textEl.textContent = this.text.addToCart || 'Add to cart';
-        }, 2200);
-      } catch (err) {
-        console.error('Add to cart error in try-on:', err);
-        btn.disabled = false;
-        if (textEl) textEl.textContent = origText;
+      } catch {
+        if (session === this.session && this.opened && toast) {
+          toast.hidden = false;
+          toast.textContent = serverMessage;
+          if (!serverMessage) this.appendCartLink(toast, root, confirmed ? this.config.fitStrings.cartRefresh : this.config.fitStrings.cartUnknown);
+        }
+      } finally {
+        this.cartPending = false;
+        if (!this.events.signal.aborted) this.updateAddCartState();
       }
+    }
+
+    appendCartLink(toast, root, message) {
+      const link = document.createElement('a');
+      link.href = root + 'cart'; link.textContent = this.config.fitStrings.viewCart;
+      toast.append(document.createTextNode(' ' + message + ' '), link);
     }
 
     selectedModel() {
@@ -338,9 +413,14 @@
       return options.length && !variant ? '' : variant?.model || this.config.model;
     }
 
+    modelUrl() {
+      return new URL((this.lowPower && this.config.liteModels?.[this.modelKey]) || this.config.models[this.modelKey], location.href).href;
+    }
+
     open(opener) {
       if (this.opened) return;
       this.opener = opener;
+      this.switchGarment({...this.config.currentProduct, variants: this.config.variants});
       this.modelKey = this.selectedModel();
       this.session++;
       this.opened = true;
@@ -365,6 +445,10 @@
         if (found) this.selectVariant(found.id);
       }
       this.resize();
+      import('@incorrect/vto-sizing').then(sizing => {
+        if (this.events.signal.aborted) return;
+        this.sizing = sizing; this.updateMeasurements(); this.refit();
+      }).catch(() => { this.q('fit-advice').textContent = this.config.fitStrings.unsupported; });
     }
 
     status(key) {
@@ -395,6 +479,7 @@
       this.generation++;
       this.session++;
       cancelAnimationFrame(this.raf);
+      cancelAnimationFrame(this.previewRaf);
       this.stopStream();
       this.abort?.abort();
       this.abort = null;
@@ -403,8 +488,14 @@
       this.rejectWorker = null;
       this.worker?.terminate();
       this.worker = null;
+      clearTimeout(this.segTimeout);
+      this.rejectSeg?.(new Error('cancelled'));this.rejectSeg=null;
+      this.segWorker?.terminate();this.segWorker=null;this.segReady=false;
+      this.segPending=false;this.segReference=null;this.segPromise=null;
+      this.q('occlusion-note').hidden=true;
       this.engine?.dispose();
       this.engine = null;
+      this.loadedModelKey = '';
       this.enginePromise = null;
       this.workerPromise = null;
       this.pending = false;
@@ -413,6 +504,8 @@
       this.bitmap?.close();
       this.bitmap = null;
       this.ctx.clearRect(0, 0, this.media.width, this.media.height);
+      this.foreground.width = this.foreground.height = this.cutout.width = this.cutout.height = this.maskCanvas.width = this.maskCanvas.height = 1;
+      this.warpCanvas.width = this.warpCanvas.height = 1;
       document.body.style.overflow = this.previousOverflow;
       this.opener?.focus();
       this.q('busy').hidden = true;
@@ -462,10 +555,12 @@
           if (!this.opened || session !== this.session) throw new Error('cancelled');
           this.engine?.dispose();
           this.freshCanvas();
-          const engine = new GarmentRenderer(this.canvas);
+          const engine = new GarmentRenderer(this.canvas, {lowPower: this.lowPower});
           this.engine = engine;
           this.resize();
-          await engine.load(new URL(this.config.models[this.modelKey], location.href).href, signal);
+          const key = this.modelKey, revision = this.modelRevision;
+          await engine.load(this.modelUrl(), signal);
+          if (session === this.session && revision === this.modelRevision && engine === this.engine && key === this.modelKey) this.loadedModelKey = key;
         })().catch(e => {
           if (this.enginePromise === promise) this.enginePromise = null;
           throw e;
@@ -479,8 +574,98 @@
         });
         this.workerPromise = promise;
       }
-      await Promise.all([this.enginePromise, this.workerPromise]);
+      if (!this.segPromise) this.segPromise = this.makeSegWorker(session, signal).catch(() => {
+        if (session !== this.session) return;
+        this.segmentationUnavailable();
+      });
+      await Promise.all([this.enginePromise, this.workerPromise, this.segPromise]);
       return this.opened && generation === this.generation;
+    }
+
+    segmentationUnavailable() {
+      this.segWorker?.terminate();this.segWorker=null;this.segReady=false;
+      this.segPending=false;this.segPromise=null;this.segReference=null;
+      this.q('occlusion-note').hidden=false;
+      if (this.lastResult) {
+        delete this.lastResult.foreground;this.lastResult.segComplete=true;
+        this.q('busy').hidden=true;this.refit();
+      }
+    }
+
+    async makeSegWorker(session, signal) {
+      const {warpForeground} = await import('@incorrect/vto-foreground');
+      this.warpForeground = warpForeground;
+      if (typeof OffscreenCanvas === 'undefined') {
+        const {createSegmentationProcessor} = await import('@incorrect/vto-segmentation');
+        if (!this.opened || session !== this.session) throw new Error('cancelled');
+        const bridge = {postMessage: data => processor.postMessage(data), terminate: () => processor.close()};
+        const processor = createSegmentationProcessor({send: data => bridge.onmessage?.({data}), createCanvas: () => document.createElement('canvas')});
+        this.segWorker = bridge;
+      } else {
+        const response = await fetch(this.config.workerUrl, {signal});
+        if (!response.ok) throw new Error('segmentation');
+        const blob = URL.createObjectURL(new Blob([await response.text()], {type:'text/javascript'}));
+        if (!this.opened || session !== this.session) { URL.revokeObjectURL(blob);throw new Error('cancelled'); }
+        this.segWorker = new Worker(blob);URL.revokeObjectURL(blob);
+      }
+      await new Promise((resolve,reject) => {
+        this.rejectSeg = reject;
+        this.segTimeout = setTimeout(() => reject(new Error('segmentation')),60000);
+        this.segWorker.onmessage = ({data}) => {
+          if (session !== this.session) return;
+          if (data.kind === 'ready') {
+            clearTimeout(this.segTimeout);this.rejectSeg=null;this.segReady=true;
+            this.q('occlusion-note').hidden=true;resolve();return;
+          }
+          this.segPending=false;
+          if (data.kind === 'error') {
+            if (data.id !== undefined && data.id !== this.generation) {
+              if (this.lastResult) this.requestSegmentation(this.lastResult);
+              return;
+            }
+            clearTimeout(this.segTimeout);this.rejectSeg=null;reject(new Error('segmentation'));
+            this.segmentationUnavailable();return;
+          }
+          if (data.id === this.generation) {
+            this.segReference=data;
+            if (this.mode === 'photo' && this.lastResult) {
+              this.lastResult.foreground=data;this.lastResult.segComplete=true;
+              this.q('busy').hidden=true;this.prepareForeground(this.lastResult);this.refit();
+            }
+          } else if (this.lastResult) this.requestSegmentation(this.lastResult);
+        };
+        this.segWorker.onerror = () => {
+          if (session !== this.session) return;
+          clearTimeout(this.segTimeout);this.rejectSeg=null;reject(new Error('segmentation'));
+          this.segmentationUnavailable();
+        };
+        this.segWorker.postMessage({kind:'init',task:'segment',
+          vision:new URL(this.config.visionUrl,location.href).href,
+          processor:new URL(this.config.segmentationUrl,location.href).href,
+          occlusion:new URL(this.config.occlusionUrl,location.href).href,
+          wasm:'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm',
+          segmentationModel:'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/1/selfie_multiclass_256x256.tflite'});
+      });
+    }
+
+    async requestSegmentation(data) {
+      if (!this.segReady || this.segPending || !data.landmarks) return;
+      const now=performance.now();
+      if (this.mode === 'camera' && now-(this.lastSegRequest||0)<(this.lowPower?650:400)) return;
+      this.segPending=true;this.lastSegRequest=now;
+      const generation=this.generation,session=this.session;
+      try {
+        const bitmap=await createImageBitmap(data.bitmap);
+        if (!this.opened || generation!==this.generation || session!==this.session || !this.segWorker) {
+          bitmap.close();if(session===this.session){this.segPending=false;if(this.lastResult)this.requestSegmentation(this.lastResult);}return;
+        }
+        this.segWorker.postMessage({kind:'frame',id:generation,bitmap,landmarks:data.landmarks,
+          frameTime:data.frameTime,still:this.mode==='photo'},[bitmap]);
+      } catch {
+        if (session !== this.session || generation !== this.generation) return;
+        this.segPending=false;
+        if(this.mode==='photo'&&data===this.lastResult){data.segComplete=true;this.q('busy').hidden=true;this.refit();}
+      }
     }
 
     async makeWorker(session, signal) {
@@ -500,7 +685,7 @@
         this.worker?.terminate();
         this.worker = new Worker(blob);
         URL.revokeObjectURL(blob);
-        this.frameInterval = 50;
+        this.frameInterval = this.lowPower ? 83 : 50;
       }
       await new Promise((resolve, reject) => {
         this.rejectWorker = reject;
@@ -544,11 +729,14 @@
     begin(mode) {
       const generation = ++this.generation;
       cancelAnimationFrame(this.raf);
+      cancelAnimationFrame(this.previewRaf);
       this.stopStream();
       this.mode = mode;
       this.failed = false;
       this.pending = false;
       this.lastResult = null;
+      this.segReference=null;this.lastSegRequest=0;
+      this.foregroundCtx.clearRect(0, 0, this.foreground.width, this.foreground.height);
       this.engine?.reset();
       this.q('save').disabled = true;
       this.bitmap?.close();
@@ -584,6 +772,12 @@
         this.video.srcObject = stream;
         await this.video.play();
         this.mirror = (stream.getVideoTracks()[0].getSettings().facingMode || this.facing) === 'user';
+        const preview=()=>{
+          if (!this.opened || generation!==this.generation || this.failed || this.lastResult) return;
+          this.paintMedia(this.video);
+          this.previewRaf=requestAnimationFrame(preview);
+        };
+        preview();
         if (!await this.prepare(generation)) return;
         this.q('busy').hidden = true;
         this.status('searching');
@@ -633,6 +827,8 @@
           bitmap.close();
           bitmap = smaller;
         }
+        if (!this.opened || generation !== this.generation) { bitmap.close(); return; }
+        this.paintMedia(bitmap);
         if (!await this.prepare(generation)) { bitmap.close(); return; }
         this.pending = true;
         this.postFrame(bitmap, generation, true);
@@ -651,9 +847,16 @@
     onPose(data) {
       if (!this.opened || data.id !== this.generation || this.failed) { data.bitmap?.close(); return; }
       this.pending = false;
+      cancelAnimationFrame(this.previewRaf);
+      if (this.mode === 'camera' && Number.isFinite(data.ms)) {
+        this.poseMs = this.poseMs == null ? Math.min(data.ms,100) : this.poseMs * .9 + data.ms * .1;
+        this.frameInterval = Math.max(typeof OffscreenCanvas === 'undefined' ? 125 : this.lowPower ? 83 : 50, Math.min(300, this.poseMs * 1.15));
+      }
       this.bitmap?.close();
       this.bitmap = data.bitmap;
       this.lastResult = data;
+      this.requestSegmentation(data);
+      this.prepareForeground(data);
       this.q('busy').hidden = true;
       this.resize();
     }
@@ -661,20 +864,25 @@
     resize() {
       if (!this.opened) return;
       const width = Math.max(1, this.stage.clientWidth), height = Math.max(1, this.stage.clientHeight);
-      const ratio = Math.min(devicePixelRatio || 1, 1.5);
+      const ratio = Math.min(devicePixelRatio || 1, this.lowPower ? 1 : 1.5);
       const pw = Math.round(width * ratio), ph = Math.round(height * ratio);
       if (this.media.width !== pw || this.media.height !== ph) {
         this.media.width = pw;
         this.media.height = ph;
       }
+      if (this.foreground.width !== pw || this.foreground.height !== ph) {
+        this.foreground.width = pw; this.foreground.height = ph;
+      }
       this.engine?.resize(width, height);
       this.refit();
     }
 
-    refit() {
-      if (!this.bitmap || !this.engine) return;
-      const w = this.stage.clientWidth, h = this.stage.clientHeight, b = this.bitmap, scale = Math.min(w / b.width, h / b.height);
-      this.rect = { x: (w - b.width * scale) / 2, y: (h - b.height * scale) / 2, width: b.width * scale, height: b.height * scale };
+    paintMedia(b) {
+      const w=this.stage.clientWidth,h=this.stage.clientHeight;
+      const sw=b.videoWidth||b.width,sh=b.videoHeight||b.height;
+      if(!w||!h||!sw||!sh)return;
+      const scale=Math.min(w/sw,h/sh);
+      this.rect={x:(w-sw*scale)/2,y:(h-sh*scale)/2,width:sw*scale,height:sh*scale};
       const r = this.rect, ctx = this.ctx;
       ctx.setTransform(this.media.width / w, 0, 0, this.media.height / h, 0, 0);
       ctx.clearRect(0, 0, w, h);
@@ -682,15 +890,60 @@
       if (this.mirror) { ctx.translate(w, 0); ctx.scale(-1, 1); }
       ctx.drawImage(b, r.x, r.y, r.width, r.height);
       ctx.restore();
+    }
+
+    refit() {
+      if (!this.bitmap || !this.engine) return;
+      const w=this.stage.clientWidth,h=this.stage.clientHeight;
+      this.paintMedia(this.bitmap);const r=this.rect;
+      if (this.loadedModelKey !== this.modelKey) {
+        this.engine.hide();this.q('save').disabled=true;
+        this.foregroundCtx.clearRect(0,0,this.foreground.width,this.foreground.height);
+        return;
+      }
+      if (this.mode === 'photo' && this.segWorker && !this.lastResult.segComplete && this.lastResult.landmarks) {
+        this.engine.hide();this.q('busy').hidden=false;this.q('save').disabled=true;return;
+      }
       const fit = this.engine.fit(this.lastResult, r, {
         mirror: this.mirror,
         still: this.mode === 'photo',
-        ease: this.currentEase || 1.0,
-        lengthScale: this.currentLengthScale || 1.0,
+        garment: this.measurements,
+        ratios: this.ratios,
+        bodyShoulder: this.bodyShoulder,
+        bodyChest: this.bodyChest,
         shoulderLift: 0.022
       });
+      const fg = this.foregroundCtx;
+      fg.setTransform(this.foreground.width / w, 0, 0, this.foreground.height / h, 0, 0);
+      fg.clearRect(0, 0, w, h);
+      if (fit && this.lastResult.foreground) {
+        fg.save(); if (this.mirror) { fg.translate(w, 0); fg.scale(-1, 1); }
+        fg.drawImage(this.cutout, r.x, r.y, r.width, r.height); fg.restore();
+      }
       this.q('save').disabled = !fit;
       this.status(fit ? 'tracking' : 'searching');
+    }
+
+    prepareForeground(data) {
+      let mask = data.foreground;
+      if (this.mode === 'camera' && this.segReference && this.warpForeground) {
+        const r=this.segReference;
+        if(this.warpCanvas.width!==r.width||this.warpCanvas.height!==r.height){this.warpCanvas.width=r.width;this.warpCanvas.height=r.height;}
+        this.warpCtx.drawImage(data.bitmap,0,0,r.width,r.height);
+        mask={width:r.width,height:r.height,alpha:this.warpForeground(r,data.landmarks,this.warpCtx.getImageData(0,0,r.width,r.height).data,data.frameTime,data.person)};
+        data.foreground=mask;
+      }
+      if (!mask) return;
+      this.maskCanvas.width = mask.width; this.maskCanvas.height = mask.height;
+      const image = this.maskCtx.createImageData(mask.width, mask.height);
+      for (let i = 0; i < mask.alpha.length; i++) image.data[i * 4 + 3] = mask.alpha[i];
+      this.maskCtx.putImageData(image, 0, 0);
+      this.cutout.width = data.bitmap.width; this.cutout.height = data.bitmap.height;
+      const ctx = this.cutoutCtx;
+      ctx.drawImage(data.bitmap, 0, 0);
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(this.maskCanvas, 0, 0, this.cutout.width, this.cutout.height);
+      ctx.globalCompositeOperation = 'source-over';
     }
 
     save() {
@@ -704,6 +957,7 @@
       ctx.drawImage(this.media, 0, 0);
       this.engine.render();
       ctx.drawImage(this.canvas, 0, 0, output.width, output.height);
+      ctx.drawImage(this.foreground, 0, 0, output.width, output.height);
       output.toBlob(blob => {
         if (!blob) return;
         const url = URL.createObjectURL(blob), link = document.createElement('a');
