@@ -9,7 +9,11 @@ export class GarmentRenderer {
     this.lowPower=lowPower;
     this.loadRevision=0;
     this.physicalUniform={value:false};
-    this.renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'high-performance'});
+    this.sleeveUniforms=Object.fromEntries(['L','R'].flatMap(side=>[
+      ['vtoElbow'+side,{value:new THREE.Vector4()}],['vtoUpper'+side,{value:new THREE.Vector4()}],
+      ['vtoBend'+side,{value:new THREE.Vector4(0,0,0,1)}],
+    ]));
+    this.renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:!lowPower,powerPreference:lowPower?'low-power':'default'});
     this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,lowPower?1:1.5));
     this.renderer.outputColorSpace=THREE.SRGBColorSpace;
     this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -69,6 +73,14 @@ export class GarmentRenderer {
     if(!fit){this.hide();return null;}
     this.model.visible=true;
     this.physicalUniform.value=fit.physical;
+    for(const side of ['L','R']){
+      const bend=fit.sleeveBends?.['upper_arm.'+side];
+      this.sleeveUniforms['vtoElbow'+side].value.set(...(bend?[...bend.elbow,bend.radius]:[0,0,0,0]));
+      if(bend){
+        this.sleeveUniforms['vtoUpper'+side].value.set(...bend.direction,0);
+        this.sleeveUniforms['vtoBend'+side].value.set(...bend.rotation);
+      }
+    }
     this.resizeGarment(options.ratios);
     for(const {bone,rest} of this.bones) {
       const name=bone.name.replace('upper_armL','upper_arm.L').replace('upper_armR','upper_arm.R');
@@ -108,18 +120,26 @@ export class GarmentRenderer {
     const materials=new Set();
     for(const {mesh,rest} of this.surfaces){
       const count=mesh.geometry.attributes.position.count,ids=new Float32Array(count*4),weights=new Float32Array(count*4);
+      const sleeveWeights=new Float32Array(count*2),skin=mesh.geometry.attributes.skinIndex,sw=mesh.geometry.attributes.skinWeight;
       for(let i=0;i<count;i++){
         const bound=this.cloth.weights([rest[i*3],rest[i*3+1],rest[i*3+2]]);
         ids.set(bound.indices,i*4);weights.set(bound.weights,i*4);
+        for(let k=0;k<4;k++){
+          const name=mesh.skeleton?.bones[skin.array[i*4+k]]?.name.replaceAll('.','');
+          if(name==='upper_armL')sleeveWeights[i*2]+=sw.array[i*4+k];
+          if(name==='upper_armR')sleeveWeights[i*2+1]+=sw.array[i*4+k];
+        }
       }
       mesh.geometry.setAttribute('clothIndices',new THREE.BufferAttribute(ids,4));
       mesh.geometry.setAttribute('clothWeights',new THREE.BufferAttribute(weights,4));
+      mesh.geometry.setAttribute('vtoSleeveWeights',new THREE.BufferAttribute(sleeveWeights,2));
       for(const material of [mesh.material].flat()){
         if(materials.has(material))continue;materials.add(material);
         material.onBeforeCompile=shader=>{
           shader.uniforms.clothOffsets={value:this.clothTexture};
           shader.uniforms.clothCount={value:this.cloth.count};
           shader.uniforms.vtoPhysical=this.physicalUniform;
+          Object.assign(shader.uniforms,this.sleeveUniforms);
           shader.vertexShader=quaternionSkinning+'attribute vec4 clothIndices; attribute vec4 clothWeights; uniform sampler2D clothOffsets; uniform float clothCount;\n'+shader.vertexShader;
           shader.vertexShader=shader.vertexShader.replace('#include <skinnormal_vertex>',quaternionNormal);
           shader.vertexShader=shader.vertexShader.replace('#include <skinning_vertex>', quaternionPosition+'\n'+
@@ -131,7 +151,7 @@ export class GarmentRenderer {
             'vec3 surfaceNormal=normalize(cross(dFdx(vViewPosition),dFdy(vViewPosition))); vec3 normal=normalize(mix(normalize(vNormal),surfaceNormal*faceDirection,0.65));');
           shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_begin>',normalChunk);
         };
-        material.customProgramCacheKey=()=> 'incorrect-cloth-v2';
+        material.customProgramCacheKey=()=> 'incorrect-cloth-v2-elbow';
         material.needsUpdate=true;
       }
     }

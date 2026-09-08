@@ -41,22 +41,39 @@ const out=path.resolve(__dirname,'../artifacts/try-on');
       let foregroundPixels=0;for(let i=3;i<pixels.length;i+=4)if(pixels[i]>180)foregroundPixels++;
       const gl=r.renderer.getContext(),w=gl.drawingBufferWidth,h=gl.drawingBufferHeight;
       const read=()=>{r.render();const p=new Uint8Array(w*h*4);gl.readPixels(0,0,w,h,gl.RGBA,gl.UNSIGNED_BYTE,p);return p;};
-      const baseline=read();let changedAlpha=0;
-      // Same shoulders and elbows: only forearms, hands and fingers sweep the
-      // chest. They cannot subtract pixels from the underlying shirt surface.
+      const baseline=read();let changedAlpha=0,torsoAlphaLosses=0;
+      // Finger/hand landmarks cannot subtract fabric. Wrist movement may now
+      // legitimately bend a cuff, so test torso integrity separately below.
       for(let step=0;step<6;step++){
         const moved={...data,landmarks:data.landmarks.map(p=>({...p})),world:data.world?.map(p=>({...p}))};
-        for(const i of [15,16,17,18,19,20,21,22]){
+        for(const i of [17,18,19,20,21,22]){
           moved.landmarks[i].x=.3+step*.07;moved.landmarks[i].y=.38+(i%2)*.06;
           if(moved.world?.[i])moved.world[i].z=-.4-step*.03;
         }
         r.fit(moved,rect,{...options,still:true});const current=read();
         for(let i=3;i<baseline.length;i+=4)if(baseline[i]!==current[i])changedAlpha++;
       }
+      const m=r.lastFit.matrices.chest,samples=[];
+      for(let ix=0;ix<12;ix++)for(let iy=0;iy<12;iy++){
+        const p=[-.17+ix*.34/11,.16+iy*.28/11,.1];
+        const x=m[0]*p[0]+m[4]*p[1]+m[8]*p[2]+m[12],y=m[1]*p[0]+m[5]*p[1]+m[9]*p[2]+m[13];
+        const px=Math.round((x/r.width+.5)*w),py=Math.round((y/r.height+.5)*h);
+        if(px>=0&&px<w&&py>=0&&py<h)samples.push((py*w+px)*4+3);
+      }
+      for(let step=0;step<6;step++){
+        const moved={...data,landmarks:data.landmarks.map(p=>({...p})),world:data.world?.map(p=>({...p}))};
+        for(const i of [15,16]){
+          moved.landmarks[i].x=.3+step*.07;moved.landmarks[i].y=.35;
+          if(moved.world?.[i])moved.world[i].z=-.4-step*.03;
+        }
+        r.fit(moved,rect,{...options,still:true});const current=read();
+        for(const i of samples)if(baseline[i]>250&&current[i]<250)torsoAlphaLosses++;
+      }
       r.fit(data,rect,options);
-      return {foregroundPixels,changedAlpha,sweeps:6,hasDepthProxies:r.occluders.length+r.hands.length};
+      return {foregroundPixels,changedAlpha,torsoAlphaLosses,torsoSamples:samples.length,sweeps:6,hasDepthProxies:r.occluders.length+r.hands.length};
     });
     assert.equal(report.hasDepthProxies,0);assert.equal(report.changedAlpha,0,'hands must never cut the garment alpha');
+    assert.ok(report.torsoSamples>100);assert.equal(report.torsoAlphaLosses,0,'bending cuffs cannot punch holes in the torso');
     assert.ok(report.foregroundPixels>100,'observed skin must still be restored above the garment');
     assert.deepEqual(errors,[]);assert.deepEqual(writes,[]);
     fs.writeFileSync(path.join(out,stem+'.json'),JSON.stringify({...report,errors,writes},null,2));

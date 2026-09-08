@@ -68,7 +68,11 @@ export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthS
   const up_ortho=sub(up_raw,mul(u_sx,dot(up_raw,u_sx)));
   const physical=!!garment;
   const measuredShoulder=Number.isFinite(bodyShoulder)&&bodyShoulder>=28&&bodyShoulder<=65 ? bodyShoulder/100 : null;
-  const scale=physical ? measuredShoulder ? length(sub(ls,rs))/measuredShoulder : pxPerM : length(sx);
+  // Monocular world landmarks have an arbitrary/unstable absolute body scale.
+  // Use their orientation, not their guessed centimetres, for garment sizing.
+  // Until calibrated, 42 cm is explicitly an anatomical shoulder-span PRIOR,
+  // independent of garment size; it is not a measured customer dimension.
+  const scale=physical ? length(sub(ls,rs))/(measuredShoulder||.42) : length(sx);
   // Garment torso length stabilization:
   // In the 3D model, the Boxy tee has nominal torso length (shoulder-to-hip) of scale * 0.49.
   // Bounding vertical torso stretch prevents the t-shirt from extending down to mid-thigh like a dress.
@@ -109,7 +113,7 @@ export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthS
   const hipDepth=physical ? mul(unit(cross(hx,hipUp)),scale) : depth;
   const spine=matrix(hx,hipUp,hipDepth,REST.hip,lowerTarget);
   const matrices={root:spine,spine,chest,neck:chest};
-  const arms=[];
+  const arms=[],sleeveBends={};
   for(const side of ['L','R']) {
     const left=side==='L',s=left?ls:rs,ei=left?ids.el:ids.er,wi=left?ids.wl:ids.wr;
     if(!visible(landmarks[ei])) return null; // Don't invent a sleeve pose.
@@ -129,9 +133,35 @@ export function solveFit(landmarks,world,rect,vw,vh,{mirror=false,ease=1,lengthS
     const pivot=physical ? add(REST.shoulder,[dot(fromChest,unit(sx))/scale,
       dot(fromChest,unit(up_ortho))/scale,dot(fromChest,normal)/scale]) : REST['shoulder'+side];
     matrices['upper_arm.'+side]=matrix(...cols,pivot,s);
-    if(visible(landmarks[wi])) arms.push({elbow:e,wrist:point(wi),radius:scale*.024});
+    if(visible(landmarks[wi])) {
+      const wrist=point(wi);arms.push({elbow:e,wrist,radius:scale*.024});
+      const forearm=sub(wrist,e);
+      if(physical&&length(forearm)>scale*.08){
+        const forward=unit(forearm),axis=cross(u,forward),angle=Math.min(Math.acos(clamp(dot(u,forward),-1,1)),Math.PI*.86);
+        if(length(axis)>.001&&angle>.02){
+          const rotation=[...mul(unit(axis),Math.sin(angle/2)),Math.cos(angle/2)];
+          sleeveBends['upper_arm.'+side]={elbow:e,direction:u,rotation,radius:scale*.04};
+        }
+      }
+    }
   }
-  return {matrices,shoulders,hips,normal,scale,arms,physical,calibrated:physical&&!!measuredShoulder,landmarks:landmarks.map((p,i)=>visible(p)?point(i):null)};
+  return {matrices,shoulders,hips,normal,scale,arms,sleeveBends,physical,calibrated:physical&&!!measuredShoulder,landmarks:landmarks.map((p,i)=>visible(p)?point(i):null)};
+}
+
+/** Bend only sleeve material that reaches the observed elbow. Chest/shoulder
+ * vertices remain unchanged; the cuff can follow a phone-holding forearm. */
+export function bendSleevePoint(point,bends,weights){
+  let out=point;
+  for(const [name,bend] of Object.entries(bends||{})){
+    const weight=weights[name]||0;if(!weight)continue;
+    const delta=sub(out,bend.elbow),u=clamp((dot(delta,bend.direction)+bend.radius)/(2*bend.radius),0,1);
+    const t=u*u*(3-2*u)*weight;if(!t)continue;
+    const q=bend.rotation.map((v,i)=>v*t+(i===3?1-t:0)),n=Math.hypot(...q);
+    for(let i=0;i<4;i++)q[i]/=n;
+    const xyz=q.slice(0,3);
+    out=add(bend.elbow,add(delta,mul(cross(xyz,add(cross(xyz,delta),mul(delta,q[3]))),2)));
+  }
+  return out;
 }
 
 /** Time-based adaptive smoothing; reset after source changes or tracking loss. */

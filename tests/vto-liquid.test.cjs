@@ -28,6 +28,25 @@ test('explicit product identity selects the correct model; unrelated titles/colo
     assert.deepEqual(output.split('|').map(JSON.parse),expected);
   }
 });
+test('global and product-section kill switches independently override every supported product',async()=>{
+  for(const id of [11569665933653,11569666097493]){
+    for(const globalFlag of [false,true,undefined])for(const sectionFlag of [false,true,undefined]){
+      const output=(await engine().parseAndRender(selection,{
+        product:product(id),settings:{enable_virtual_try_on:globalFlag},
+        section:{settings:{enable_virtual_try_on:sectionFlag}},
+      })).trim();
+      const [available]=output.split('|').map(JSON.parse);
+      assert.equal(available,globalFlag!==false&&sectionFlag!==false,
+        `product ${id}: global=${globalFlag}, section=${sectionFlag}`);
+    }
+  }
+  const overridden=product(99);
+  overridden.variants[0].metafields.custom.try_on_model={value:'secrets'};
+  const output=(await engine().parseAndRender(selection,{
+    product:overridden,settings:{enable_virtual_try_on:false},section:{settings:{}},
+  })).trim();
+  assert.equal(JSON.parse(output.split('|')[0]),false,'variant model cannot bypass the global kill switch');
+});
 test('EN and PT modal config is valid, fully translated, scoped and script-safe',async()=>{
   for(const lang of ['en.default','pt-PT']){
     const p=product();p.title='<img src=x onerror=alert(1)>';

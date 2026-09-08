@@ -39,6 +39,17 @@ export function skinPoint(transforms,weights,point){
 
 export const quaternionSkinning = `
 uniform bool vtoPhysical;
+attribute vec2 vtoSleeveWeights;
+uniform vec4 vtoElbowL; uniform vec4 vtoElbowR;
+uniform vec4 vtoUpperL; uniform vec4 vtoUpperR;
+uniform vec4 vtoBendL; uniform vec4 vtoBendR;
+vec3 vtoBendSleeve(vec3 p,vec4 elbow,vec4 upper,vec4 rotation,float weight){
+  if(elbow.w<=0.0||weight<=0.0)return p;
+  vec3 delta=p-elbow.xyz;
+  float t=smoothstep(-elbow.w,elbow.w,dot(delta,upper.xyz))*weight;
+  vec4 q=normalize(mix(vec4(0.0,0.0,0.0,1.0),rotation,t));
+  return elbow.xyz+delta+2.0*cross(q.xyz,cross(q.xyz,delta)+q.w*delta);
+}
 vec4 vtoMul(vec4 a,vec4 b){return vec4(a.w*b.xyz+b.w*a.xyz+cross(a.xyz,b.xyz),a.w*b.w-dot(a.xyz,b.xyz));}
 vec3 vtoRotate(vec4 q,vec3 p){return p+2.0*cross(q.xyz,cross(q.xyz,p)+q.w*p);}
 vec4 vtoQuat(mat3 m){
@@ -75,7 +86,10 @@ export const quaternionPosition = `
   if(vtoPhysical){
     vec3 p=(bindMatrix*vec4(position,1.0)).xyz*vtoScale;
     vec3 translation=2.0*vtoMul(vtoQD,vec4(-vtoQR.xyz,vtoQR.w)).xyz;
-    transformed=(bindMatrixInverse*vec4(vtoRotate(vtoQR,p)+translation,1.0)).xyz;
+    vec3 bent=vtoRotate(vtoQR,p)+translation;
+    bent=vtoBendSleeve(bent,vtoElbowL,vtoUpperL,vtoBendL,vtoSleeveWeights.x);
+    bent=vtoBendSleeve(bent,vtoElbowR,vtoUpperR,vtoBendR,vtoSleeveWeights.y);
+    transformed=(bindMatrixInverse*vec4(bent,1.0)).xyz;
   }
 #endif
 `;

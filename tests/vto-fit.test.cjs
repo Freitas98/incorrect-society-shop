@@ -13,6 +13,25 @@ test('contain mapping agrees for portrait, landscape and resize',async()=>{
   close(mapLandmark({x:.5,y:.5},mediaRect(1000,500,400,600),400,600),[0,0,0]);
   close(mapLandmark({x:.2,y:.1},mediaRect(500,1000,400,600),400,600,true),[90,240,0]);
 });
+test('uncalibrated garment scale is invariant to arbitrary monocular world-body metres',async()=>{
+  const {solveFit,mediaRect}=await modulePromise,p=pose(),r=mediaRect(1000,1000,600,600);
+  const world=p.map(v=>({...v,x:v.x-.5,y:v.y-.5,z:0}));
+  const a=solveFit(p,world,r,600,600,{garment:{chest:62}});
+  const tiny=world.map(v=>({...v,x:v.x*.6,y:v.y*.6,z:v.z*.6}));
+  const b=solveFit(p,tiny,r,600,600,{garment:{chest:62}});
+  assert.ok(Math.abs(a.scale-b.scale)<1e-8);
+  assert.ok(Math.abs(a.scale-180/.42)<1e-8);
+  const measured=solveFit(p,tiny,r,600,600,{garment:{chest:62},bodyShoulder:40});
+  assert.equal(measured.scale,450);assert.equal(measured.calibrated,true);
+});
+test('phone-holding forearm bends cuff material forward but never moves torso vertices',async()=>{
+  const {bendSleevePoint}=await modulePromise;
+  const bends={'upper_arm.L':{elbow:[0,0,0],direction:[1,0,0],radius:.04,rotation:[0,-Math.SQRT1_2,0,Math.SQRT1_2]}};
+  close(bendSleevePoint([.12,0,0],bends,{'upper_arm.L':1}),[0,0,.12]);
+  close(bendSleevePoint([-.12,0,0],bends,{'upper_arm.L':1}),[-.12,0,0]);
+  close(bendSleevePoint([.12,0,0],bends,{chest:1}),[.12,0,0]);
+  close(bendSleevePoint([.12,0,0],{}, {'upper_arm.L':1}),[.12,0,0]);
+});
 test('chest anchors both anatomical shoulders and lower torso follows hips',async()=>{
   const {solveFit,mediaRect,transform,REST,mapLandmark}=await modulePromise,p=pose(),r=mediaRect(1000,1000,600,600);
   const fit=solveFit(p,null,r,600,600);assert.ok(fit);

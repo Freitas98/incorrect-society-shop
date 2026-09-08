@@ -41,7 +41,10 @@
       this.selectedVariantId = null;
       this.profile = {};
       this.modelRevision = 0;
-      this.autoLowPower = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
+      // iOS does not expose deviceMemory. Missing hints are NOT evidence that a
+      // phone can sustain desktop rendering and two neural networks indefinitely.
+      this.mobile = window.matchMedia('(pointer: coarse)').matches;
+      this.autoLowPower = this.mobile || (navigator.hardwareConcurrency || 4) <= 4 || (navigator.deviceMemory ?? 4) <= 4;
       this.lowPower = this.autoLowPower;
 
       const on = (el, event, fn) => el.addEventListener(event, fn, { signal: this.events.signal });
@@ -627,6 +630,7 @@
             this.segmentationUnavailable();return;
           }
           if (data.id === this.generation) {
+            if(Number.isFinite(data.ms))this.segMs=this.segMs==null?data.ms:this.segMs*.8+data.ms*.2;
             this.segReference=data;
             if (this.mode === 'photo' && this.lastResult) {
               this.lastResult.foreground=data;this.lastResult.segComplete=true;
@@ -651,7 +655,7 @@
     async requestSegmentation(data) {
       if (!this.segReady || this.segPending || !data.landmarks) return;
       const now=performance.now();
-      if (this.mode === 'camera' && now-(this.lastSegRequest||0)<(this.lowPower?650:400)) return;
+      if (this.mode === 'camera' && now-(this.lastSegRequest||0)<Math.max(this.lowPower?900:700,(this.segMs||0)*2.5)) return;
       this.segPending=true;this.lastSegRequest=now;
       const generation=this.generation,session=this.session;
       try {
@@ -685,7 +689,7 @@
         this.worker?.terminate();
         this.worker = new Worker(blob);
         URL.revokeObjectURL(blob);
-        this.frameInterval = this.lowPower ? 83 : 50;
+        this.frameInterval = this.lowPower ? 83 : 67;
       }
       await new Promise((resolve, reject) => {
         this.rejectWorker = reject;
@@ -721,7 +725,9 @@
           vision: new URL(this.config.visionUrl, location.href).href,
           processor: new URL(this.config.processorUrl, location.href).href,
           wasm: 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm',
-          model: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'
+          model: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_'+(this.mode==='photo'?'full':'lite')+'/float16/1/pose_landmarker_'+(this.mode==='photo'?'full':'lite')+'.task',
+          videoModel: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
+          photoModel: 'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task'
         });
       });
     }
@@ -732,6 +738,7 @@
       cancelAnimationFrame(this.previewRaf);
       this.stopStream();
       this.mode = mode;
+      this.poseMs=null;this.segMs=null;
       this.failed = false;
       this.pending = false;
       this.lastResult = null;
@@ -762,7 +769,7 @@
         if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) throw new Error('cameraUnavailable');
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: false,
-          video: { facingMode: { ideal: this.facing }, width: { ideal: 1280 }, height: { ideal: 720 } }
+          video: { facingMode: { ideal: this.facing }, width: { ideal: 640 }, height: { ideal: 480 }, frameRate: {ideal:24,max:30} }
         });
         if (!this.opened || generation !== this.generation) {
           stream.getTracks().forEach(t => t.stop());
@@ -774,7 +781,8 @@
         this.mirror = (stream.getVideoTracks()[0].getSettings().facingMode || this.facing) === 'user';
         const preview=()=>{
           if (!this.opened || generation!==this.generation || this.failed || this.lastResult) return;
-          this.paintMedia(this.video);
+          const now=performance.now();
+          if(now-(this.lastPreviewTime||0)>66){this.paintMedia(this.video);this.lastPreviewTime=now;}
           this.previewRaf=requestAnimationFrame(preview);
         };
         preview();
@@ -791,7 +799,13 @@
           this.lastVideoTime = this.video.currentTime;
           this.pending = true;
           try {
-            const bitmap = await createImageBitmap(this.video);
+            // Some cameras negotiate above the requested ideal resolution.
+            // Bound the transferred/displayed frame even when that happens.
+            const scale=Math.min(1,640/Math.max(this.video.videoWidth,this.video.videoHeight));
+            const bitmap = await createImageBitmap(this.video,{
+              resizeWidth:Math.max(1,Math.round(this.video.videoWidth*scale)),
+              resizeHeight:Math.max(1,Math.round(this.video.videoHeight*scale))
+            });
             if (!this.opened || generation !== this.generation) { bitmap.close(); return; }
             this.postFrame(bitmap, generation, false);
           } catch (e) {
@@ -850,7 +864,9 @@
       cancelAnimationFrame(this.previewRaf);
       if (this.mode === 'camera' && Number.isFinite(data.ms)) {
         this.poseMs = this.poseMs == null ? Math.min(data.ms,100) : this.poseMs * .9 + data.ms * .1;
-        this.frameInterval = Math.max(typeof OffscreenCanvas === 'undefined' ? 125 : this.lowPower ? 83 : 50, Math.min(300, this.poseMs * 1.15));
+        // Leave idle time for cooling instead of immediately saturating a CPU
+        // fallback. GPU/Lite can sustain the frame cap with substantially less work.
+        this.frameInterval = Math.max(typeof OffscreenCanvas === 'undefined' ? 125 : this.lowPower ? 83 : 67, Math.min(1000, this.poseMs * 2.2));
       }
       this.bitmap?.close();
       this.bitmap = data.bitmap;
@@ -934,13 +950,16 @@
         data.foreground=mask;
       }
       if (!mask) return;
-      this.maskCanvas.width = mask.width; this.maskCanvas.height = mask.height;
+      if(this.maskCanvas.width!==mask.width||this.maskCanvas.height!==mask.height){this.maskCanvas.width=mask.width;this.maskCanvas.height=mask.height;}
       const image = this.maskCtx.createImageData(mask.width, mask.height);
       for (let i = 0; i < mask.alpha.length; i++) image.data[i * 4 + 3] = mask.alpha[i];
       this.maskCtx.putImageData(image, 0, 0);
-      this.cutout.width = data.bitmap.width; this.cutout.height = data.bitmap.height;
+      const factor=Math.min(1,(this.mode==='photo'?1800:640)/Math.max(data.bitmap.width,data.bitmap.height));
+      const width=Math.round(data.bitmap.width*factor),height=Math.round(data.bitmap.height*factor);
+      if(this.cutout.width!==width||this.cutout.height!==height){this.cutout.width=width;this.cutout.height=height;}
       const ctx = this.cutoutCtx;
-      ctx.drawImage(data.bitmap, 0, 0);
+      ctx.clearRect(0,0,width,height);
+      ctx.drawImage(data.bitmap, 0, 0,width,height);
       ctx.globalCompositeOperation = 'destination-in';
       ctx.drawImage(this.maskCanvas, 0, 0, this.cutout.width, this.cutout.height);
       ctx.globalCompositeOperation = 'source-over';

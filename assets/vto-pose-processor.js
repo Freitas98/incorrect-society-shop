@@ -1,13 +1,13 @@
 /** Pose plus the same model's person silhouette. Slow six-class hand/skin
  * classification runs independently. No customer media leaves the device. */
 export function poseInputSize(width,height,still) {
-  const factor=Math.min(1,(still?1024:640)/Math.max(width,height));
+  const factor=Math.min(1,(still?1024:384)/Math.max(width,height));
   // Pinned MediaPipe CPU mask copies fail on unaligned image rows (for example
   // 427×640). Align the inference bitmap, never the original display bitmap.
   return {width:Math.max(4,Math.round(width*factor/4)*4),height:Math.max(4,Math.round(height*factor/4)*4)};
 }
 export function createPoseProcessor({send,createCanvas}) {
-  let detector,mode,closed=false,queue=Promise.resolve();
+  let detector,mode,activeModel,models,delegate,closed=false,queue=Promise.resolve();
   const process=async data=>{
     if(closed){data.bitmap?.close();return;}
     const {id,kind}=data;
@@ -15,18 +15,34 @@ export function createPoseProcessor({send,createCanvas}) {
       if(kind==='init') {
         const {PoseLandmarker,FilesetResolver}=await import(data.vision);
         const files=await FilesetResolver.forVisionTasks(data.wasm);
-        detector=await PoseLandmarker.createFromOptions(files,{
-          canvas:createCanvas(),baseOptions:{modelAssetPath:data.model,delegate:'CPU'},
+        models={video:data.videoModel||data.model,photo:data.photoModel||data.model};
+        activeModel=data.model;
+        const canvas=createCanvas(),gl=canvas.getContext('webgl2',{powerPreference:'low-power'});
+        const debug=gl?.getExtension('WEBGL_debug_renderer_info');
+        const renderer=debug?String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)):'';
+        delegate=gl&&!/swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer)?'GPU':'CPU';
+        const options={
+          canvas,baseOptions:{modelAssetPath:activeModel,delegate},
           runningMode:'VIDEO',numPoses:1,minPoseDetectionConfidence:.55,
           minPosePresenceConfidence:.55,minTrackingConfidence:.55,
           outputSegmentationMasks:true,
-        });
+        };
+        try {detector=await PoseLandmarker.createFromOptions(files,options);}
+        catch(error){
+          if(delegate==='CPU')throw error;
+          delegate='CPU';
+          detector=await PoseLandmarker.createFromOptions(files,{...options,canvas:createCanvas(),baseOptions:{modelAssetPath:activeModel,delegate}});
+        }
         if(closed){detector.close();detector=null;return;}
-        mode='VIDEO';send({id,kind:'ready'});return;
+        mode='VIDEO';send({id,kind:'ready',delegate});return;
       }
       if(kind==='frame') {
         const next=data.still?'IMAGE':'VIDEO';
-        if(next!==mode){await detector.setOptions({runningMode:next});mode=next;}
+        const model=data.still?models.photo:models.video;
+        if(next!==mode||model!==activeModel){
+          await detector.setOptions({runningMode:next,...(model!==activeModel?{baseOptions:{modelAssetPath:model,delegate}}:{})});
+          mode=next;activeModel=model;
+        }
         if(closed){data.bitmap.close();return;}
         const start=performance.now();
         // Keep the original bitmap for display, but avoid upsampling the pose

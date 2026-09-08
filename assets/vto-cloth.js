@@ -1,4 +1,4 @@
-import {transform,sub,dot,unit,cross,length,clamp} from '@incorrect/vto-fit';
+import {transform,sub,dot,unit,cross,length,clamp,bendSleevePoint} from '@incorrect/vto-fit';
 import {skinTransforms,skinPoint} from '@incorrect/vto-skinning';
 
 /** Garment grading in bind metres, shared by render mesh and simulation cage. */
@@ -48,7 +48,7 @@ export class ClothCage {
     const transforms=fit.physical?skinTransforms(fit.matrices):null;
     this.nodes.forEach((node,i)=>{
       if(transforms){
-        const point=skinPoint(transforms,node.w,this.rest[i]);
+        const point=bendSleevePoint(skinPoint(transforms,node.w,this.rest[i]),fit.sleeveBends,node.w);
         for(let k=0;k<3;k++)this.targets[i*3+k]=point[k]/scale;
         return;
       }
@@ -73,7 +73,7 @@ export class ClothCage {
       this.motionStep=gain;
     }
     this.time=time;this.lastTargets.set(this.targets);
-    const iterations=this.lowPower?3:5,steps=still?10:Math.min(4,Math.ceil(this.motionStep||2)),dt=1/60;
+    const iterations=this.lowPower?2:4,steps=still?10:this.lowPower?1:2,dt=1/60;
     const origin=fit.shoulders.map(v=>v/scale);
     const basisX=unit(fit.matrices.chest.slice(0,3)),basisY=unit(fit.matrices.chest.slice(4,7)),basisZ=unit(cross(basisX,basisY));
     // Ellipse perimeter approximation, aspect 1.55. A measured chest sets

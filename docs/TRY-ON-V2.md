@@ -98,6 +98,39 @@ Ronda de contorno atual e compatibilidade (2026-09-08):
 - Os 16 assets alterados responderam HTTP 200 no CDN da montra; os quatro GLB coincidem byte a byte. O CDN minifica JS/CSS, pelo que comparação textual direta desses recursos não é válida. O teste de browser com os módulos minificados reais e os GLB do CDN passou Secrets e Sinners (20 respostas CDN por peça, fotografia ajustada, sem erros JS/worker nem POST). Usou HTML Liquid/catálogo fictício servido localmente e uma fotografia pública; não substitui teste das páginas Shopify autenticadas.
 - A página pública do produto redireciona para `/password` e identifica o mesmo tema publicado. Não foram submetidas credenciais, usada uma câmara real nem efetuadas compras. O utilizador vai validar as páginas reais e a câmara física: mãos/antebraços à frente, braços cruzados/levantados, rotação, troca de câmara, S/M/L/XL, modo leve e fecho/reabertura. Caimento e recomendação continuam aproximações por validar contra peças reais.
 
+## Auditoria de conclusão após publicação
+
+A publicação está concluída, mas o objetivo completo de representar o caimento real e apoiar uma compra de tamanho ainda não está comprovado. Não interpretar os testes de estabilidade como validação de fidelidade física.
+
+| Requisito do utilizador | Evidência disponível | Falta para concluir |
+| --- | --- | --- |
+| Preservar a estética e tornar o provador profissional | Redesign preservado; fotografias Chrome/WebKit/mobile; dois modelos com recursos reais do CDN | Avaliação nas páginas reais e confirmação visual do utilizador |
+| Assentar como a peça real no corpo | GLB em metros; escala calibrável; pivôs anatómicos; deformação com volume e contacto aproximado | Fotografias das próprias peças vestidas, com tamanho conhecido, para comparar gola, cava, comprimento e folga; os parâmetros de tecido são aproximações |
+| Reagir ao movimento sem abrir buracos | Vídeo e câmara simulada; pesos reais das mangas; teste de transparência e composição sem recorte geométrico | Câmara física, mãos cruzadas, movimentos rápidos e rotação; segmentação de dedos/acessórios não é perfeita |
+| Comparar S/M/L/XL usando a tabela | Cinco medidas lidas do mesmo Liquid da tabela; escala constante; graduação e recomendação testadas | Comparação com tamanhos realmente vestidos; folgas de estilo não foram validadas pela marca como regra de compra |
+| Funcionar em dispositivos mais fracos | LOD leve, carregamento adiado, limites de resolução, teste sem workers e ensaio de CPU limitada | Telefone de menor capacidade real, incluindo fluidez, aquecimento, orientação e estabilidade numa utilização prolongada; SwiftShader a ~9–10 fps não prova desempenho mobile |
+| Publicar preservando controlo do tema | Commit e ficheiros live/CDN verificados; configurações intactas | Publicação concluída; validar interação nas páginas autenticadas, sem criar encomendas de teste |
+| Permitir desligar a funcionalidade | Lógica Liquid verificada; novo teste local cobre 18 combinações dos interruptores global/secção e um override de variante | O teste não altera a opção em produção; o utilizador mantém controlo pelo editor |
+
+Próxima referência necessária: teste na câmara real com identificação do telemóvel/browser e, para calibrar o caimento, fotografias de frente/perfil de Secrets ou Sinners vestida com indicação do tamanho. Não é necessário mostrar o rosto. Uma captura que já contém uma peça virtual não permite reconstruir os píxeis originais ocultados.
+
+O teste adicional do interruptor e esta auditoria são alterações locais de validação, posteriores ao commit publicado; não mudam o comportamento da montra.
+
+## Correções após teste físico — iPhone 15 Pro Max, 2026-09-08
+
+O utilizador testou a versão publicada e reportou lentidão extrema, aquecimento, tamanhos visualmente excessivos e manga sem dobrar com o braço que segura o telemóvel. Esta observação substitui qualquer inferência anterior de desempenho mobile a partir dos testes de computador.
+
+- **Carga:** informação de memória ausente no iPhone deixava o modo automático escolher o perfil pesado. O perfil automático passou a ser conservador em interfaces táteis/coarse e sem indicações de hardware. Pose Lite no vídeo e Full nas fotografias, com preferência por GPU real e alternativa CPU quando a inicialização GPU falha. Os modelos oficiais estão documentados pela [Google](https://developers.google.com/edge/mediapipe/solutions/vision/pose_landmarker). Os URLs continuam fixos em `float16/1`, incluindo `pose_landmarker_lite/float16/1/pose_landmarker_lite.task`.
+- **Orçamento contínuo:** captura pedida a 640×480/24 fps, máximo 30; bitmap limitado a 640 px mesmo se a câmara negociar mais. Pose de vídeo limitada a 384 px, com o alinhamento necessário para as máscaras; fotografias mantêm 1024. Intervalos de inferência/segmentação incluem tempo ocioso proporcional ao custo observado. LOD leve, DPR 1, sem MSAA e menos iterações de tecido no vídeo; continuam a existir detalhes de mãos e volume, sem voltar a recortar a malha.
+- **Escala:** o tamanho absoluto de um esqueleto inferido por uma única câmara não é uma medida corporal. A escala não calibrada usa a largura anatómica de ombros de 42 cm como referência aproximada, mantendo a orientação/profundidade observadas. A medida introduzida pelo cliente tem precedência. Um teste verifica que multiplicar os world landmarks por 0,6 não aumenta a peça. A tabela S/M/L/XL mantém os valores da loja.
+- **Manga:** dobra suave no cotovelo, orientada pelo pulso, aplicada à parte da manga que chega ao cotovelo. Mesma transformação nos alvos CPU do tecido e no shader GPU. Não foi necessário aumentar polígonos nem alterar os quatro GLB para corrigir este movimento. Testes distinguem a silhueta legítima de uma manga dobrada de um buraco no tronco.
+- **Evidência local:** 61 testes Node; Theme Check 0 erros/10 avisos anteriores; integração com workers e alternativa na thread principal, comércio simulado, resiliência e fotografia/reabertura WebKit passaram. Integridade: zero alterações de alpha ao mover apenas as mãos/dedos e zero perdas de opacidade em 144 amostras do tronco ao mover pulsos; 1118 píxeis de pele restaurados na fotografia pública.
+- **Comparação sequencial, mesmo vídeo/SwiftShader:** GLB normal, 11,89 fps, cloth mediano 2,9 ms, idade p95 53,4 ms (antes: 9,43 fps / 6,6 ms / 110,3 ms). LOD leve/CPU limitada 4×, 11,81 fps, cloth 5,4 ms, idade p95 59,4 ms (antes: 9,88 fps / 20 ms / 115,1 ms). São medições de computador sob essas condições, não temperatura ou FPS garantidos no iPhone.
+- **GPU real de computador:** capacidades de browser semelhantes às do iPhone (6 threads, memória não exposta, pointer coarse) selecionaram LOD leve/DPR 1; Pose Lite efetivamente carregado, delegado GPU Intel UHD/Direct3D11, 35 frames, mediana de pose 29,3 ms. Nenhum download de Pose Full para vídeo; câmara simulada e ambos os workers terminados ao fechar. Não é emulação do chip Apple A17.
+- **Referência recebida:** na mesma captura recortada, a escala calculada passou de 140,14 para 101,95 px/m e ambas as mangas receberam uma dobra. A imagem já contém a peça virtual antiga: não permite avaliar remoção da roupa anterior nem calibrar a dimensão física verdadeira. O resultado sobre uma fotografia pública sem sobreposição também foi inspecionado.
+
+Novo teste necessário no iPhone: modo automático, sessão curta, braço a segurar o telemóvel, mãos à frente, troca de tamanhos e comparação de escala. A redução de trabalho está medida; a redução de aquecimento tem de ser confirmada no aparelho.
+
 Comandos adicionais:
 
 ```powershell
@@ -106,4 +139,5 @@ node scripts/vto-commerce-check.cjs
 node scripts/vto-commerce-check.cjs --lite
 node scripts/vto-occlusion-check.cjs
 node scripts/vto-resilience-check.cjs
+node scripts/vto-device-budget-check.cjs --gpu
 ```
