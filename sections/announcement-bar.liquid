@@ -1,51 +1,71 @@
 <div class="announcement-bar">
   {% liquid
-    assign default_text = 'announcement.default' | t | default: 'WORLDWIDE SHIPPING | FEMALE ANXIETY OUT NOW | FREE SHIPPING 80€+'
-    assign setting_text = section.settings.announcement_text | strip
-    assign announcement_text = default_text
-    if section.settings.use_translated_default == false and setting_text != blank
-      assign announcement_text = setting_text
-    endif
-    assign no_restock_text = ''
-    if settings.enable_drop_features and settings.drop_show_no_restock
-      assign no_restock_text = 'drop.no_restocks' | t
-    endif
-    assign extra_messages = section.settings.announcement_extra_messages | newline_to_br | split: '<br />'
+    assign msg1 = section.settings.message_1 | default: settings.announcement_message_1 | strip
+    assign msg2 = section.settings.message_2 | default: settings.announcement_message_2 | strip
+    assign msg3 = section.settings.message_3 | default: settings.announcement_message_3 | strip
+
+    assign scroll_duration = section.settings.scroll_speed | default: 35
   %}
-  {% capture announcement_sequence %}
-    <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" class="announcement-icon" alt="" width="60" height="60">
-    {% assign primary_messages = announcement_text | split: '|' %}
-    {% for primary_message in primary_messages %}
-      {% assign primary_message = primary_message | strip %}
-      {% if primary_message != blank %}
-        <span class="announcement-message">
-          <span class="announcement-copy">{{ primary_message | escape }}</span>
-          <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" class="announcement-icon" alt="" width="60" height="60">
+
+  {% capture brand_icon %}
+    {% if section.settings.custom_icon != blank %}
+      {{ section.settings.custom_icon | image_url: width: 60 | image_tag: class: 'announcement-icon', alt: '', width: 26, height: 26, loading: 'eager' }}
+    {% else %}
+      <img
+        src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556"
+        class="announcement-icon"
+        alt=""
+        width="26"
+        height="26"
+        loading="eager"
+      >
+    {% endif %}
+  {% endcapture %}
+
+  {% capture announcement_unit %}
+    {% if msg1 != blank %}
+      <span class="announcement-item">
+        <span class="announcement-icon-wrap" aria-hidden="true">
+          {{ brand_icon }}
         </span>
-      {% endif %}
-    {% endfor %}
-    {% for extra_message in extra_messages %}
-      {% assign extra_message = extra_message | strip %}
-      {% if extra_message != blank %}
-        <span class="announcement-message">
-          <span class="announcement-copy">{{ extra_message | escape }}</span>
-          <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" class="announcement-icon" alt="" width="60" height="60">
+        <span class="announcement-copy">{{ msg1 | escape }}</span>
+      </span>
+    {% endif %}
+    {% if msg2 != blank %}
+      <span class="announcement-item">
+        <span class="announcement-icon-wrap" aria-hidden="true">
+          {{ brand_icon }}
         </span>
-      {% endif %}
-    {% endfor %}
-    {% if no_restock_text != blank %}
-      <span class="announcement-message">
-        <span class="announcement-copy announcement-copy--no-restocks">{{ no_restock_text }}</span>
-      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" class="announcement-icon" alt="" width="60" height="60">
+        <span class="announcement-copy">{{ msg2 | escape }}</span>
+      </span>
+    {% endif %}
+    {% if msg3 != blank %}
+      <span class="announcement-item">
+        <span class="announcement-icon-wrap" aria-hidden="true">
+          {{ brand_icon }}
+        </span>
+        <span class="announcement-copy">{{ msg3 | escape }}</span>
       </span>
     {% endif %}
   {% endcapture %}
-  <div class="announcement-content" aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}">
+
+  {% capture announcement_track_content %}
+    {{ announcement_unit }}
+    {{ announcement_unit }}
+    {{ announcement_unit }}
+    {{ announcement_unit }}
+  {% endcapture %}
+
+  <div
+    class="announcement-content"
+    style="--announcement-duration: {{ scroll_duration }}s;"
+    aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}"
+  >
     <div class="announcement-track">
-      {{ announcement_sequence }}
+      {{ announcement_track_content }}
     </div>
     <div class="announcement-track" aria-hidden="true">
-      {{ announcement_sequence }}
+      {{ announcement_track_content }}
     </div>
   </div>
 </div>
@@ -69,7 +89,7 @@
     top: 0;
     left: 0;
     white-space: nowrap;
-    animation: announcement-scroll 28s linear infinite;
+    animation: announcement-scroll var(--announcement-duration, 35s) linear infinite;
     line-height: 30px;
     font-weight: var(--font-heading-weight);
     font-size: 0.8rem;
@@ -86,23 +106,30 @@
     align-items: center;
   }
 
-  .announcement-message {
+  .announcement-item {
     display: inline-flex;
     align-items: center;
-    gap: 13px;
-    color: white;
-    margin-right: 13px;
+    flex-shrink: 0;
+  }
+
+  .announcement-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 14px;
   }
 
   .announcement-icon {
     width: 26px;
     height: 26px;
     object-fit: contain;
-    display: inline-block;
+    display: block;
   }
 
-  .announcement-copy--no-restocks {
-    font-weight: 700;
+  .announcement-copy {
+    display: inline-block;
+    color: #ffffff;
+    white-space: nowrap;
   }
 
   @keyframes announcement-scroll {
@@ -117,6 +144,13 @@
   @media (prefers-reduced-motion: reduce) {
     .announcement-content {
       animation: none;
+      position: relative;
+      overflow-x: auto;
+      width: 100%;
+      justify-content: center;
+    }
+    .announcement-track[aria-hidden="true"] {
+      display: none;
     }
   }
 {% endstylesheet %}
@@ -126,23 +160,34 @@
   "name": "Announcement Bar",
   "settings": [
     {
-      "type": "checkbox",
-      "id": "use_translated_default",
-      "label": "Use translated default",
-      "default": true
+      "type": "text",
+      "id": "message_1",
+      "label": "Message 1"
     },
     {
       "type": "text",
-      "id": "announcement_text",
-      "label": "Main messages",
-      "info": "Use | to separate messages.",
-      "default": " WORLDWIDE SHIPPING | FEMALE ANXIETY OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL"
+      "id": "message_2",
+      "label": "Message 2"
     },
     {
-      "type": "textarea",
-      "id": "announcement_extra_messages",
-      "label": "Additional rotating messages",
-      "info": "One message per line. Blank lines are ignored."
+      "type": "text",
+      "id": "message_3",
+      "label": "Message 3"
+    },
+    {
+      "type": "range",
+      "id": "scroll_speed",
+      "min": 15,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Scroll duration",
+      "default": 35
+    },
+    {
+      "type": "image_picker",
+      "id": "custom_icon",
+      "label": "Custom separator icon"
     }
   ]
 }

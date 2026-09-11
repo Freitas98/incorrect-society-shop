@@ -61,9 +61,12 @@ test('only the two requested heroes enable rounded lower corners', () => {
   assert.equal(allProducts.sections.hero_editorial.settings.round_bottom_corners, true);
 });
 
-test('announcement bar supports optional configured messages and the drop no-restocks message', () => {
+test('announcement bar supports up to 3 configurable messages with brand icon separator', () => {
   const announcement = read('sections/announcement-bar.liquid');
-  assert.match(announcement, /announcement_extra_messages/);
-  assert.match(announcement, /extra_messages = section\.settings\.announcement_extra_messages/);
-  assert.match(announcement, /drop\.no_restocks/);
+  assert.match(announcement, /message_1/);
+  assert.match(announcement, /message_2/);
+  assert.match(announcement, /message_3/);
+  assert.match(announcement, /announcement-icon-wrap/);
+  assert.match(announcement, /Logo_white\.svg/);
+  assert.match(announcement, /announcement-scroll/);
 });

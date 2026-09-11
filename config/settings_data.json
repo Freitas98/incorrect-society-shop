@@ -16,7 +16,6 @@
     "drop_collection": "secrets-and-sins",
     "drop_name": "Secrets and Sinners",
     "drop_close_at": "2026-10-31T23:59:00+00:00",
-    "drop_show_no_restock": true,
     "drop_bundle_product": "secrets-sinners-bundle",
     "drop_bundle_component_one": "secrets-white-tee",
     "drop_bundle_component_two": "sins-burgundy-tee",
@@ -72,14 +71,17 @@
     "password_timer_enabled": true,
     "password_open_date": "2026-10-01T20:00:00+00:00",
     "password_auto_password": "SecretsAndSins2026",
+    "announcement_message_1": "WORLDWIDE SHIPPING WITH FREE SHIPING IN PORTUGAL 80€+",
+    "announcement_message_2": "SECRETS AND SINS OUT NOW",
+    "announcement_message_3": "NO RESTOCKS",
     "enable_virtual_try_on": false,
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
         "settings": {
-          "use_translated_default": true,
-          "announcement_text": "WORLDWIDE SHIPPING | FREE SHIPPING ON ORDERS OVER 80€",
-          "announcement_extra_messages": "DPD DELIVERY AVAILABLE"
+          "message_1": "WORLDWIDE SHIPPING WITH FREE SHIPING IN PORTUGAL 80€+",
+          "message_2": "SECRETS AND SINS OUT NOW",
+          "message_3": "NO RESTOCKS"
         }
       },
       "secure-scratch-card": {

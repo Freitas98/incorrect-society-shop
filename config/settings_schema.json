@@ -103,12 +103,6 @@
         "info": "ISO 8601 in Lisbon time, for example 2026-10-31T23:59:00+00:00. Leave empty to hide the countdown."
       },
       {
-        "type": "checkbox",
-        "id": "drop_show_no_restock",
-        "label": "Show NO RESTOCKS in the announcement bar",
-        "default": true
-      },
-      {
         "type": "header",
         "content": "Secrets + Sinners bundle"
       },
@@ -1089,6 +1083,26 @@
         "label": "Enable Virtual Try-On (VR)",
         "default": true,
         "info": "Enable 3D Virtual Try-On for supported garments across the store"
+      }
+    ]
+  },
+  {
+    "name": "Announcement Bar",
+    "settings": [
+      {
+        "type": "text",
+        "id": "announcement_message_1",
+        "label": "Message 1"
+      },
+      {
+        "type": "text",
+        "id": "announcement_message_2",
+        "label": "Message 2"
+      },
+      {
+        "type": "text",
+        "id": "announcement_message_3",
+        "label": "Message 3"
       }
     ]
   }
