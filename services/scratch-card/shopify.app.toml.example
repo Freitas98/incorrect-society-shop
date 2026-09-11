@@ -1,0 +1,12 @@
+name = "Incorrect secure scratch card"
+client_id = "REPLACE_WITH_SHOPIFY_CUSTOM_APP_CLIENT_ID"
+application_url = "https://REPLACE_WITH_WORKER.workers.dev"
+embedded = false
+
+[access_scopes]
+scopes = "write_discounts,read_discounts,read_customers"
+
+[app_proxy]
+url = "https://REPLACE_WITH_WORKER.workers.dev/proxy"
+subpath = "incorrect-scratch"
+prefix = "apps"

@@ -5,6 +5,12 @@
   "class": "hero-editorial-section",
   "settings": [
     {
+      "type": "checkbox",
+      "id": "round_bottom_corners",
+      "label": "Round bottom corners",
+      "default": false
+    },
+    {
       "type": "header",
       "content": "Image Settings"
     },
@@ -167,7 +173,7 @@
   endif
 %}
 
-<div class="hero-editorial full-width full-width-image-container {{ height_class }} hero-editorial--color-{{ section.settings.text_color }} hero-editorial--pos-{{ section.settings.content_position }}" id="HeroEditorial-{{ section.id }}">
+<div class="hero-editorial full-width full-width-image-container {{ height_class }} hero-editorial--color-{{ section.settings.text_color }} hero-editorial--pos-{{ section.settings.content_position }}{% if section.settings.round_bottom_corners %} hero-editorial--rounded-bottom{% endif %}" id="HeroEditorial-{{ section.id }}">
   <!-- Background Image -->
   <div class="hero-editorial__media">
     {% if section.settings.image != blank %}
@@ -297,6 +303,11 @@
     margin: 0 !important;
     overflow: hidden;
     grid-column: 1 / -1 !important;
+  }
+
+  .hero-editorial--rounded-bottom {
+    border-radius: 0 0 clamp(28px, 7vw, 72px) clamp(28px, 7vw, 72px);
+    isolation: isolate;
   }
 
   .hero-editorial--full,

@@ -1,0 +1,67 @@
+{% if section.settings.enabled %}
+  {{ 'secure-scratch-card.css' | asset_url | stylesheet_tag }}
+
+  <section
+    class="secure-scratch"
+    data-secure-scratch
+    data-campaign-id="{{ section.settings.campaign_id | escape }}"
+    data-proxy-path="{{ section.settings.proxy_path | escape }}"
+    data-login-url="{{ routes.account_login_url | escape }}"
+    data-strings='{
+      "intro": {{ "scratch.intro" | t | json }},
+      "loading": {{ "scratch.loading" | t | json }},
+      "login": {{ "scratch.login" | t | json }},
+      "start": {{ "scratch.start" | t | json }},
+      "retry": {{ "scratch.retry" | t | json }},
+      "resume": {{ "scratch.resume" | t | json }},
+      "alreadyPlayed": {{ "scratch.already_played" | t | json }},
+      "scratch": {{ "scratch.scratch" | t | json }},
+      "noPrize": {{ "scratch.no_prize" | t | json }},
+      "blocked": {{ "scratch.blocked" | t | json }},
+      "error": {{ "scratch.error" | t | json }},
+      "expires": {{ "scratch.expires" | t | json }},
+      "copy": {{ "scratch.copy" | t | json }},
+      "copied": {{ "scratch.copied" | t | json }},
+      "close": {{ "scratch.close" | t | json }}
+    }'
+  >
+    <button class="secure-scratch__teaser" type="button" data-scratch-open>
+      <span class="secure-scratch__teaser-pulse" aria-hidden="true"></span>
+      <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" alt="" width="52" height="28">
+      <span>{{ 'scratch.teaser' | t }}</span>
+    </button>
+    <dialog class="secure-scratch__dialog" data-scratch-dialog aria-labelledby="secure-scratch-title">
+      <button class="secure-scratch__close" type="button" data-scratch-close aria-label="{{ 'scratch.close' | t | escape }}">×</button>
+      <div class="secure-scratch__panel">
+        <div class="secure-scratch__brand" aria-hidden="true">
+          <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" alt="" width="96" height="40">
+          <span>INCORRECT SOCIETY</span>
+        </div>
+        <h2 id="secure-scratch-title">{{ 'scratch.title' | t }}</h2>
+        <p data-scratch-copy>{{ 'scratch.intro' | t }}</p>
+        <button class="secure-scratch__action" type="button" data-scratch-action hidden>{{ 'scratch.start' | t }}</button>
+        <div class="secure-scratch__card" data-scratch-card hidden>
+          <div class="secure-scratch__ticket-brand" aria-hidden="true">
+            <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_white.svg?v=1764257556" alt="" width="88" height="38">
+            <span>SECRETS + SINNERS / DROP 2026</span>
+          </div>
+          <div class="secure-scratch__result" data-scratch-result aria-live="polite"></div>
+          <div class="secure-scratch__progress" aria-hidden="true"><span></span></div>
+          <canvas class="secure-scratch__canvas" data-scratch-canvas aria-label="{{ 'scratch.canvas_label' | t | escape }}"></canvas>
+        </div>
+      </div>
+    </dialog>
+  </section>
+  <script src="{{ 'secure-scratch-card.js' | asset_url }}" defer></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Secure Scratch Card",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Enable secure scratch card", "default": false },
+    { "type": "text", "id": "campaign_id", "label": "Campaign ID", "default": "secrets-sinners-2026" },
+    { "type": "text", "id": "proxy_path", "label": "Shopify App Proxy path", "default": "apps/incorrect-scratch", "info": "Must match the custom app proxy configuration." }
+  ]
+}
+{% endschema %}

@@ -39,6 +39,7 @@ Comunicar com o utilizador em português de Portugal. Distinguir sempre funciona
 | Blog / artigo | `sections/blog.liquid` / `sections/article.liquid` |
 | Gift card emitido | `templates/gift_card.liquid`, documento independente com `{% layout none %}` |
 | Música | `snippets/music-player.liquid`, renderizado no footer |
+| Drop comercial | `config/settings_schema.json` → Current Drop & Delivery; interface em `sections/product.liquid`; configuração operacional em `docs/DROP-COMMERCE.md` |
 
 Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. Não confundir `sections/sidebar-navigation.liquid` com o menu mobile atual, implementado no header. Ambos existem, mas não estão ligados aos templates/grupos atuais. `sections/cart-inventory.liquid` é usado por pedido HTTP de Section Rendering, mesmo sem referência Liquid direta. Não apagar ficheiros apenas por uma pesquisa de `render` não encontrar usos.
 
@@ -53,6 +54,8 @@ Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. N�
 - Newsletter usa formulários nativos `customer`, com tags `newsletter_modal`, `newsletter_footer`, `newsletter_page`. Entrega de email, confirmação e desconto de 10% são dependências externas, não funcionalidades implementadas aqui.
 - Contacto usa formulários nativos `contact`; existe mais de um template legado. Preferir o caminho `page.contact-us` → `policy-page` → `contact-us-content` quando for o efetivamente atribuído.
 - Playlist: até 50 pares `music_track_N_name` / `music_track_N_url`, com fallback no snippet e estado `musicPlayer*` em `localStorage`.
+- Drop comercial: o tema só apresenta o bundle nas duas t-shirts escolhidas em `drop_bundle_component_one/two`; o produto-pai em `drop_bundle_product` deve ser criado com Shopify Bundles e combinar a opção de tamanho. Portes grátis por bundle, taxas de envio e remoção real no fecho são regras/configurações da Shopify, não garantias que o tema possa impor.
+- O contador do drop aplica-se aos produtos da coleção configurada em `drop_collection`. `drop_close_at` deve ser ISO 8601 com offset UTC correto para a data em Lisboa. O indicador de stock baixo usa inventário atual Shopify e o metafield numérico de variante `custom.drop_initial_stock`; só aparece à percentagem configurada em `low_stock_ratio`.
 
 ## Contratos JavaScript e carrinho
 

@@ -2,14 +2,14 @@
   <div class="footer-container">
     <!-- Newsletter Section -->
     <div class="footer-newsletter-section">
-      <h3 class="footer-newsletter-title">Newsletter | subscribe & get a 10% off</h3>
-      <p class="footer-newsletter-subtitle">Receive news about collections, restocks, events and sales.</p>
+      <h3 class="footer-newsletter-title">Newsletter</h3>
+      <p class="footer-newsletter-subtitle">Receive curiosities, stories, collection news and events.</p>
       {% form 'customer', id: 'FooterNewsletterForm', class: 'footer-newsletter-form', onsubmit: 'window.loadingScreen.show();' %}
         <input type="hidden" name="contact[tags]" value="newsletter_footer">
         <input type="hidden" name="contact[accepts_marketing]" value="true">
         {%- if form.posted_successfully? -%}
           <p class="newsletter-form__message newsletter-form__message--success">
-            Thank you for subscribing! Check your e-mail for your 10% discount.
+            Thank you for subscribing. Welcome to Incorrect Society.
           </p>
           <script>try { localStorage.setItem('newsletter_modal_status', 'subscribed'); } catch(e){}</script>
         {%- else -%}
@@ -30,7 +30,7 @@
         {%- endif -%}
       {% endform %}
       <a href="{{ pages['newsletter'].url }}" class="footer-signup-link">
-        <span class="arrow">→</span> Sign up and get 10% off
+        <span class="arrow">→</span> Sign up for curiosities and updates
       </a>
     </div>
 
@@ -307,7 +307,7 @@
     }
 
     .footer-music-player-wrapper {
-      bottom: 15px;
+      bottom: calc(15px + env(safe-area-inset-bottom, 0px));
       right: 15px;
       padding: 6px 10px;
     }
@@ -330,7 +330,7 @@
   /* Music Player - Fixed position */
   .footer-music-player-wrapper {
     position: fixed;
-    bottom: 30px;
+    bottom: calc(30px + env(safe-area-inset-bottom, 0px));
     right: 30px;
     z-index: 1000;
     background: rgba(0, 0, 0, 0.4);
@@ -350,6 +350,14 @@
 
   .footer-music-player-wrapper .cd-music-player-minimal {
     margin: 0;
+  }
+
+  @media (max-width: 749px) {
+    .footer-music-player-wrapper {
+      bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+      right: 15px;
+      padding: 6px 10px;
+    }
   }
 {% endstylesheet %}
 

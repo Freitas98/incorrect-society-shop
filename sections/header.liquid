@@ -95,7 +95,13 @@
 </header>
 <div id="site-header-spacer" class="site-header-spacer" aria-hidden="true"></div>
 
-<div class="cart-sidebar" id="cart-sidebar">
+<div
+  class="cart-sidebar"
+  id="cart-sidebar"
+  data-bundle-product-id="{{ settings.drop_bundle_product.id }}"
+  data-bundle-image-primary="{{ settings.drop_bundle_component_one.featured_image | image_url: width: 160 }}"
+  data-bundle-image-secondary="{{ settings.drop_bundle_component_two.featured_image | image_url: width: 160 }}"
+>
   <div class="cart-sidebar-content">
     <div class="cart-header">
       <h3>{{ 'cart.title' | t }}</h3>
@@ -1097,6 +1103,28 @@
     transition: transform 0.5s ease;
   }
 
+  .cart-sidebar .bundle-cart-images {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .cart-sidebar .bundle-cart-images img {
+    width: 48px;
+    height: 72px;
+    object-fit: contain;
+    background: transparent;
+    mix-blend-mode: multiply;
+  }
+
+  .cart-sidebar .bundle-cart-images img + img {
+    margin-left: -20px;
+    transform: translateY(7px) rotate(4deg);
+  }
+
   .cart-sidebar .cart-item-card:hover .item-image img {
     transform: scale(1.05);
   }
@@ -1388,6 +1416,18 @@
     const cartCount = document.getElementById('cart-count');
     const mobileCartCount = document.getElementById('mobile-cart-count');
     const cartTotal = document.getElementById('cart-total');
+    const bundleProductId = String(cartSidebar.dataset.bundleProductId || '');
+    const bundleImageUrls = [cartSidebar.dataset.bundleImagePrimary, cartSidebar.dataset.bundleImageSecondary].filter(Boolean);
+
+    function cartItemImage(item) {
+      if (item.featured_image && item.featured_image.url) {
+        return `<img src="${item.featured_image.url}?width=160" alt="${item.product_title}" loading="lazy" width="80" height="80">`;
+      }
+      if (bundleProductId && String(item.product_id) === bundleProductId && bundleImageUrls.length) {
+        return `<span class="bundle-cart-images" aria-hidden="true">${bundleImageUrls.map((url) => `<img src="${url}" alt="" loading="lazy" width="80" height="80">`).join('')}</span>`;
+      }
+      return '<div class="no-image">No Image</div>';
+    }
     // Localized option labels mapping via themeStrings (set in layout)
     const translateOptionName = (name) => {
       if (!name) return '';
@@ -1606,9 +1646,7 @@
       <div class="cart-item-card" data-key="${item.key}">
         <div class="item-image">
           <a href="${item.url}" style="display: block; width: 100%; height: 100%;">
-            ${item.featured_image 
-              ? `<img src="${item.featured_image.url}?width=160" alt="${item.product_title}" loading="lazy" width="80" height="80">` 
-              : '<div class="no-image">No Image</div>'}
+            ${cartItemImage(item)}
           </a>
         </div>
 
@@ -1850,40 +1888,48 @@
       }, 3000);
     }
 
-    // Global function to add item and update cart (called from product page)
-    window.addToCartAndUpdate = function (formData) {
+    // Shared cart additions. Shopify remains the authority for inventory and prices.
+    const cartRoot = window.Shopify?.routes?.root || '/';
+    const cartEndpoint = (path) => `${cartRoot.replace(/\/?$/, '/')}${path.replace(/^\//, '')}`;
+    const responseError = async (response, fallback) => {
+      let payload = null;
+      try { payload = await response.json(); } catch (_) {}
+      return new Error(payload?.description || payload?.message || fallback);
+    };
+
+    async function addItemsAndRefresh(request, source) {
       if (window.loadingScreen) window.loadingScreen.show();
-      return fetch('/cart/add.js', {
-        method: 'POST',
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Update cart count immediately
-          return fetch('/cart.js');
-        })
-        .then((response) => response.json())
-        .then((cart) => {
-          // Update stored cart data
-          currentCartData = cart;
+      try {
+        const response = await fetch(cartEndpoint('cart/add.js'), request);
+        if (!response.ok) throw await responseError(response, window.themeStrings?.error_adding_to_cart || 'Unable to add this item to the cart.');
+        await response.json();
 
-          updateCartCount(cart.item_count);
-
-          // Broadcast cart update event for main cart page
-          window.dispatchEvent(
-            new CustomEvent('cartUpdated', {
-              detail: { cart: cart, source: 'sidebar' },
-            })
-          );
-          
-          if (window.loadingScreen) window.loadingScreen.hide();
-          return cart;
-        })
-        .catch((error) => {
-          console.error('Error adding to cart:', error);
-          if (window.loadingScreen) window.loadingScreen.hide();
+        const cartResponse = await fetch(cartEndpoint('cart.js'));
+        if (!cartResponse.ok) {
+          const error = await responseError(cartResponse, window.themeStrings?.cart_refresh_failed || 'Item added, but the cart could not be refreshed. Reload the page before trying again.');
+          error.added = true;
           throw error;
-        });
+        }
+        const cart = await cartResponse.json();
+        currentCartData = cart;
+        updateCartCount(cart.item_count);
+        window.dispatchEvent(new CustomEvent('cartUpdated', { detail: { cart, source } }));
+        return cart;
+      } finally {
+        if (window.loadingScreen) window.loadingScreen.hide();
+      }
+    }
+
+    window.addToCartAndUpdate = function (formData, source = 'quick-add') {
+      return addItemsAndRefresh({ method: 'POST', body: formData }, source);
+    };
+
+    window.addItemsToCartAndUpdate = function (items, source = 'quick-add') {
+      return addItemsAndRefresh({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ items })
+      }, source);
     };
 
     // Clear Cart Modal Functionality

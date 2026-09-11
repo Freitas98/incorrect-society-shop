@@ -23,6 +23,7 @@
         adding: {{ 'theme.messages.adding' | t | json }},
         added_to_cart: {{ 'theme.messages.added_to_cart' | t | json }},
         error_adding_to_cart: {{ 'theme.messages.error_adding_to_cart' | t | json }},
+        cart_refresh_failed: {{ 'theme.messages.cart_refresh_failed' | t | json }},
         sold_out: {{ 'products.product.sold_out' | t | json }},
         add_to_cart: {{ 'products.product.add_to_cart' | t | json }},
         cart_remove_item_message: {{ 'cart.remove_item_message_html' | t: title: '___TITLE___' | json }},
@@ -127,6 +128,7 @@
     </main>
 
     {% render 'newsletter-modal' %}
+    {% section 'secure-scratch-card' %}
 
     <script>
       (function () {

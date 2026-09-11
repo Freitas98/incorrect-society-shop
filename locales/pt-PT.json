@@ -237,16 +237,17 @@
       "added_to_cart": "Produto adicionado ao carrinho com sucesso!",
       "error_adding_to_cart": "Erro ao adicionar produto ao carrinho. Tenta novamente.",
       "sold_out": "Esgotado",
-      "add_to_cart": "Adicionar ao carrinho"
+      "add_to_cart": "Adicionar ao carrinho",
+      "cart_refresh_failed": "O artigo foi adicionado, mas não foi possível atualizar o carrinho. Recarrega antes de tentares novamente."
     }
   },
   "newsletter": {
     "stay_connected_title": "Mantém-te ligado",
-    "intro_html": "Junta-te à <strong>Incorrect Society</strong> e sê o primeiro a saber de novos lançamentos, drops exclusivos e eventos.",
-    "offer_highlight_html": "Subscreve a nossa newsletter e recebe <strong>10% de desconto</strong> na tua primeira compra!",
+    "intro_html": "Junta-te à <strong>Incorrect Society</strong> para receberes curiosidades, lançamentos, drops e eventos.",
+    "offer_highlight_html": "Subscreve para receberes <strong>curiosidades e novidades</strong> da Incorrect Society.",
     "what_you_get_title": "O que vais receber",
     "benefit_early_access_html": "<strong>Acesso antecipado:</strong> Compra novas coleções antes do público",
-    "benefit_discounts_html": "<strong>Descontos exclusivos:</strong> Códigos e ofertas para subscritores",
+    "benefit_discounts_html": "<strong>Curiosidades:</strong> Histórias, referências e detalhes por trás dos lançamentos",
     "benefit_bts_html": "<strong>Nos bastidores:</strong> Conteúdo de sessões e do processo criativo",
     "benefit_events_html": "<strong>Convites:</strong> Acesso VIP a pop-ups e eventos",
     "benefit_style_tips_html": "<strong>Dicas de estilo:</strong> Como usar as peças Incorrect Society",
@@ -254,7 +255,7 @@
     "signup_prompt": "Pronto para te juntares? Introduz o teu email para subscreveres a newsletter.",
     "subscribe_now": "SUBSCREVER",
     "subscribe_prompt": "Introduz o teu email para te juntares à Incorrect Society",
-    "subscribe_cta": "Subscrever e obter 10%",
+    "subscribe_cta": "Subscrever",
     "privacy_title": "Privacidade e frequência",
     "privacy_intro": "Respeitamos a tua privacidade e nunca partilhamos o teu email.",
     "freq_per_week": "1-2 newsletters por semana com novidades",
@@ -265,7 +266,7 @@
     "social_highlight": "Segue-nos para atualizações diárias:",
     "instagram_label": "Instagram:",
     "tiktok_label": "TikTok:",
-    "success": "Obrigado por subscreveres! Verifica o teu email para obter o teu código de desconto.",
+    "success": "Obrigado por subscreveres. Vais agora receber curiosidades e novidades.",
     "name_placeholder": "O teu nome",
     "email_placeholder": "O teu email",
     "phone_placeholder": "O teu telemóvel (opcional)",
@@ -277,7 +278,7 @@
     "sms_phone_required": "Introduz um número de telemóvel válido para aderir aos SMS.",
     "verifying": "A verificar...",
     "captcha_message": "Conclui a verificação para finalizar a subscrição.",
-    "check_email_discount": "Após subscrever, verifique o seu email para receber o seu código de desconto exclusivo!"
+    "check_email_discount": "Após subscreveres, fica atento ao email para curiosidades e novidades."
   },
   "return_policy": {
     "title": "Caso você queira devolver algo",
@@ -379,6 +380,44 @@
   "announcement": {
     "default": "WORLDWIDE SHIPPING | FEMALE ANXIETY OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL",
     "aria_label": "Anúncio da loja"
+  },
+  "drop": {
+    "no_restocks": "NO RESTOCKS",
+    "bundle_title": "O BUNDLE",
+    "bundle_copy": "Adiciona Secrets + Sinners no mesmo tamanho.",
+    "bundle_page_eyebrow": "SECRETS + SINNERS",
+    "bundle_page_title": "DUAS T-SHIRTS. UM TAMANHO.",
+    "bundle_page_copy": "Secrets White Tee e Sins Burgundy Tee no mesmo tamanho. O preço do bundle é a soma das duas peças e inclui portes grátis.",
+    "bundle_add": "ADICIONAR O BUNDLE",
+    "bundle_unavailable": "Este bundle não está disponível no tamanho selecionado.",
+    "bundle_free_shipping": "Portes grátis desbloqueados com este bundle.",
+    "free_shipping_threshold": "Portes grátis em encomendas de {{ amount }} ou mais.",
+    "low_stock": "Poucas unidades",
+    "extinct": "EXTINCT",
+    "delivery_countdown": "Encomenda nas próximas ___TIME___ e enviamos em ___DAY___ .",
+    "delivery_estimate": "Entrega estimada via ___CARRIER___: ___FROM___ a ___TO___ .",
+    "drop_countdown": "___DROP___ será removido para sempre em ___DAYS___d ___HOURS___h ___MINUTES___m.",
+    "drop_ended": "Este drop terminou."
+  },
+  "scratch": {
+    "teaser": "RASPA E GANHA",
+    "title": "A TUA VEZ",
+    "intro": "Inicia sessão para revelar o teu resultado. Prémios limitados, sujeitos a disponibilidade.",
+    "loading": "A verificar o teu cartão…",
+    "login": "Inicia sessão com o teu email confirmado para jogar.",
+    "start": "COMEÇAR",
+    "retry": "TENTAR NOVAMENTE",
+    "resume": "O teu cartão está pronto. Raspa para revelar o resultado.",
+    "already_played": "Já jogaste este cartão. O teu resultado está em baixo.",
+    "scratch": "RASPA AQUI",
+    "no_prize": "NÃO GANHASTE DESTA VEZ.",
+    "blocked": "ESTE JOGO NÃO ESTÁ DISPONÍVEL NESTA REDE.",
+    "error": "NÃO FOI POSSÍVEL PROCESSAR O JOGO. TENTA NOVAMENTE.",
+    "expires": "EXPIRA EM",
+    "copy": "COPIAR CÓDIGO",
+    "copied": "COPIADO",
+    "close": "Fechar raspadinha",
+    "canvas_label": "Raspa o cartão para revelar o teu resultado"
   },
   "pagefly": {
     "products": {

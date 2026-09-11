@@ -76,6 +76,154 @@
     ]
   },
   {
+    "name": "Current Drop & Delivery",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_drop_features",
+        "label": "Enable current drop features",
+        "default": false
+      },
+      {
+        "type": "collection",
+        "id": "drop_collection",
+        "label": "Current drop collection",
+        "info": "Products in this collection can show the countdown and bundle offer."
+      },
+      {
+        "type": "text",
+        "id": "drop_name",
+        "label": "Drop name",
+        "default": "Secrets and Sinners"
+      },
+      {
+        "type": "text",
+        "id": "drop_close_at",
+        "label": "Drop closing date/time",
+        "info": "ISO 8601 in Lisbon time, for example 2026-10-31T23:59:00+00:00. Leave empty to hide the countdown."
+      },
+      {
+        "type": "checkbox",
+        "id": "drop_show_no_restock",
+        "label": "Show NO RESTOCKS in the announcement bar",
+        "default": true
+      },
+      {
+        "type": "header",
+        "content": "Secrets + Sinners bundle"
+      },
+      {
+        "type": "product",
+        "id": "drop_bundle_product",
+        "label": "Bundle product",
+        "info": "Select the parent product created with the free Shopify Bundles app."
+      },
+      {
+        "type": "product",
+        "id": "drop_bundle_component_one",
+        "label": "First bundle t-shirt"
+      },
+      {
+        "type": "product",
+        "id": "drop_bundle_component_two",
+        "label": "Second bundle t-shirt"
+      },
+      {
+        "type": "range",
+        "id": "free_shipping_threshold",
+        "min": 0,
+        "max": 500,
+        "step": 5,
+        "unit": "€",
+        "label": "Free shipping order threshold",
+        "default": 80
+      },
+      {
+        "type": "header",
+        "content": "Low stock"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_low_stock",
+        "label": "Show low-stock message",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "low_stock_ratio",
+        "min": 10,
+        "max": 90,
+        "step": 1,
+        "unit": "%",
+        "label": "Show at or below this percentage of initial drop stock",
+        "default": 67,
+        "info": "Requires the custom.drop_initial_stock number metafield on each variant."
+      },
+      {
+        "type": "header",
+        "content": "DPD delivery estimate"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_delivery_estimate",
+        "label": "Show delivery estimate near Add to Cart",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "shipping_carrier_name",
+        "label": "Carrier name",
+        "default": "DPD"
+      },
+      {
+        "type": "text",
+        "id": "shipping_timezone",
+        "label": "Fulfilment timezone",
+        "default": "Europe/Lisbon"
+      },
+      {
+        "type": "text",
+        "id": "shipping_cutoff_time",
+        "label": "Order cutoff time",
+        "default": "15:00",
+        "info": "24-hour time in the fulfilment timezone."
+      },
+      {
+        "type": "text",
+        "id": "shipping_dispatch_weekdays",
+        "label": "Dispatch weekdays",
+        "default": "1,2,3,4,5",
+        "info": "1 = Monday and 7 = Sunday."
+      },
+      {
+        "type": "textarea",
+        "id": "shipping_closed_dates",
+        "label": "Closed fulfilment dates",
+        "info": "One YYYY-MM-DD date per line."
+      },
+      {
+        "type": "range",
+        "id": "shipping_min_business_days",
+        "min": 1,
+        "max": 20,
+        "step": 1,
+        "unit": "d",
+        "label": "Minimum estimated delivery business days",
+        "default": 1
+      },
+      {
+        "type": "range",
+        "id": "shipping_max_business_days",
+        "min": 1,
+        "max": 30,
+        "step": 1,
+        "unit": "d",
+        "label": "Maximum estimated delivery business days",
+        "default": 3
+      }
+    ]
+  },
+  {
     "name": "t:general.colors",
     "settings": [
       {

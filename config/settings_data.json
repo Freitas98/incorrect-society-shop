@@ -12,6 +12,24 @@
     "type_primary_font": "work_sans_n4",
     "min_page_margin": 10,
     "current_collection": "secrets-and-sins",
+    "enable_drop_features": true,
+    "drop_collection": "secrets-and-sins",
+    "drop_name": "Secrets and Sinners",
+    "drop_close_at": "2026-10-31T23:59:00+00:00",
+    "drop_show_no_restock": true,
+    "drop_bundle_product": "secrets-sinners-bundle",
+    "drop_bundle_component_one": "secrets-white-tee",
+    "drop_bundle_component_two": "sins-burgundy-tee",
+    "free_shipping_threshold": 80,
+    "show_low_stock": true,
+    "low_stock_ratio": 67,
+    "show_delivery_estimate": true,
+    "shipping_carrier_name": "DPD",
+    "shipping_timezone": "Europe/Lisbon",
+    "shipping_cutoff_time": "15:00",
+    "shipping_dispatch_weekdays": "1,2,3,4,5",
+    "shipping_min_business_days": 1,
+    "shipping_max_business_days": 3,
     "newsletter_modal_image": "shopify://shop_images/image00026.jpg",
     "music_spotify_url": "https://open.spotify.com/playlist/4mtoSf0Fh48ecJHF9MJiG1?si=59fb75290d874601&nd=1&dlsi=8183cb39a4594d7e",
     "music_cover_image": "shopify://shop_images/cd_cover.png",
@@ -60,7 +78,16 @@
         "type": "announcement-bar",
         "settings": {
           "use_translated_default": true,
-          "announcement_text": "WORLDWIDE SHIPPING | FEMALE ANXIETY OUT NOW | FREE SHIPPING 80€+ IN PORTUGAL"
+          "announcement_text": "WORLDWIDE SHIPPING | FREE SHIPPING ON ORDERS OVER 80€",
+          "announcement_extra_messages": "DPD DELIVERY AVAILABLE"
+        }
+      },
+      "secure-scratch-card": {
+        "type": "secure-scratch-card",
+        "settings": {
+          "enabled": true,
+          "campaign_id": "secrets-sinners-2026",
+          "proxy_path": "apps/incorrect-scratch"
         }
       },
       "sidebar-navigation": {
