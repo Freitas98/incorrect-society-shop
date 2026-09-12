@@ -124,7 +124,9 @@
       <div class="cart-actions">
         <button class="btn btn--secondary" id="clear-cart-btn">{{ 'cart.clear' | t }}</button>
         <a href="{{ routes.cart_url }}" class="btn btn--primary">{{ 'cart.goToCartBtn' | t }}</a>
-        <a href="/checkout" class="btn btn--primary">{{ 'cart.checkout' | t }}</a>
+        <form action="{{ routes.cart_url }}" method="post">
+          <button type="submit" name="checkout" class="btn btn--primary">{{ 'cart.checkout' | t }}</button>
+        </form>
       </div>
     </div>
   </div>
@@ -841,6 +843,11 @@
     text-align: center;
   }
 
+  .cart-actions form {
+    width: 100%;
+    margin: 0;
+  }
+
   .cart-view-btn {
     --btn-border: color-mix(in oklab, var(--color-border), transparent 15%);
     --btn-hover-border: color-mix(in oklab, var(--color-border), var(--color-primary) 20%);
@@ -1177,6 +1184,28 @@
     margin-left: 4px;
   }
 
+  .cart-sidebar .original-price {
+    color: var(--color-foreground-muted);
+    text-decoration: line-through;
+    margin-right: 6px;
+  }
+
+  .cart-sidebar .line-item-discounts {
+    display: grid;
+    gap: 3px;
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    color: var(--color-foreground-muted);
+    font-size: 11px;
+  }
+
+  .cart-sidebar .line-item-discounts li {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
   .cart-sidebar .item-actions-column {
     display: flex;
     flex-direction: column;
@@ -1444,6 +1473,9 @@
       if (key === 'color' || key === 'cor') return window.themeStrings?.option_color_label || name;
       return name;
     };
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[character]);
 
     // Store current cart data for stock validation
     let currentCartData = null;
@@ -1466,7 +1498,7 @@
         }
 
         searchTimeout = setTimeout(() => {
-          fetch(`/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=5`)
+          fetch(`${cartEndpoint('search/suggest.json')}?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=5`)
             .then(response => response.json())
             .then(data => {
               const products = data.resources.results.products;
@@ -1478,7 +1510,7 @@
                     <div class="predictive-search-info">
                       <h4 class="predictive-search-title">${product.title}</h4>
                       <div class="predictive-search-price">
-                        ${product.available ? product.price + ' €' : '<span class="sold-out-badge">Sold Out</span>'}
+                        ${product.available ? formatCartMoney(product.price, window.themeMoney?.currency) : '<span class="sold-out-badge">Sold Out</span>'}
                       </div>
                     </div>
                   </a>
@@ -1544,8 +1576,14 @@
     function loadCartItems() {
       // Fetch both cart data and inventory data
       Promise.all([
-        fetch('/cart.js').then(res => res.json()),
-        fetch('/?section_id=cart-inventory').then(res => res.text())
+        fetch(cartEndpoint('cart.js')).then(res => {
+          if (!res.ok) throw new Error('Unable to load cart');
+          return res.json();
+        }),
+        fetch(cartEndpoint('?section_id=cart-inventory')).then(res => {
+          if (!res.ok) throw new Error('Unable to load inventory');
+          return res.text();
+        })
       ])
       .then(([cart, inventoryHtml]) => {
         // Parse inventory data from the section HTML
@@ -1568,7 +1606,7 @@
 
         renderCartItems(cart);
         updateCartCount(cart.item_count);
-        updateCartTotal(cart.total_price);
+        updateCartTotal(cart.total_price, cart.currency);
       })
       .catch((error) => {
         console.error('Error loading cart:', error);
@@ -1649,6 +1687,20 @@
             
           const availableStock = hasInventoryLimit ? inventoryItem.inventory_quantity : null;
           const isMaxQuantity = hasInventoryLimit && item.quantity >= availableStock;
+          const originalPrice = Number(item.original_price || 0);
+          const finalPrice = Number(item.final_price ?? item.price ?? originalPrice);
+          const originalLinePrice = Number(item.original_line_price || 0);
+          const finalLinePrice = Number(item.final_line_price ?? item.line_price ?? originalLinePrice);
+          const discountAllocations = Array.isArray(item.line_level_discount_allocations)
+            ? item.line_level_discount_allocations
+            : [];
+          const discountHtml = discountAllocations.length
+            ? `<ul class="line-item-discounts" role="list">${discountAllocations.map((allocation) => `
+                <li><span>${escapeHtml(allocation.discount_application?.title || window.themeStrings?.cart_discount_applied || 'Discount applied')}</span><span>−${formatCartMoney(allocation.amount, cart.currency)}</span></li>
+              `).join('')}</ul>`
+            : originalLinePrice > finalLinePrice
+              ? `<ul class="line-item-discounts" role="list"><li><span>${escapeHtml(window.themeStrings?.cart_discount_applied || 'Discount applied')}</span><span>−${formatCartMoney(originalLinePrice - finalLinePrice, cart.currency)}</span></li></ul>`
+              : '';
 
           return `
       <div class="cart-item-card" data-key="${item.key}">
@@ -1666,19 +1718,20 @@
           <div class="item-variant-price-wrapper">
             ${variantHtml}
             <span class="variant-price">
-              ${item.original_line_price !== item.line_price 
-                ? `<span class="original-price">${formatMoneyEuro(item.original_price)}</span>
-                   <span class="discounted-price">${formatMoneyEuro(item.price)}</span>`
-                : `<span class="unit-price">${formatMoneyEuro(item.price)}</span>`
+              ${originalPrice > finalPrice
+                ? `<span class="original-price">${formatCartMoney(originalPrice, cart.currency)}</span>
+                   <span class="discounted-price">${formatCartMoney(finalPrice, cart.currency)}</span>`
+                : `<span class="unit-price">${formatCartMoney(finalPrice, cart.currency)}</span>`
               }
-              <span class="price-label">each</span>
+              <span class="price-label">${escapeHtml(window.themeStrings?.cart_each || 'each')}</span>
             </span>
+            ${discountHtml}
           </div>
         </div>
 
         <div class="item-actions-column">
           <div class="quantity-wrapper">
-            <label class="quantity-label">QUANTITY</label>
+            <label class="quantity-label">${escapeHtml(window.themeStrings?.cart_quantity || 'Quantity')}</label>
             <div class="quantity-controls">
               <button
                 type="button"
@@ -1703,8 +1756,8 @@
           </div>
           
           <div class="total-wrapper">
-            <label class="total-label">TOTAL</label>
-            <div class="item-total-price">${formatMoneyEuro(item.line_price)}</div>
+            <label class="total-label">${escapeHtml(window.themeStrings?.cart_total || 'Total')}</label>
+            <div class="item-total-price">${formatCartMoney(finalLinePrice, cart.currency)}</div>
           </div>
 
           <button class="remove-item-btn" data-key="${item.key}">
@@ -1803,18 +1856,24 @@
       const formData = new FormData();
       formData.append('updates[' + key + ']', quantity);
 
-      fetch('/cart/update.js', {
+      fetch(cartEndpoint('cart/update.js'), {
         method: 'POST',
         body: formData,
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (!response.ok) throw new Error('Unable to update cart');
+          return response.json();
+        })
         .then((cart) => {
           // Update stored cart data first
           currentCartData = cart;
           
           // Re-fetch inventory data to ensure it's up to date (optional but safer)
-          fetch('/?section_id=cart-inventory')
-            .then(res => res.text())
+          fetch(cartEndpoint('?section_id=cart-inventory'))
+            .then(res => {
+              if (!res.ok) throw new Error('Unable to load inventory');
+              return res.text();
+            })
             .then(inventoryHtml => {
               const parser = new DOMParser();
               const doc = parser.parseFromString(inventoryHtml, 'text/html');
@@ -1828,7 +1887,7 @@
               
               renderCartItems(cart);
               updateCartCount(cart.item_count);
-              updateCartTotal(cart.total_price);
+              updateCartTotal(cart.total_price, cart.currency);
             });
 
           // Broadcast cart update event for main cart page
@@ -1863,18 +1922,22 @@
     }
 
     // Update cart total
-    function updateCartTotal(totalPrice) {
-      cartTotal.textContent = formatMoneyEuro(totalPrice);
+    function updateCartTotal(totalPrice, currency) {
+      cartTotal.textContent = formatCartMoney(totalPrice, currency);
     }
 
-    // Format money using shop currency (fallback to simple format)
-    function formatMoneyEuro(cents) {
-      const amount = Math.abs(cents || 0);
-      const euros = Math.floor(amount / 100);
-      const centsPart = amount % 100;
-      const centsStr = String(centsPart).padStart(2, '0');
-      const eurosStr = String(euros).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      return `${eurosStr},${centsStr} €`;
+    function formatCartMoney(amount, currency) {
+      const resolvedCurrency = currency || window.themeMoney?.currency || 'EUR';
+      const locale = window.themeMoney?.locale || document.documentElement.lang || undefined;
+      try {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: resolvedCurrency,
+          currencyDisplay: 'code'
+        }).format(Number(amount || 0) / 100);
+      } catch (_) {
+        return `${resolvedCurrency} ${(Number(amount || 0) / 100).toFixed(2)}`;
+      }
     }
 
     // Show error notification
@@ -1973,7 +2036,7 @@
     if (modalConfirm) {
       modalConfirm.addEventListener('click', function () {
         // Clear cart via Shopify API
-        fetch('/cart/clear.js', {
+        fetch(cartEndpoint('cart/clear.js'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1987,7 +2050,7 @@
                 '<p style="color: #cccccc; text-align: center; padding: 40px;">' +
                 (window.themeStrings?.cart_empty_title || 'Your cart is empty') +
                 '</p>';
-              cartTotal.textContent = formatMoneyEuro(0);
+              cartTotal.textContent = formatCartMoney(0, currentCartData?.currency);
 
               // Broadcast cart clear event for main cart page
               window.dispatchEvent(
@@ -2018,7 +2081,7 @@
         currentCartData = cart;
 
         updateCartCount(cart.item_count);
-        updateCartTotal(cart.total_price);
+        updateCartTotal(cart.total_price, cart.currency);
 
         // If sidebar is open, refresh the items
         if (cartSidebar.classList.contains('open')) {
@@ -2031,7 +2094,7 @@
     window.addEventListener('cartCleared', function (event) {
       if (event.detail.source !== 'sidebar') {
         updateCartCount(0);
-        cartTotal.textContent = formatMoneyEuro(0);
+        cartTotal.textContent = formatCartMoney(0, currentCartData?.currency);
 
         // If sidebar is open, show empty state
         if (cartSidebar.classList.contains('open')) {

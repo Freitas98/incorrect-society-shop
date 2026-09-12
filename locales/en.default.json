@@ -120,6 +120,7 @@
     "subtotal": "Subtotal",
     "total": "Total",
     "discount": "Discount",
+    "discount_applied": "Discount applied",
     "quantity": "Quantity",
     "each": "each",
     "stock_available_html": "{{ count }} available",
@@ -138,6 +139,10 @@
     "empty_title": "Your cart is empty",
     "empty_message": "Looks like you haven't added anything to your cart yet.",
     "continue_shopping": "Continue Shopping"
+  },
+  "localization": {
+    "country_region": "Country / region",
+    "update_country": "Update"
   },
   "customers": {
     "login": {

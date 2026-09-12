@@ -335,7 +335,7 @@
                 {
                   "id": {{ bundle_variant.id | json }},
                   "available": {{ bundle_variant.available | json }},
-                  "priceHtml": {{ bundle_variant.price | money | json }},
+                  "priceHtml": {{ bundle_variant.price | money_with_currency | json }},
                   "option1": {{ bundle_variant.option1 | json }},
                   "option2": {{ bundle_variant.option2 | json }},
                   "option3": {{ bundle_variant.option3 | json }}
