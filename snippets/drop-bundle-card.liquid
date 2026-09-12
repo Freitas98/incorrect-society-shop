@@ -7,6 +7,10 @@
   assign bundle_product = settings.drop_bundle_product
   assign component_one = settings.drop_bundle_component_one
   assign component_two = settings.drop_bundle_component_two
+  assign component_one_handle = component_one.handle | default: component_one
+  assign component_two_handle = component_two.handle | default: component_two
+  assign component_one_catalog_product = all_products[component_one_handle]
+  assign component_two_catalog_product = all_products[component_two_handle]
   assign component_one_image = component_one.featured_image
   assign component_two_image = component_two.featured_image
   if component_one_image == blank and component_one.featured_media != blank
@@ -20,6 +24,12 @@
   endif
   if component_two_image == blank
     assign component_two_image = component_two.images.first
+  endif
+  if component_one_image == blank and component_one_catalog_product != blank
+    assign component_one_image = component_one_catalog_product.featured_image | default: component_one_catalog_product.images.first
+  endif
+  if component_two_image == blank and component_two_catalog_product != blank
+    assign component_two_image = component_two_catalog_product.featured_image | default: component_two_catalog_product.images.first
   endif
   assign component_one_size_option = blank
   assign component_two_size_option = blank
