@@ -105,12 +105,12 @@ async function getRewardedAttempt(db, attempt) {
 }
 
 async function createDiscount(env, { code, customerId, amountCents, expiresAt }) {
-  if (env.ALLOW_SIMULATION === 'true' || env.TEST_MODE === 'true') {
-    return 'gid://shopify/DiscountCodeNode/simulated';
-  }
   if (!env.SHOPIFY_ADMIN_ACCESS_TOKEN && (!env.SHOPIFY_APP_CLIENT_ID || !env.SHOPIFY_APP_CLIENT_SECRET)) {
-    console.warn('[createDiscount] No Shopify admin credentials configured, returning simulated discount node');
-    return 'gid://shopify/DiscountCodeNode/simulated';
+    if (env.ALLOW_SIMULATION === 'true') {
+      console.warn('[createDiscount] No Shopify admin credentials configured, returning simulated discount node');
+      return 'gid://shopify/DiscountCodeNode/simulated';
+    }
+    throw new Error('shopify_admin_access_token_missing');
   }
   const mutation = `
     mutation CreateScratchDiscount($input: DiscountCodeBasicInput!) {
@@ -128,7 +128,12 @@ async function createDiscount(env, { code, customerId, amountCents, expiresAt })
       endsAt: expiresAt,
       usageLimit: 1,
       appliesOncePerCustomer: true,
-      customerSelection: { customers: { add: [`gid://shopify/Customer/${customerId}`] } },
+      customerSelection: { all: true },
+      combinesWith: {
+        orderDiscounts: false,
+        productDiscounts: false,
+        shippingDiscounts: true,
+      },
       customerGets: {
         items: { all: true },
         value: { discountAmount: { amount: (amountCents / 100).toFixed(2), appliesOnEachItem: false } },
@@ -225,7 +230,7 @@ async function reveal(db, env, attempt) {
       return { state: 'rewarded', code: current.discount_code, expiresAt: current.expires_at, amountCents: reward.amount_cents };
     } catch (error) {
       console.error('[reveal] Discount creation failed:', error);
-      if (env.ALLOW_SIMULATION === 'true' || env.TEST_MODE === 'true') {
+      if (env.ALLOW_SIMULATION === 'true') {
         await db.prepare("UPDATE attempts SET state = 'rewarded', discount_node_id = NULL, revealed_at = ? WHERE id = ?")
           .bind(nowIso(), current.id).run();
         return { state: 'rewarded', code: current.discount_code, expiresAt: current.expires_at, amountCents: reward.amount_cents };

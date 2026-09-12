@@ -90,13 +90,13 @@
 .secure-scratch__action { position: relative; min-width: 188px; border: 1px solid #fff; border-radius: 999px; padding: 13px 22px; background: #fff; color: #111; font: inherit; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: transform .2s ease, background .2s ease; }
 .secure-scratch__action:hover { transform: translateY(-2px); background: #d9d9d9; }
 .secure-scratch__action[hidden] { display: none; }
-.secure-scratch__card { position: relative; width: 100%; min-height: 218px; overflow: hidden; background: radial-gradient(circle at 80% 10%, #b92a58, transparent 36%), #272124; color: #fff; }
+.secure-scratch__card { position: relative; width: 100%; min-height: 218px; overflow: hidden; background: radial-gradient(circle at 80% 10%, rgba(185, 42, 88, 0.28), transparent 45%), #141214; color: #fff; }
 .secure-scratch__ticket-brand { position: absolute; inset: 15px 17px auto; z-index: 1; display: flex; align-items: center; justify-content: space-between; color: rgba(255,255,255,.7); font-size: .52rem; font-weight: 700; letter-spacing: .12em; }
 .secure-scratch__ticket-brand img { width: 48px; height: 22px; object-fit: contain; }
-.secure-scratch__result { position: relative; z-index: 2; display: grid; min-height: 218px; place-content: center; gap: 11px; padding: 53px 24px 28px; font-size: 1.2rem; font-weight: 700; text-align: center; text-transform: uppercase; }
-.secure-scratch__result > div { font-size: clamp(2.2rem, 10vw, 3.5rem); letter-spacing: -.06em; }
-.secure-scratch__prize-value { font-size: clamp(2.6rem, 12vw, 3.8rem); font-weight: 700; letter-spacing: -.06em; color: #fff; text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45); }
-.secure-scratch__prize-value--no-prize { font-size: clamp(1.2rem, 5vw, 1.6rem); letter-spacing: .08em; color: rgba(255, 255, 255, 0.85); text-shadow: none; }
+.secure-scratch__result { position: relative; z-index: 2; display: grid; min-height: 218px; place-content: center; gap: 11px; padding: 53px 24px 28px; font-size: 1.2rem; font-weight: 700; text-align: center; text-transform: uppercase; background: transparent !important; }
+.secure-scratch__result > div { font-size: clamp(2.2rem, 10vw, 3.5rem); letter-spacing: -.06em; background: transparent !important; }
+.secure-scratch__prize-value { font-size: clamp(2.6rem, 12vw, 3.8rem); font-weight: 700; letter-spacing: -.06em; color: #fff; background: transparent !important; background-color: transparent !important; text-shadow: none !important; box-shadow: none !important; }
+.secure-scratch__prize-value--no-prize { font-size: clamp(1.2rem, 5vw, 1.6rem); letter-spacing: .08em; color: rgba(255, 255, 255, 0.85); background: transparent !important; text-shadow: none !important; }
 .secure-scratch__details { display: grid; gap: 10px; animation: secure-scratch-details-in 0.35s ease forwards; }
 .secure-scratch__result small { color: rgba(255,255,255,.72); font-size: .68rem; font-weight: 400; letter-spacing: .08em; }
 .secure-scratch__canvas { position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; transition: opacity 0.35s ease; }

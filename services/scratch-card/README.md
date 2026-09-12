@@ -15,12 +15,12 @@ Este serviço é o lado privado da raspadinha. O tema apenas desenha a interface
 1. Na conta Cloudflare, criar uma base D1 e executar `schema.sql`.
 2. Copiar `wrangler.toml.example` para `wrangler.toml` e preencher apenas o ID da base D1.
 3. Criar um Custom App Shopify com os scopes `write_discounts,read_discounts,read_customers` e configurar o App Proxy como `apps/incorrect-scratch` a apontar para `https://<worker>/proxy`.
-4. Guardar estes segredos no Worker (nunca no repositório):
-   - `SHOPIFY_APP_CLIENT_SECRET`
-   - `SHOPIFY_APP_CLIENT_ID`
-   - `SHOP_DOMAIN` (por exemplo, `uuxj91-bd.myshopify.com`)
-   - `IP_HASH_SECRET` (uma chave aleatória independente)
-5. Publicar o Worker e só depois ativar a campanha na D1 (`campaigns.active = 1`) e a secção **Secure Scratch Card** no tema de desenvolvimento.
+4. Guardar estes segredos no Worker (na consola Cloudflare → Workers & Pages → Settings → Variables and Secrets) (nunca no repositório):
+   - `SHOPIFY_ADMIN_ACCESS_TOKEN` — Token de acesso da API Admin (começa por `shpat_...`, gerado na Shopify ao clicar em "Instalar app" na App personalizada). Essencial para criar os códigos de desconto reais.
+   - `SHOPIFY_APP_CLIENT_SECRET` — Segredo partilhado do Proxy de app (configurado na secção App Proxy da App personalizada na Shopify, para validar os pedidos HMAC).
+   - `SHOP_DOMAIN` — Domínio da loja (por exemplo, `uuxj91-bd.myshopify.com`).
+   - `IP_HASH_SECRET` — Uma chave secreta aleatória de 32+ caracteres para anonimizar os IPs com HMAC.
+5. Publicar o Worker (`npx wrangler deploy`) e só depois ativar a campanha na D1 (`campaigns.active = 1`) e a secção **Secure Scratch Card** no tema.
 
 O produto/tema não deve ser publicado nesta fase. Antes de ativar a campanha real, acrescentar às condições da ação: “Prémios limitados, sujeitos a disponibilidade; uma participação por cliente e por rede.”
 
