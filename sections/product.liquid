@@ -1023,14 +1023,14 @@
 
   .drop-bundle-card__images {
     position: relative;
-    min-height: 174px;
+    min-height: 198px;
     isolation: isolate;
   }
 
   .drop-bundle-card__images img {
     position: absolute;
-    width: 108px;
-    height: 148px;
+    width: 80%;
+    height: 78%;
     object-fit: contain;
     background: transparent;
     /* Keep the product cut-outs opaque where they overlap. */
@@ -1040,14 +1040,14 @@
   }
 
   .drop-bundle-card__images img:first-child {
-    top: 4px;
-    left: 0;
+    top: 0;
+    left: -4px;
     transform: rotate(-3deg);
     z-index: 1;
   }
 
   .drop-bundle-card__images img:last-child {
-    right: 0;
+    right: -4px;
     bottom: 0;
     transform: rotate(3deg);
     z-index: 2;
@@ -1087,6 +1087,7 @@
 
   .drop-bundle-card__copy { margin-top: 6px; }
   .drop-bundle-card__shipping { margin-top: 8px; font-weight: 700; }
+  .product-free-shipping-threshold { font-weight: 700; }
 
   .drop-bundle-card__sizes {
     display: grid;
@@ -1448,7 +1449,9 @@
     
     .product-col-center {
       grid-row: 1;
-      height: 55vh;
+      /* Keep the first product image visible without pushing the buying
+         choices below the first mobile viewport. */
+      height: 30vh;
       margin: 0;
       position: relative;
       overflow: hidden;
@@ -1511,7 +1514,8 @@
 
     .drop-bundle-card {
       display: block;
-      padding: 14px;
+      margin-bottom: 18px;
+      padding: 12px;
     }
 
     .drop-bundle-card__images {
@@ -1519,7 +1523,7 @@
     }
 
     .drop-bundle-card__content {
-      margin-top: 11px;
+      margin-top: 8px;
     }
 
     .drop-bundle-card__sizes {
@@ -1697,7 +1701,7 @@
   
   @media (max-width: 480px) {
     .product-col-center {
-      height: 50vh;
+      height: 27vh;
     }
     
     .fullscreen-image {
