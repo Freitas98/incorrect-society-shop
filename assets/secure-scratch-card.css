@@ -21,7 +21,7 @@
   text-transform: uppercase;
   cursor: pointer;
   box-shadow: 0 11px 30px rgba(0, 0, 0, .28);
-  transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease;
+  transition: transform .22s ease, box-shadow .22s ease, background-color .22s ease, opacity .18s ease;
 }
 
 .secure-scratch__teaser::before {
