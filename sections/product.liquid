@@ -422,14 +422,6 @@
         }
       </script>
 
-      <p class="stock-status{% unless current_variant.available %} out-stock{% endunless %}" data-stock-status{% if current_variant.available %} hidden{% endif %}></p>
-      <p class="product-low-stock" data-low-stock hidden>
-        <span class="product-low-stock__live" aria-hidden="true"></span>
-        <span>{{ 'drop.low_stock' | t }}</span>
-        <span class="visually-hidden">{{ 'drop.low_stock_live' | t }}</span>
-      </p>
-      <p class="product-extinct" data-extinct hidden>{{ 'drop.extinct' | t }}</p>
-
       <button
         type="submit"
         id="add-to-cart-btn"
@@ -439,6 +431,14 @@
         <span class="btn-text">Add to Cart</span>
         <span class="btn-price">{% render 'price', amount: current_variant.price, product: product %}</span>
       </button>
+
+      <p class="stock-status{% unless current_variant.available %} out-stock{% endunless %}" data-stock-status{% if current_variant.available %} hidden{% endif %}></p>
+      <p class="product-low-stock" data-low-stock hidden>
+        <span class="product-low-stock__live" aria-hidden="true"></span>
+        <span>{{ 'drop.low_stock' | t }}</span>
+        <span class="visually-hidden">{{ 'drop.low_stock_live' | t }}</span>
+      </p>
+      <p class="product-extinct" data-extinct hidden>{{ 'drop.extinct' | t }}</p>
 
       {% if vto_available %}
         <button
@@ -992,6 +992,7 @@
   }
 
   .drop-bundle-card {
+    position: relative;
     display: grid;
     grid-template-columns: 148px minmax(0, 1fr);
     gap: 16px;
@@ -999,7 +1000,25 @@
     padding: 14px;
     background: var(--color-surface, #111111);
     border: 1px solid var(--color-border, #333333);
+    overflow: hidden;
   }
+
+  .drop-bundle-card__offer {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+    background: #8f173d;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    line-height: 1;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .drop-bundle-card__offer span { margin-right: 3px; color: #f3b15c; }
 
   .drop-bundle-card__images {
     position: relative;
@@ -1490,20 +1509,20 @@
     }
 
     .drop-bundle-card {
-      grid-template-columns: 118px minmax(0, 1fr);
+      display: block;
+      padding: 14px;
     }
 
     .drop-bundle-card__images {
-      min-height: 146px;
+      display: none;
     }
 
-    .drop-bundle-card__images img {
-      width: 88px;
-      height: 126px;
+    .drop-bundle-card__content {
+      margin-top: 11px;
     }
 
     .drop-bundle-card__sizes {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .product-thumbnails-corner {
