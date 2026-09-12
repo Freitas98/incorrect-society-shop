@@ -81,7 +81,8 @@
         "settings": {
           "message_1": "WORLDWIDE SHIPPING WITH FREE SHIPING IN PORTUGAL 80€+",
           "message_2": "SECRETS AND SINS OUT NOW",
-          "message_3": "NO RESTOCKS"
+          "message_3": "NO RESTOCKS",
+          "scroll_speed": 65
         }
       },
       "secure-scratch-card": {

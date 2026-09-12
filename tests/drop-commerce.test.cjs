@@ -70,3 +70,38 @@ test('announcement bar supports up to 3 configurable messages with brand icon se
   assert.match(announcement, /Logo_white\.svg/);
   assert.match(announcement, /announcement-scroll/);
 });
+
+test('bundle product gallery shows product images and carts prioritize the two-tshirt composition', () => {
+  const product = read('sections/product.liquid');
+  assert.doesNotMatch(product, /fullscreen-image--bundle/);
+  assert.match(product, /for image in product\.images/);
+
+  const cart = read('sections/cart.liquid');
+  assert.match(cart, /is_bundle_cart_item/);
+  assert.match(cart, /bundle-cart-images/);
+
+  const header = read('sections/header.liquid');
+  assert.match(header, /const isBundle/);
+  assert.match(header, /bundle-cart-images/);
+});
+
+test('bundle product displays collection breadcrumb and unlocks free shipping', () => {
+  const product = read('sections/product.liquid');
+  assert.match(product, /is_bundle_product/);
+  assert.match(product, /BUNDLES/);
+  assert.match(product, /product-free-shipping-threshold--bundle/);
+});
+
+test('low stock string is "Poucas unidades" in store locales', () => {
+  const en = parseThemeJson('locales/en.default.json');
+  const pt = parseThemeJson('locales/pt-PT.json');
+  assert.equal(en.drop.low_stock, 'Poucas unidades');
+  assert.equal(pt.drop.low_stock, 'Poucas unidades');
+});
+
+test('mobile product gallery uses horizontal scroll snap and preserves page scroll', () => {
+  const product = read('sections/product.liquid');
+  assert.match(product, /overflow-x:\s*auto;/);
+  assert.match(product, /scroll-snap-type:\s*x mandatory;/);
+  assert.match(product, /smoothScrollToImage[\s\S]*?targetImage\.offsetLeft/);
+});

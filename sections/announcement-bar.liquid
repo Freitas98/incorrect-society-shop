@@ -4,7 +4,7 @@
     assign msg2 = section.settings.message_2 | default: settings.announcement_message_2 | strip
     assign msg3 = section.settings.message_3 | default: settings.announcement_message_3 | strip
 
-    assign scroll_duration = section.settings.scroll_speed | default: 35
+    assign scroll_duration = section.settings.scroll_speed | default: 65
   %}
 
   {% capture brand_icon %}
@@ -89,7 +89,7 @@
     top: 0;
     left: 0;
     white-space: nowrap;
-    animation: announcement-scroll var(--announcement-duration, 35s) linear infinite;
+    animation: announcement-scroll var(--announcement-duration, 65s) linear infinite;
     line-height: 30px;
     font-weight: var(--font-heading-weight);
     font-size: 0.8rem;
@@ -177,12 +177,12 @@
     {
       "type": "range",
       "id": "scroll_speed",
-      "min": 15,
-      "max": 60,
+      "min": 20,
+      "max": 120,
       "step": 5,
       "unit": "s",
       "label": "Scroll duration",
-      "default": 35
+      "default": 65
     },
     {
       "type": "image_picker",

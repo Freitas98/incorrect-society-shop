@@ -51,12 +51,12 @@
   assign bundle_available_for_product = false
   assign is_bundle_product = false
   if settings.enable_drop_features and settings.drop_bundle_product != blank
-    if product.id == settings.drop_bundle_product.id
+    if product.id == settings.drop_bundle_product.id or product.handle == settings.drop_bundle_product.handle or product.handle == settings.drop_bundle_product
       assign is_bundle_product = true
-    elsif product.id == settings.drop_bundle_component_one.id
+    elsif product.id == settings.drop_bundle_component_one.id or product.handle == settings.drop_bundle_component_one.handle or product.handle == settings.drop_bundle_component_one
       assign bundle_component_product = settings.drop_bundle_component_two
       assign bundle_available_for_product = true
-    elsif product.id == settings.drop_bundle_component_two.id
+    elsif product.id == settings.drop_bundle_component_two.id or product.handle == settings.drop_bundle_component_two.handle or product.handle == settings.drop_bundle_component_two
       assign bundle_component_product = settings.drop_bundle_component_one
       assign bundle_available_for_product = true
     endif
@@ -68,11 +68,32 @@
   <!-- Left Column: Product Info -->
   <div class="product-col-left">
     <nav class="product-breadcrumb">
-      {% if product.collections.size > 0 %}
+      {% if is_bundle_product %}
+        {% assign drop_collection = collections[settings.drop_collection] %}
+        {% assign drop_collection_url = drop_collection.url | default: settings.drop_collection.url %}
+        {% if drop_collection_url == blank and product.collections.size > 0 %}
+          {% assign drop_collection_url = product.collections.first.url %}
+        {% endif %}
+        {% if drop_collection_url == blank %}
+          {% assign drop_collection_url = '/collections/secrets-and-sins' %}
+        {% endif %}
+        {% assign drop_collection_title = drop_collection.title | default: settings.drop_collection.title %}
+        {% if drop_collection_title == blank and product.collections.size > 0 %}
+          {% assign drop_collection_title = product.collections.first.title %}
+        {% endif %}
+        {% if drop_collection_title == blank %}
+          {% assign drop_collection_title = 'Secrets And Sins' %}
+        {% endif %}
+        <a href="{{ drop_collection_url }}">{{ drop_collection_title }}</a>
+        <span>/</span>
+        <span>BUNDLES</span>
+      {% elsif product.collections.size > 0 %}
         <a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a>
         <span>/</span>
+        <span>{{ product.title }}</span>
+      {% else %}
+        <span>{{ product.title }}</span>
       {% endif %}
-      <span>{{ product.title }}</span>
     </nav>
     
     <div class="product-title-row">
@@ -237,44 +258,24 @@
   <!-- Center Column: Fullscreen Images -->
   <div class="product-col-center" id="product-gallery">
     <div class="product-images-fullscreen" id="product-images-fullscreen">
-      {% if is_bundle_product %}
-        <div class="fullscreen-image fullscreen-image--bundle">
-          <div class="bundle-product-hero">
-            <p class="bundle-product-hero__eyebrow">{{ 'drop.bundle_page_eyebrow' | t }}</p>
-            <div class="bundle-product-hero__pieces">
-              {% if settings.drop_bundle_component_one.featured_image != blank %}
-                <figure class="bundle-product-hero__piece bundle-product-hero__piece--one">
-                  <img src="{{ settings.drop_bundle_component_one.featured_image | image_url: width: 1000 }}" alt="{{ settings.drop_bundle_component_one.title | escape }}" width="500" height="650" fetchpriority="high">
-                </figure>
-              {% endif %}
-              {% if settings.drop_bundle_component_two.featured_image != blank %}
-                <figure class="bundle-product-hero__piece bundle-product-hero__piece--two">
-                  <img src="{{ settings.drop_bundle_component_two.featured_image | image_url: width: 1000 }}" alt="{{ settings.drop_bundle_component_two.title | escape }}" width="500" height="650" fetchpriority="high">
-                </figure>
-              {% endif %}
-            </div>
+      {% for image in product.images %}
+      <div class="fullscreen-image" data-image-index="{{ forloop.index0 }}">
+        <img
+          src="{{ image | image_url: width: 1600 }}"
+          alt="{{ image.alt | escape }}"
+          width="800"
+          height="1000"
+          loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+          data-zoom-src="{{ image | image_url: width: 2400 }}"
+        >
+        {% if product.metafields.custom.model_info != blank %}
+          <div class="model-info-overlay">
+            {{ product.metafields.custom.model_info | metafield_tag }}
           </div>
-        </div>
-      {% else %}
-        {% for image in product.images %}
-        <div class="fullscreen-image" data-image-index="{{ forloop.index0 }}">
-          <img
-            src="{{ image | image_url: width: 1600 }}"
-            alt="{{ image.alt | escape }}"
-            width="800"
-            height="1000"
-            loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
-            data-zoom-src="{{ image | image_url: width: 2400 }}"
-          >
-          {% if product.metafields.custom.model_info != blank %}
-            <div class="model-info-overlay">
-              {{ product.metafields.custom.model_info | metafield_tag }}
-            </div>
-          {% endif %}
-        </div>
-        {% endfor %}
-      {% endif %}
-      {% if product.images.size == 0 and is_bundle_product == false %}
+        {% endif %}
+      </div>
+      {% endfor %}
+      {% if product.images.size == 0 %}
         <div class="no-image-placeholder">
           <p>No Image Available</p>
         </div>
@@ -519,7 +520,9 @@
         ></p>
       {% endif %}
 
-      {% if settings.enable_drop_features and settings.free_shipping_threshold > 0 %}
+      {% if is_bundle_product %}
+        <p class="product-free-shipping-threshold product-free-shipping-threshold--bundle">{{ 'drop.bundle_free_shipping' | t }}</p>
+      {% elsif settings.enable_drop_features and settings.free_shipping_threshold > 0 %}
         {% capture free_shipping_amount %}{{ settings.free_shipping_threshold | times: 100 | money }}{% endcapture %}
         <p class="product-free-shipping-threshold">{{ 'drop.free_shipping_threshold' | t: amount: free_shipping_amount }}</p>
       {% endif %}
@@ -1022,59 +1025,6 @@
     margin-bottom: 20px;
   }
 
-  .fullscreen-image--bundle {
-    cursor: default;
-    background: #d8d2c9;
-  }
-
-  .bundle-product-hero {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(28px, 5vw, 70px);
-    background: radial-gradient(circle at 50% 28%, rgba(255, 255, 255, .42), transparent 40%), #d8d2c9;
-  }
-
-  .bundle-product-hero__eyebrow {
-    margin: 0;
-    color: #171717;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .13em;
-    text-align: center;
-    text-transform: uppercase;
-  }
-
-  .bundle-product-hero__pieces {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: min(100%, 660px);
-    flex: 1;
-    min-height: 0;
-    margin: 18px auto 0;
-  }
-
-  .bundle-product-hero__piece {
-    display: flex;
-    width: min(56%, 350px);
-    max-width: 350px;
-    height: min(100%, 560px);
-    margin: 0 -7%;
-    flex-direction: column;
-    justify-content: flex-end;
-    overflow: hidden;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .bundle-product-hero__piece--one { z-index: 1; transform: rotate(-5deg) translateY(-10px); }
-  .bundle-product-hero__piece--two { z-index: 2; transform: rotate(5deg) translateY(18px); }
-  .bundle-product-hero__piece img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; filter: drop-shadow(0 24px 22px rgba(48, 35, 35, .18)); }
-
   .product-bundle {
     display: grid;
     grid-template-columns: 148px minmax(0, 1fr);
@@ -1486,10 +1436,54 @@
     .product-col-center {
       grid-row: 1;
       height: 75vh;
+      margin: 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-images-fullscreen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      overscroll-behavior-y: auto;
+      touch-action: pan-x pan-y;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .product-images-fullscreen::-webkit-scrollbar {
+      display: none;
     }
     
     .fullscreen-image {
-      height: 75vh;
+      flex: 0 0 100%;
+      width: 100%;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fullscreen-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
     
     .product-col-left {
@@ -1514,9 +1508,6 @@
       width: 88px;
       height: 126px;
     }
-
-    .bundle-product-hero { padding: 26px; }
-    .bundle-product-hero__piece { width: 60%; }
     
     .product-thumbnails-corner {
       top: auto;
@@ -1525,6 +1516,15 @@
       transform: none;
       flex-direction: row;
       gap: 5px;
+      max-width: calc(100% - 30px);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      z-index: 10;
+    }
+
+    .product-thumbnails-corner::-webkit-scrollbar {
+      display: none;
     }
     
     .model-info-overlay {
@@ -1684,7 +1684,7 @@
     }
     
     .fullscreen-image {
-      height: 65vh;
+      height: 100%;
     }
     
     .product-col-left,
@@ -1782,11 +1782,19 @@ document.addEventListener('DOMContentLoaded', function() {
   function smoothScrollToImage(targetImage) {
     if (!targetImage || !imagesContainer) return;
     
-    const targetTop = targetImage.offsetTop;
-    imagesContainer.scrollTo({
-      top: targetTop,
-      behavior: 'smooth'
-    });
+    if (window.innerWidth <= 768) {
+      const targetLeft = targetImage.offsetLeft;
+      imagesContainer.scrollTo({
+        left: targetLeft,
+        behavior: 'smooth'
+      });
+    } else {
+      const targetTop = targetImage.offsetTop;
+      imagesContainer.scrollTo({
+        top: targetTop,
+        behavior: 'smooth'
+      });
+    }
   }
   
   // Thumbnail click scrolls to image
@@ -1812,19 +1820,26 @@ document.addEventListener('DOMContentLoaded', function() {
           const index = entry.target.dataset.imageIndex;
           thumbnails.forEach(t => t.classList.remove('active'));
           const activeThumb = document.querySelector(`.thumbnail[data-image-index="${index}"]`);
-          if (activeThumb) activeThumb.classList.add('active');
+          if (activeThumb) {
+            activeThumb.classList.add('active');
+            if (window.innerWidth <= 768 && activeThumb.scrollIntoView) {
+              activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+            }
+          }
           
-          // Check if we're at the last image
-          const lastIndex = fullscreenImages.length - 1;
-          if (parseInt(index) === lastIndex) {
-            // Small delay to allow animation to complete
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-              const scrolledToBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 20;
-              if (scrolledToBottom) {
-                isGalleryScrolling = false;
-              }
-            }, 100);
+          // Check if we're at the last image on desktop
+          if (window.innerWidth > 768) {
+            const lastIndex = fullscreenImages.length - 1;
+            if (parseInt(index) === lastIndex) {
+              // Small delay to allow animation to complete
+              clearTimeout(scrollTimeout);
+              scrollTimeout = setTimeout(() => {
+                const scrolledToBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 20;
+                if (scrolledToBottom) {
+                  isGalleryScrolling = false;
+                }
+              }, 100);
+            }
           }
         }
       });
@@ -1836,8 +1851,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (gallery) {
       let accumulatedDelta = 0;
       let lastScrollTime = 0;
+
+      if (window.innerWidth <= 768) {
+        isGalleryScrolling = false;
+      }
       
       gallery.addEventListener('wheel', function(e) {
+        if (window.innerWidth <= 768) return;
         const now = Date.now();
         
         if (isGalleryScrolling) {
@@ -1881,32 +1901,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       }, { passive: false });
       
-      // Touch support for mobile
-      let touchStartY = 0;
-      let touchStartScrollTop = 0;
-      
-      gallery.addEventListener('touchstart', function(e) {
-        touchStartY = e.touches[0].clientY;
-        touchStartScrollTop = imagesContainer.scrollTop;
-      }, { passive: true });
-      
-      gallery.addEventListener('touchmove', function(e) {
-        if (!isGalleryScrolling) return;
+      // Touch support for desktop/tablet vertical capture
+      if (window.innerWidth > 768) {
+        let touchStartY = 0;
+        let touchStartScrollTop = 0;
         
-        const touchY = e.touches[0].clientY;
-        const deltaY = touchStartY - touchY;
+        gallery.addEventListener('touchstart', function(e) {
+          touchStartY = e.touches[0].clientY;
+          touchStartScrollTop = imagesContainer.scrollTop;
+        }, { passive: true });
         
-        const atBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 10;
-        const atTop = imagesContainer.scrollTop <= 10;
-        
-        if (deltaY > 0 && atBottom) {
-          isGalleryScrolling = false;
-          return;
-        }
-        if (deltaY < 0 && atTop) {
-          return;
-        }
-      }, { passive: true });
+        gallery.addEventListener('touchmove', function(e) {
+          if (!isGalleryScrolling) return;
+
+          const touchY = e.touches[0].clientY;
+          const deltaY = touchStartY - touchY;
+
+          const atBottom = imagesContainer.scrollHeight - imagesContainer.scrollTop <= imagesContainer.clientHeight + 10;
+          const atTop = imagesContainer.scrollTop <= 10;
+
+          if (deltaY > 0 && atBottom) {
+            isGalleryScrolling = false;
+            return;
+          }
+          if (deltaY < 0 && atTop) {
+            return;
+          }
+        }, { passive: true });
+      }
     }
   }
   

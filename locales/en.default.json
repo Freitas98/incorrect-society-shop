@@ -392,7 +392,7 @@
     "bundle_unavailable": "This bundle is unavailable in the selected size.",
     "bundle_free_shipping": "Free shipping unlocked with this bundle.",
     "free_shipping_threshold": "Free shipping on orders of {{ amount }} or more.",
-    "low_stock": "Few units left",
+    "low_stock": "Poucas unidades",
     "extinct": "EXTINCT",
     "delivery_countdown": "Order within ___TIME___ and we dispatch on ___DAY___ .",
     "delivery_estimate": "Estimated delivery via ___CARRIER___: ___FROM___ to ___TO___ .",

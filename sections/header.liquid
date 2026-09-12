@@ -99,6 +99,7 @@
   class="cart-sidebar"
   id="cart-sidebar"
   data-bundle-product-id="{{ settings.drop_bundle_product.id }}"
+  data-bundle-product-handle="{{ settings.drop_bundle_product.handle | default: settings.drop_bundle_product }}"
   data-bundle-image-primary="{{ settings.drop_bundle_component_one.featured_image | image_url: width: 160 }}"
   data-bundle-image-secondary="{{ settings.drop_bundle_component_two.featured_image | image_url: width: 160 }}"
 >
@@ -1417,14 +1418,17 @@
     const mobileCartCount = document.getElementById('mobile-cart-count');
     const cartTotal = document.getElementById('cart-total');
     const bundleProductId = String(cartSidebar.dataset.bundleProductId || '');
+    const bundleProductHandle = String(cartSidebar.dataset.bundleProductHandle || '');
     const bundleImageUrls = [cartSidebar.dataset.bundleImagePrimary, cartSidebar.dataset.bundleImageSecondary].filter(Boolean);
 
     function cartItemImage(item) {
+      const isBundle = (bundleProductId && String(item.product_id) === bundleProductId) ||
+                       (bundleProductHandle && item.handle === bundleProductHandle);
+      if (isBundle && bundleImageUrls.length) {
+        return `<span class="bundle-cart-images" aria-hidden="true">${bundleImageUrls.map((url) => `<img src="${url}" alt="" loading="lazy" width="80" height="80">`).join('')}</span>`;
+      }
       if (item.featured_image && item.featured_image.url) {
         return `<img src="${item.featured_image.url}?width=160" alt="${item.product_title}" loading="lazy" width="80" height="80">`;
-      }
-      if (bundleProductId && String(item.product_id) === bundleProductId && bundleImageUrls.length) {
-        return `<span class="bundle-cart-images" aria-hidden="true">${bundleImageUrls.map((url) => `<img src="${url}" alt="" loading="lazy" width="80" height="80">`).join('')}</span>`;
       }
       return '<div class="no-image">No Image</div>';
     }
