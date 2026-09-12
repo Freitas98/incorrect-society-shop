@@ -64,8 +64,16 @@
       canvas.hidden = true;
       result.textContent = '';
       if (data.state === 'rewarded') {
-        var isExpired = data.expiresAt && (new Date(data.expiresAt).getTime() <= Date.now());
-        setCopy(isExpired ? (strings.alreadyPlayedExpired || strings.alreadyPlayed) : (strings.alreadyPlayed || strings.noPrize));
+        var isUsed = Boolean(data.used);
+        var isExpired = !isUsed && data.expiresAt && (new Date(data.expiresAt).getTime() <= Date.now());
+
+        if (isUsed) {
+          setCopy(strings.alreadyPlayedUsed || 'Code successfully used on your order.');
+        } else if (isExpired) {
+          setCopy(strings.alreadyPlayedExpired || 'This card has expired.');
+        } else {
+          setCopy(strings.alreadyPlayed || strings.noPrize);
+        }
 
         var message = document.createElement('div');
         message.className = 'secure-scratch__prize-value';
@@ -83,13 +91,26 @@
 
         var button = document.createElement('button');
         button.type = 'button'; button.className = 'secure-scratch__copy'; button.textContent = strings.copy;
-        button.addEventListener('click', function () { navigator.clipboard.writeText(data.code).then(function () { button.textContent = strings.copied; }); });
+
+        if (isUsed) {
+          details.classList.add('is-used');
+          code.classList.add('is-used');
+          expiry.classList.add('is-used');
+          expiry.textContent = strings.used || 'USED';
+          button.classList.add('is-used');
+          button.textContent = strings.used || 'USED';
+          button.disabled = true;
+        } else {
+          button.addEventListener('click', function () {
+            navigator.clipboard.writeText(data.code).then(function () { button.textContent = strings.copied; });
+          });
+          updateExpiry(expiry, details, button);
+        }
 
         details.append(code, expiry, button);
         result.append(message, details);
-        updateExpiry(expiry, details, button);
       } else {
-        setCopy(strings.alreadyPlayed || strings.noPrize);
+        setCopy(strings.noPrize || strings.alreadyPlayed);
         var noPrizeEl = document.createElement('div');
         noPrizeEl.className = 'secure-scratch__prize-value secure-scratch__prize-value--no-prize';
         noPrizeEl.textContent = strings.noPrize;

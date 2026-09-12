@@ -28,6 +28,26 @@ test('secure-scratch-card.js marks code and button as is-expired when time expir
   assert.match(scriptSource, /button\.classList\.add\('is-expired'\)/);
 });
 
+test('secure-scratch-card.js marks code and button as is-used when voucher was used in an order', () => {
+  assert.match(scriptSource, /details\.classList\.add\('is-used'\)/);
+  assert.match(scriptSource, /button\.classList\.add\('is-used'\)/);
+});
+
+const parseThemeJson = (file) => JSON.parse(
+  fs.readFileSync(path.join(__dirname, '..', file), 'utf8')
+    .replace(/^\/\*[\s\S]*?\*\/\s*/, '')
+    .replace(/,\s*([}\]])/g, '$1')
+);
+
+test('locales avoid generic "played this card" / "jogaste este cartão" copy in scratch messages', () => {
+  const en = parseThemeJson('locales/en.default.json');
+  const pt = parseThemeJson('locales/pt-PT.json');
+  assert.equal(en.scratch.already_played_expired, 'This card has expired.');
+  assert.equal(pt.scratch.already_played_expired, 'Este cartão já expirou.');
+  assert.doesNotMatch(en.scratch.already_played_expired, /played this card/i);
+  assert.doesNotMatch(pt.scratch.already_played_expired, /jogaste este cartão/i);
+});
+
 test('reset-campaign.sql activates campaign for testing', () => {
   const resetSql = fs.readFileSync(path.join(__dirname, '../services/scratch-card/reset-campaign.sql'), 'utf8');
   assert.match(resetSql, /UPDATE campaigns SET active = 1/);

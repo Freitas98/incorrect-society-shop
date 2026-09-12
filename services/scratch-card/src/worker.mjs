@@ -104,7 +104,13 @@ async function attemptFor(db, campaignId, customerId) {
 function publicAttempt(attempt) {
   if (!attempt) return { state: 'ready' };
   if (attempt.state === 'rewarded') {
-    return { state: 'rewarded', code: attempt.discount_code, expiresAt: attempt.expires_at, amountCents: attempt.amount_cents };
+    return {
+      state: 'rewarded',
+      code: attempt.discount_code,
+      expiresAt: attempt.expires_at,
+      amountCents: attempt.amount_cents,
+      used: Boolean(attempt.used),
+    };
   }
   if (attempt.state === 'no_prize') return { state: 'no_prize' };
   return { state: attempt.state === 'started' ? 'started' : 'processing' };
@@ -272,6 +278,37 @@ async function reveal(db, env, attempt) {
   return publicAttempt(await getRewardedAttempt(db, current));
 }
 
+async function checkDiscountUsed(env, discountNodeId) {
+  if (!discountNodeId || discountNodeId.includes('simulated')) return false;
+  try {
+    const accessToken = await adminAccessToken(env);
+    const apiVersion = env.SHOPIFY_API_VERSION || '2025-01';
+    const query = `
+      query CheckDiscountUsage($id: ID!) {
+        codeDiscountNode(id: $id) {
+          codeDiscount {
+            ... on DiscountCodeBasic {
+              asyncUsageCount
+            }
+          }
+        }
+      }
+    `;
+    const response = await fetch(`https://${env.SHOP_DOMAIN}/admin/api/${apiVersion}/graphql.json`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': accessToken },
+      body: JSON.stringify({ query, variables: { id: discountNodeId } }),
+    });
+    if (!response.ok) return false;
+    const payload = await response.json();
+    const count = payload.data?.codeDiscountNode?.codeDiscount?.asyncUsageCount;
+    return Number(count) > 0;
+  } catch (err) {
+    console.warn('[checkDiscountUsed] Check failed:', err);
+    return false;
+  }
+}
+
 export default {
   async fetch(request, env) {
     const route = proxyPath(new URL(request.url).pathname);
@@ -287,6 +324,9 @@ export default {
     let attempt = await attemptFor(env.DB, campaignId, auth.customerId);
     if (route === 'state') {
       const enrichedAttempt = await getRewardedAttempt(env.DB, attempt);
+      if (enrichedAttempt && enrichedAttempt.state === 'rewarded' && enrichedAttempt.discount_node_id) {
+        enrichedAttempt.used = await checkDiscountUsed(env, enrichedAttempt.discount_node_id);
+      }
       return json(publicAttempt(enrichedAttempt));
     }
     if (route === 'start') {
