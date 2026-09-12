@@ -27,8 +27,7 @@
     }
 
     function request(route) {
-      var url = endpoint + '/' + route;
-      if (route === 'state') url += '?campaignId=' + encodeURIComponent(campaignId);
+      var url = endpoint + '/' + route + '?campaignId=' + encodeURIComponent(campaignId);
       return fetch(url, {
         method: route === 'state' ? 'GET' : 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -152,29 +151,31 @@
       }
 
       var rect = canvas.getBoundingClientRect();
+      var width = Math.round(rect.width || card.offsetWidth || 360);
+      var height = Math.round(rect.height || card.offsetHeight || 218);
       var ratio = window.devicePixelRatio || 1;
-      canvas.width = rect.width * ratio;
-      canvas.height = rect.height * ratio;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
       var context = canvas.getContext('2d');
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
 
-      var foil = context.createLinearGradient(0, 0, rect.width, rect.height);
+      var foil = context.createLinearGradient(0, 0, width, height);
       foil.addColorStop(0, '#521126');
       foil.addColorStop(.22, '#c22d5c');
       foil.addColorStop(.5, '#711530');
       foil.addColorStop(.76, '#e04978');
       foil.addColorStop(1, '#5a1028');
       context.fillStyle = foil;
-      context.fillRect(0, 0, rect.width, rect.height);
+      context.fillRect(0, 0, width, height);
 
       context.save();
       context.globalAlpha = .22;
       context.strokeStyle = '#fff';
       context.lineWidth = 1;
-      for (var stripe = -rect.height; stripe < rect.width; stripe += 10) {
+      for (var stripe = -height; stripe < width; stripe += 10) {
         context.beginPath();
         context.moveTo(stripe, 0);
-        context.lineTo(stripe + rect.height, rect.height);
+        context.lineTo(stripe + height, height);
         context.stroke();
       }
       context.restore();
@@ -182,7 +183,7 @@
       context.save();
       context.strokeStyle = 'rgba(255,255,255,.72)';
       context.lineWidth = 1;
-      context.strokeRect(15, 15, rect.width - 30, rect.height - 30);
+      context.strokeRect(15, 15, width - 30, height - 30);
       context.fillStyle = '#fff';
       context.textAlign = 'left';
       for (var mark = 0; mark < 3; mark += 1) {
@@ -194,15 +195,15 @@
       }
       context.textAlign = 'right';
       context.font = '700 8px Century Gothic, sans-serif';
-      context.fillText('SECRETS + SINNERS // DROP 2026', rect.width - 30, 35);
+      context.fillText('SECRETS + SINNERS // DROP 2026', width - 30, 35);
       context.fillStyle = '#fff';
       context.textAlign = 'center';
       context.font = '700 10px Century Gothic, sans-serif';
-      context.fillText('ERASE THE SURFACE', rect.width / 2, rect.height / 2 - 17);
+      context.fillText('ERASE THE SURFACE', width / 2, height / 2 - 17);
       context.font = '700 20px Century Gothic, sans-serif';
-      context.fillText(strings.scratch, rect.width / 2, rect.height / 2 + 13);
+      context.fillText(strings.scratch, width / 2, height / 2 + 13);
       context.font = '400 9px Century Gothic, sans-serif';
-      context.fillText('REVEAL YOUR RESULT', rect.width / 2, rect.height / 2 + 33);
+      context.fillText('REVEAL YOUR RESULT', width / 2, height / 2 + 33);
       context.restore();
 
       var drawing = false;
@@ -256,9 +257,10 @@
 
       function scratch(event) {
         if (!drawing || revealed) return;
+        var r = canvas.getBoundingClientRect();
         var point = event.touches ? event.touches[0] : event;
-        var x = point.clientX - rect.left;
-        var y = point.clientY - rect.top;
+        var x = point.clientX - r.left;
+        var y = point.clientY - r.top;
         context.globalCompositeOperation = 'destination-out';
         context.lineCap = 'round';
         context.lineJoin = 'round';
@@ -307,32 +309,58 @@
           showState(start);
           return;
         }
+        if (start.data && (start.data.state === 'rewarded' || start.data.state === 'no_prize')) {
+          action.disabled = false;
+          showOutcome(start.data);
+          return;
+        }
         request('reveal').then(function (reveal) {
           action.disabled = false;
           if (reveal.ok && (reveal.data.state === 'rewarded' || reveal.data.state === 'no_prize')) {
             beginScratch(reveal.data);
+          } else if (reveal.ok && reveal.data.state === 'processing') {
+            action.disabled = true;
+            setCopy(strings.loading || '…');
+            window.setTimeout(function () {
+              request('reveal').then(function (retryReveal) {
+                action.disabled = false;
+                if (retryReveal.ok && (retryReveal.data.state === 'rewarded' || retryReveal.data.state === 'no_prize')) {
+                  beginScratch(retryReveal.data);
+                } else {
+                  showState(retryReveal);
+                }
+              }).catch(function (err) {
+                action.disabled = false;
+                console.error('[ScratchCard] Reveal retry error:', err);
+                setCopy(strings.error);
+                showAction(strings.retry || strings.start, startGame);
+              });
+            }, 800);
           } else {
             showState(reveal);
           }
-        }).catch(function () {
+        }).catch(function (err) {
           action.disabled = false;
+          console.error('[ScratchCard] Reveal error:', err);
           setCopy(strings.error);
           showAction(strings.retry || strings.start, startGame);
         });
-      }).catch(function () {
+      }).catch(function (err) {
         action.disabled = false;
+        console.error('[ScratchCard] Start error:', err);
         setCopy(strings.error);
         showAction(strings.retry || strings.start, startGame);
       });
     }
 
     function showState(reply) {
-      if (reply.status === 401 || reply.data.error === 'login_required') {
+      if (reply.status === 401 || (reply.data && reply.data.error === 'login_required')) {
         setCopy(strings.login);
         showAction(strings.login, function () { window.location.assign(root.dataset.loginUrl); });
         return;
       }
       if (!reply.ok) {
+        console.warn('[ScratchCard] Server error state:', reply);
         setCopy(strings.error);
         showAction(strings.retry || strings.start, loadState);
         return;
@@ -346,16 +374,22 @@
         action.hidden = true;
         return;
       }
-      if (reply.data.state === 'started') {
+      if (reply.data.state === 'started' || reply.data.state === 'processing') {
         setTeaserState('active');
         setCopy(strings.loading || '…');
+        action.disabled = true;
         request('reveal').then(function (reveal) {
+          action.disabled = false;
           if (reveal.ok && (reveal.data.state === 'rewarded' || reveal.data.state === 'no_prize')) {
             beginScratch(reveal.data);
           } else {
-            showOutcome(reveal.data);
+            console.error('[ScratchCard] Reveal state in showState:', reveal);
+            setCopy(strings.error);
+            showAction(strings.retry || strings.start, loadState);
           }
-        }).catch(function () {
+        }).catch(function (err) {
+          action.disabled = false;
+          console.error('[ScratchCard] Reveal error in showState:', err);
           setCopy(strings.error);
           showAction(strings.retry || strings.start, loadState);
         });

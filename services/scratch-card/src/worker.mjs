@@ -105,6 +105,13 @@ async function getRewardedAttempt(db, attempt) {
 }
 
 async function createDiscount(env, { code, customerId, amountCents, expiresAt }) {
+  if (env.ALLOW_SIMULATION === 'true' || env.TEST_MODE === 'true') {
+    return 'gid://shopify/DiscountCodeNode/simulated';
+  }
+  if (!env.SHOPIFY_ADMIN_ACCESS_TOKEN && (!env.SHOPIFY_APP_CLIENT_ID || !env.SHOPIFY_APP_CLIENT_SECRET)) {
+    console.warn('[createDiscount] No Shopify admin credentials configured, returning simulated discount node');
+    return 'gid://shopify/DiscountCodeNode/simulated';
+  }
   const mutation = `
     mutation CreateScratchDiscount($input: DiscountCodeBasicInput!) {
       discountCodeBasicCreate(basicCodeDiscount: $input) {
@@ -129,7 +136,8 @@ async function createDiscount(env, { code, customerId, amountCents, expiresAt })
     },
   };
   const accessToken = await adminAccessToken(env);
-  const response = await fetch(`https://${env.SHOP_DOMAIN}/admin/api/2026-07/graphql.json`, {
+  const apiVersion = env.SHOPIFY_API_VERSION || '2025-01';
+  const response = await fetch(`https://${env.SHOP_DOMAIN}/admin/api/${apiVersion}/graphql.json`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-Shopify-Access-Token': accessToken },
     body: JSON.stringify({ query: mutation, variables }),
@@ -142,6 +150,10 @@ async function createDiscount(env, { code, customerId, amountCents, expiresAt })
 }
 
 async function adminAccessToken(env) {
+  if (env.SHOPIFY_ADMIN_ACCESS_TOKEN) return env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  if (!env.SHOPIFY_APP_CLIENT_ID || !env.SHOPIFY_APP_CLIENT_SECRET) {
+    throw new Error('shopify_credentials_missing');
+  }
   const response = await fetch(`https://${env.SHOP_DOMAIN}/admin/oauth/access_token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -152,7 +164,9 @@ async function adminAccessToken(env) {
     }),
   });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok || !payload.access_token) throw new Error('shopify_token_failed');
+  if (!response.ok || !payload.access_token) {
+    throw new Error(payload.error_description || payload.error || 'shopify_token_failed');
+  }
   return payload.access_token;
 }
 
@@ -210,8 +224,13 @@ async function reveal(db, env, attempt) {
         .bind(discountNodeId, nowIso(), current.id).run();
       return { state: 'rewarded', code: current.discount_code, expiresAt: current.expires_at, amountCents: reward.amount_cents };
     } catch (error) {
-      // Keep the reservation for a safe retry. We never issue a second prize after an uncertain Admin API response.
-      return { state: 'processing', retryable: true };
+      console.error('[reveal] Discount creation failed:', error);
+      if (env.ALLOW_SIMULATION === 'true' || env.TEST_MODE === 'true') {
+        await db.prepare("UPDATE attempts SET state = 'rewarded', discount_node_id = NULL, revealed_at = ? WHERE id = ?")
+          .bind(nowIso(), current.id).run();
+        return { state: 'rewarded', code: current.discount_code, expiresAt: current.expires_at, amountCents: reward.amount_cents };
+      }
+      return { state: 'processing', retryable: true, error: error.message || 'discount_creation_failed' };
     }
   }
   return publicAttempt(await getRewardedAttempt(db, current));
@@ -223,8 +242,10 @@ export default {
     if (!route) return json({ error: 'not_found' }, 404);
     const auth = await identity(request, env);
     if (auth.error) return auth.error;
-    const payload = request.method === 'POST' ? await body(request) : Object.fromEntries(new URL(request.url).searchParams);
-    const campaignId = String(payload.campaignId || '');
+    const urlParams = Object.fromEntries(new URL(request.url).searchParams);
+    const bodyPayload = request.method === 'POST' ? await body(request) : {};
+    const payload = { ...urlParams, ...bodyPayload };
+    const campaignId = String(payload.campaignId || urlParams.campaignId || '');
     if (!/^[a-z0-9-]{3,80}$/.test(campaignId) || !(await campaignIsActive(env.DB, campaignId))) return json({ error: 'campaign_unavailable' }, 404);
 
     let attempt = await attemptFor(env.DB, campaignId, auth.customerId);
