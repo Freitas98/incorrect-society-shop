@@ -47,8 +47,8 @@
               <h3 class="item-title">{{ item.product.title }}</h3>
             </a>
 
-            {% unless item.product.has_only_default_variant %}
-              <div class="item-variant-price-wrapper">
+            <div class="item-variant-price-wrapper">
+              {% unless item.product.has_only_default_variant %}
                 <div class="item-variant">
                   {% for option in item.product.options_with_values %}
                     {% liquid
@@ -67,19 +67,30 @@
                     <span class="{{ opt_class }}">{{ opt_label }}: {{ item.variant.options[forloop.index0] }}</span>
                   {% endfor %}
                 </div>
-                
-                <!-- Price inline with variant -->
-                <span class="variant-price">
-                  {% if item.original_price != item.price %}
-                    <span class="original-price">{{ item.original_price | money }}</span>
-                    <span class="discounted-price">{{ item.price | money }}</span>
-                  {% else %}
-                    <span class="unit-price">{{ item.price | money }}</span>
-                  {% endif %}
-                  <span class="price-label">{{ 'cart.each' | t }}</span>
-                </span>
-              </div>
-            {% endunless %}
+              {% endunless %}
+
+              <!-- Price inline with variant -->
+              <span class="variant-price">
+                {% if item.original_price > item.final_price %}
+                  <span class="original-price">{{ item.original_price | money_with_currency }}</span>
+                  <span class="discounted-price">{{ item.final_price | money_with_currency }}</span>
+                {% else %}
+                  <span class="unit-price">{{ item.final_price | money_with_currency }}</span>
+                {% endif %}
+                <span class="price-label">{{ 'cart.each' | t }}</span>
+              </span>
+
+              {% if item.line_level_discount_allocations.size > 0 %}
+                <ul class="line-item-discounts" role="list">
+                  {% for discount_allocation in item.line_level_discount_allocations %}
+                    <li>
+                      <span>{{ discount_allocation.discount_application.title | escape }}</span>
+                      <span>−{{ discount_allocation.amount | money_with_currency }}</span>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
 
             {% if item.properties.size > 0 %}
               <div class="item-properties">
@@ -121,7 +132,7 @@
             <!-- Line Total -->
             <div class="line-total">
               <span class="total-label">{{ 'cart.total' | t }}</span>
-              <span class="total-price" data-key="{{ item.key }}">{{ item.line_price | money }}</span>
+              <span class="total-price" data-key="{{ item.key }}">{{ item.final_line_price | money_with_currency }}</span>
             </div>
 
             <!-- Remove Button -->
@@ -144,7 +155,21 @@
         <div class="summary-content">
         <div class="subtotal-row">
           <span class="subtotal-label">{{ 'cart.subtotal' | t }}</span>
-          <span class="subtotal-amount" id="cart-subtotal">{{ cart.total_price | money }}</span>
+          <span class="subtotal-amount" id="cart-subtotal">{{ cart.items_subtotal_price | money_with_currency }}</span>
+        </div>
+
+        <div id="cart-level-discounts" class="cart-level-discounts">
+          {% for discount_application in cart.cart_level_discount_applications %}
+            <div class="cart-level-discount">
+              <span>{{ discount_application.title | escape }}</span>
+              <span>−{{ discount_application.total_allocated_amount | money_with_currency }}</span>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div id="cart-total-row" class="subtotal-row cart-total-row"{% if cart.cart_level_discount_applications.size == 0 %} hidden{% endif %}>
+          <span class="subtotal-label">{{ 'cart.total' | t }}</span>
+          <span class="subtotal-amount" id="cart-total-price">{{ cart.total_price | money_with_currency }}</span>
         </div>
 
         <div class="tax-info">
@@ -159,7 +184,9 @@
         <div class="cart-actions">
           <button type="button" id="clear-cart-btn-main" class="btn btn--secondary btn--block">{{ 'cart.clear' | t }}</button>
           <a href="{{ routes.root_url }}" class="btn btn--primary btn--block">{{ 'cart.continue_shopping' | t }}</a>
-          <a href="/checkout" class="btn btn--primary btn--block">{{ 'cart.checkout' | t }}</a>
+          <form action="{{ routes.cart_url }}" method="post">
+            <button type="submit" name="checkout" class="btn btn--primary btn--block">{{ 'cart.checkout' | t }}</button>
+          </form>
         </div>
       </div>
     </div>
@@ -354,6 +381,33 @@
     margin-left: 4px;
   }
 
+  .original-price {
+    color: var(--color-foreground-muted);
+    text-decoration: line-through;
+    margin-right: 6px;
+  }
+
+  .discounted-price {
+    color: var(--color-foreground);
+  }
+
+  .line-item-discounts {
+    display: grid;
+    gap: 4px;
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    color: var(--color-foreground-muted);
+    font-size: var(--font-size-xs, 11px);
+  }
+
+  .line-item-discounts li,
+  .cart-level-discount {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
   /* Actions Column (Qty, Total, Remove) */
   .item-actions {
     display: flex;
@@ -505,6 +559,18 @@
     color: var(--color-foreground);
   }
 
+  .cart-level-discounts {
+    display: grid;
+    gap: 8px;
+    margin: -8px 0 20px;
+    color: var(--color-foreground-muted);
+    font-size: 13px;
+  }
+
+  .cart-total-row {
+    margin-top: 8px;
+  }
+
   .tax-info {
     font-size: 13px;
     color: var(--color-foreground-muted);
@@ -516,6 +582,11 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+  }
+
+  .cart-actions form {
+    width: 100%;
+    margin: 0;
   }
 
   /* Empty Cart */
@@ -690,6 +761,8 @@
 
     // Track ongoing cart updates to prevent spamming
     const ongoingUpdates = new Map();
+    const cartRoot = window.Shopify?.routes?.root || '/';
+    const cartEndpoint = (path) => `${cartRoot.replace(/\/?$/, '/')}${path.replace(/^\//, '')}`;
 
     // Clear Cart Modal Functions
     if (clearCartBtn) {
@@ -855,33 +928,12 @@
 
       // Update the display immediately with the new quantity (optimistic update)
       const qtyDisplay = document.querySelector(`.qty-display[data-key="${key}"]`);
-      const totalPrice = document.querySelector(`.total-price[data-key="${key}"]`);
-
       // Store original quantity for error reversion
       const originalQuantity = qtyDisplay ? parseInt(qtyDisplay.textContent) : quantity;
 
       // Update quantity display immediately (optimistic)
       if (qtyDisplay) {
         qtyDisplay.textContent = quantity;
-      }
-
-      // Calculate and update price immediately (optimistic)
-      if (totalPrice) {
-        const cartItemCard = document.querySelector(`.cart-item-card[data-key="${key}"]`);
-        const unitPriceElement = cartItemCard.querySelector('.unit-price') || cartItemCard.querySelector('.discounted-price');
-        
-        if (unitPriceElement) {
-          const unitPriceText = unitPriceElement.textContent;
-          const match = unitPriceText.match(/([\d.,]+)/);
-          const eurosNumber = match ? parseFloat(match[1].replace(/\./g, '').replace(',', '.')) : 0;
-          if (!isNaN(eurosNumber)) {
-            const newLineCents = Math.round(eurosNumber * 100) * quantity;
-            totalPrice.textContent = formatMoneyEuro(newLineCents);
-
-            // Update cart subtotal optimistically
-            updateSubtotalOptimistically();
-          }
-        }
       }
 
       // Update button states immediately (but keep them disabled during update)
@@ -896,7 +948,7 @@
       const formData = new FormData();
       formData.append('updates[' + key + ']', quantity);
 
-      fetch('/cart/update.js', {
+      fetch(cartEndpoint('cart/update.js'), {
         method: 'POST',
         body: formData,
       })
@@ -941,26 +993,6 @@
         });
     }
 
-    // Helper function to update subtotal optimistically
-    function updateSubtotalOptimistically() {
-      const cartSubtotal = document.getElementById('cart-subtotal');
-      if (cartSubtotal) {
-        let totalCents = 0;
-
-        // Sum up all line prices
-        document.querySelectorAll('.total-price').forEach((priceEl) => {
-          const priceText = priceEl.textContent;
-          const match = priceText.match(/([\d.,]+)/);
-          const eurosNumber = match ? parseFloat(match[1].replace(/\./g, '').replace(',', '.')) : 0;
-          if (!isNaN(eurosNumber)) {
-            totalCents += Math.round(eurosNumber * 100);
-          }
-        });
-
-        cartSubtotal.textContent = formatMoneyEuro(totalCents);
-      }
-    }
-
     function removeCartItem(key) {
       // First, hide the card with animation
       const cardToRemove = document.querySelector(`.cart-item-card[data-key="${key}"]`);
@@ -985,7 +1017,7 @@
     }
 
     function clearCart() {
-      fetch('/cart/clear.js', {
+      fetch(cartEndpoint('cart/clear.js'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1013,49 +1045,133 @@
         });
     }
 
+    function formatCartMoney(amount, currency) {
+      const resolvedCurrency = currency || window.themeMoney?.currency || 'EUR';
+      const locale = window.themeMoney?.locale || document.documentElement.lang || undefined;
+      try {
+        return new Intl.NumberFormat(locale, {
+          style: 'currency',
+          currency: resolvedCurrency,
+          currencyDisplay: 'code'
+        }).format(Number(amount || 0) / 100);
+      } catch (_) {
+        return `${resolvedCurrency} ${(Number(amount || 0) / 100).toFixed(2)}`;
+      }
+    }
+
+    function renderUnitPrice(card, item, currency) {
+      const priceEl = card.querySelector('.variant-price');
+      if (!priceEl) return;
+
+      const original = Number(item.original_price || 0);
+      const final = Number(item.final_price ?? item.price ?? original);
+      priceEl.replaceChildren();
+
+      if (original > final) {
+        const originalEl = document.createElement('span');
+        originalEl.className = 'original-price';
+        originalEl.textContent = formatCartMoney(original, currency);
+        priceEl.appendChild(originalEl);
+
+        const finalEl = document.createElement('span');
+        finalEl.className = 'discounted-price';
+        finalEl.textContent = formatCartMoney(final, currency);
+        priceEl.appendChild(finalEl);
+      } else {
+        const finalEl = document.createElement('span');
+        finalEl.className = 'unit-price';
+        finalEl.textContent = formatCartMoney(final, currency);
+        priceEl.appendChild(finalEl);
+      }
+
+      const label = document.createElement('span');
+      label.className = 'price-label';
+      label.textContent = window.themeStrings?.cart_each || 'each';
+      priceEl.appendChild(label);
+    }
+
+    function renderLineDiscounts(card, item, currency) {
+      card.querySelector('.line-item-discounts')?.remove();
+      const allocations = Array.isArray(item.line_level_discount_allocations)
+        ? item.line_level_discount_allocations
+        : [];
+      const originalLine = Number(item.original_line_price || 0);
+      const finalLine = Number(item.final_line_price ?? item.line_price ?? originalLine);
+
+      if (!allocations.length && originalLine <= finalLine) return;
+      const list = document.createElement('ul');
+      list.className = 'line-item-discounts';
+      list.setAttribute('role', 'list');
+
+      const items = allocations.length
+        ? allocations
+        : [{ amount: originalLine - finalLine, discount_application: { title: window.themeStrings?.cart_discount_applied || 'Discount applied' } }];
+
+      items.forEach((allocation) => {
+        const row = document.createElement('li');
+        const title = document.createElement('span');
+        const amount = document.createElement('span');
+        title.textContent = allocation.discount_application?.title || window.themeStrings?.cart_discount_applied || 'Discount applied';
+        amount.textContent = `−${formatCartMoney(allocation.amount, currency)}`;
+        row.append(title, amount);
+        list.appendChild(row);
+      });
+
+      card.querySelector('.item-variant-price-wrapper')?.appendChild(list);
+    }
+
+    function renderCartSummary(cart) {
+      const currency = cart.currency || window.themeMoney?.currency;
+      const cartSubtotal = document.getElementById('cart-subtotal');
+      const cartTotal = document.getElementById('cart-total-price');
+      const totalRow = document.getElementById('cart-total-row');
+      const discounts = document.getElementById('cart-level-discounts');
+      const allocations = Array.isArray(cart.cart_level_discount_applications)
+        ? cart.cart_level_discount_applications
+        : [];
+
+      if (cartSubtotal) {
+        cartSubtotal.textContent = formatCartMoney(cart.items_subtotal_price ?? cart.total_price, currency);
+      }
+      if (cartTotal) cartTotal.textContent = formatCartMoney(cart.total_price, currency);
+      if (totalRow) totalRow.hidden = allocations.length === 0;
+      if (!discounts) return;
+
+      discounts.replaceChildren();
+      allocations.forEach((allocation) => {
+        const row = document.createElement('div');
+        row.className = 'cart-level-discount';
+        const title = document.createElement('span');
+        const amount = document.createElement('span');
+        title.textContent = allocation.title || window.themeStrings?.cart_discount || 'Discount';
+        amount.textContent = `−${formatCartMoney(allocation.total_allocated_amount, currency)}`;
+        row.append(title, amount);
+        discounts.appendChild(row);
+      });
+    }
+
     function updateCartDisplay(cart) {
-      // Update each item's quantity and line price from API response (confirmation)
+      const currency = cart.currency || window.themeMoney?.currency;
       cart.items.forEach((item) => {
+        const card = document.querySelector(`.cart-item-card[data-key="${item.key}"]`);
         const qtyDisplay = document.querySelector(`.qty-display[data-key="${item.key}"]`);
         const totalPrice = document.querySelector(`.total-price[data-key="${item.key}"]`);
         const qtyIncreaseBtn = document.querySelector(`.quantity-increase[data-key="${item.key}"]`);
         const qtyDecreaseBtn = document.querySelector(`.quantity-decrease[data-key="${item.key}"]`);
 
-        // Confirm the quantity and price from API
-        if (qtyDisplay) {
-          qtyDisplay.textContent = item.quantity;
+        if (qtyDisplay) qtyDisplay.textContent = item.quantity;
+        if (totalPrice) totalPrice.textContent = formatCartMoney(item.final_line_price ?? item.line_price, currency);
+        if (card) {
+          renderUnitPrice(card, item, currency);
+          renderLineDiscounts(card, item, currency);
         }
-
-        if (totalPrice) {
-          totalPrice.textContent = formatMoneyEuro(item.line_price);
-        }
-
-        // Final button state confirmation
-        if (qtyDecreaseBtn) {
-          qtyDecreaseBtn.disabled = item.quantity <= 1;
-        }
-
-        if (qtyIncreaseBtn) {
-          const hasInventoryLimit =
-            item.variant &&
-            item.variant.inventory_management === 'shopify' &&
-            item.variant.inventory_policy === 'deny' &&
-            item.variant.inventory_quantity !== null;
-
-          if (hasInventoryLimit) {
-            qtyIncreaseBtn.disabled = item.quantity >= item.variant.inventory_quantity;
-          } else {
-            qtyIncreaseBtn.disabled = false;
-          }
-        }
+        if (qtyDecreaseBtn) qtyDecreaseBtn.disabled = item.quantity <= 1;
+        if (qtyIncreaseBtn) qtyIncreaseBtn.disabled = false;
       });
 
-      // Update cart summary with final values
-      const cartSubtotal = document.getElementById('cart-subtotal');
-      const cartCount = document.querySelector('.cart-count');
+      renderCartSummary(cart);
 
-      if (cartSubtotal) cartSubtotal.textContent = formatMoneyEuro(cart.total_price);
-      if (cartCount) {
+      document.querySelectorAll('.cart-count').forEach((cartCount) => {
         if (cart.item_count > 0) {
           cartCount.textContent = cart.item_count;
           cartCount.classList.add('cart-count--visible');
@@ -1063,28 +1179,14 @@
           cartCount.textContent = '';
           cartCount.classList.remove('cart-count--visible');
         }
-      }
+      });
 
-      // If cart is empty, reload page to show empty state
-      if (cart.item_count === 0) {
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      }
-    }
+      const cartItemKeys = cart.items.map((item) => item.key);
+      document.querySelectorAll('.cart-item-card').forEach((card) => {
+        if (!cartItemKeys.includes(card.dataset.key)) card.remove();
+      });
 
-    function formatMoney(cents) {
-      const dollars = (cents / 100).toFixed(2);
-      return `$${dollars}`;
-    }
-
-    function formatMoneyEuro(cents) {
-      const amount = Math.abs(cents || 0);
-      const euros = Math.floor(amount / 100);
-      const centsPart = amount % 100;
-      const centsStr = String(centsPart).padStart(2, '0');
-      const eurosStr = String(euros).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      return `${eurosStr},${centsStr} €`;
+      if (cart.item_count === 0) window.location.reload();
     }
 
     function showError(message) {
@@ -1103,80 +1205,9 @@
     }
 
 
-    // Listen for cart updates from sidebar
+    // Listen for cart updates from the sidebar, quick add and product pages.
     window.addEventListener('cartUpdated', function (event) {
-      if (event.detail.source !== 'main') {
-        const cart = event.detail.cart;
-
-        // Update each item's quantity and line price from API response
-        cart.items.forEach((item) => {
-          const qtyDisplay = document.querySelector(`.qty-display[data-key="${item.key}"]`);
-          const totalPrice = document.querySelector(`.total-price[data-key="${item.key}"]`);
-          const qtyIncreaseBtn = document.querySelector(`.quantity-increase[data-key="${item.key}"]`);
-          const qtyDecreaseBtn = document.querySelector(`.quantity-decrease[data-key="${item.key}"]`);
-
-          // Update quantity and price from sidebar changes
-          if (qtyDisplay) {
-            qtyDisplay.textContent = item.quantity;
-          }
-
-          if (totalPrice) {
-            totalPrice.textContent = formatMoneyEuro(item.line_price);
-          }
-
-          // Update button states
-          if (qtyDecreaseBtn) {
-            qtyDecreaseBtn.disabled = item.quantity <= 1;
-          }
-
-          if (qtyIncreaseBtn) {
-            const hasInventoryLimit =
-              item.variant &&
-              item.variant.inventory_management === 'shopify' &&
-              item.variant.inventory_policy === 'deny' &&
-              item.variant.inventory_quantity !== null;
-
-            if (hasInventoryLimit) {
-              qtyIncreaseBtn.disabled = item.quantity >= item.variant.inventory_quantity;
-            } else {
-              qtyIncreaseBtn.disabled = false;
-            }
-          }
-        });
-
-        // Update cart summary
-        const cartSubtotal = document.getElementById('cart-subtotal');
-        const cartCount = document.querySelector('.cart-count');
-
-        if (cartSubtotal) cartSubtotal.textContent = formatMoneyEuro(cart.total_price);
-        if (cartCount) {
-          if (cart.item_count > 0) {
-            cartCount.textContent = cart.item_count;
-            cartCount.classList.add('cart-count--visible');
-          } else {
-            cartCount.textContent = '';
-            cartCount.classList.remove('cart-count--visible');
-          }
-        }
-
-        // Remove items that are no longer in cart
-        const currentCards = document.querySelectorAll('.cart-item-card');
-        const cartItemKeys = cart.items.map((item) => item.key);
-
-        currentCards.forEach((card) => {
-          const cardKey = card.dataset.key;
-          if (!cartItemKeys.includes(cardKey)) {
-            card.remove();
-          }
-        });
-
-        // If cart is empty, reload page to show empty state
-        if (cart.item_count === 0) {
-          setTimeout(() => {
-            window.location.reload();
-          }, 500);
-        }
-      }
+      if (event.detail.source !== 'main') updateCartDisplay(event.detail.cart);
     });
 
     // Listen for cart clear events from sidebar

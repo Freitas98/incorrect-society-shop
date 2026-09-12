@@ -18,6 +18,10 @@
 
   {{ content_for_header }}
     <script>
+      window.themeMoney = {
+        currency: {{ cart.currency.iso_code | json }},
+        locale: {{ request.locale.iso_code | json }}
+      };
       window.themeStrings = Object.assign({}, window.themeStrings, {
         cart_empty_title: {{ 'cart.empty_title' | t | json }},
         adding: {{ 'theme.messages.adding' | t | json }},
@@ -31,6 +35,11 @@
         cart_update_failed: {{ 'cart.update_failed' | t | json }},
         cart_clear_failed: {{ 'cart.clear_failed' | t | json }},
         stock_available_suffix: {{ 'cart.stock_available_suffix' | t | json }},
+        cart_quantity: {{ 'cart.quantity' | t | json }},
+        cart_total: {{ 'cart.total' | t | json }},
+        cart_each: {{ 'cart.each' | t | json }},
+        cart_discount: {{ 'cart.discount' | t | json }},
+        cart_discount_applied: {{ 'cart.discount_applied' | t | json }},
         option_size_label: {{ 'products.options.size' | t | json }},
         option_color_label: {{ 'products.options.color' | t | json }}
       });

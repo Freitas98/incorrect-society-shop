@@ -77,6 +77,33 @@
   <!-- Footer Bottom -->
   <div class="footer-bottom">
     <div class="footer-bottom-content">
+      {% if localization.available_countries.size > 1 %}
+        {% assign localization_form_id = 'FooterLocalizationForm-' | append: section.id %}
+        <div class="footer-localization" data-footer-localization>
+          {% form 'localization', id: localization_form_id, class: 'footer-localization__form' %}
+            <input type="hidden" name="return_to" value="{{ request.path | escape }}">
+            <label class="footer-localization__label" for="FooterCountry-{{ section.id }}">
+              {{ 'localization.country_region' | t }}
+            </label>
+            <select
+              id="FooterCountry-{{ section.id }}"
+              class="footer-localization__select"
+              name="country_code"
+              aria-describedby="FooterCountryHint-{{ section.id }}"
+            >
+              {% for country in localization.available_countries %}
+                <option value="{{ country.iso_code | escape }}"{% if country.iso_code == localization.country.iso_code %} selected{% endif %}>
+                  {{ country.name | escape }} ({{ country.currency.iso_code | escape }} {{ country.currency.symbol | escape }})
+                </option>
+              {% endfor %}
+            </select>
+            <span id="FooterCountryHint-{{ section.id }}" class="visually-hidden">
+              {{ 'localization.country_region' | t }}
+            </span>
+            <button type="submit" class="footer-localization__submit">{{ 'localization.update_country' | t }}</button>
+          {% endform %}
+        </div>
+      {% endif %}
       <span class="footer-copyright">{{ shop.name | upcase }} ® NOT IN ACCORDANCE WITH ANY STANDARD OR RULE</span>
       <img src="https://cdn.shopify.com/s/files/1/0954/9840/4181/files/Logo_black.svg?v=1764257555" alt="{{ shop.name }}" class="footer-logo" width="80" height="40">
     </div>
@@ -257,6 +284,50 @@
     align-items: center;
   }
 
+  .footer-localization {
+    margin-right: auto;
+  }
+
+  .footer-localization__form {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+  }
+
+  .footer-localization__label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .footer-localization__select,
+  .footer-localization__submit {
+    min-height: 36px;
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font: inherit;
+    font-size: 12px;
+  }
+
+  .footer-localization__select {
+    max-width: min(280px, 52vw);
+    padding: 0 28px 0 10px;
+  }
+
+  .footer-localization__submit {
+    padding: 0 10px;
+    cursor: pointer;
+  }
+
+  .footer-localization__select:focus-visible,
+  .footer-localization__submit:focus-visible {
+    outline: 2px solid var(--color-foreground);
+    outline-offset: 2px;
+  }
+
   .footer-copyright {
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -304,6 +375,15 @@
       flex-direction: column;
       gap: 20px;
       text-align: center;
+    }
+
+    .footer-localization {
+      margin-right: 0;
+      width: 100%;
+    }
+
+    .footer-localization__form {
+      justify-content: center;
     }
 
     .footer-music-player-wrapper {
@@ -365,6 +445,33 @@
 <div class="footer-music-player-wrapper">
   {% render 'music-player' %}
 </div>
+
+<script>
+  (function () {
+    function initFooterLocalization(root) {
+      (root || document).querySelectorAll('[data-footer-localization]').forEach(function (container) {
+        if (container.dataset.localizationBound === 'true') return;
+        var form = container.querySelector('form');
+        var select = container.querySelector('select[name="country_code"]');
+        if (!form || !select) return;
+
+        container.dataset.localizationBound = 'true';
+        select.addEventListener('change', function () {
+          if (typeof form.requestSubmit === 'function') {
+            form.requestSubmit();
+          } else {
+            form.submit();
+          }
+        });
+      });
+    }
+
+    initFooterLocalization(document);
+    document.addEventListener('shopify:section:load', function (event) {
+      initFooterLocalization(event.target);
+    });
+  })();
+</script>
 
 {% schema %}
 {
