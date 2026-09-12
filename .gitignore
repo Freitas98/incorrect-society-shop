@@ -12,6 +12,10 @@ node_modules/
 # Shopify CLI files
 .shopify/
 
+# Cloudflare Wrangler local files
+.wrangler/
+services/scratch-card/wrangler.toml
+
 ## Release files
 release
 *.zip

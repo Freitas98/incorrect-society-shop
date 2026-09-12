@@ -105,12 +105,14 @@ async function getRewardedAttempt(db, attempt) {
 }
 
 async function createDiscount(env, { code, customerId, amountCents, expiresAt }) {
-  if (!env.SHOPIFY_ADMIN_ACCESS_TOKEN && (!env.SHOPIFY_APP_CLIENT_ID || !env.SHOPIFY_APP_CLIENT_SECRET)) {
+  const hasToken = Boolean(env.SHOPIFY_ADMIN_ACCESS_TOKEN && !env.SHOPIFY_ADMIN_ACCESS_TOKEN.startsWith('atkn_'));
+  const hasAppCredentials = Boolean(env.SHOPIFY_APP_CLIENT_ID && env.SHOPIFY_APP_CLIENT_SECRET);
+  if (!hasToken && !hasAppCredentials) {
     if (env.ALLOW_SIMULATION === 'true') {
       console.warn('[createDiscount] No Shopify admin credentials configured, returning simulated discount node');
       return 'gid://shopify/DiscountCodeNode/simulated';
     }
-    throw new Error('shopify_admin_access_token_missing');
+    throw new Error('shopify_credentials_missing');
   }
   const mutation = `
     mutation CreateScratchDiscount($input: DiscountCodeBasicInput!) {
@@ -154,25 +156,38 @@ async function createDiscount(env, { code, customerId, amountCents, expiresAt })
   return result.codeDiscountNode.id;
 }
 
+let cachedAdminToken = null;
+let tokenExpiresAt = 0;
+
 async function adminAccessToken(env) {
-  if (env.SHOPIFY_ADMIN_ACCESS_TOKEN) return env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  if (env.SHOPIFY_ADMIN_ACCESS_TOKEN && !env.SHOPIFY_ADMIN_ACCESS_TOKEN.startsWith('atkn_') && !env.SHOPIFY_ADMIN_ACCESS_TOKEN.startsWith('shpss_')) {
+    return env.SHOPIFY_ADMIN_ACCESS_TOKEN;
+  }
+  const now = Date.now();
+  if (cachedAdminToken && now < tokenExpiresAt) {
+    return cachedAdminToken;
+  }
   if (!env.SHOPIFY_APP_CLIENT_ID || !env.SHOPIFY_APP_CLIENT_SECRET) {
     throw new Error('shopify_credentials_missing');
   }
+  const form = new URLSearchParams({
+    client_id: env.SHOPIFY_APP_CLIENT_ID,
+    client_secret: env.SHOPIFY_APP_CLIENT_SECRET,
+    grant_type: 'client_credentials',
+  });
   const response = await fetch(`https://${env.SHOP_DOMAIN}/admin/oauth/access_token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: env.SHOPIFY_APP_CLIENT_ID,
-      client_secret: env.SHOPIFY_APP_CLIENT_SECRET,
-      grant_type: 'client_credentials',
-    }),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: form.toString(),
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || !payload.access_token) {
     throw new Error(payload.error_description || payload.error || 'shopify_token_failed');
   }
-  return payload.access_token;
+  cachedAdminToken = payload.access_token;
+  const ttlMs = Math.max(60, (Number(payload.expires_in) || 86400) - 60) * 1000;
+  tokenExpiresAt = now + ttlMs;
+  return cachedAdminToken;
 }
 
 async function reserveReward(db, campaignId, attemptId) {
