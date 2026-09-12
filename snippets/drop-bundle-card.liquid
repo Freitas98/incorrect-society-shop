@@ -1,0 +1,100 @@
+{% comment %}
+  Reusable entry point for the configured Shopify Bundle product.
+  The parent bundle must expose one size option for each component, in the
+  same order as drop_bundle_component_one and drop_bundle_component_two.
+{% endcomment %}
+{% liquid
+  assign bundle_product = settings.drop_bundle_product
+  assign component_one = settings.drop_bundle_component_one
+  assign component_two = settings.drop_bundle_component_two
+  assign component_one_size_option = blank
+  assign component_two_size_option = blank
+  assign component_one_selected_size = blank
+  assign component_two_selected_size = blank
+
+  for option in component_one.options_with_values
+    assign option_name = option.name | downcase
+    if option_name contains 'size' or option_name contains 'tamanho'
+      assign component_one_size_option = option
+      assign component_one_selected_size = option.selected_value
+      break
+    endif
+  endfor
+  for option in component_two.options_with_values
+    assign option_name = option.name | downcase
+    if option_name contains 'size' or option_name contains 'tamanho'
+      assign component_two_size_option = option
+      assign component_two_selected_size = option.selected_value
+      break
+    endif
+  endfor
+
+  if context_product != blank
+    if context_product.id == component_one.id and component_one_size_option != blank
+      assign option_index = component_one_size_option.position | minus: 1
+      assign component_one_selected_size = context_product.selected_or_first_available_variant.options[option_index]
+    elsif context_product.id == component_two.id and component_two_size_option != blank
+      assign option_index = component_two_size_option.position | minus: 1
+      assign component_two_selected_size = context_product.selected_or_first_available_variant.options[option_index]
+    endif
+  endif
+%}
+
+{% if settings.enable_drop_features and bundle_product != blank and component_one != blank and component_two != blank and component_one_size_option != blank and component_two_size_option != blank %}
+  <aside class="drop-bundle-card{% if home_bundle %} drop-bundle-card--home{% endif %}" data-drop-bundle-card data-unavailable-text="{{ 'drop.bundle_unavailable' | t | escape }}" aria-live="polite">
+    <div class="drop-bundle-card__images" aria-hidden="true">
+      {% if component_one.featured_image != blank %}
+        <img src="{{ component_one.featured_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
+      {% endif %}
+      {% if component_two.featured_image != blank %}
+        <img src="{{ component_two.featured_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
+      {% endif %}
+    </div>
+    <div class="drop-bundle-card__content">
+      <p class="drop-bundle-card__eyebrow">{{ 'drop.bundle_title' | t }}</p>
+      <p class="drop-bundle-card__copy">{{ 'drop.bundle_copy' | t }}</p>
+      <div class="drop-bundle-card__sizes">
+        <label>
+          <span>{{ component_one.title }}</span>
+          <select data-drop-bundle-size="one">
+            {% for value in component_one_size_option.values %}
+              <option value="{{ value | escape }}"{% if value == component_one_selected_size %} selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>{{ component_two.title }}</span>
+          <select data-drop-bundle-size="two">
+            {% for value in component_two_size_option.values %}
+              <option value="{{ value | escape }}"{% if value == component_two_selected_size %} selected{% endif %}>{{ value }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
+      <p class="drop-bundle-card__shipping">{{ 'drop.bundle_free_shipping' | t }}</p>
+      <button type="button" class="drop-bundle-card__button" data-drop-bundle-add>
+        <span>{{ 'drop.bundle_add' | t }}</span>
+        <span data-drop-bundle-price></span>
+      </button>
+      <p class="drop-bundle-card__status" data-drop-bundle-status hidden></p>
+    </div>
+    <script type="application/json" data-drop-bundle-data>
+      {
+        "options": {{ bundle_product.options | json }},
+        "variants": [
+          {% for bundle_variant in bundle_product.variants %}
+            {
+              "id": {{ bundle_variant.id | json }},
+              "available": {{ bundle_variant.available | json }},
+              "priceHtml": {{ bundle_variant.price | money_with_currency | json }},
+              "option1": {{ bundle_variant.option1 | json }},
+              "option2": {{ bundle_variant.option2 | json }},
+              "option3": {{ bundle_variant.option3 | json }}
+            }{% unless forloop.last %},{% endunless %}
+          {% endfor %}
+        ]
+      }
+    </script>
+  </aside>
+  <script src="{{ 'drop-bundle.js' | asset_url }}" defer="defer"></script>
+{% endif %}

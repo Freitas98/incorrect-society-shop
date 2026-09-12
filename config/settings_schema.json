@@ -110,7 +110,7 @@
         "type": "product",
         "id": "drop_bundle_product",
         "label": "Bundle product",
-        "info": "Select the parent product created with the free Shopify Bundles app."
+        "info": "Select the parent product created with Shopify Bundles. It needs one size option for each T-shirt to support mixed sizes."
       },
       {
         "type": "product",

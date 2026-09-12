@@ -33,6 +33,10 @@
         "corner_button_link": "/collections/secrets-and-sins"
       }
     },
+    "drop_bundle": {
+      "type": "drop-bundle",
+      "settings": {}
+    },
     "new_arrivals": {
       "type": "new-arrivals-grid",
       "settings": {
@@ -136,6 +140,7 @@
   },
   "order": [
     "hero_editorial",
+    "drop_bundle",
     "new_arrivals",
     "hero_gallery"
   ]

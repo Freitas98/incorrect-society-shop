@@ -14,6 +14,7 @@
     var campaignId = root.dataset.campaignId;
     var endpoint = (window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/') + root.dataset.proxyPath.replace(/^\/+/, '');
     var revealed = false;
+    var returnStorageKey = 'incorrectScratchReturnPath';
 
     function setTeaserState(state) {
       root.dataset.scratchState = state;
@@ -391,7 +392,10 @@
     function showState(reply) {
       if (reply.status === 401 || (reply.data && reply.data.error === 'login_required')) {
         setCopy(strings.login);
-        showAction(strings.login, function () { window.location.assign(root.dataset.loginUrl); });
+        showAction(strings.login, function () {
+          try { window.sessionStorage.setItem(returnStorageKey, window.location.pathname); } catch (_) {}
+          window.location.assign(root.dataset.loginUrl);
+        });
         return;
       }
       if (!reply.ok) {
@@ -451,6 +455,17 @@
     close.addEventListener('click', function () { dialog.close(); });
     dialog.addEventListener('click', function (event) { if (event.target === dialog) dialog.close(); });
     syncTeaserState();
+
+    // Shopify's customer login returns to the supplied return_url. Reopen the
+    // card there so the customer continues the challenge instead of landing
+    // in an account area without context.
+    try {
+      if (window.sessionStorage.getItem(returnStorageKey) === window.location.pathname) {
+        window.sessionStorage.removeItem(returnStorageKey);
+        dialog.showModal();
+        loadState();
+      }
+    } catch (_) {}
   }
   function boot() { document.querySelectorAll('[data-secure-scratch]').forEach(init); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
