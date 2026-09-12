@@ -400,6 +400,7 @@
     "low_stock_live": "Disponibilidade atualizada em tempo real",
     "extinct": "EXTINCT",
     "delivery_countdown": "Encomenda nas próximas ___TIME___ e enviamos em ___DAY___ .",
+    "delivery_after_cutoff": "As encomendas efetuadas agora são enviadas em ___DAY___ .",
     "delivery_estimate": "Entrega estimada via ___CARRIER___: ___FROM___ a ___TO___ .",
     "drop_countdown": "___DROP___ será removido para sempre em ___DAYS___d ___HOURS___h ___MINUTES___m.",
     "drop_ended": "Este drop terminou."
