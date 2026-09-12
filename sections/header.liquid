@@ -1172,6 +1172,17 @@
     gap: 8px;
   }
 
+  .cart-sidebar .item-variant--bundle {
+    display: grid;
+    gap: 3px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .cart-sidebar .item-variant--bundle span {
+    display: block;
+  }
+
   .cart-sidebar .variant-price {
     font-size: 14px;
     color: var(--color-foreground);
@@ -1673,7 +1684,8 @@
               }
               return `<span class="${optClass}">${translateOptionName(ov.name)}: ${ov.value}</span>`;
             });
-            variantHtml = `<div class="item-variant">${parts.join('')}</div>`;
+            const isBundle = String(item.product_id) === bundleProductId || item.handle === bundleProductHandle;
+            variantHtml = `<div class="item-variant${isBundle ? ' item-variant--bundle' : ''}">${parts.join('')}</div>`;
           }
 
           // Get inventory data for this item
