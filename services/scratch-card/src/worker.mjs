@@ -68,9 +68,21 @@ function proxyPath(pathname) {
 }
 
 async function identity(request, env) {
+  const url = new URL(request.url);
   const proxy = await verifyProxyRequest(request, env.SHOPIFY_APP_CLIENT_SECRET);
-  if (!proxy || proxy.shop !== env.SHOP_DOMAIN) return { error: json({ error: 'invalid_request' }, 401) };
-  if (!proxy.logged_in_customer_id) return { error: json({ error: 'login_required' }, 401) };
+  if (!proxy || proxy.shop !== env.SHOP_DOMAIN) {
+    console.warn('[identity] Proxy verification failed', {
+      hasProxy: Boolean(proxy),
+      proxyShop: proxy?.shop,
+      expectedShop: env.SHOP_DOMAIN,
+      search: url.search
+    });
+    return { error: json({ error: 'invalid_request' }, 401) };
+  }
+  if (!proxy.logged_in_customer_id) {
+    console.warn('[identity] Missing logged_in_customer_id in proxy params', { search: url.search });
+    return { error: json({ error: 'login_required' }, 401) };
+  }
   const forwarded = request.headers.get('X-Forwarded-For') || '';
   const ip = forwarded.split(',')[0].trim();
   if (!ip) return { error: json({ error: 'network_unavailable' }, 403) };
@@ -130,10 +142,14 @@ async function createDiscount(env, { code, customerId, amountCents, expiresAt })
       endsAt: expiresAt,
       usageLimit: 1,
       appliesOncePerCustomer: true,
-      customerSelection: { all: true },
+      customerSelection: {
+        customers: {
+          add: [`gid://shopify/Customer/${customerId}`],
+        },
+      },
       combinesWith: {
-        orderDiscounts: false,
-        productDiscounts: false,
+        orderDiscounts: true,
+        productDiscounts: true,
         shippingDiscounts: true,
       },
       customerGets: {
