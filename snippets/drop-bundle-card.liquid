@@ -31,6 +31,14 @@
   if component_two_image == blank and component_two_catalog_product != blank
     assign component_two_image = component_two_catalog_product.featured_image | default: component_two_catalog_product.images.first
   endif
+  if component_one_image == blank and component_one_handle == 'secrets-white-tee'
+    assign component_one_drop_product = all_products['secrets-white-tee']
+    assign component_one_image = component_one_drop_product.featured_image | default: component_one_drop_product.images.first
+  endif
+  if component_two_image == blank and component_two_handle == 'sins-burgundy-tee'
+    assign component_two_drop_product = all_products['sins-burgundy-tee']
+    assign component_two_image = component_two_drop_product.featured_image | default: component_two_drop_product.images.first
+  endif
   assign component_one_size_option = blank
   assign component_two_size_option = blank
   assign component_one_selected_size = blank
