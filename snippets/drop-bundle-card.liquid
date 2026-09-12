@@ -7,6 +7,20 @@
   assign bundle_product = settings.drop_bundle_product
   assign component_one = settings.drop_bundle_component_one
   assign component_two = settings.drop_bundle_component_two
+  assign component_one_image = component_one.featured_image
+  assign component_two_image = component_two.featured_image
+  if component_one_image == blank and component_one.featured_media != blank
+    assign component_one_image = component_one.featured_media.preview_image
+  endif
+  if component_two_image == blank and component_two.featured_media != blank
+    assign component_two_image = component_two.featured_media.preview_image
+  endif
+  if component_one_image == blank
+    assign component_one_image = component_one.images.first
+  endif
+  if component_two_image == blank
+    assign component_two_image = component_two.images.first
+  endif
   assign component_one_size_option = blank
   assign component_two_size_option = blank
   assign component_one_selected_size = blank
@@ -47,11 +61,11 @@
       <img class="drop-bundle-card__offer-logo" src="{{ 'Logo_white.svg' | asset_url }}" alt="" width="38" height="18" loading="lazy">
     </p>
     <div class="drop-bundle-card__images" aria-hidden="true">
-      {% if component_one.featured_image != blank %}
-        <img src="{{ component_one.featured_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
+      {% if component_one_image != blank %}
+        <img src="{{ component_one_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
       {% endif %}
-      {% if component_two.featured_image != blank %}
-        <img src="{{ component_two.featured_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
+      {% if component_two_image != blank %}
+        <img src="{{ component_two_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
       {% endif %}
     </div>
     <div class="drop-bundle-card__content">
