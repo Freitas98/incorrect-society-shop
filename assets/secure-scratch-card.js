@@ -62,9 +62,11 @@
       card.hidden = false; card.classList.remove('is-scratching'); card.classList.add('is-revealed');
       action.hidden = true;
       canvas.hidden = true;
-      setCopy(strings.alreadyPlayed || strings.noPrize);
       result.textContent = '';
       if (data.state === 'rewarded') {
+        var isExpired = data.expiresAt && (new Date(data.expiresAt).getTime() <= Date.now());
+        setCopy(isExpired ? (strings.alreadyPlayedExpired || strings.alreadyPlayed) : (strings.alreadyPlayed || strings.noPrize));
+
         var message = document.createElement('div');
         message.className = 'secure-scratch__prize-value';
         message.textContent = (data.amountCents / 100).toFixed(0) + ' €';
@@ -85,8 +87,9 @@
 
         details.append(code, expiry, button);
         result.append(message, details);
-        updateExpiry(expiry);
+        updateExpiry(expiry, details, button);
       } else {
+        setCopy(strings.alreadyPlayed || strings.noPrize);
         var noPrizeEl = document.createElement('div');
         noPrizeEl.className = 'secure-scratch__prize-value secure-scratch__prize-value--no-prize';
         noPrizeEl.textContent = strings.noPrize;
@@ -94,12 +97,23 @@
       }
     }
 
-    function updateExpiry(node) {
+    function updateExpiry(node, details, button) {
       var remaining = Math.max(0, new Date(node.dataset.expiresAt).getTime() - Date.now());
-      if (!remaining) { node.textContent = strings.expires + ': 00:00'; return; }
+      if (!remaining) {
+        node.textContent = strings.expired || 'EXPIRED';
+        node.classList.add('is-expired');
+        if (details) details.classList.add('is-expired');
+        if (button) {
+          button.textContent = strings.expired || 'EXPIRED';
+          button.disabled = true;
+          button.classList.add('is-expired');
+        }
+        if (strings.alreadyPlayedExpired) setCopy(strings.alreadyPlayedExpired);
+        return;
+      }
       var minutes = Math.floor(remaining / 60000); var seconds = Math.floor((remaining % 60000) / 1000);
       node.textContent = strings.expires + ': ' + String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-      window.setTimeout(function () { updateExpiry(node); }, 1000);
+      window.setTimeout(function () { updateExpiry(node, details, button); }, 1000);
     }
 
     function beginScratch(data) {
@@ -142,7 +156,7 @@
 
         details.append(code, expiry, button);
         result.append(message, details);
-        updateExpiry(expiry);
+        updateExpiry(expiry, details, button);
       } else {
         var noPrizeEl = document.createElement('div');
         noPrizeEl.className = 'secure-scratch__prize-value secure-scratch__prize-value--no-prize';

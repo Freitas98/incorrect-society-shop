@@ -23,6 +23,11 @@ test('secure-scratch-card.js hides code details while scratching and reveals on 
   assert.match(scriptSource, /card\.classList\.add\('is-revealed'\)/);
 });
 
+test('secure-scratch-card.js marks code and button as is-expired when time expires', () => {
+  assert.match(scriptSource, /node\.classList\.add\('is-expired'\)/);
+  assert.match(scriptSource, /button\.classList\.add\('is-expired'\)/);
+});
+
 test('reset-campaign.sql activates campaign for testing', () => {
   const resetSql = fs.readFileSync(path.join(__dirname, '../services/scratch-card/reset-campaign.sql'), 'utf8');
   assert.match(resetSql, /UPDATE campaigns SET active = 1/);
