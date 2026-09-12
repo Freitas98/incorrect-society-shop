@@ -31,8 +31,7 @@ O produto/tema não deve ser publicado nesta fase. Antes de ativar a campanha re
 Os valores ficam no servidor, na consola **Cloudflare → Storage & databases → D1 → incorrect-scratch-card**, nunca no tema.
 
 - `rewards.initial_quantity` define o máximo de cada prémio; `remaining` é o saldo em direto. O ponto de partida é 5×€3, 10×€2 e 15×€1.
-- `campaigns.no_prize_weight` define a percentagem inicial de não-prémio. Com o valor `70`, as probabilidades iniciais são €3: **5%**, €2: **10%**, €1: **15%**, sem prémio: **70%**. Quando um prémio esgota, nunca volta a ser escolhido.
-- Para uma taxa inicial total de prémios diferente, usar `no_prize_weight = (30 / taxa_de_premio) - 30`. Exemplo: para 25% de prémios, definir `90`.
+- `campaigns.no_prize_weight` define o peso de não-prémio. Com o valor `18` (calibrado para um universo de cerca de 100 pessoas/peças), a probabilidade inicial de prémio é de **~62,5%** (€3: **10,4%**, €2: **20,8%**, €1: **31,3%**, sem prémio: **37,5%**). Esta ponderação garante matematicamente que quase todos ou a totalidade dos 30 prémios saem ao longo de aproximadamente 100 participações. Quando um prémio esgota, nunca volta a ser escolhido.
 - Para reiniciar testes, desativar o tema e a campanha, aguardar 20 minutos para os cupões emitidos expirarem e executar [`reset-campaign.sql`](reset-campaign.sql). O ficheiro limpa participações/IPs de teste e restaura `remaining` a `initial_quantity`.
 
 - Para alterar a data/campanha, criar novo ID de campanha e novas linhas de prémios; não reutilizar uma campanha esgotada.

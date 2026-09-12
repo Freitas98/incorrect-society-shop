@@ -3,7 +3,7 @@ PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS campaigns (
   id TEXT PRIMARY KEY,
   active INTEGER NOT NULL DEFAULT 0,
-  no_prize_weight INTEGER NOT NULL DEFAULT 70 CHECK (no_prize_weight >= 0),
+  no_prize_weight INTEGER NOT NULL DEFAULT 18 CHECK (no_prize_weight >= 0),
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -42,8 +42,9 @@ CREATE TABLE IF NOT EXISTS attempts (
 CREATE INDEX IF NOT EXISTS attempts_campaign_state_idx ON attempts (campaign_id, state);
 
 -- Create the drop only once. These are absolute maximums, not replenishing quotas.
--- Initial probabilities: €3 = 5%, €2 = 10%, €1 = 15%, no prize = 70%.
-INSERT OR IGNORE INTO campaigns (id, active, no_prize_weight) VALUES ('secrets-sinners-2026', 0, 70);
+-- Initial probabilities for ~100 participants: €3 ≈ 10.4%, €2 ≈ 20.8%, €1 ≈ 31.3%, no prize ≈ 37.5%.
+-- Overall win rate initially is ~62.5%, allowing virtually all 30 prizes to be claimed within ~100 participants.
+INSERT OR IGNORE INTO campaigns (id, active, no_prize_weight) VALUES ('secrets-sinners-2026', 0, 18);
 INSERT OR IGNORE INTO rewards (id, campaign_id, amount_cents, remaining, initial_quantity) VALUES
   ('secrets-sinners-2026-eur-3', 'secrets-sinners-2026', 300, 5, 5),
   ('secrets-sinners-2026-eur-2', 'secrets-sinners-2026', 200, 10, 10),

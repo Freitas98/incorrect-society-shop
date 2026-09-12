@@ -95,8 +95,12 @@
 .secure-scratch__ticket-brand img { width: 48px; height: 22px; object-fit: contain; }
 .secure-scratch__result { position: relative; z-index: 2; display: grid; min-height: 218px; place-content: center; gap: 11px; padding: 53px 24px 28px; font-size: 1.2rem; font-weight: 700; text-align: center; text-transform: uppercase; }
 .secure-scratch__result > div { font-size: clamp(2.2rem, 10vw, 3.5rem); letter-spacing: -.06em; }
+.secure-scratch__prize-value { font-size: clamp(2.6rem, 12vw, 3.8rem); font-weight: 700; letter-spacing: -.06em; color: #fff; text-shadow: 0 4px 18px rgba(0, 0, 0, 0.45); }
+.secure-scratch__prize-value--no-prize { font-size: clamp(1.2rem, 5vw, 1.6rem); letter-spacing: .08em; color: rgba(255, 255, 255, 0.85); text-shadow: none; }
+.secure-scratch__details { display: grid; gap: 10px; animation: secure-scratch-details-in 0.35s ease forwards; }
 .secure-scratch__result small { color: rgba(255,255,255,.72); font-size: .68rem; font-weight: 400; letter-spacing: .08em; }
-.secure-scratch__canvas { position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+.secure-scratch__canvas { position: absolute; z-index: 3; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; transition: opacity 0.35s ease; }
+.secure-scratch__canvas.is-fading { opacity: 0; pointer-events: none; }
 .secure-scratch__canvas:active { cursor: grabbing; }
 .secure-scratch__progress { position: absolute; z-index: 4; right: 18px; bottom: 16px; left: 18px; height: 2px; overflow: hidden; background: rgba(255,255,255,.32); pointer-events: none; }
 .secure-scratch__progress span { display: block; width: var(--scratch-progress, 0%); height: 100%; background: #fff; box-shadow: 0 0 10px #fff; transition: width .12s linear; }
@@ -105,6 +109,7 @@
 .secure-scratch__code { display: block; padding: 10px 12px; border: 1px dashed rgba(255,255,255,.8); background: rgba(0,0,0,.16); font-family: monospace; font-size: 1rem; letter-spacing: .08em; text-transform: none; }
 .secure-scratch__copy { border: 1px solid rgba(255,255,255,.72); background: transparent; color: #fff; padding: 9px 12px; font: inherit; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .2s ease; }
 .secure-scratch__copy:hover { background: #fff; color: #171717; }
+@keyframes secure-scratch-details-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 @keyframes secure-scratch-shine { 0%, 58% { left: -125%; } 76%, 100% { left: 160%; } }
 @keyframes secure-scratch-pulse { 0% { box-shadow: 0 0 0 0 rgba(197, 43, 92, .7); } 70% { box-shadow: 0 0 0 8px rgba(197, 43, 92, 0); } 100% { box-shadow: 0 0 0 0 rgba(197, 43, 92, 0); } }

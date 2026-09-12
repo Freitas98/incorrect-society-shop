@@ -162,7 +162,7 @@ async function reserveReward(db, campaignId, attemptId) {
     const rows = rewards.results || [];
     if (!rows.length) return null;
     const campaign = await db.prepare('SELECT no_prize_weight FROM campaigns WHERE id = ?').bind(campaignId).first();
-    const noPrizeWeight = Math.max(0, Number(campaign?.no_prize_weight || 0));
+    const noPrizeWeight = Math.max(0, Number(campaign?.no_prize_weight ?? 18));
     const total = rows.reduce((sum, reward) => sum + reward.remaining, noPrizeWeight);
     let draw = randomInt(total);
     if (draw < noPrizeWeight) return null;
