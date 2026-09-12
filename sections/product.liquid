@@ -468,6 +468,7 @@
           data-min-days="{{ settings.shipping_min_business_days }}"
           data-max-days="{{ settings.shipping_max_business_days }}"
           data-countdown-template="{{ 'drop.delivery_countdown' | t | escape }}"
+          data-after-cutoff-template="{{ 'drop.delivery_after_cutoff' | t | escape }}"
           data-estimate-template="{{ 'drop.delivery_estimate' | t | escape }}"
           role="status"
         ></p>
@@ -1119,8 +1120,8 @@
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #d10a31;
-    box-shadow: 0 0 0 3px rgba(209, 10, 49, .16);
+    background: #f28c28;
+    box-shadow: 0 0 0 3px rgba(242, 140, 40, .18);
   }
 
   .product-extinct {
@@ -1505,17 +1506,6 @@
       grid-template-columns: 1fr;
     }
 
-    /* Keep the purchase action available while browsing the full-screen gallery. */
-    .add-to-cart-btn {
-      position: fixed;
-      z-index: 101;
-      right: 16px;
-      bottom: max(12px, env(safe-area-inset-bottom));
-      left: 16px;
-      width: auto;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
-    }
-    
     .product-thumbnails-corner {
       top: auto;
       bottom: 90px; /* Above model info on mobile */
@@ -2130,7 +2120,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function zonedParts(timeZone) {
-    const parts = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+    const parts = new Intl.DateTimeFormat('en-GB', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
     return Object.fromEntries(parts.filter(part => part.type !== 'literal').map(part => [part.type, Number(part.value)]));
   }
 
@@ -2153,12 +2143,16 @@ document.addEventListener('DOMContentLoaded', function() {
       try {
         const now = zonedParts(timeZone);
         const base = new Date(Date.UTC(now.year, now.month - 1, now.day));
-        const minutesUntilCutoff = (cutoffHour * 60 + cutoffMinute) - (now.hour * 60 + now.minute);
-        const dispatch = nextBusinessDate(base, minutesUntilCutoff > 0 ? 0 : 1);
+        const secondsUntilCutoff = (cutoffHour * 3600 + cutoffMinute * 60) - (now.hour * 3600 + now.minute * 60 + now.second);
+        const beforeCutoff = secondsUntilCutoff > 0;
+        const dispatch = nextBusinessDate(base, beforeCutoff ? 0 : 1);
         const from = nextBusinessDate(dispatch, Number(estimate.dataset.minDays || 1));
         const to = nextBusinessDate(dispatch, Number(estimate.dataset.maxDays || 3));
-        const time = minutesUntilCutoff > 0 ? `${Math.floor(minutesUntilCutoff / 60)}h ${minutesUntilCutoff % 60}m` : '0h 0m';
-        const countdown = estimate.dataset.countdownTemplate.replace('___TIME___', time).replace('___DAY___', displayDate(dispatch));
+        const totalMinutes = Math.ceil(Math.max(0, secondsUntilCutoff) / 60);
+        const time = `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+        const countdown = beforeCutoff
+          ? estimate.dataset.countdownTemplate.replace('___TIME___', time).replace('___DAY___', displayDate(dispatch))
+          : estimate.dataset.afterCutoffTemplate.replace('___DAY___', displayDate(dispatch));
         const arrival = estimate.dataset.estimateTemplate.replace('___CARRIER___', estimate.dataset.carrier).replace('___FROM___', displayDate(from)).replace('___TO___', displayDate(to));
         estimate.textContent = `${countdown} ${arrival}`;
       } catch (_) {
