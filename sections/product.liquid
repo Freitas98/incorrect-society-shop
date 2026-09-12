@@ -422,6 +422,12 @@
         }
       </script>
 
+      <p class="product-low-stock" data-low-stock hidden>
+        <span class="product-low-stock__live" aria-hidden="true"></span>
+        <span>{{ 'drop.low_stock' | t }}</span>
+        <span class="visually-hidden">{{ 'drop.low_stock_live' | t }}</span>
+      </p>
+
       <button
         type="submit"
         id="add-to-cart-btn"
@@ -433,11 +439,6 @@
       </button>
 
       <p class="stock-status{% unless current_variant.available %} out-stock{% endunless %}" data-stock-status{% if current_variant.available %} hidden{% endif %}></p>
-      <p class="product-low-stock" data-low-stock hidden>
-        <span class="product-low-stock__live" aria-hidden="true"></span>
-        <span>{{ 'drop.low_stock' | t }}</span>
-        <span class="visually-hidden">{{ 'drop.low_stock_live' | t }}</span>
-      </p>
       <p class="product-extinct" data-extinct hidden>{{ 'drop.extinct' | t }}</p>
 
       {% if vto_available %}
@@ -1447,7 +1448,7 @@
     
     .product-col-center {
       grid-row: 1;
-      height: 75vh;
+      height: 55vh;
       margin: 0;
       position: relative;
       overflow: hidden;
@@ -1696,7 +1697,7 @@
   
   @media (max-width: 480px) {
     .product-col-center {
-      height: 65vh;
+      height: 50vh;
     }
     
     .fullscreen-image {

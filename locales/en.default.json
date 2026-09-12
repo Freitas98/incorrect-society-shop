@@ -396,6 +396,8 @@
     "bundle_page_copy": "Secrets White Tee and Sins Burgundy Tee, each in your chosen size. The bundle price is the sum of both pieces.",
     "bundle_add": "ADD THE BUNDLE",
     "bundle_unavailable": "This bundle is unavailable in the selected size.",
+    "bundle_unavailable_size": "Unavailable: ___SIZES___ .",
+    "bundle_unavailable_combination": "This size combination is unavailable: ___SIZES___ .",
     "bundle_free_shipping": "This bundle includes free shipping for Portugal.",
     "free_shipping_threshold": "Free shipping in Portugal on orders of {{ amount }} or more.",
     "low_stock": "Poucas unidades",

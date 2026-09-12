@@ -41,7 +41,7 @@
 %}
 
 {% if settings.enable_drop_features and bundle_product != blank and component_one != blank and component_two != blank and component_one_size_option != blank and component_two_size_option != blank %}
-  <aside class="drop-bundle-card{% if home_bundle %} drop-bundle-card--home{% endif %}" data-drop-bundle-card data-unavailable-text="{{ 'drop.bundle_unavailable' | t | escape }}" aria-live="polite">
+  <aside class="drop-bundle-card{% if home_bundle %} drop-bundle-card--home{% endif %}" data-drop-bundle-card data-unavailable-text="{{ 'drop.bundle_unavailable' | t | escape }}" data-unavailable-size-template="{{ 'drop.bundle_unavailable_size' | t | escape }}" data-unavailable-combination-template="{{ 'drop.bundle_unavailable_combination' | t | escape }}" aria-live="polite">
     <p class="drop-bundle-card__offer"><span aria-hidden="true">✦</span> {{ 'drop.bundle_offer' | t }}</p>
     <div class="drop-bundle-card__images" aria-hidden="true">
       {% if component_one.featured_image != blank %}

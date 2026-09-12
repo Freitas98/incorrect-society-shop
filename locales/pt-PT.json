@@ -395,6 +395,8 @@
     "bundle_page_copy": "Secrets White Tee e Sins Burgundy Tee, cada uma no teu tamanho. O preço do bundle é a soma das duas peças.",
     "bundle_add": "ADICIONAR O BUNDLE",
     "bundle_unavailable": "Este bundle não está disponível no tamanho selecionado.",
+    "bundle_unavailable_size": "Indisponível: ___SIZES___ .",
+    "bundle_unavailable_combination": "Esta combinação de tamanhos não está disponível: ___SIZES___ .",
     "bundle_free_shipping": "Este bundle inclui portes grátis para Portugal.",
     "free_shipping_threshold": "Portes grátis em Portugal em encomendas de {{ amount }} ou mais.",
     "low_stock": "Poucas unidades",
