@@ -11,17 +11,29 @@ As funcionalidades comerciais do drop são controladas em **Definições do tema
 
 O countdown é apenas informativo. No instante de fecho, remover/despublicar os produtos ou a coleção continua a ser uma ação no Shopify Admin; o tema não altera catálogo, inventário ou canais de venda.
 
-## Bundle com portes grátis
+## Bundle e portes em Portugal
 
-Criar primeiro um produto-pai com a aplicação gratuita Shopify Bundles:
+O tema identifica e adiciona **uma variante do produto-pai** `Secrets + Sinners Bundle`; nunca acrescenta duas t-shirts independentes. Criar e manter esse produto-pai na aplicação gratuita Shopify Bundles:
 
-1. Criar um fixed bundle com as duas t-shirts.
+1. Criar um *fixed bundle* com `Secrets White Tee` e `Sins Burgundy Tee`.
 2. Combinar a opção com o mesmo nome nas duas peças, normalmente **Tamanho**, para que cada variante do bundle corresponda ao mesmo tamanho em ambas.
-3. Indicar esse produto-pai em **Bundle product** e as duas peças em **First/Second bundle t-shirt**.
-4. Configurar no Shopify as taxas reais: portes grátis para encomendas de 80 EUR ou mais e uma taxa gratuita para o produto-pai do bundle.
-5. Testar no checkout uma compra com apenas o bundle, uma compra de 80 EUR e uma compra que combine o bundle com outros produtos. O checkout Shopify é a autoridade sobre as taxas finais.
+3. Confirmar que o bundle apresenta as componentes no admin da aplicação **Shopify Bundles**. É esta ligação, e não o tema, que reduz o inventário da Secrets e da Sinners quando é comprada uma variante do bundle.
+4. No editor do tema, indicar esse produto-pai em **Bundle product** e as duas peças em **First/Second bundle t-shirt**. Não escolher uma das t-shirts como produto-pai.
 
-O cartão nas páginas das t-shirts adiciona a variante do produto-pai do bundle. Não adiciona duas variantes independentes: essa diferença permite à Shopify tratar o bundle e os portes como uma regra comercial real.
+Em **Definições Shopify > Envio e entrega > Perfis de envio**, na zona Portugal, manter as taxas normais da transportadora e criar uma taxa gratuita com mínimo de preço de **80 EUR**. Assim, duas unidades da mesma T-shirt só têm portes grátis quando o subtotal elegível chega a 80 EUR; a quantidade não é usada como critério.
+
+O Shopify Bundles não permite aplicar um perfil de envio ao produto-pai: os portes são calculados pelos perfis das peças que o compõem. Por isso, no plano Basic da loja, a regra “bundle presente → portes grátis em Portugal” não pode ser criada apenas com as taxas nativas. Exige uma app pública de regras/descontos de envio que suporte essa condição (pode ter subscrição) ou uma Shopify Function numa loja Shopify Plus. O tema não pode alterar a taxa do checkout de forma segura.
+
+Na raspadinha, cada cupão válido é criado para uma utilização, para o cliente que o recebeu, e está autorizado a acumular com descontos de produto, de encomenda e de envio. Confirmar no admin que outras campanhas/descontos automáticos também permitem acumulação; a Shopify continua a decidir compatibilidades e a validade no checkout.
+
+Antes de publicar, testar no checkout com endereço em Portugal:
+
+1. Uma T-shirt abaixo de 80 EUR: taxa normal da transportadora.
+2. Duas unidades da mesma T-shirt abaixo de 80 EUR: taxa normal da transportadora.
+3. Encomenda de 80 EUR ou mais: portes 0 EUR.
+4. Só o `Secrets + Sinners Bundle`, abaixo de 80 EUR: portes 0 EUR e redução do stock das duas componentes.
+5. Bundle com outros artigos abaixo de 80 EUR: confirmar o comportamento pretendido para os perfis ou para a regra de envio instalada.
+6. Cada caso anterior com um cupão de raspadinha ainda válido: o cupão deve poder ser aplicado.
 
 ## Poucas unidades e EXTINCT
 

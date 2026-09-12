@@ -85,11 +85,26 @@ test('bundle product gallery shows product images and carts prioritize the two-t
   assert.match(header, /bundle-cart-images/);
 });
 
-test('bundle product displays collection breadcrumb and unlocks free shipping', () => {
+test('bundle product displays collection breadcrumb and shipping information', () => {
   const product = read('sections/product.liquid');
   assert.match(product, /is_bundle_product/);
   assert.match(product, /BUNDLES/);
   assert.match(product, /product-free-shipping-threshold--bundle/);
+});
+
+test('bundle composition keeps both product images opaque in product and cart views', () => {
+  const product = read('sections/product.liquid');
+  const cart = read('sections/cart.liquid');
+  const header = read('sections/header.liquid');
+  [product, cart, header].forEach((source) => {
+    assert.doesNotMatch(source, /bundle[\s\S]{0,600}mix-blend-mode:\s*multiply/);
+    assert.match(source, /mix-blend-mode:\s*normal/);
+  });
+});
+
+test('scratch-card codes are permitted to combine with Shopify discount classes', () => {
+  const worker = read('services/scratch-card/src/worker.mjs');
+  assert.match(worker, /combinesWith:\s*{[\s\S]*?orderDiscounts:\s*true,[\s\S]*?productDiscounts:\s*true,[\s\S]*?shippingDiscounts:\s*true/);
 });
 
 test('low stock string is "Poucas unidades" in store locales', () => {

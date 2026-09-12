@@ -1047,7 +1047,9 @@
     height: 148px;
     object-fit: contain;
     background: transparent;
-    mix-blend-mode: multiply;
+    /* Keep the product cut-outs opaque where they overlap. */
+    opacity: 1;
+    mix-blend-mode: normal;
     filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .12));
   }
 
@@ -1062,6 +1064,7 @@
     right: 0;
     bottom: 0;
     transform: rotate(3deg);
+    z-index: 2;
   }
 
   .product-bundle__content {

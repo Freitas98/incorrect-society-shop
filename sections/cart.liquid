@@ -285,12 +285,16 @@
     height: 84%;
     object-fit: contain;
     background: transparent;
-    mix-blend-mode: multiply;
+    opacity: 1;
+    mix-blend-mode: normal;
   }
+
+  .bundle-cart-images img:first-child { z-index: 1; }
 
   .bundle-cart-images img + img {
     margin-left: -28%;
     transform: translateY(8px) rotate(4deg);
+    z-index: 2;
   }
 
   .cart-item-card:hover .item-image img {
