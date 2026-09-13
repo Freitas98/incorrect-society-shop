@@ -178,3 +178,72 @@ test('product page bundle renders drop-bundle-card with hide_images and two sepa
   assert.match(snippet, /data-drop-bundle-size="two"/);
   assert.match(snippet, /drop-bundle-card__offer-logo/);
 });
+
+test('delivery estimate uses after-cutoff template without 0h 0m after cutoff and on non-business days', () => {
+  const product = read('sections/product.liquid');
+  assert.match(product, /data-after-cutoff-template="\{\{\s*'drop\.delivery_after_cutoff'\s*\|\s*t\s*\|\s*escape\s*\}\}"/);
+  assert.match(product, /const todayIsBusinessDay = isBusinessDay\(base\);/);
+  assert.match(product, /const beforeCutoff = todayIsBusinessDay && secondsUntilCutoff > 0;/);
+  assert.doesNotMatch(product, /minutesUntilCutoff > 0 \? .* : '0h 0m'/);
+
+  const weekdays = new Set([1, 2, 3, 4, 5]);
+  const closedDates = new Set(['2026-12-25']);
+  const cutoffHour = 15;
+  const cutoffMinute = 0;
+  const isBusinessDay = (date) => weekdays.has(((date.getUTCDay() + 6) % 7) + 1) && !closedDates.has(date.toISOString().slice(0, 10));
+  const nextBusinessDate = (date, offset = 0) => {
+    const result = new Date(date);
+    result.setUTCDate(result.getUTCDate() + offset);
+    while (!isBusinessDay(result)) result.setUTCDate(result.getUTCDate() + 1);
+    return result;
+  };
+  const countdownTemplate = 'Order within ___TIME___ and we dispatch on ___DAY___ .';
+  const afterCutoffTemplate = 'Orders placed now are dispatched on ___DAY___ .';
+
+  const simulate = (now) => {
+    const base = new Date(Date.UTC(now.year, now.month - 1, now.day));
+    const secondsUntilCutoff = (cutoffHour * 3600 + cutoffMinute * 60) - (now.hour * 3600 + now.minute * 60 + (now.second || 0));
+    const todayIsBusinessDay = isBusinessDay(base);
+    const beforeCutoff = todayIsBusinessDay && secondsUntilCutoff > 0;
+    const dispatch = nextBusinessDate(base, beforeCutoff ? 0 : 1);
+    let dispatchText;
+    if (beforeCutoff) {
+      const remainingMinutes = Math.ceil(secondsUntilCutoff / 60);
+      const hours = Math.floor(remainingMinutes / 60);
+      const minutes = remainingMinutes % 60;
+      const time = `${hours}h ${minutes}m`;
+      dispatchText = countdownTemplate.replace('___TIME___', time).replace('___DAY___', dispatch.toISOString().slice(0, 10));
+    } else {
+      const template = afterCutoffTemplate || countdownTemplate;
+      dispatchText = template.replace('___DAY___', dispatch.toISOString().slice(0, 10)).replace('___TIME___', '').trim();
+    }
+    return { beforeCutoff, dispatchText, dispatchDate: dispatch.toISOString().slice(0, 10) };
+  };
+
+  // 1. Sunday morning (non-business day):
+  const sunday = simulate({ year: 2026, month: 9, day: 13, hour: 11, minute: 0, second: 0 });
+  assert.equal(sunday.beforeCutoff, false);
+  assert.equal(sunday.dispatchDate, '2026-09-14');
+  assert.equal(sunday.dispatchText, 'Orders placed now are dispatched on 2026-09-14 .');
+  assert.doesNotMatch(sunday.dispatchText, /0h 0m/);
+
+  // 2. Monday at 10:00 (business day before cutoff):
+  const mondayMorning = simulate({ year: 2026, month: 9, day: 14, hour: 10, minute: 0, second: 0 });
+  assert.equal(mondayMorning.beforeCutoff, true);
+  assert.equal(mondayMorning.dispatchDate, '2026-09-14');
+  assert.equal(mondayMorning.dispatchText, 'Order within 5h 0m and we dispatch on 2026-09-14 .');
+
+  // 3. Monday at 15:00 (cutoff exact):
+  const mondayCutoff = simulate({ year: 2026, month: 9, day: 14, hour: 15, minute: 0, second: 0 });
+  assert.equal(mondayCutoff.beforeCutoff, false);
+  assert.equal(mondayCutoff.dispatchDate, '2026-09-15');
+  assert.equal(mondayCutoff.dispatchText, 'Orders placed now are dispatched on 2026-09-15 .');
+  assert.doesNotMatch(mondayCutoff.dispatchText, /0h 0m/);
+
+  // 4. Friday at 16:00 (business day after cutoff):
+  const fridayEvening = simulate({ year: 2026, month: 9, day: 18, hour: 16, minute: 0, second: 0 });
+  assert.equal(fridayEvening.beforeCutoff, false);
+  assert.equal(fridayEvening.dispatchDate, '2026-09-21');
+  assert.equal(fridayEvening.dispatchText, 'Orders placed now are dispatched on 2026-09-21 .');
+  assert.doesNotMatch(fridayEvening.dispatchText, /0h 0m/);
+});
