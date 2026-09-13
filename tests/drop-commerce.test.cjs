@@ -120,3 +120,61 @@ test('mobile product gallery uses horizontal scroll snap and preserves page scro
   assert.match(product, /scroll-snap-type:\s*x mandatory;/);
   assert.match(product, /smoothScrollToImage[\s\S]*?targetImage\.offsetLeft/);
 });
+
+test('product page places extinct between size options and buy button, and bundle after buy button', () => {
+  const product = read('sections/product.liquid');
+  const sizeOptionIndex = product.indexOf('class="size-options"');
+  const extinctIndex = product.indexOf('class="product-extinct"');
+  const addToCartIndex = product.indexOf('id="add-to-cart-btn"');
+  const bundleCardIndex = product.indexOf('class="product-bundle"');
+
+  assert.ok(sizeOptionIndex !== -1, 'size options must exist');
+  assert.ok(extinctIndex !== -1, 'extinct element must exist');
+  assert.ok(addToCartIndex !== -1, 'add to cart button must exist');
+  assert.ok(bundleCardIndex !== -1, 'product bundle card must exist');
+
+  assert.ok(sizeOptionIndex < extinctIndex, 'size options must come before extinct');
+  assert.ok(extinctIndex < addToCartIndex, 'extinct must come before add to cart button');
+  assert.ok(addToCartIndex < bundleCardIndex, 'add to cart button must come before bundle card');
+});
+
+test('drop bundle section keeps overlapping shirt images visible on mobile and desktop', () => {
+  const dropBundle = read('sections/drop-bundle.liquid');
+  assert.match(dropBundle, /\.drop-bundle-section \.drop-bundle-card__images img:first-child[\s\S]*?transform:\s*rotate\(-4deg\)/);
+  assert.match(dropBundle, /\.drop-bundle-section \.drop-bundle-card__images img:last-child[\s\S]*?transform:\s*rotate\(4deg\)/);
+  assert.doesNotMatch(dropBundle, /@media\s*\(max-width:\s*640px\)[\s\S]*?\.drop-bundle-card__images\s*\{\s*display:\s*none/);
+  assert.match(dropBundle, /@media\s*\(max-width:\s*640px\)[\s\S]*?\.drop-bundle-card__images\s*\{[\s\S]*?display:\s*block/);
+});
+
+test('mobile product page places gallery, title, buying options and bundle first, moving info sections below', () => {
+  const product = read('sections/product.liquid');
+  const mobileMedia = product.match(/@media\s*\(max-width:\s*768px\)\s*\{([\s\S]*?)\n\s*@media/);
+  assert.ok(mobileMedia, 'mobile media query <= 768px must exist');
+  const css = mobileMedia[1];
+
+  assert.match(css, /\.product-col-left\s*\{[\s\S]*?display:\s*contents;/);
+  assert.match(css, /\.product-col-center\s*\{[\s\S]*?order:\s*1;/);
+  assert.match(css, /\.product-breadcrumb\s*\{[\s\S]*?order:\s*2;/);
+  assert.match(css, /\.product-title-row\s*\{[\s\S]*?order:\s*3;/);
+  assert.match(css, /\.product-col-right\s*\{[\s\S]*?order:\s*4;/);
+  assert.match(css, /\.product-info-sections\s*\{[\s\S]*?order:\s*5;/);
+});
+
+test('product page displays yellow dot for low stock and red dot for extinct', () => {
+  const product = read('sections/product.liquid');
+  assert.match(product, /\.product-low-stock::before\s*\{[\s\S]*?border-radius:\s*50%;[\s\S]*?background:\s*#eab308;/);
+  assert.match(product, /\.product-extinct::before\s*\{[\s\S]*?border-radius:\s*50%;[\s\S]*?background:\s*#dc2626;/);
+});
+
+test('product page bundle renders drop-bundle-card with hide_images and two separate size dropdowns', () => {
+  const product = read('sections/product.liquid');
+  assert.match(product, /render 'drop-bundle-card'[\s\S]*?hide_images:\s*true/);
+  assert.match(product, /\.product-bundle \.drop-bundle-card__offer[\s\S]*?background:\s*#7a1228/);
+  assert.match(product, /\.product-bundle \.drop-bundle-card__sizes select/);
+  assert.match(product, /\.product-bundle \.drop-bundle-card__button/);
+
+  const snippet = read('snippets/drop-bundle-card.liquid');
+  assert.match(snippet, /data-drop-bundle-size="one"/);
+  assert.match(snippet, /data-drop-bundle-size="two"/);
+  assert.match(snippet, /drop-bundle-card__offer-logo/);
+});

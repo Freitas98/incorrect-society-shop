@@ -6,7 +6,7 @@
     data-secure-scratch
     data-campaign-id="{{ section.settings.campaign_id | escape }}"
     data-proxy-path="{{ section.settings.proxy_path | escape }}"
-    data-login-url="{{ routes.account_login_url }}{% if request.path %}?return_to={{ request.path | url_encode }}{% endif %}"
+    data-login-url="{{ routes.storefront_login_url }}"
     data-strings='{
       "intro": {{ "scratch.intro" | t | json }},
       "loading": {{ "scratch.loading" | t | json }},

@@ -16,7 +16,7 @@ O countdown é apenas informativo. No instante de fecho, remover/despublicar os 
 O tema identifica e adiciona **uma variante do produto-pai** `Secrets + Sinners Bundle`; nunca acrescenta duas t-shirts independentes. Criar e manter esse produto-pai na aplicação gratuita Shopify Bundles:
 
 1. Criar um *fixed bundle* com `Secrets White Tee` e `Sins Burgundy Tee`.
-2. Combinar a opção com o mesmo nome nas duas peças, normalmente **Tamanho**, para que cada variante do bundle corresponda ao mesmo tamanho em ambas.
+2. Não ativar **Combine options with matching names** na Shopify Bundles. Manter o seletor de tamanho de cada componente separado, para que o Shopify crie uma variante do bundle para cada combinação vendável (por exemplo, Secrets L + Sinners M).
 3. Confirmar que o bundle apresenta as componentes no admin da aplicação **Shopify Bundles**. É esta ligação, e não o tema, que reduz o inventário da Secrets e da Sinners quando é comprada uma variante do bundle.
 4. No editor do tema, indicar esse produto-pai em **Bundle product** e as duas peças em **First/Second bundle t-shirt**. Não escolher uma das t-shirts como produto-pai.
 
@@ -24,14 +24,14 @@ Em **Definições Shopify > Envio e entrega > Perfis de envio**, na zona Portuga
 
 O Shopify Bundles não permite aplicar um perfil de envio ao produto-pai: os portes são calculados pelos perfis das peças que o compõem. Por isso, no plano Basic da loja, a regra “bundle presente → portes grátis em Portugal” não pode ser criada apenas com as taxas nativas. Exige uma app pública de regras/descontos de envio que suporte essa condição (pode ter subscrição) ou uma Shopify Function numa loja Shopify Plus. O tema não pode alterar a taxa do checkout de forma segura.
 
-Na raspadinha, cada cupão válido é criado para uma utilização, para o cliente que o recebeu, e está autorizado a acumular com descontos de produto, de encomenda e de envio. Confirmar no admin que outras campanhas/descontos automáticos também permitem acumulação; a Shopify continua a decidir compatibilidades e a validade no checkout.
+Na raspadinha, cada cupão válido é criado para uma utilização, para o cliente que o recebeu, e está autorizado a acumular com descontos de produto, de encomenda e de envio. Depois do login, o tema regressa à página de onde a raspadinha foi aberta e volta a abrir o desafio. Confirmar no admin que outras campanhas/descontos automáticos também permitem acumulação; a Shopify continua a decidir compatibilidades e a validade no checkout.
 
 Antes de publicar, testar no checkout com endereço em Portugal:
 
 1. Uma T-shirt abaixo de 80 EUR: taxa normal da transportadora.
 2. Duas unidades da mesma T-shirt abaixo de 80 EUR: taxa normal da transportadora.
 3. Encomenda de 80 EUR ou mais: portes 0 EUR.
-4. Só o `Secrets + Sinners Bundle`, abaixo de 80 EUR: portes 0 EUR e redução do stock das duas componentes.
+4. Só o `Secrets + Sinners Bundle`, abaixo de 80 EUR, incluindo uma combinação de tamanhos diferentes: portes 0 EUR e redução do stock das duas componentes.
 5. Bundle com outros artigos abaixo de 80 EUR: confirmar o comportamento pretendido para os perfis ou para a regra de envio instalada.
 6. Cada caso anterior com um cupão de raspadinha ainda válido: o cupão deve poder ser aplicado.
 

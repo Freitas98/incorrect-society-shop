@@ -47,23 +47,20 @@
     endfor
   endif
 
-  assign bundle_component_product = blank
   assign bundle_available_for_product = false
   assign is_bundle_product = false
   if settings.enable_drop_features and settings.drop_bundle_product != blank
     if product.id == settings.drop_bundle_product.id or product.handle == settings.drop_bundle_product.handle or product.handle == settings.drop_bundle_product
       assign is_bundle_product = true
     elsif product.id == settings.drop_bundle_component_one.id or product.handle == settings.drop_bundle_component_one.handle or product.handle == settings.drop_bundle_component_one
-      assign bundle_component_product = settings.drop_bundle_component_two
       assign bundle_available_for_product = true
     elsif product.id == settings.drop_bundle_component_two.id or product.handle == settings.drop_bundle_component_two.handle or product.handle == settings.drop_bundle_component_two
-      assign bundle_component_product = settings.drop_bundle_component_one
       assign bundle_available_for_product = true
     endif
   endif
 -%}
 
-<div class="product-page-new{% if product.gift_card? or product.type == 'Gift Card' %} product-page--gift-card{% endif %}" data-product-commerce data-low-stock-enabled="{% if settings.enable_drop_features and settings.show_low_stock %}true{% else %}false{% endif %}" data-low-stock-ratio="{{ settings.low_stock_ratio | default: 67 }}" data-bundle-enabled="{{ bundle_available_for_product | json }}">
+<div class="product-page-new{% if product.gift_card? or product.type == 'Gift Card' %} product-page--gift-card{% endif %}" data-product-commerce data-product-id="{{ product.id }}" data-product-handle="{{ product.handle }}" data-product-title="{{ product.title | escape }}" data-low-stock-enabled="{% if settings.enable_drop_features and settings.show_low_stock %}true{% else %}false{% endif %}" data-low-stock-ratio="{{ settings.low_stock_ratio | default: 67 }}" data-bundle-enabled="{{ bundle_available_for_product | json }}">
   
   <!-- Left Column: Product Info -->
   <div class="product-col-left">
@@ -306,46 +303,6 @@
   <!-- Right Column: Options & Add to Cart -->
   <div class="product-col-right">
     {% form 'product', product %}
-      {% if bundle_available_for_product %}
-        <aside class="product-bundle" data-bundle-card data-unavailable-text="{{ 'drop.bundle_unavailable' | t | escape }}" aria-live="polite">
-          <div class="product-bundle__images" aria-hidden="true">
-            {% if product.featured_image != blank %}
-              <img src="{{ product.featured_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
-            {% endif %}
-            {% if bundle_component_product.featured_image != blank %}
-              <img src="{{ bundle_component_product.featured_image | image_url: width: 440 }}" alt="" width="220" height="290" loading="lazy">
-            {% endif %}
-          </div>
-          <div class="product-bundle__content">
-            <p class="product-bundle__eyebrow">{{ 'drop.bundle_title' | t }}</p>
-            <p class="product-bundle__copy">{{ 'drop.bundle_copy' | t }}</p>
-            <p class="product-bundle__shipping">{{ 'drop.bundle_free_shipping' | t }}</p>
-            <button type="button" class="product-bundle__button" data-bundle-add>
-              <span data-bundle-button-text>{{ 'drop.bundle_add' | t }}</span>
-              <span data-bundle-price></span>
-            </button>
-            <p class="product-bundle__status" data-bundle-status hidden></p>
-          </div>
-        </aside>
-        <script type="application/json" data-bundle-data>
-          {
-            "options": {{ settings.drop_bundle_product.options | json }},
-            "variants": [
-              {% for bundle_variant in settings.drop_bundle_product.variants %}
-                {
-                  "id": {{ bundle_variant.id | json }},
-                  "available": {{ bundle_variant.available | json }},
-                  "priceHtml": {{ bundle_variant.price | money_with_currency | json }},
-                  "option1": {{ bundle_variant.option1 | json }},
-                  "option2": {{ bundle_variant.option2 | json }},
-                  "option3": {{ bundle_variant.option3 | json }}
-                }{% unless forloop.last %},{% endunless %}
-              {% endfor %}
-            ]
-          }
-        </script>
-      {% endif %}
-
       {% if product.has_only_default_variant == false %}
         <!-- Color Selection (if exists) -->
         {% for option in product.options_with_values %}
@@ -489,6 +446,12 @@
           </svg>
           <span>{{ 'products.product.try_on_ar' | t: default: 'Try now using VR' }}</span>
         </button>
+      {% endif %}
+
+      {% if bundle_available_for_product %}
+        <div class="product-bundle">
+          {% render 'drop-bundle-card', context_product: product, hide_images: true %}
+        </div>
       {% endif %}
 
       {% if settings.enable_drop_features and settings.show_delivery_estimate and product.gift_card? == false %}
@@ -1026,70 +989,149 @@
   }
 
   .product-bundle {
-    display: grid;
-    grid-template-columns: 148px minmax(0, 1fr);
-    gap: 16px;
-    margin: 0 0 24px;
-    padding: 14px;
-    background: var(--color-surface, #111111);
-    border: 1px solid var(--color-border, #333333);
-  }
-
-  .product-bundle__images {
-    position: relative;
-    min-height: 174px;
-    isolation: isolate;
-  }
-
-  .product-bundle__images img {
-    position: absolute;
-    width: 108px;
-    height: 148px;
-    object-fit: contain;
-    background: transparent;
-    /* Keep the product cut-outs opaque where they overlap. */
-    opacity: 1;
+    margin: 20px 0 24px;
+    width: 100%;
     mix-blend-mode: normal;
-    filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .12));
   }
 
-  .product-bundle__images img:first-child {
-    top: 4px;
-    left: 0;
-    transform: rotate(-3deg);
-    z-index: 1;
+  .product-bundle .drop-bundle-card {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--color-background, #fff);
+    border: 1px solid var(--color-border, #d8d8d8);
+    box-sizing: border-box;
   }
 
-  .product-bundle__images img:last-child {
-    right: 0;
-    bottom: 0;
-    transform: rotate(3deg);
-    z-index: 2;
-  }
-
-  .product-bundle__content {
+  .product-bundle .drop-bundle-card__offer {
     display: flex;
-    min-width: 0;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .product-bundle__eyebrow,
-  .product-bundle__copy,
-  .product-bundle__shipping,
-  .product-bundle__status {
-    margin: 0;
-  }
-
-  .product-bundle__eyebrow {
-    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    padding: 10px 14px;
+    background: #7a1228;
+    color: #ffffff;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: .09em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    margin-bottom: 16px;
   }
 
-  .product-bundle__copy,
-  .product-bundle__shipping,
-  .product-bundle__status,
+  .product-bundle .drop-bundle-card__offer-label > span {
+    color: #f3b15c;
+    margin-right: 4px;
+  }
+
+  .product-bundle .drop-bundle-card__offer-logo {
+    position: absolute;
+    right: 14px;
+    width: 32px;
+    height: 16px;
+    object-fit: contain;
+  }
+
+  .product-bundle .drop-bundle-card__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .product-bundle .drop-bundle-card__copy {
+    margin: 0 0 16px 0;
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--color-foreground, #111);
+    font-weight: 400;
+  }
+
+  .product-bundle .drop-bundle-card__sizes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .product-bundle .drop-bundle-card__sizes label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--color-foreground, #111);
+  }
+
+  .product-bundle .drop-bundle-card__sizes select {
+    width: 100%;
+    height: 42px;
+    min-height: 42px;
+    padding: 8px 32px 8px 12px;
+    border: 1px solid var(--color-border, #d1d5db);
+    border-radius: 0;
+    background-color: var(--color-background, #fff);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    color: var(--color-foreground, #111);
+    font: inherit;
+    font-size: 13px;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .product-bundle .drop-bundle-card__sizes select:focus {
+    outline: 1px solid var(--color-foreground, #111);
+    border-color: var(--color-foreground, #111);
+  }
+
+  .product-bundle .drop-bundle-card__shipping {
+    margin: 0 0 16px 0;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--color-foreground, #111);
+  }
+
+  .product-bundle .drop-bundle-card__button {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 13px 16px;
+    border: 0;
+    background: var(--color-foreground, #111);
+    color: var(--color-background, #fff);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .product-bundle .drop-bundle-card__button:disabled {
+    cursor: not-allowed;
+    opacity: .52;
+  }
+
+  .product-bundle .drop-bundle-card__status {
+    margin: 10px 0 0;
+    color: var(--color-error, #b91c1c);
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
   .product-low-stock,
   .product-extinct,
   .product-delivery-estimate,
@@ -1099,34 +1141,10 @@
     line-height: 1.45;
   }
 
-  .product-bundle__copy { margin-top: 6px; }
-  .product-bundle__shipping { margin-top: 8px; font-weight: 700; }
-
-  .product-bundle__button {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    gap: 12px;
-    margin-top: 14px;
-    padding: 12px;
-    color: var(--color-background);
-    background: var(--color-foreground);
-    border: 0;
-    cursor: pointer;
-    font: inherit;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .06em;
-  }
-
-  .product-bundle__button:disabled {
-    cursor: not-allowed;
-    opacity: .52;
-  }
-
-  .product-bundle__status { margin-top: 8px; color: var(--color-error); }
-
   .product-low-stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     margin: 0 0 10px;
     color: var(--color-warning, #a16207);
     font-weight: 700;
@@ -1134,11 +1152,44 @@
     letter-spacing: .06em;
   }
 
+  .product-low-stock::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    border-radius: 50%;
+    background: #eab308;
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2);
+  }
+
+  .product-low-stock[hidden] {
+    display: none !important;
+  }
+
   .product-extinct {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     margin: 0 0 14px;
     color: var(--color-error, #b91c1c);
     font-weight: 800;
     letter-spacing: .12em;
+  }
+
+  .product-extinct::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    border-radius: 50%;
+    background: #dc2626;
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+  }
+
+  .product-extinct[hidden] {
+    display: none !important;
   }
 
   .product-delivery-estimate,
@@ -1271,16 +1322,45 @@
   
   /* Stock Status */
   .stock-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     font-size: 13px;
     margin: 20px 0;
+  }
+
+  .stock-status[hidden] {
+    display: none !important;
   }
   
   .stock-status.in-stock {
     color: #22c55e;
   }
+
+  .stock-status.in-stock::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+  }
   
   .stock-status.out-stock {
-    color: var(--color-error);
+    color: var(--color-error, #b91c1c);
+  }
+
+  .stock-status.out-stock::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    min-width: 7px;
+    border-radius: 50%;
+    background: var(--color-error, #b91c1c);
+    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
   }
   
   /* Add to Cart Button */
@@ -1426,22 +1506,51 @@
   
   @media (max-width: 768px) {
     .product-page-new {
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       margin-top: 0;
+      padding: 0;
     }
     
-    .product-col-left,
-    .product-col-center,
-    .product-col-right {
-      grid-column: 1;
+    .product-col-left {
+      display: contents;
     }
-    
+
     .product-col-center {
-      grid-row: 1;
-      height: 75vh;
+      order: 1;
+      height: 28vh;
+      min-height: 190px;
+      max-height: 270px;
       margin: 0;
       position: relative;
       overflow: hidden;
+    }
+
+    .product-breadcrumb {
+      order: 2;
+      padding: 12px 20px 0;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+
+    .product-title-row {
+      order: 3;
+      padding: 0 20px 8px;
+      margin-bottom: 4px;
+      border-bottom: 1px solid var(--color-border);
+      gap: 10px;
+    }
+
+    .product-col-right {
+      order: 4;
+      padding: 8px 20px 20px;
+    }
+
+    .product-info-sections {
+      order: 5;
+      padding: 14px 20px 60px;
+      border-top: 1px solid var(--color-border);
+      margin-top: 8px;
     }
 
     .product-images-fullscreen {
@@ -1488,39 +1597,123 @@
       height: 100%;
       object-fit: contain;
     }
-    
-    .product-col-left {
-      grid-row: 2;
-      padding: 20px 20px;
+
+    .product-option-group {
+      margin-bottom: 10px;
     }
-    
-    .product-col-right {
-      grid-row: 3;
-      padding: 20px 20px;
+
+    .option-header-inline {
+      margin-bottom: 4px;
+    }
+
+    .size-options {
+      gap: 6px;
+    }
+
+    .size-btn {
+      min-width: 44px;
+      height: 38px;
+      padding: 0 12px;
+      font-size: 13px;
+    }
+
+    .stock-status {
+      margin: 6px 0;
+      font-size: 11px;
+    }
+
+    .product-low-stock {
+      margin: 0 0 6px;
+      font-size: 11px;
+    }
+
+    .product-extinct {
+      margin: 0 0 8px;
+      font-size: 11px;
+    }
+
+    .add-to-cart-btn {
+      padding: 12px 18px;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .btn-try-on-ar {
+      margin-top: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
     }
 
     .product-bundle {
-      grid-template-columns: 118px minmax(0, 1fr);
+      margin-top: 10px;
+      margin-bottom: 12px;
     }
 
-    .product-bundle__images {
-      min-height: 146px;
+    .product-bundle .drop-bundle-card {
+      padding: 12px;
     }
 
-    .product-bundle__images img {
-      width: 88px;
-      height: 126px;
+    .product-bundle .drop-bundle-card__offer {
+      padding: 8px 10px;
+      font-size: 10px;
+      margin-bottom: 12px;
+    }
+
+    .product-bundle .drop-bundle-card__offer-logo {
+      right: 10px;
+      width: 26px;
+      height: 13px;
+    }
+
+    .product-bundle .drop-bundle-card__copy {
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .product-bundle .drop-bundle-card__sizes {
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .product-bundle .drop-bundle-card__sizes label {
+      font-size: 10px;
+      gap: 6px;
+    }
+
+    .product-bundle .drop-bundle-card__sizes select {
+      height: 38px;
+      min-height: 38px;
+      font-size: 12px;
+      padding: 6px 28px 6px 10px;
+      background-position: right 10px center;
+    }
+
+    .product-bundle .drop-bundle-card__shipping {
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .product-bundle .drop-bundle-card__button {
+      padding: 11px 12px;
+      font-size: 11px;
+    }
+
+    .product-delivery-estimate,
+    .product-drop-countdown,
+    .product-free-shipping-threshold {
+      margin: 6px 0 0;
+      font-size: 11px;
     }
     
     .product-thumbnails-corner {
-      top: auto;
-      bottom: 90px; /* Above model info on mobile */
-      left: 15px;
-      transform: none;
-      flex-direction: row;
-      gap: 5px;
-      max-width: calc(100% - 30px);
-      overflow-x: auto;
+      top: 50%;
+      bottom: auto;
+      left: 10px;
+      transform: translateY(-50%);
+      flex-direction: column;
+      gap: 4px;
+      max-height: calc(100% - 20px);
+      overflow-y: auto;
       scrollbar-width: none;
       -ms-overflow-style: none;
       z-index: 10;
@@ -1531,14 +1724,16 @@
     }
     
     .model-info-overlay {
-      bottom: 15px;
-      font-size: 11px;
-      padding: 6px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 10px;
+      padding: 4px 6px;
     }
     
     .thumbnail {
-      width: 38px;
-      height: 48px;
+      width: 26px;
+      height: 36px;
     }
     
     .size-guide-popup {
@@ -1683,32 +1878,64 @@
   
   @media (max-width: 480px) {
     .product-col-center {
-      height: 65vh;
+      height: 26vh;
+      min-height: 180px;
+      max-height: 240px;
     }
     
     .fullscreen-image {
       height: 100%;
     }
     
-    .product-col-left,
+    .product-breadcrumb {
+      padding: 10px 15px 0;
+    }
+
+    .product-title-row {
+      padding: 0 15px 6px;
+    }
+
     .product-col-right {
-      padding: 15px;
+      padding: 6px 15px 16px;
+    }
+
+    .product-info-sections {
+      padding: 12px 15px 50px;
+    }
+
+    .product-bundle {
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .product-bundle .drop-bundle-card {
+      padding: 10px;
+    }
+
+    .product-bundle .drop-bundle-card__sizes {
+      gap: 6px;
     }
     
     .product-thumbnails-corner {
-      bottom: 75px;
-      left: 10px;
-      gap: 4px;
+      top: 50%;
+      bottom: auto;
+      left: 8px;
+      transform: translateY(-50%);
+      flex-direction: column;
+      gap: 3px;
     }
     
     .thumbnail {
-      width: 32px;
-      height: 42px;
+      width: 24px;
+      height: 32px;
     }
     
     .model-info-overlay {
-      bottom: 10px;
-      font-size: 10px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      font-size: 9px;
+      padding: 3px 6px;
     }
   }
 {% endstylesheet %}
@@ -2050,24 +2277,36 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function updateBundle(values) {
-    const card = commerceRoot.querySelector('[data-bundle-card]');
-    const dataEl = commerceRoot.querySelector('[data-bundle-data]');
-    if (!card || !dataEl) return;
-    const button = card.querySelector('[data-bundle-add]');
-    const price = card.querySelector('[data-bundle-price]');
-    const status = card.querySelector('[data-bundle-status]');
-    const bundleData = JSON.parse(dataEl.textContent);
+    const card = commerceRoot.querySelector('[data-drop-bundle-card]');
+    if (!card) return;
+    const productId = Number(commerceRoot.dataset.productId);
+    const productHandle = commerceRoot.dataset.productHandle;
+    const compOneId = Number(card.dataset.componentOneId);
+    const compTwoId = Number(card.dataset.componentTwoId);
+    const compOneHandle = card.dataset.componentOneHandle;
+    const compTwoHandle = card.dataset.componentTwoHandle;
+
+    const isCompOne = (productId && compOneId && productId === compOneId) || (productHandle && compOneHandle && productHandle === compOneHandle);
+    const isCompTwo = (productId && compTwoId && productId === compTwoId) || (productHandle && compTwoHandle && productHandle === compTwoHandle);
+
     const mainSizePosition = variantData.options.findIndex(option => /size|tamanho/i.test(option.name)) + 1;
-    const bundleSizePosition = bundleData.options.findIndex(option => /size|tamanho/i.test(option)) + 1;
     const size = values[mainSizePosition];
-    const bundleVariant = size && bundleSizePosition
-      ? bundleData.variants.find(variant => normalise(optionValue(variant, bundleSizePosition)) === size)
-      : null;
-    const available = Boolean(bundleVariant && bundleVariant.available);
-    button.disabled = !available;
-    button.dataset.variantId = available ? bundleVariant.id : '';
-    price.textContent = available ? bundleVariant.priceHtml : '';
-    setMessage(status, available ? '' : card.dataset.unavailableText, !available);
+    if (!size) return;
+
+    let targetSelect = null;
+    if (isCompOne) {
+      targetSelect = card.querySelector('[data-drop-bundle-size="one"]');
+    } else if (isCompTwo) {
+      targetSelect = card.querySelector('[data-drop-bundle-size="two"]');
+    }
+
+    if (targetSelect && normalise(targetSelect.value) !== size) {
+      const matchingOption = Array.from(targetSelect.options).find(opt => normalise(opt.value) === size);
+      if (matchingOption) {
+        targetSelect.value = matchingOption.value;
+        targetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
   }
 
   function updateVariant() {

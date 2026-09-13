@@ -49,11 +49,14 @@
 
             <div class="item-variant-price-wrapper">
               {% unless item.product.has_only_default_variant %}
-                <div class="item-variant">
+                <div class="item-variant{% if is_bundle_cart_item %} item-variant--bundle{% endif %}">
                   {% for option in item.product.options_with_values %}
                     {% liquid
                       assign opt_name_down = option.name | downcase
-                      if opt_name_down contains 'size' or opt_name_down contains 'tamanho'
+                      if is_bundle_cart_item
+                        assign opt_label = option.name
+                        assign opt_class = 'bundle-variant-option'
+                      elsif opt_name_down contains 'size' or opt_name_down contains 'tamanho'
                         assign opt_label = 'products.options.size' | t
                         assign opt_class = 'size-badge'
                       elsif opt_name_down contains 'color' or opt_name_down contains 'cor'
@@ -367,6 +370,17 @@
 
   .item-variant span {
     display: inline-block;
+  }
+
+  .item-variant--bundle {
+    display: grid;
+    gap: 3px;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .item-variant--bundle span {
+    display: block;
   }
 
   .variant-price {
