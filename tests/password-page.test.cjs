@@ -219,6 +219,19 @@ test('password page enforces pure black background for html, body, and video con
   assert.match(source, /\.password-video-container\s*\{[\s\S]*?background-color:\s*#000000;/);
 });
 
+test('password page applies dark overlay for video legibility and declares opacity range in schema', () => {
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/settings_schema.json'), 'utf8'));
+  const passwordSettings = schema.find((group) => group.name === 'Password Page').settings;
+  const overlaySetting = passwordSettings.find((setting) => setting.id === 'password_video_overlay_opacity');
+
+  assert.ok(overlaySetting, 'password_video_overlay_opacity setting should exist');
+  assert.equal(overlaySetting.type, 'range');
+  assert.equal(overlaySetting.default, 45);
+
+  assert.match(source, /\.password-overlay\s*\{[\s\S]*?\{\%\s*if password_has_video\s*\%\}\s*background:\s*rgba\(0,\s*0,\s*0,/);
+  assert.match(source, /\.password-overlay\s*\{[\s\S]*?pointer-events:\s*none;/);
+});
+
 test('video autoplay initialization ensures video element is muted and triggers play()', () => {
   let playCalled = false;
   let isMuted = false;

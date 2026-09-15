@@ -1074,6 +1074,17 @@
         "info": "Direct MP4/WebM URL fallback if not selecting a Shopify-hosted video"
       },
       {
+        "type": "range",
+        "id": "password_video_overlay_opacity",
+        "min": 0,
+        "max": 90,
+        "step": 5,
+        "unit": "%",
+        "label": "Video overlay opacity",
+        "default": 45,
+        "info": "Dark overlay to improve text and timer readability over video"
+      },
+      {
         "type": "checkbox",
         "id": "password_show_visitor_message",
         "label": "Show visitor message",
