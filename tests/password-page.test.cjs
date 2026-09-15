@@ -168,3 +168,86 @@ test('initialization also runs through DOMContentLoaded', () => {
   page.ready();
   assertEnterButton(page);
 });
+
+test('password background type setting is defined in schema with image and video options', () => {
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/settings_schema.json'), 'utf8'));
+  const passwordSettings = schema.find((group) => group.name === 'Password Page').settings;
+  const bgTypeSetting = passwordSettings.find((setting) => setting.id === 'password_background_type');
+
+  assert.ok(bgTypeSetting, 'password_background_type should exist in Password Page settings');
+  assert.equal(bgTypeSetting.type, 'select');
+  assert.equal(bgTypeSetting.default, 'image');
+
+  const values = bgTypeSetting.options.map((opt) => opt.value);
+  assert.ok(values.includes('image'), 'Options must include "image"');
+  assert.ok(values.includes('video'), 'Options must include "video"');
+});
+
+test('password background video settings exist for hosted video and fallback URL', () => {
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/settings_schema.json'), 'utf8'));
+  const passwordSettings = schema.find((group) => group.name === 'Password Page').settings;
+
+  const hostedVideoSetting = passwordSettings.find((setting) => setting.id === 'password_background_video');
+  assert.ok(hostedVideoSetting, 'password_background_video setting should exist');
+  assert.equal(hostedVideoSetting.type, 'video');
+
+  const videoUrlSetting = passwordSettings.find((setting) => setting.id === 'password_background_video_url');
+  assert.ok(videoUrlSetting, 'password_background_video_url setting should exist');
+  assert.equal(videoUrlSetting.type, 'url');
+});
+
+test('password video background markup includes autoplay, loop, muted, and playsinline attributes', () => {
+  assert.match(source, /\{%\s*if password_has_video\s*%\}\s*<div class="password-video-container" aria-hidden="true">/);
+  assert.match(source, /autoplay:\s*true/);
+  assert.match(source, /loop:\s*true/);
+  assert.match(source, /muted:\s*true/);
+  assert.match(source, /playsinline:\s*true/);
+  assert.match(source, /<video[\s\S]*?autoplay[\s\S]*?loop[\s\S]*?muted[\s\S]*?playsinline/);
+});
+
+test('password video background CSS layers behind overlay and interactive content', () => {
+  assert.match(source, /\.password-video-container\s*\{[\s\S]*?position:\s*fixed;/);
+  assert.match(source, /\.password-video-container\s*\{[\s\S]*?z-index:\s*0;/);
+  assert.match(source, /\.password-background-video\s*\{[\s\S]*?object-fit:\s*cover;/);
+  assert.match(source, /\.password-overlay\s*\{[\s\S]*?z-index:\s*1;/);
+  assert.match(source, /\.password-wrapper\s*\{[\s\S]*?z-index:\s*2;/);
+});
+
+test('video autoplay initialization ensures video element is muted and triggers play()', () => {
+  let playCalled = false;
+  let isMuted = false;
+
+  const videoMock = {
+    muted: false,
+    play() {
+      playCalled = true;
+      isMuted = this.muted;
+      return Promise.resolve();
+    },
+  };
+
+  const elements = new Map([
+    ['password-background-video', videoMock],
+    ['password-timer', { classList: { add: () => {}, remove: () => {}, contains: () => false } }],
+    ['password-input-group', { classList: { add: () => {}, remove: () => {}, contains: () => false } }],
+    ['password-enter-btn', { classList: { add: () => {}, remove: () => {}, contains: () => false } }],
+    ['password-input', { value: '', removeAttribute: () => {}, hasAttribute: () => false }],
+  ]);
+
+  const renderedScript = script
+    .replace(/const TIMER_ENABLED = [^\r\n]+/, 'const TIMER_ENABLED = false;');
+
+  vm.runInNewContext(renderedScript, {
+    Date,
+    document: {
+      readyState: 'complete',
+      getElementById: (id) => elements.get(id),
+      addEventListener: () => {},
+    },
+    setInterval: () => {},
+    clearInterval: () => {},
+  });
+
+  assert.equal(playCalled, true, 'Video play() should be called during initialization');
+  assert.equal(isMuted, true, 'Video should be explicitly muted before play() to allow browser autoplay');
+});
