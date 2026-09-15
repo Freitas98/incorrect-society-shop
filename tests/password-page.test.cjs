@@ -213,6 +213,12 @@ test('password video background CSS layers behind overlay and interactive conten
   assert.match(source, /\.password-wrapper\s*\{[\s\S]*?z-index:\s*2;/);
 });
 
+test('password page enforces pure black background for html, body, and video container with no image in video mode', () => {
+  assert.match(source, /html\s*\{[\s\S]*?background-color:\s*#000000;/);
+  assert.match(source, /\{%\s*if password_has_video\s*%\}\s*background-color:\s*#000000;\s*background-image:\s*none;\s*\{%\s*else\s*%\}/);
+  assert.match(source, /\.password-video-container\s*\{[\s\S]*?background-color:\s*#000000;/);
+});
+
 test('video autoplay initialization ensures video element is muted and triggers play()', () => {
   let playCalled = false;
   let isMuted = false;
