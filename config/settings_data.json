@@ -67,14 +67,16 @@
     "music_track_17_name": "",
     "music_track_17_url": "",
     "logo_image": "shopify://shop_images/Logo_white.svg",
+    "password_background_type": "video",
     "password_background_image": "shopify://shop_images/WhatsApp_Image_2026-02-06_at_01.47.53.jpg",
+    "password_background_video": "shopify://files/videos/inc.mp4",
     "password_timer_enabled": true,
     "password_open_date": "2026-10-01T20:00:00+00:00",
     "password_auto_password": "SecretsAndSins2026",
+    "enable_virtual_try_on": false,
     "announcement_message_1": "WORLDWIDE SHIPPING WITH FREE SHIPING IN PORTUGAL 80€+",
     "announcement_message_2": "SECRETS AND SINS OUT NOW",
     "announcement_message_3": "NO RESTOCKS",
-    "enable_virtual_try_on": false,
     "sections": {
       "announcement-bar": {
         "type": "announcement-bar",
@@ -100,13 +102,6 @@
         }
       }
     },
-    "content_for_index": [],
-    "blocks": {
-      "9604309306827082646": {
-        "type": "shopify://apps/mori-scratch-card-popup/blocks/popup/019e1d61-0725-7ffa-8de9-7548f2731d08",
-        "disabled": false,
-        "settings": {}
-      }
-    }
+    "content_for_index": []
   }
 }
