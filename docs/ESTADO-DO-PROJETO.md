@@ -6,6 +6,8 @@ Atualização de 2026-09-03: corrigida localmente a precedência do modo countdo
 
 Também adicionada a opção `password_show_visitor_message`, em Password Page, para mostrar a mensagem nativa da página de acesso (`shop.password_message`) abaixo do logótipo e com a mesma fonte. Esta é a mensagem definida no admin em Acesso à loja → Mensagem para os seus visitantes; não é a descrição SEO da loja. Ativa por defeito; sem mensagem ou com a opção desativada, o parágrafo não é renderizado. Foram acrescentadas verificações estruturais do schema, condição, escape e tipografia aos testes locais; a apresentação com os dados reais da loja precisa de confirmação em preview.
 
+Atualização de 2026-09-21: Password Page passou a poder substituir a entrada de palavra-passe por subscrição de newsletter enquanto o countdown ativo decorre (`password_countdown_newsletter_enabled`, desativado por defeito). O formulário continua a usar o tipo nativo `customer`, com a tag `newsletter_password`; quando o contador termina, a subscrição é ocultada e mantém-se o ENTER com o fluxo existente. As mensagens dos estados countdown em curso, countdown terminado e countdown desativado são configuráveis em Password Page. A apresentação efetiva e a entrega de email continuam a depender da configuração da loja Shopify; não foram feitas subscrições nem publicação.
+
 ## 1. Conclusão
 
 A loja tem um tema Shopify personalizado com as principais áreas de uma loja de roupa já implementadas: catálogo, produto, variantes, compra rápida, carrinho, pesquisa, tamanhos, newsletter, gift cards e conteúdo editorial. Não é apenas um protótipo visual.

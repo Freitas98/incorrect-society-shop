@@ -33,8 +33,33 @@ test('visitor message inherits the page font and sits between the logo and timer
   assert.match(source, /\.password-visitor-message\s*\{[^}]*font-family:\s*inherit;/);
 });
 
+test('password-page settings include configurable copy for each state and optional countdown newsletter', () => {
+  const schema = JSON.parse(fs.readFileSync(path.join(__dirname, '../config/settings_schema.json'), 'utf8'));
+  const passwordSettings = schema.find((group) => group.name === 'Password Page').settings;
+  const newsletterToggle = passwordSettings.find((setting) => setting.id === 'password_countdown_newsletter_enabled');
+
+  assert.equal(newsletterToggle.type, 'checkbox');
+  assert.equal(newsletterToggle.default, false);
+
+  for (const id of [
+    'password_countdown_message',
+    'password_open_message',
+    'password_default_message',
+    'password_countdown_newsletter_message',
+  ]) {
+    assert.equal(passwordSettings.find((setting) => setting.id === id).type, 'text');
+  }
+});
+
+test('newsletter form is a separate native customer form and is only presented for the countdown state', () => {
+  assert.match(source, /\{%\s*form 'customer', id: 'PasswordNewsletterForm', class: 'password-newsletter'\s*%\}/);
+  assert.match(source, /name="contact\[tags\]" value="newsletter_password"/);
+  assert.match(source, /name="contact\[accepts_marketing\]" value="true"/);
+  assert.match(source, /id="password-state-message" aria-live="polite"/);
+});
+
 // Execute the actual page script with an isolated DOM and clock. No Shopify requests.
-function createPage({ enabled, now, readyState = 'complete', initialInput = '' }) {
+function createPage({ enabled, newsletterEnabled = false, now, readyState = 'complete', initialInput = '' }) {
   let clock = now;
   const elements = new Map();
   const intervals = new Map();
@@ -43,7 +68,7 @@ function createPage({ enabled, now, readyState = 'complete', initialInput = '' }
 
   for (const id of [
     'password-timer', 'password-input-group', 'password-enter-btn', 'password-input',
-    'timer-days', 'timer-hours', 'timer-minutes', 'timer-seconds',
+    'PasswordNewsletterForm', 'password-state-message', 'timer-days', 'timer-hours', 'timer-minutes', 'timer-seconds',
   ]) {
     const classes = new Set();
     const attributes = new Set(id === 'password-input' ? ['required'] : []);
@@ -51,6 +76,10 @@ function createPage({ enabled, now, readyState = 'complete', initialInput = '' }
       classList: {
         add: (value) => classes.add(value),
         remove: (value) => classes.delete(value),
+        toggle: (value, force) => {
+          if (force) classes.add(value);
+          else classes.delete(value);
+        },
         contains: (value) => classes.has(value),
       },
       value: id === 'password-input' ? initialInput : '',
@@ -70,7 +99,11 @@ function createPage({ enabled, now, readyState = 'complete', initialInput = '' }
   const renderedScript = script
     .replace(/const TIMER_ENABLED = [^\r\n]+/, `const TIMER_ENABLED = ${JSON.stringify(enabled)};`)
     .replace(/const SHOP_OPEN_DATE = [^\r\n]+/, `const SHOP_OPEN_DATE = new Date(${openingTime});`)
-    .replace(/const AUTO_PASSWORD = [^\r\n]+/, `const AUTO_PASSWORD = ${JSON.stringify(fixturePassword)};`);
+    .replace(/const AUTO_PASSWORD = [^\r\n]+/, `const AUTO_PASSWORD = ${JSON.stringify(fixturePassword)};`)
+    .replace(/const COUNTDOWN_NEWSLETTER_ENABLED = [^\r\n]+/, `const COUNTDOWN_NEWSLETTER_ENABLED = ${JSON.stringify(newsletterEnabled)};`)
+    .replace(/const COUNTDOWN_MESSAGE = [^\r\n]+/, 'const COUNTDOWN_MESSAGE = "countdown message";')
+    .replace(/const OPEN_MESSAGE = [^\r\n]+/, 'const OPEN_MESSAGE = "open message";')
+    .replace(/const DEFAULT_MESSAGE = [^\r\n]+/, 'const DEFAULT_MESSAGE = "default message";');
 
   vm.runInNewContext(renderedScript, {
     Date: ControlledDate,
@@ -107,12 +140,22 @@ function assertManualEntry(page, countdownVisible) {
   assert.equal(page.get('password-input').value, '');
 }
 
+function assertNewsletterSignup(page) {
+  assert.equal(page.get('password-timer').classList.contains('active'), true);
+  assert.equal(page.get('password-input-group').classList.contains('hidden'), true);
+  assert.equal(page.get('PasswordNewsletterForm').classList.contains('active'), true);
+  assert.equal(page.get('password-enter-btn').classList.contains('active'), false);
+  assert.equal(page.get('password-state-message').textContent, 'countdown message');
+}
+
 function assertEnterButton(page) {
   assert.equal(page.get('password-timer').classList.contains('active'), false);
   assert.equal(page.get('password-input-group').classList.contains('hidden'), true);
   assert.equal(page.get('password-enter-btn').classList.contains('active'), true);
   assert.equal(page.get('password-input').value, fixturePassword);
   assert.equal(page.get('password-input').hasAttribute('required'), false);
+  assert.equal(page.get('PasswordNewsletterForm').classList.contains('active'), false);
+  assert.equal(page.get('password-state-message').textContent, 'open message');
   assert.equal(page.intervals.size, 0);
 }
 
@@ -139,6 +182,13 @@ test('enabled countdown: countdown and manual input remain visible before openin
   assert.equal(page.intervals.size, 1);
 });
 
+test('enabled countdown can replace password entry with newsletter signup before opening', () => {
+  const page = createPage({ enabled: true, newsletterEnabled: true, now: openingTime - 1000 });
+  assertNewsletterSignup(page);
+  page.tick(openingTime);
+  assertEnterButton(page);
+});
+
 for (const [label, offset] of [['at', 0], ['after', 1000]]) {
   test(`enabled countdown: prefilled ENTER button ${label} opening`, () => {
     assertEnterButton(createPage({ enabled: true, now: openingTime + offset }));
@@ -160,6 +210,7 @@ test('disabled countdown preserves user input rather than auto-filling it', () =
   const page = createPage({ enabled: false, now: openingTime + 1000, initialInput: 'manual-entry' });
   assert.equal(page.get('password-input').value, 'manual-entry');
   assert.equal(page.get('password-input').hasAttribute('required'), true);
+  assert.equal(page.get('password-state-message').textContent, 'default message');
 });
 
 test('initialization also runs through DOMContentLoaded', () => {
@@ -254,7 +305,11 @@ test('video autoplay initialization ensures video element is muted and triggers 
   ]);
 
   const renderedScript = script
-    .replace(/const TIMER_ENABLED = [^\r\n]+/, 'const TIMER_ENABLED = false;');
+    .replace(/const TIMER_ENABLED = [^\r\n]+/, 'const TIMER_ENABLED = false;')
+    .replace(/const COUNTDOWN_NEWSLETTER_ENABLED = [^\r\n]+/, 'const COUNTDOWN_NEWSLETTER_ENABLED = false;')
+    .replace(/const COUNTDOWN_MESSAGE = [^\r\n]+/, 'const COUNTDOWN_MESSAGE = "countdown message";')
+    .replace(/const OPEN_MESSAGE = [^\r\n]+/, 'const OPEN_MESSAGE = "open message";')
+    .replace(/const DEFAULT_MESSAGE = [^\r\n]+/, 'const DEFAULT_MESSAGE = "default message";');
 
   vm.runInNewContext(renderedScript, {
     Date,

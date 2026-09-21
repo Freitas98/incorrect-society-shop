@@ -1099,6 +1099,55 @@
         "info": "Show a countdown timer on the password page"
       },
       {
+        "type": "checkbox",
+        "id": "password_countdown_newsletter_enabled",
+        "label": "Show newsletter signup during countdown",
+        "default": false,
+        "info": "Replace password entry with newsletter signup while the enabled countdown is still running."
+      },
+      {
+        "type": "text",
+        "id": "password_countdown_message",
+        "label": "Message while countdown is running",
+        "default": "The drop is coming soon."
+      },
+      {
+        "type": "text",
+        "id": "password_open_message",
+        "label": "Message when countdown has ended",
+        "default": "The drop is live. Enter the store."
+      },
+      {
+        "type": "text",
+        "id": "password_default_message",
+        "label": "Message without countdown",
+        "default": "Enter the password to access the store."
+      },
+      {
+        "type": "text",
+        "id": "password_countdown_newsletter_message",
+        "label": "Newsletter signup message",
+        "default": "Get the latest news about the drop."
+      },
+      {
+        "type": "text",
+        "id": "password_countdown_newsletter_placeholder",
+        "label": "Newsletter email placeholder",
+        "default": "Your email address"
+      },
+      {
+        "type": "text",
+        "id": "password_countdown_newsletter_button_label",
+        "label": "Newsletter button label",
+        "default": "Subscribe"
+      },
+      {
+        "type": "text",
+        "id": "password_countdown_newsletter_success_message",
+        "label": "Newsletter success message",
+        "default": "Thanks for subscribing."
+      },
+      {
         "type": "text",
         "id": "password_open_date",
         "label": "Shop open date/time",
