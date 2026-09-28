@@ -66,6 +66,7 @@ Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. N�
 - Eventos atuais: `cartUpdated` com `detail: { cart, source }`, e `cartCleared` com `detail: { source }`; fontes existentes `sidebar` e `main`. Preservar consumidores ou migrá-los em conjunto.
 - `cart-inventory` devolve `#inventory-data` com `items` indexados por `item.key`. O JSON normal de `/cart.js` não equivale ao objeto Liquid `item.variant`.
 - Alterar/remover linhas por `item.key`, não apenas pelo ID da variante, para distinguir propriedades/descontos distintos.
+- O carrinho lateral apresenta `item.original_price`, `item.original_line_price` e a soma dos totais originais, sem mostrar descontos. A página de carrinho mantém os descontos; a Shopify calcula o valor final no checkout.
 - Numa alteração ao carrinho, verificar os dois carrinhos e os seis caminhos de quick add: coleção, pesquisa, new arrivals, new in, old collections e product grid.
 - Preferir rotas localizadas (`routes.*` em Liquid; `window.Shopify.routes.root` em JS). Os caminhos absolutos existentes são dívida técnica, não convenção a replicar.
 - Tratar `response.ok`, mensagens de erro, cliques concorrentes, falha de rede e reconciliação com a resposta do servidor. Não indicar sucesso só porque `fetch` resolveu.
