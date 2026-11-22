@@ -224,7 +224,7 @@
                 <h3 class="product-title">{{ product.title }}</h3>
               </a>
               <span class="product-price">
-                {% render 'price', amount: product.price, catalog_price: true %}
+                {% render 'price', amount: product.price, catalog_product: product %}
               </span>
             </div>
           </div>

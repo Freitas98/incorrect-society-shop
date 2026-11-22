@@ -142,7 +142,7 @@
                     <span class="related-product-price-regular">{{ related_product.price | money }}</span>
                   {% endif %}
                 {% endcapture %}
-                {% render 'price', amount: related_product.price, catalog_price: true, without_currency: true, regular_markup: regular_markup %}
+                {% render 'price', amount: related_product.price, catalog_product: related_product, without_currency: true, regular_markup: regular_markup %}
               </div>
             </div>
           </a>

@@ -40,7 +40,7 @@ Comunicar com o utilizador em português de Portugal. Distinguir sempre funciona
 | Gift card emitido | `templates/gift_card.liquid`, documento independente com `{% layout none %}` |
 | Música | `snippets/music-player.liquid`, renderizado no footer |
 | Drop comercial | `config/settings_schema.json` → Current Drop & Delivery; interface em `snippets/drop-bundle-card.liquid`, apresentada em `sections/product.liquid` e `sections/drop-bundle.liquid`; configuração operacional em `docs/DROP-COMMERCE.md` |
-| Black Friday | `config/settings_schema.json` → Black Friday. `layout/theme.liquid` publica a janela da campanha, `assets/black-friday.js` atualiza o contador e o estado, e `snippets/price.liquid` apresenta a redução em preços de catálogo. O desconto automático na Shopify é configurado separadamente conforme `docs/BLACK-FRIDAY.md`. |
+| Black Friday | `config/settings_schema.json` → Black Friday. `layout/theme.liquid` publica a janela da campanha, `assets/black-friday.js` atualiza o contador e o estado, e `snippets/price.liquid` apresenta a redução nos produtos elegíveis, incluindo o bundle. Os cartões-oferta ficam de fora da campanha no tema e no desconto automático da Shopify, conforme `docs/BLACK-FRIDAY.md`. |
 
 Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. Não confundir `sections/sidebar-navigation.liquid` com o menu mobile atual, implementado no header. Ambos existem, mas não estão ligados aos templates/grupos atuais. `sections/cart-inventory.liquid` é usado por pedido HTTP de Section Rendering, mesmo sem referência Liquid direta. Não apagar ficheiros apenas por uma pesquisa de `render` não encontrar usos.
 

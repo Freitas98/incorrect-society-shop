@@ -85,7 +85,7 @@
       <p class="drop-bundle-card__shipping">{{ 'drop.bundle_free_shipping' | t }}</p>
       <button type="button" class="drop-bundle-card__button" data-drop-bundle-add>
         <span>{{ 'drop.bundle_add' | t }}</span>
-        <span data-drop-bundle-price>{% render 'price', amount: bundle_product.price, catalog_price: true %}</span>
+        <span data-drop-bundle-price>{% render 'price', amount: bundle_product.price, catalog_product: bundle_product %}</span>
       </button>
       <p class="drop-bundle-card__status" data-drop-bundle-status hidden></p>
     </div>
@@ -97,7 +97,7 @@
             {
               "id": {{ bundle_variant.id | json }},
               "available": {{ bundle_variant.available | json }},
-              "priceHtml": {% render 'price', amount: bundle_variant.price, catalog_price: true, output: 'json' %},
+              "priceHtml": {% render 'price', amount: bundle_variant.price, catalog_product: bundle_product, output: 'json' %},
               "option1": {{ bundle_variant.option1 | json }},
               "option2": {{ bundle_variant.option2 | json }},
               "option3": {{ bundle_variant.option3 | json }}

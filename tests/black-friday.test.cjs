@@ -59,12 +59,21 @@ test('the schedule requires a valid end and starts inclusively in the configured
 
 test('variant prices serialize as script-safe HTML and only catalogue prices are discounted', async () => {
   const liquid = engine({ enable_black_friday: true });
-  const render = (args) => liquid.parseAndRender(`{% render 'price', amount: 6299${args} %}`);
-  const markup = await render(", catalog_price: true, output: 'json'");
+  const product = { type: 'T-Shirt', 'gift_card?': false };
+  const render = (args) => liquid.parseAndRender(`{% render 'price', amount: 6299${args} %}`, { product });
+  const markup = await render(", catalog_product: product, output: 'json'");
   assert.doesNotMatch(markup, /</);
   assert.match(JSON.parse(markup), /black-friday-price[\s\S]*50\.39 EUR[\s\S]*<s[^>]*>62\.99 EUR<\/s>/);
   assert.equal(await render(''), '62.99 EUR');
-  assert.equal(await engine({}).parseAndRender("{% render 'price', amount: 6299, catalog_price: true %}"), '62.99 EUR');
+  assert.equal(await engine({}).parseAndRender("{% render 'price', amount: 6299, catalog_product: product %}", { product }), '62.99 EUR');
+});
+
+test('gift card products retain their regular price even when Black Friday is enabled', async () => {
+  const liquid = engine({ enable_black_friday: true });
+  const source = "{% render 'price', amount: 2500, catalog_product: product, output: 'json' %}";
+  for (const product of [{ 'gift_card?': true }, { type: 'Gift Card' }]) {
+    assert.equal(JSON.parse(await liquid.parseAndRender(source, { product })), '25.00 EUR');
+  }
 });
 
 test('the countdown updates prices in place at the start and restores the announcement at the end', () => {

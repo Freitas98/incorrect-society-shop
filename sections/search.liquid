@@ -162,7 +162,7 @@
                     <h3 class="product-title">{{ result.title }}</h3>
                   </a>
                   <span class="product-price">
-                    {% render 'price', amount: result.price, catalog_price: true %}
+                    {% render 'price', amount: result.price, catalog_product: result %}
                   </span>
                 </div>
               </div>

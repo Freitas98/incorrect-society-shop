@@ -1,7 +1,7 @@
 {%- comment -%}
   amount is in the customer's presentment currency, in Shopify price units.
-  Only catalog_price callers show the scheduled offer. Cart totals and issued
-  gift card balances always use the supplied amount.
+  Pass catalog_product to show the scheduled offer on eligible products.
+  Gift card products, cart totals and issued balances use the supplied amount.
 {%- endcomment -%}
 {%- liquid
   assign amount = amount | default: 0
@@ -11,7 +11,7 @@
   {%- if without_currency -%}{{ amount | money }}{%- else -%}{{ amount | money_with_currency }}{%- endif -%}
 {%- endcapture -%}
 {%- capture price_markup -%}
-  {%- if catalog_price and settings.enable_black_friday and sale_amount < amount -%}
+  {%- if settings.enable_black_friday and catalog_product and catalog_product.gift_card? != true and catalog_product.type != 'Gift Card' and sale_amount < amount -%}
     <span class="black-friday-regular">{{ regular_markup | default: formatted_price }}</span>
     <span class="black-friday-price">
       <span><span class="visually-hidden">{{ 'black_friday.sale_price' | t | escape }} </span>

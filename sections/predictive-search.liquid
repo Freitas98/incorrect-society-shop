@@ -9,7 +9,7 @@
           <h4 class="predictive-search-title">{{ product.title | escape }}</h4>
           <div class="predictive-search-price">
             {% if product.available %}
-              {% render 'price', amount: product.price, catalog_price: true %}
+              {% render 'price', amount: product.price, catalog_product: product %}
             {% else %}
               <span class="sold-out-badge">{{ 'products.product.sold_out' | t }}</span>
             {% endif %}
