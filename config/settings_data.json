@@ -99,7 +99,7 @@
       "secure-scratch-card": {
         "type": "secure-scratch-card",
         "settings": {
-          "enabled": true,
+          "enabled": false,
           "campaign_id": "secrets-sinners-2026",
           "proxy_path": "apps/incorrect-scratch"
         }
