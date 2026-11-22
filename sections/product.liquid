@@ -95,7 +95,7 @@
     
     <div class="product-title-row">
       <h1 class="product-title">{{ product.title }}</h1>
-      <span class="product-price">{% render 'price', amount: current_variant.price, product: product %}</span>
+      <span class="product-price">{% render 'price', amount: current_variant.price, catalog_price: true %}</span>
     </div>
     
     <!-- Product Info Sections -->
@@ -389,7 +389,6 @@
         {
           "variants": [
             {% for variant in product.variants %}
-              {% capture price_html %}{% render 'price', amount: variant.price, product: product %}{% endcapture %}
               {
                 "id": {{ variant.id | json }},
                 "title": {{ variant.title | json }},
@@ -399,7 +398,7 @@
                 "inventory_management": {{ variant.inventory_management | json }},
                 "drop_initial_stock": {{ variant.metafields.custom.drop_initial_stock.value | json }},
                 "price": {{ variant.price | json }},
-                "priceHtml": {{ price_html | json }},
+                "priceHtml": {% render 'price', amount: variant.price, catalog_price: true, output: 'json' %},
                 "option1": {{ variant.option1 | json }},
                 "option2": {{ variant.option2 | json }},
                 "option3": {{ variant.option3 | json }},
@@ -429,7 +428,7 @@
         {% unless current_variant.available %}disabled{% endunless %}
       >
         <span class="btn-text">Add to Cart</span>
-        <span class="btn-price">{% render 'price', amount: current_variant.price, product: product %}</span>
+        <span class="btn-price">{% render 'price', amount: current_variant.price, catalog_price: true %}</span>
       </button>
 
       {% if vto_available %}

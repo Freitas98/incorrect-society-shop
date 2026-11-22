@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "black_friday_starts_at": "2026-11-25T00:00:00+00:00",
     "type_primary_font": "work_sans_n4",
     "min_page_margin": 10,
     "current_collection": "secrets-and-sins",

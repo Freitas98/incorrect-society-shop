@@ -1,0 +1,23 @@
+{%- if predictive_search.performed -%}
+  <div data-predictive-search-fragment>
+    {% for product in predictive_search.resources.products %}
+      <a href="{{ product.url | escape }}" class="predictive-search-item">
+        {% if product.featured_image %}
+          {{ product.featured_image | image_url: width: 80 | image_tag: class: 'predictive-search-image', width: 40, height: 40, alt: '', loading: 'lazy' }}
+        {% endif %}
+        <div class="predictive-search-info">
+          <h4 class="predictive-search-title">{{ product.title | escape }}</h4>
+          <div class="predictive-search-price">
+            {% if product.available %}
+              {% render 'price', amount: product.price, catalog_price: true %}
+            {% else %}
+              <span class="sold-out-badge">{{ 'products.product.sold_out' | t }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    {% else %}
+      <div class="predictive-search-item">{{ 'search.no_results_title' | t }}</div>
+    {% endfor %}
+  </div>
+{%- endif -%}

@@ -76,6 +76,30 @@
     ]
   },
   {
+    "name": "t:black_friday.name",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_black_friday",
+        "label": "t:black_friday.enable",
+        "info": "t:black_friday.enable_info",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "black_friday_starts_at",
+        "label": "t:black_friday.starts_at",
+        "info": "t:black_friday.starts_at_info"
+      },
+      {
+        "type": "text",
+        "id": "black_friday_ends_at",
+        "label": "t:black_friday.ends_at",
+        "info": "t:black_friday.ends_at_info"
+      }
+    ]
+  },
+  {
     "name": "Current Drop & Delivery",
     "settings": [
       {

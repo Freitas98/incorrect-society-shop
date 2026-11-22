@@ -26,8 +26,8 @@ Comunicar com o utilizador em português de Portugal. Distinguir sempre funciona
 
 | Área | Entrada / implementação |
 | --- | --- |
-| Homepage | `templates/index.json`: `full-width-images` → `new-arrivals-grid` → `hero-slider-gallery` |
-| Shop / todos os produtos | `templates/page.all-products.json`: hero → `new-in-products` → `old-collections` → galeria |
+| Homepage | `templates/index.json`: `hero-editorial-banner` (50% da altura do ecrã) → `drop-bundle` → `new-arrivals-grid` → `hero-slider-gallery` |
+| Shop / todos os produtos | `templates/page.all-products.json`: hero → `drop-bundle` → `new-in-products` → `old-collections` → galeria |
 | Coleção | `templates/collection.json` → `sections/collection.liquid`, paginação de 12 produtos |
 | Produto | `templates/product.json` → `sections/product.liquid` + `sections/related-products.liquid` |
 | Carrinho | `sections/header.liquid` para drawer; `sections/cart.liquid` para página completa |
@@ -40,6 +40,7 @@ Comunicar com o utilizador em português de Portugal. Distinguir sempre funciona
 | Gift card emitido | `templates/gift_card.liquid`, documento independente com `{% layout none %}` |
 | Música | `snippets/music-player.liquid`, renderizado no footer |
 | Drop comercial | `config/settings_schema.json` → Current Drop & Delivery; interface em `snippets/drop-bundle-card.liquid`, apresentada em `sections/product.liquid` e `sections/drop-bundle.liquid`; configuração operacional em `docs/DROP-COMMERCE.md` |
+| Black Friday | `config/settings_schema.json` → Black Friday. `layout/theme.liquid` publica a janela da campanha, `assets/black-friday.js` atualiza o contador e o estado, e `snippets/price.liquid` apresenta a redução em preços de catálogo. O desconto automático na Shopify é configurado separadamente conforme `docs/BLACK-FRIDAY.md`. |
 
 Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. Não confundir `sections/sidebar-navigation.liquid` com o menu mobile atual, implementado no header. Ambos existem, mas não estão ligados aos templates/grupos atuais. `sections/cart-inventory.liquid` é usado por pedido HTTP de Section Rendering, mesmo sem referência Liquid direta. Não apagar ficheiros apenas por uma pesquisa de `render` não encontrar usos.
 
@@ -66,7 +67,7 @@ Não confundir `sections/product-grid.liquid` com a grelha ativa da homepage. N�
 - Eventos atuais: `cartUpdated` com `detail: { cart, source }`, e `cartCleared` com `detail: { source }`; fontes existentes `sidebar` e `main`. Preservar consumidores ou migrá-los em conjunto.
 - `cart-inventory` devolve `#inventory-data` com `items` indexados por `item.key`. O JSON normal de `/cart.js` não equivale ao objeto Liquid `item.variant`.
 - Alterar/remover linhas por `item.key`, não apenas pelo ID da variante, para distinguir propriedades/descontos distintos.
-- O carrinho lateral apresenta `item.original_price`, `item.original_line_price` e a soma dos totais originais, sem mostrar descontos. A página de carrinho mantém os descontos; a Shopify calcula o valor final no checkout.
+- O carrinho lateral usa os preços originais e deduz apenas as alocações reais da campanha com o título `Black Friday -20%`. A página de carrinho mantém os descontos calculados pela Shopify, que também calcula o valor final no checkout.
 - Numa alteração ao carrinho, verificar os dois carrinhos e os seis caminhos de quick add: coleção, pesquisa, new arrivals, new in, old collections e product grid.
 - Preferir rotas localizadas (`routes.*` em Liquid; `window.Shopify.routes.root` em JS). Os caminhos absolutos existentes são dívida técnica, não convenção a replicar.
 - Tratar `response.ok`, mensagens de erro, cliques concorrentes, falha de rede e reconciliação com a resposta do servidor. Não indicar sucesso só porque `fetch` resolveu.

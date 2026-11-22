@@ -1,4 +1,17 @@
 {
+  "black_friday": {
+    "name": "Black Friday",
+    "enable": "Enable Black Friday",
+    "enable_info": "Shows the campaign in the storefront. Schedule a matching automatic 20% product discount in Shopify Discounts.",
+    "starts_at": "Campaign start",
+    "starts_at_info": "ISO 8601 with a time zone, e.g. 2026-11-27T00:00:00+00:00. Leave blank to start immediately.",
+    "ends_at": "Campaign end",
+    "ends_at_info": "Required. Use ISO 8601 with a time zone and match the end of the Shopify discount."
+  },
+  "editorial_hero": {
+    "half_height": "Half screen (50vh)",
+    "left_above_center": "Left, slightly above center"
+  },
   "general": {
     "404": "Not found",
     "article": "Article",

@@ -95,7 +95,7 @@
       var available = Boolean(variant && variant.available);
       button.disabled = !available;
       button.dataset.variantId = available ? variant.id : '';
-      price.textContent = available ? variant.priceHtml : '';
+      price.innerHTML = available ? variant.priceHtml : '';
       setStatus(status, available ? '' : unavailableMessage(), !available);
     }
 

@@ -61,6 +61,14 @@ test('only the two requested heroes enable rounded lower corners', () => {
   assert.equal(allProducts.sections.hero_editorial.settings.round_bottom_corners, true);
 });
 
+test('the homepage has a half-height editorial hero followed immediately by the bundle', () => {
+  const homepage = parseThemeJson('templates/index.json');
+  const shop = parseThemeJson('templates/page.all-products.json');
+  assert.deepEqual(homepage.order.slice(0, 2), ['hero_editorial', 'drop_bundle']);
+  assert.equal(homepage.sections.hero_editorial.settings.image_height, 'half');
+  assert.equal(shop.sections.hero_editorial.settings.image_height, 'full');
+});
+
 test('announcement bar supports up to 3 configurable messages with brand icon separator', () => {
   const announcement = read('sections/announcement-bar.liquid');
   assert.match(announcement, /message_1/);

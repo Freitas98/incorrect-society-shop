@@ -1,7 +1,31 @@
-{% comment %}
-  Price formatting snippet
-  Input: amount (integer, in the customer's presentment currency)
-  Output: Shopify-formatted amount with its currency code.
-{% endcomment %}
-
-{{ amount | default: 0 | money_with_currency }}
+{%- comment -%}
+  amount is in the customer's presentment currency, in Shopify price units.
+  Only catalog_price callers show the scheduled offer. Cart totals and issued
+  gift card balances always use the supplied amount.
+{%- endcomment -%}
+{%- liquid
+  assign amount = amount | default: 0
+  assign sale_amount = amount | times: 0.8 | round
+-%}
+{%- capture formatted_price -%}
+  {%- if without_currency -%}{{ amount | money }}{%- else -%}{{ amount | money_with_currency }}{%- endif -%}
+{%- endcapture -%}
+{%- capture price_markup -%}
+  {%- if catalog_price and settings.enable_black_friday and sale_amount < amount -%}
+    <span class="black-friday-regular">{{ regular_markup | default: formatted_price }}</span>
+    <span class="black-friday-price">
+      <span><span class="visually-hidden">{{ 'black_friday.sale_price' | t | escape }} </span>
+        {%- if without_currency -%}{{ sale_amount | money }}{%- else -%}{{ sale_amount | money_with_currency }}{%- endif -%}
+      </span>
+      <span><span class="visually-hidden">{{ 'black_friday.original_price' | t | escape }} </span><s class="black-friday-original">{{ formatted_price }}</s></span>
+    </span>
+  {%- else -%}
+    {{- regular_markup | default: formatted_price -}}
+  {%- endif -%}
+{%- endcapture -%}
+{%- if output == 'json' -%}
+  {%- capture json_lt -%}\u003c{%- endcapture -%}
+  {{- price_markup | json | replace: '<', json_lt -}}
+{%- else -%}
+  {{- price_markup -}}
+{%- endif -%}

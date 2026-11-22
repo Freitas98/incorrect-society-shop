@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html lang="{{ request.locale.iso_code }}"{% render 'black-friday-schedule' %}>
   <head>
     {% render 'vto-import-map' %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +12,9 @@
     {% # Preload and load the critical CSS %}
     {{ 'critical.css' | asset_url | preload_tag: as: 'style' }}
     {{ 'critical.css' | asset_url | stylesheet_tag }}
+    {% if settings.enable_black_friday %}
+      <script src="{{ 'black-friday.js' | asset_url }}" defer></script>
+    {% endif %}
 
     {% # Social, title, etc. %}
     {% render 'meta-tags' %}
@@ -40,6 +43,8 @@
         cart_each: {{ 'cart.each' | t | json }},
         cart_discount: {{ 'cart.discount' | t | json }},
         cart_discount_applied: {{ 'cart.discount_applied' | t | json }},
+        black_friday_sale_price: {{ 'black_friday.sale_price' | t | json }},
+        black_friday_original_price: {{ 'black_friday.original_price' | t | json }},
         option_size_label: {{ 'products.options.size' | t | json }},
         option_color_label: {{ 'products.options.color' | t | json }}
       });

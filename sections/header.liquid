@@ -41,7 +41,7 @@
     <div class="header-right">
       <div class="header-actions">
         <div class="header-search" data-search>
-          <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form" aria-label="{{ 'search.title' | t }}">
+          <form action="{{ routes.search_url }}" method="get" role="search" class="header-search-form" aria-label="{{ 'search.title' | t }}" data-predictive-url="{{ routes.predictive_search_url | escape }}">
             <label for="header-search-input" class="visually-hidden">{{ 'search.title' | t }}</label>
             <input
               id="header-search-input"
@@ -95,9 +95,11 @@
 </header>
 <div id="site-header-spacer" class="site-header-spacer" aria-hidden="true"></div>
 
+{% assign black_friday_discount_title = 'Black Friday -20%' %}
 <div
   class="cart-sidebar"
   id="cart-sidebar"
+  data-black-friday-discount-title="{{ black_friday_discount_title | escape }}"
   data-bundle-product-id="{{ settings.drop_bundle_product.id }}"
   data-bundle-product-handle="{{ settings.drop_bundle_product.handle | default: settings.drop_bundle_product }}"
   data-bundle-image-primary="{{ settings.drop_bundle_component_one.featured_image | image_url: width: 160 }}"
@@ -119,11 +121,16 @@
     <div class="cart-footer">
       <div class="cart-total">
         <span>{{ 'cart.subtotal' | t }}: </span>
-        {% assign sidebar_original_subtotal = 0 %}
+        {% assign sidebar_subtotal = 0 %}
         {% for item in cart.items %}
-          {% assign sidebar_original_subtotal = sidebar_original_subtotal | plus: item.original_line_price %}
+          {% assign sidebar_subtotal = sidebar_subtotal | plus: item.original_line_price %}
+          {% for allocation in item.line_level_discount_allocations %}
+            {% if allocation.discount_application.title == black_friday_discount_title %}
+              {% assign sidebar_subtotal = sidebar_subtotal | minus: allocation.amount %}
+            {% endif %}
+          {% endfor %}
         {% endfor %}
-        <span id="cart-total">{% render 'price', amount: sidebar_original_subtotal %}</span>
+        <span id="cart-total">{% render 'price', amount: sidebar_subtotal %}</span>
       </div>
       <div class="cart-actions">
         <button class="btn btn--secondary" id="clear-cart-btn">{{ 'cart.clear' | t }}</button>
@@ -1443,6 +1450,7 @@
     const cartCount = document.getElementById('cart-count');
     const mobileCartCount = document.getElementById('mobile-cart-count');
     const cartTotal = document.getElementById('cart-total');
+    const blackFridayDiscountTitle = cartSidebar.dataset.blackFridayDiscountTitle;
     const bundleProductId = String(cartSidebar.dataset.bundleProductId || '');
     const bundleProductHandle = String(cartSidebar.dataset.bundleProductHandle || '');
     const bundleImageUrls = [cartSidebar.dataset.bundleImagePrimary, cartSidebar.dataset.bundleImageSecondary].filter(Boolean);
@@ -1478,10 +1486,12 @@
     const searchInput = document.getElementById('header-search-input');
     const searchResults = document.getElementById('predictive-search-results');
     let searchTimeout;
+    let searchRequest;
 
     if (searchInput && searchResults) {
       searchInput.addEventListener('input', function() {
         clearTimeout(searchTimeout);
+        searchRequest?.abort();
         const query = this.value.trim();
 
         if (query.length === 0) {
@@ -1490,33 +1500,27 @@
           return;
         }
 
-        searchTimeout = setTimeout(() => {
-          fetch(`${cartEndpoint('search/suggest.json')}?q=${encodeURIComponent(query)}&resources[type]=product&resources[limit]=5`)
-            .then(response => response.json())
-            .then(data => {
-              const products = data.resources.results.products;
-              
-              if (products.length > 0) {
-                searchResults.innerHTML = products.map(product => `
-                  <a href="${product.url}" class="predictive-search-item">
-                    <img src="${product.image}" alt="${product.title}" class="predictive-search-image" width="40" height="40">
-                    <div class="predictive-search-info">
-                      <h4 class="predictive-search-title">${product.title}</h4>
-                      <div class="predictive-search-price">
-                        ${product.available ? formatCartMoney(product.price, window.themeMoney?.currency) : '<span class="sold-out-badge">Sold Out</span>'}
-                      </div>
-                    </div>
-                  </a>
-                `).join('');
-                searchResults.classList.add('has-results');
-              } else {
-                searchResults.innerHTML = '<div class="predictive-search-item">No results found</div>';
-                searchResults.classList.add('has-results');
-              }
-            })
-            .catch(error => {
-              console.error('Error fetching search suggestions:', error);
-            });
+        searchTimeout = setTimeout(async () => {
+          const controller = new AbortController();
+          searchRequest = controller;
+          const url = new URL(searchInput.form.dataset.predictiveUrl, window.location.origin);
+          url.search = new URLSearchParams({
+            q: query,
+            'resources[type]': 'product',
+            'resources[limit]': '5',
+            section_id: 'predictive-search'
+          });
+          try {
+            const response = await fetch(url, { signal: controller.signal });
+            if (!response.ok) throw new Error('Unable to load search suggestions');
+            const html = await response.text();
+            const fragment = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-predictive-search-fragment]');
+            if (!fragment || controller.signal.aborted) return;
+            searchResults.replaceChildren(...fragment.children);
+            searchResults.classList.add('has-results');
+          } catch (error) {
+            if (error.name !== 'AbortError') console.error('Error fetching search suggestions:', error);
+          }
         }, 300); // Debounce for 300ms
       });
 
@@ -1681,8 +1685,7 @@
             
           const availableStock = hasInventoryLimit ? inventoryItem.inventory_quantity : null;
           const isMaxQuantity = hasInventoryLimit && item.quantity >= availableStock;
-          const originalPrice = Number(item.original_price ?? item.price ?? 0);
-          const originalLinePrice = Number(item.original_line_price ?? originalPrice * item.quantity);
+          const prices = cartItemPrices(item);
 
           return `
       <div class="cart-item-card" data-key="${item.key}">
@@ -1700,7 +1703,7 @@
           <div class="item-variant-price-wrapper">
             ${variantHtml}
             <span class="variant-price">
-              <span class="unit-price">${formatCartMoney(originalPrice, cart.currency)}</span>
+              <span class="unit-price">${cartPriceMarkup(prices.unit, prices.originalUnit, cart.currency)}</span>
               <span class="price-label">${escapeHtml(window.themeStrings?.cart_each || 'each')}</span>
             </span>
           </div>
@@ -1734,7 +1737,7 @@
           
           <div class="total-wrapper">
             <label class="total-label">${escapeHtml(window.themeStrings?.cart_total || 'Total')}</label>
-            <div class="item-total-price">${formatCartMoney(originalLinePrice, cart.currency)}</div>
+            <div class="item-total-price">${cartPriceMarkup(prices.line, prices.originalLine, cart.currency)}</div>
           </div>
 
           <button class="remove-item-btn" data-key="${item.key}">
@@ -1898,13 +1901,31 @@
       });
     }
 
-    // Update cart total
-    function updateCartTotal(cart) {
-      const originalSubtotal = cart.items.reduce((total, item) => {
-        const originalPrice = Number(item.original_price ?? item.price ?? 0);
-        return total + Number(item.original_line_price ?? originalPrice * item.quantity);
+    function cartItemPrices(item) {
+      const originalUnit = Number(item.original_price ?? item.price ?? 0);
+      const originalLine = Number(item.original_line_price ?? originalUnit * item.quantity);
+      const campaignDiscount = (item.line_level_discount_allocations || []).reduce((discount, allocation) => {
+        return allocation.discount_application?.title === blackFridayDiscountTitle
+          ? discount + Number(allocation.amount)
+          : discount;
       }, 0);
-      cartTotal.textContent = formatCartMoney(originalSubtotal, cart.currency);
+      const line = originalLine - campaignDiscount;
+      const unit = campaignDiscount > 0 && item.quantity > 0 ? Math.round(line / item.quantity) : originalUnit;
+      return { originalUnit, originalLine, unit, line };
+    }
+
+    function cartPriceMarkup(price, original, currency) {
+      const formatted = escapeHtml(formatCartMoney(price, currency));
+      if (price >= original) return formatted;
+      const saleLabel = escapeHtml(window.themeStrings.black_friday_sale_price);
+      const originalLabel = escapeHtml(window.themeStrings.black_friday_original_price);
+      const compare = escapeHtml(formatCartMoney(original, currency));
+      return `<span class="black-friday-cart-price"><span><span class="visually-hidden">${saleLabel} </span>${formatted}</span><span><span class="visually-hidden">${originalLabel} </span><s class="black-friday-original">${compare}</s></span></span>`;
+    }
+
+    function updateCartTotal(cart) {
+      const subtotal = cart.items.reduce((total, item) => total + cartItemPrices(item).line, 0);
+      cartTotal.textContent = formatCartMoney(subtotal, cart.currency);
     }
 
     function formatCartMoney(amount, currency) {

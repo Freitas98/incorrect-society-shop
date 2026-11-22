@@ -1,4 +1,13 @@
 <div class="announcement-bar">
+  {% if settings.enable_black_friday %}
+    <div class="black-friday-announcement" data-black-friday-announcement hidden>
+      <span data-black-friday-label
+        data-starts-in="{{ 'black_friday.starts_in' | t | escape }}"
+        data-ends-in="{{ 'black_friday.ends_in' | t | escape }}"
+      ></span>
+      <span role="timer" data-black-friday-timer data-format="{{ 'black_friday.remaining' | t: days: '__DAYS__', hours: '__HOURS__', minutes: '__MINUTES__', seconds: '__SECONDS__' | escape }}"></span>
+    </div>
+  {% endif %}
   {% liquid
     assign msg1 = section.settings.message_1 | default: settings.announcement_message_1 | strip
     assign msg2 = section.settings.message_2 | default: settings.announcement_message_2 | strip
@@ -57,7 +66,7 @@
   {% endcapture %}
 
   <div
-    class="announcement-content"
+    class="announcement-content" data-standard-announcement
     style="--announcement-duration: {{ scroll_duration }}s;"
     aria-label="{{ 'announcement.aria_label' | t | default: 'Store announcement' }}"
   >
@@ -98,6 +107,28 @@
     width: max-content;
     text-rendering: geometricPrecision;
     will-change: transform;
+  }
+
+  .black-friday-announcement {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 10px;
+    height: 100%;
+    padding-inline: 6px;
+    font-size: clamp(.625rem, 2.8vw, .8rem);
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .black-friday-announcement[hidden],
+  .announcement-content[hidden] {
+    display: none;
+  }
+
+  .black-friday-announcement [role="timer"] {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   .announcement-track {

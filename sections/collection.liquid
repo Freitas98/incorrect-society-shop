@@ -164,9 +164,9 @@
               </a>
               <span class="product-price">
                 {% if product.gift_card? or product.type == 'Gift Card' %}
-                  {{ 'gift_card.start_at' | t }} {% render 'price', amount: product.price, product: product %}
+                  {{ 'gift_card.start_at' | t }} {% render 'price', amount: product.price, catalog_price: true %}
                 {% else %}
-                  {% render 'price', amount: product.price, product: product %}
+                  {% render 'price', amount: product.price, catalog_price: true %}
                 {% endif %}
               </span>
             </div>

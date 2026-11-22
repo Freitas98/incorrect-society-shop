@@ -409,6 +409,13 @@
     "drop_countdown": "___DROP___ will be removed forever in ___DAYS___d ___HOURS___h ___MINUTES___m.",
     "drop_ended": "This drop has closed."
   },
+  "black_friday": {
+    "starts_in": "Black Friday starts in",
+    "ends_in": "Black Friday −20% · Ends in",
+    "remaining": "{{ days }}d {{ hours }}h {{ minutes }}m {{ seconds }}s",
+    "sale_price": "Black Friday price",
+    "original_price": "Previous price"
+  },
   "scratch": {
     "teaser": "SCRATCH TO WIN",
     "title": "YOUR TURN",

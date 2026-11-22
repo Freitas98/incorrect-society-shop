@@ -134,12 +134,15 @@
             <div class="related-product-info">
               <h3 class="related-product-title">{{ related_product.title }}</h3>
               <div class="related-product-price">
-                {% if related_product.compare_at_price > related_product.price %}
-                  <span class="related-product-price-sale">{{ related_product.price | money }}</span>
-                  <span class="related-product-price-compare">{{ related_product.compare_at_price | money }}</span>
-                {% else %}
-                  <span class="related-product-price-regular">{{ related_product.price | money }}</span>
-                {% endif %}
+                {% capture regular_markup %}
+                  {% if related_product.compare_at_price > related_product.price %}
+                    <span class="related-product-price-sale">{{ related_product.price | money }}</span>
+                    <span class="related-product-price-compare">{{ related_product.compare_at_price | money }}</span>
+                  {% else %}
+                    <span class="related-product-price-regular">{{ related_product.price | money }}</span>
+                  {% endif %}
+                {% endcapture %}
+                {% render 'price', amount: related_product.price, catalog_price: true, without_currency: true, regular_markup: regular_markup %}
               </div>
             </div>
           </a>

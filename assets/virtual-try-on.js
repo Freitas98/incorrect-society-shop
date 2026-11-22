@@ -36,7 +36,7 @@
       this.events = new AbortController();
 
       // Active garment product and variants
-      this.activeProduct = this.config.currentProduct || { id: '', title: '', priceFormatted: '', model: this.config.model };
+      this.activeProduct = this.config.currentProduct || { id: '', title: '', model: this.config.model };
       this.activeVariants = this.config.variants || [];
       this.selectedVariantId = null;
       this.profile = {};
@@ -134,7 +134,7 @@
 
           const price = document.createElement('div');
           price.className = 'vto-catalog-price';
-          price.textContent = item.priceFormatted || '';
+          this.renderPrice(price, item);
 
           info.appendChild(title);
           info.appendChild(price);
@@ -278,17 +278,19 @@
       } else {
         btn.disabled = !!this.cartPending;
         if (textEl) textEl.textContent = this.text.addToCart || 'Add to cart';
-        if (priceEl && variant.priceFormatted) priceEl.textContent = variant.priceFormatted;
         if (stockBadge) {
           stockBadge.textContent = this.config.fitStrings.available;
           stockBadge.classList.remove('out-of-stock');
         }
       }
-      if (variant?.priceFormatted) {
-        if (priceEl) priceEl.textContent=variant.priceFormatted;
-        const displayedPrice=this.q('product-price');
-        if(displayedPrice)displayedPrice.textContent=variant.priceFormatted;
-      }
+      this.renderPrice(priceEl, variant || this.activeProduct);
+      this.renderPrice(this.q('product-price'), variant || this.activeProduct);
+    }
+
+    renderPrice(element, item) {
+      if (!element) return;
+      if (item?.priceHtml != null) element.innerHTML = item.priceHtml;
+      else element.textContent = item?.priceFormatted || '';
     }
 
     async switchGarment(item) {
@@ -304,8 +306,8 @@
 
       if (headerTitle) headerTitle.textContent = item.title;
       if (nameEl) nameEl.textContent = item.title;
-      if (priceEl && item.priceFormatted) priceEl.textContent = item.priceFormatted;
-      if (cartPriceEl && item.priceFormatted) cartPriceEl.textContent = item.priceFormatted;
+      this.renderPrice(priceEl, item);
+      this.renderPrice(cartPriceEl, item);
 
       // Update catalog cards highlight
       const grid = this.q('collection-grid');

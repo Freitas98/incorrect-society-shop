@@ -408,6 +408,13 @@
     "drop_countdown": "___DROP___ será removido para sempre em ___DAYS___d ___HOURS___h ___MINUTES___m.",
     "drop_ended": "Este drop terminou."
   },
+  "black_friday": {
+    "starts_in": "Black Friday começa em",
+    "ends_in": "Black Friday −20% · Termina em",
+    "remaining": "{{ days }}d {{ hours }}h {{ minutes }}m {{ seconds }}s",
+    "sale_price": "Preço Black Friday",
+    "original_price": "Preço anterior"
+  },
   "scratch": {
     "teaser": "RASPA E GANHA",
     "title": "A TUA VEZ",

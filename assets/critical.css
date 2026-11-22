@@ -1721,3 +1721,34 @@ body[data-template="index"] .main-content {
     padding-right: 10px;
   }
 }
+
+.black-friday-regular {
+  display: contents;
+}
+
+.black-friday-price,
+[data-black-friday-active] .black-friday-regular {
+  display: none;
+}
+
+[data-black-friday-active] .black-friday-price,
+.black-friday-cart-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: .4em;
+}
+
+.black-friday-price > span,
+.black-friday-original {
+  white-space: nowrap;
+}
+
+.black-friday-original {
+  color: var(--black-friday-strike-color, #8f173d);
+}
+
+.drop-bundle-card__button,
+.vto-cart-cta-price {
+  --black-friday-strike-color: #f1b7c1;
+}

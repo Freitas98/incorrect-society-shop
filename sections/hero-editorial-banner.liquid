@@ -31,7 +31,8 @@
       "options": [
         { "value": "full", "label": "Full Screen (100vh)" },
         { "value": "large", "label": "Full Screen (100vh)" },
-        { "value": "medium", "label": "Medium (75vh)" }
+        { "value": "medium", "label": "Medium (75vh)" },
+        { "value": "half", "label": "t:editorial_hero.half_height" }
       ],
       "default": "full"
     },
@@ -42,6 +43,7 @@
       "options": [
         { "value": "center center", "label": "Center" },
         { "value": "left center", "label": "Left (models on left)" },
+        { "value": "left 38%", "label": "t:editorial_hero.left_above_center" },
         { "value": "right center", "label": "Right" },
         { "value": "center top", "label": "Top Center" }
       ],
@@ -170,6 +172,8 @@
     assign height_class = 'hero-editorial--full'
   elsif section.settings.image_height == 'medium'
     assign height_class = 'hero-editorial--medium'
+  elsif section.settings.image_height == 'half'
+    assign height_class = 'hero-editorial--half'
   endif
 %}
 
@@ -183,7 +187,7 @@
         {% endif %}
         <img
           src="{{ section.settings.image | image_url: width: 2400 }}"
-          alt="{{ section.settings.image.alt | escape | default: section.settings.heading | strip_newlines }}"
+          alt="{{ section.settings.image.alt | default: section.settings.heading | strip_newlines | escape }}"
           class="hero-editorial__img"
           loading="eager"
           fetchpriority="high"
@@ -215,9 +219,7 @@
       {% endif %}
 
       {% if section.settings.heading != blank %}
-        <h2 class="hero-editorial__heading">
-          {{ section.settings.heading | newline_to_br }}
-        </h2>
+        <h2 class="hero-editorial__heading">{{ section.settings.heading | escape }}</h2>
       {% endif %}
     </div>
 
@@ -448,6 +450,7 @@
     overflow-wrap: break-word;
     text-align: left;
     width: 100%;
+    white-space: pre-line;
   }
 
   /* Column Bottom (Description text) */
@@ -789,6 +792,152 @@
     }
     .hero-editorial__text {
       font-size: 13px !important;
+    }
+  }
+
+  .hero-editorial.hero-editorial--half {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-areas: "corner content";
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 8px 24px;
+    height: auto;
+    min-height: 50vh;
+    min-height: 50svh;
+    padding: calc(var(--announcement-height, 30px) + var(--site-header-height, 64px) + clamp(6px, 1.8svh, 16px))
+      clamp(16px, 3.5vw, 60px) clamp(12px, 2.7svh, 28px);
+  }
+
+  .hero-editorial--half.hero-editorial--pos-left {
+    grid-template-areas: "content corner";
+  }
+
+  .hero-editorial--half .hero-editorial__column {
+    grid-area: content;
+    justify-self: end;
+    position: relative;
+    inset: auto;
+    width: min(100%, 440px);
+    gap: clamp(6px, 1.2svh, 12px);
+  }
+
+  .hero-editorial--half .hero-editorial__column--left {
+    justify-self: start;
+  }
+
+  .hero-editorial--half .hero-editorial__corner {
+    grid-area: corner;
+    position: relative;
+    inset: auto;
+  }
+
+  .hero-editorial--half .hero-editorial__heading {
+    font-size: clamp(24px, min(4vw, 4.6svh), 62px);
+  }
+
+  .hero-editorial--half .hero-editorial__text {
+    font-size: clamp(12px, min(1.05vw, 1.65svh), 16px);
+    max-width: 100%;
+  }
+
+  .hero-editorial--half.hero-editorial--color-auto :is(.hero-editorial__heading, .hero-editorial__text) {
+    text-shadow: 0 1px 7px rgba(0, 0, 0, .55);
+  }
+
+  @media (max-width: 768px) {
+    .hero-editorial.hero-editorial--half,
+    .hero-editorial--half.hero-editorial--pos-left {
+      grid-template-areas: "content" "corner";
+      grid-template-columns: minmax(0, 1fr);
+      align-content: end;
+      height: auto !important;
+      min-height: 50vh !important;
+      min-height: 50svh !important;
+      max-height: none;
+      padding: calc(var(--announcement-height, 30px) + var(--site-header-height, 64px) + 6px) 16px 14px !important;
+    }
+
+    .hero-editorial--half .hero-editorial__heading {
+      font-size: clamp(20px, min(6.2vw, 5.2svh), 34px) !important;
+      line-height: 1.04 !important;
+      margin: 0 !important;
+      white-space: normal;
+    }
+
+    .hero-editorial--half .hero-editorial__text {
+      font-size: 12px !important;
+      margin: 0 !important;
+    }
+
+    .hero-editorial--half .hero-editorial__corner-text {
+      display: none;
+    }
+
+    .hero-editorial--half .hero-editorial__btn {
+      padding-block: 8px !important;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .hero-editorial.hero-editorial--half,
+    .hero-editorial--half .hero-editorial__column {
+      row-gap: 4px;
+    }
+
+    .hero-editorial--half .hero-editorial__heading {
+      font-size: 18px !important;
+    }
+
+    .hero-editorial--half .hero-editorial__text {
+      font-size: 11px !important;
+      line-height: 1.25 !important;
+    }
+
+    .hero-editorial--half .hero-editorial__btn {
+      padding-block: 6px !important;
+    }
+  }
+
+  @media (max-height: 600px) and (min-width: 769px) {
+    .hero-editorial--half .hero-editorial__heading {
+      white-space: normal;
+    }
+  }
+
+  @media (max-height: 480px) and (min-width: 769px) {
+    .hero-editorial.hero-editorial--half {
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 16px;
+      padding-block: calc(var(--announcement-height, 30px) + var(--site-header-height, 64px) + 4px) 10px;
+    }
+
+    .hero-editorial--half.hero-editorial--pos-left {
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .hero-editorial--half .hero-editorial__column {
+      display: grid;
+      grid-template-columns: minmax(115px, .36fr) minmax(0, 1fr);
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-editorial--half .hero-editorial__heading {
+      font-size: clamp(15px, 1.9vw, 21px);
+    }
+
+    .hero-editorial--half .hero-editorial__text {
+      font-size: 11px;
+      line-height: 1.25;
+    }
+
+    .hero-editorial--half .hero-editorial__corner-text {
+      display: none;
+    }
+
+    .hero-editorial--half .hero-editorial__btn {
+      padding: 7px 14px;
     }
   }
 </style>

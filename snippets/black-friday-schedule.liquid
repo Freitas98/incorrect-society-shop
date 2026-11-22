@@ -1,0 +1,38 @@
+{%- if settings.enable_black_friday -%}
+  {%- liquid
+    assign start_at = 0
+    assign end_at = 0
+    assign date_fields = 'black_friday_starts_at,black_friday_ends_at' | split: ','
+    for field in date_fields
+      assign timestamp = settings[field] | strip
+      if forloop.first and timestamp == blank
+        continue
+      endif
+
+      assign normalized = timestamp
+      assign suffix = timestamp | slice: -1
+      if suffix == 'Z'
+        assign normalized = timestamp | slice: 0, 19 | append: '+00:00'
+      endif
+      assign parsed = timestamp | date: '%Y-%m-%dT%H:%M:%S%:z'
+      assign epoch = timestamp | date: '%s' | plus: 0
+      if parsed != normalized or epoch <= 0
+        break
+      endif
+
+      if forloop.first
+        assign start_at = epoch
+      else
+        assign end_at = epoch
+      endif
+    endfor
+    assign now = 'now' | date: '%s' | plus: 0
+  -%}
+  {%- if end_at > start_at %}
+    data-black-friday-start="{{ start_at }}"
+    data-black-friday-end="{{ end_at }}"
+    {%- if now >= start_at and now < end_at %}
+      data-black-friday-active
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
