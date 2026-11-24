@@ -13,7 +13,7 @@
     "min_page_margin": 10,
     "current_collection": "secrets-and-sins",
     "enable_black_friday": true,
-    "black_friday_starts_at": "2026-11-25T00:00:00+00:00",
+    "black_friday_starts_at": "2026-11-24T21:00:00+00:00",
     "black_friday_ends_at": "2026-11-30T00:00:00+00:00",
     "enable_drop_features": true,
     "drop_collection": "secrets-and-sins",
